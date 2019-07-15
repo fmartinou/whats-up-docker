@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+
+  # OMNIDB
+  omnidb:
+    image: wiremind/omnidb:latest
+    command: omnidb-server --host=0.0.0.0
+    labels:
+      wud-watch: true
+
+  # MONGO
+  mongo:
+    image: mongo:latest
+    labels:
+      wud-watch: true
+
+  # REDIS
+  redis:
+    image: redis:latest
+    labels:
+      wud-watch: true
+
+  # MARIADB
+  mariadb:
+    image: mariadb:5.5.63
+    labels:
+      wud-watch: true

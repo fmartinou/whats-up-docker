@@ -1,0 +1,15 @@
+---
+
+log_level: info
+
+sources:
+  - type: docker
+    socketPath: '/var/run/docker.sock'
+    watchByDefault: true
+
+triggers:
+  - type: email
+    service: gmail
+    auth:
+      user: manfred.martin@gmail.com
+      pass: taLlXXPH)ZUBg9LO(S4_
