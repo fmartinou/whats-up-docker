@@ -1,0 +1,10 @@
+---
+
+log_level: info
+
+triggers:
+  - type: email
+    service: gmail
+    auth:
+      user: manfred.martin@gmail.com
+      pass: taLlXXPH)ZUBg9LO(S4_

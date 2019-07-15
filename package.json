@@ -1,0 +1,30 @@
+{
+  "name": "whats-up-doc",
+  "version": "1.0.0",
+  "description": "What'up with you Docker images?",
+  "main": "index.js",
+  "scripts": {
+    "serve": "node src/index.js",
+    "lint": "eslint '**/*.js'"
+  },
+  "author": "fmartinou",
+  "repository": "fmartinou/whats-up-doc",
+  "license": "MIT",
+  "dependencies": {
+    "bunyan": "1.8.12",
+    "docker-parse-image": "^3.0.1",
+    "docker-registry-v2-client": "^1.7.1",
+    "express": "^4.17.1",
+    "js-yaml": "3.13.1",
+    "node-docker-api": "^1.1.22",
+    "nodemailer": "6.3.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7",
+    "semver": "^6.2.0"
+  },
+  "devDependencies": {
+    "eslint": "6.0.1",
+    "eslint-config-airbnb-base": "13.2.0",
+    "eslint-plugin-import": "2.18.0"
+  }
+}
