@@ -2,6 +2,11 @@
 
 log_level: info
 
+sources:
+  - type: docker
+    socketPath: '/var/run/docker.sock'
+    watchByDefault: true
+
 triggers:
   - type: email
     service: gmail

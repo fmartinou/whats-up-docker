@@ -5,11 +5,11 @@
 ### Node ###
 # Logs
 logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+*.index
+npm-debug.index*
+yarn-debug.index*
+yarn-error.index*
+lerna-debug.index*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
