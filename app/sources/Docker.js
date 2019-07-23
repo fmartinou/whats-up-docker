@@ -39,7 +39,11 @@ class Docker extends Source {
                 return Object.keys(labels).find(labelName => labelName.toLowerCase() === 'wud-watch') !== undefined;
 
                 // Map container to image
-            }).map((container) => {
+            }).map(async (container) => {
+
+                const img = await this.dockerApi.image.get(container.data.Image).status();
+                console.log(img.data.Created);
+
                 const parsedImage = parse(container.data.Image);
                 return {
                     registry: parsedImage.registry || 'https://hub.docker.com',
