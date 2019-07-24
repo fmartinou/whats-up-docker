@@ -3,7 +3,6 @@ const parse = require('docker-parse-image');
 const rp = require('request-promise-native');
 const semver = require('semver');
 const moment = require('moment');
-const log = require('../log');
 const Source = require('./Source');
 
 async function getTagsPage(url) {
@@ -43,6 +42,7 @@ class Docker extends Source {
         return Promise.all(imagesPromises);
     }
 
+    /* eslint-disable-next-line */
     async findNewVersion(image) {
         let next = `${image.registry}/v2/repositories/${image.organization}/${image.image}/tags?page=1`;
         while (next) {
