@@ -7,9 +7,11 @@ node_js:
 services:
   - docker
 
-script:
+install:
   - npm ci
   - npm run lint
+
+script:
 
   # Build docker image
   - docker build -t $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH -f Dockerfile .
