@@ -8,7 +8,7 @@ class Log extends Trigger {
     }
 
     notify(image) {
-        this.log.info(image);
+        this.log.debug(image);
     }
 }
 

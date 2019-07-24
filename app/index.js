@@ -27,8 +27,8 @@ app.post('/api/images', (req, res) => {
 const port = getPort();
 
 app.listen(port, () => {
-    log.info(`What's up, doc? is listening on port ${port}`);
-
-    // Fetch at startup
-    fetchService.fetch(sources);
 });
+log.info(`What's up, doc? is listening on port ${port}`);
+
+// Fetch at startup
+fetchService.fetch(sources);

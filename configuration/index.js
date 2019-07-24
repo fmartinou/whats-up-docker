@@ -1,5 +1,3 @@
-// const mail = require('../triggers/mail');
-// const eventEmitter = require('../../util/eventEmitter');
 const envProp = require('env-dot-prop');
 
 function getSourceConfigurations() {
@@ -26,19 +24,6 @@ function getTriggerConfigurations() {
 
 function getPort() {
     return envProp.get('wut.port', 3000);
-}
-
-function loadTriggers() {
-/*
-    configuration.triggers.forEach((trigger) => {
-        switch (trigger.type) {
-            case 'email':
-                eventEmitter.register(mail);
-                break;
-            default:
-        }
-    });
-*/
 }
 
 module.exports = {

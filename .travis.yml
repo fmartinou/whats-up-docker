@@ -1,0 +1,11 @@
+sudo: required
+
+language: node_js
+
+services:
+  - docker
+
+script:
+  # Build project
+  - npm install
+  - npm run lint
