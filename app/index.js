@@ -1,6 +1,6 @@
 const express = require('express');
 const log = require('./log');
-const { getPort } = require('../configuration');
+const { getPort } = require('./configuration');
 const sourceService = require('./sourceService');
 const triggerService = require('./triggerService');
 const fetchService = require('./fetchService');

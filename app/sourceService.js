@@ -1,6 +1,6 @@
 const capitalize = require('capitalize');
 const log = require('./log');
-const { getSourceConfigurations } = require('../configuration');
+const { getSourceConfigurations } = require('./configuration');
 
 function registerSource(sourceConfigurationName, sourceConfiguration) {
     const className = capitalize(sourceConfiguration.type);

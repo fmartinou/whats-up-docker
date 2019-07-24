@@ -1,11 +1,23 @@
 sudo: required
 
 language: node_js
+node_js:
+  - "12"
 
 services:
   - docker
 
 script:
-  # Build project
   - npm install
   - npm run lint
+
+  # Build docker image
+  - docker build -t $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH -f Dockerfile .
+
+  # Push docker image
+  - if [ ! -z "$TRAVIS_TAG" ] || [ "$TRAVIS_BRANCH" == "master" ] ; then
+    docker tag $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH $DOCKER_USERNAME/whats-up-docker:latest;
+    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+    docker push $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH;
+    docker push $DOCKER_USERNAME/whats-up-docker:latest;
+    fi

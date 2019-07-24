@@ -1,7 +1,7 @@
 const capitalize = require('capitalize');
 const events = require('events');
 const log = require('./log');
-const { getTriggerConfigurations } = require('../configuration');
+const { getTriggerConfigurations } = require('./configuration');
 
 const eventEmitter = new events.EventEmitter();
 
