@@ -1,5 +1,9 @@
 sudo: required
 
+env:
+  global:
+    - CC_TEST_REPORTER_ID=46ef31dae5b656e0f4be410a86bd83bdcf73e7d27ab33a704c197e6fe4bf02a0
+
 language: node_js
 node_js:
   - "12"
@@ -9,21 +13,38 @@ services:
 
 install:
   - npm ci
-  - npm run lint
+
+before_script:
+
+  # Init Code Climate
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 
 script:
 
-  # Build docker image
+  # Run Linter
+  - npm run lint
+
+  # Run Unit tests
+  - npm test
+
+after_script:
+
+  # Report to Code Climate
+  - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT
+
+    # Build docker image
   - docker build -t $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH -f Dockerfile .
 
-  # Tag & Push docker image (tag)
-  - if [ ! -z "$TRAVIS_TAG" ] || [ "$TRAVIS_BRANCH" == "master" ] ; then
+  # Tag or dev branch? -> push
+  - if [ ! -z "$TRAVIS_TAG" ] || [ "$TRAVIS_BRANCH" == "dev" ] ; then
     docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
     docker push $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH;
     fi
 
-  # Tag & Push docker image (latest)
-  - if [ "$TRAVIS_BRANCH" == "master" ] ; then
+  # Tag? -> push latest
+  - if [ ! -z "$TRAVIS_TAG" ] ; then
     docker tag $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH $DOCKER_USERNAME/whats-up-docker:latest;
     docker push $DOCKER_USERNAME/whats-up-docker:latest;
     fi
