@@ -1,10 +1,10 @@
 const semver = require('semver');
 const log = require('../log');
-const eventEmitter = require('../triggerService');
+const eventEmitter = require('../outputService');
 
-class Source {
-    constructor(sourceConfiguration) {
-        this.configuration = sourceConfiguration;
+class Input {
+    constructor(inputConfiguration) {
+        this.configuration = inputConfiguration;
     }
 
     async fetch() {
@@ -50,4 +50,4 @@ class Source {
     }
 }
 
-module.exports = Source;
+module.exports = Input;

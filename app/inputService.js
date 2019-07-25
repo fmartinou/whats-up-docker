@@ -1,21 +1,21 @@
 const capitalize = require('capitalize');
 const log = require('./log');
-const { getSourceConfigurations } = require('./configuration');
+const { getInputConfigurations } = require('./configuration');
 
 function registerSource(sourceConfigurationName, sourceConfiguration) {
     const className = capitalize(sourceConfiguration.type);
 
     /* eslint-disable-next-line */
-    let Source = require(`./sources/${className}`);
+    let Source = require(`./inputs/${className}`);
     log.info(`Register source ${sourceConfigurationName} with configuration ${JSON.stringify(sourceConfiguration)}`);
     return new Source(sourceConfiguration);
 }
 
 function registerSources() {
-    return Object.keys(getSourceConfigurations())
+    return Object.keys(getInputConfigurations())
         .map(sourceConfigurationName => registerSource(
             sourceConfigurationName,
-            getSourceConfigurations()[sourceConfigurationName],
+            getInputConfigurations()[sourceConfigurationName],
         ));
 }
 

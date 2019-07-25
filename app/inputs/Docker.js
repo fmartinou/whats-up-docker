@@ -3,7 +3,7 @@ const parse = require('docker-parse-image');
 const rp = require('request-promise-native');
 const semver = require('semver');
 const moment = require('moment');
-const Source = require('./Source');
+const Input = require('./Input');
 
 async function getTagsPage(url) {
     return rp({
@@ -15,9 +15,9 @@ async function getTagsPage(url) {
     });
 }
 
-class Docker extends Source {
-    constructor(sourceConfiguration) {
-        super(sourceConfiguration);
+class Docker extends Input {
+    constructor(inputConfiguration) {
+        super(inputConfiguration);
         this.watchByDefault = this.configuration.watchByDefault !== undefined
             ? this.configuration.watchByDefault : true;
         this.dockerApi = new DockerApi({

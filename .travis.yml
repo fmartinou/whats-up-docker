@@ -16,10 +16,14 @@ script:
   # Build docker image
   - docker build -t $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH -f Dockerfile .
 
-  # Push docker image
+  # Tag & Push docker image (tag)
   - if [ ! -z "$TRAVIS_TAG" ] || [ "$TRAVIS_BRANCH" == "master" ] ; then
-    docker tag $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH $DOCKER_USERNAME/whats-up-docker:latest;
     docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
     docker push $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH;
+    fi
+
+  # Tag & Push docker image (latest)
+  - if [ "$TRAVIS_BRANCH" == "master" ] ; then
+    docker tag $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH $DOCKER_USERNAME/whats-up-docker:latest;
     docker push $DOCKER_USERNAME/whats-up-docker:latest;
     fi

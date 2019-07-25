@@ -1,7 +1,7 @@
-class Trigger {
-    constructor(triggerConfiguration) {
+class Output {
+    constructor(outputConfiguration) {
         /* eslint-disable-next-line */
-        this.configuration = triggerConfiguration;
+        this.configuration = outputConfiguration;
     }
 
     /* eslint-disable-next-line */
@@ -10,4 +10,4 @@ class Trigger {
     }
 }
 
-module.exports = Trigger;
+module.exports = Output;

@@ -1,14 +1,14 @@
 const log = require('./log');
-const triggerService = require('./triggerService');
+const triggerService = require('./outputService');
 
-async function fetch(sources) {
+async function fetch(inputs) {
     log.info('Start fetching');
 
     // Fetch all images on on all sources
-    const sourceResults = await Promise.all(sources.map(source => source.fetch()));
+    const inputResults = await Promise.all(inputs.map(input => input.fetch()));
 
     // Flatten results
-    const results = [].concat(...sourceResults);
+    const results = [].concat(...inputResults);
 
     results.forEach((result) => {
         triggerService.emit(result);

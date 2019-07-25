@@ -1,18 +1,18 @@
 const express = require('express');
 const log = require('./log');
 const { getPort } = require('./configuration');
-const sourceService = require('./sourceService');
-const triggerService = require('./triggerService');
+const inputService = require('./inputService');
+const outputService = require('./outputService');
 const fetchService = require('./fetchService');
 
 log.info('What\'s up, doc? is starting');
 
-// Register sources
-const sources = sourceService.registerSources();
+// Register inputs
+const inputs = inputService.registerSources();
 
-// Register triggers
-triggerService.registerTriggers();
-
+// Register outputs
+outputService.registerOutputs();
+/*
 const app = express();
 
 app.get('/api/images', (req, res) => {
@@ -20,7 +20,7 @@ app.get('/api/images', (req, res) => {
 });
 
 app.post('/api/images', (req, res) => {
-    fetchService.fetch(sources);
+    fetchService.fetch(inputs);
     res.status(200).send();
 });
 
@@ -28,7 +28,7 @@ const port = getPort();
 
 app.listen(port, () => {
 });
-log.info(`What's up, doc? is listening on port ${port}`);
+log.info(`What's up, doc? is listening on port ${port}`);*/
 
 // Fetch at startup
-fetchService.fetch(sources);
+fetchService.fetch(inputs);
