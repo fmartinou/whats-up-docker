@@ -5,6 +5,8 @@ EXPOSE 3000
 
 WORKDIR /home/node/app
 
+RUN mkdir /store
+
 # Default Command
 CMD ["node", "index"]
 

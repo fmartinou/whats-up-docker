@@ -1,17 +1,22 @@
-const express = require('express');
 const log = require('./log');
-const { getPort } = require('./configuration');
-const inputService = require('./inputService');
-const outputService = require('./outputService');
-const fetchService = require('./fetchService');
+const store = require('./store');
+const registry = require('./registry');
 
-log.info('What\'s up, doc? is starting');
+log.info('What\'s up, docker? is starting');
 
-// Register inputs
-const inputs = inputService.registerSources();
+async function main() {
+    // Init store
+    await store.init();
 
-// Register outputs
-outputService.registerOutputs();
+    // Register triggers
+    registry.registerTriggers();
+
+    // Register watchers
+    registry.registerWatchers();
+}
+main();
+
+
 /*
 const app = express();
 
@@ -28,7 +33,4 @@ const port = getPort();
 
 app.listen(port, () => {
 });
-log.info(`What's up, doc? is listening on port ${port}`);*/
-
-// Fetch at startup
-fetchService.fetch(inputs);
+log.info(`What's up, doc? is listening on port ${port}`); */

@@ -1,34 +1,44 @@
 {
-  "name": "whats-up-doc",
+  "name": "whats-up-docker",
   "version": "1.0.0",
-  "description": "What'up with you Docker images?",
+  "description": "What'up with your Docker images?",
   "main": "app/index.js",
   "scripts": {
-    "serve": "WUT_LOG_LEVEL=debug nodemon app/index.js | ./node_modules/.bin/bunyan",
-    "lint": "eslint '**/*.js'"
+    "serve": "WUD_LOG_LEVEL=debug nodemon app/index.js | ./node_modules/.bin/bunyan",
+    "serve-doc": "node_modules/.bin/docsify serve ./docs",
+    "lint": "eslint '**/*.js'",
+    "test": "jest --coverage"
   },
   "author": "fmartinou",
-  "repository": "fmartinou/whats-up-doc",
+  "repository": "fmartinou/whats-up-docker",
   "license": "MIT",
   "dependencies": {
     "bunyan": "1.8.12",
     "capitalize": "^2.0.0",
     "docker-parse-image": "^3.0.1",
     "docker-registry-v2-client": "^1.7.1",
+    "docsify-cli": "^4.3.0",
     "env-dot-prop": "^2.0.1",
+    "eslint-plugin-jest": "^22.15.1",
     "express": "^4.17.1",
+    "joi": "14.3.1",
+    "joi-cron-expression": "0.0.2",
     "js-yaml": "3.13.1",
+    "lokijs": "^1.5.7",
     "moment": "2.24.0",
+    "node-cron": "^2.0.3",
     "node-docker-api": "^1.1.22",
     "nodemailer": "6.3.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
+    "rewire": "4.0.1",
     "semver": "^6.2.0"
   },
   "devDependencies": {
     "eslint": "6.0.1",
     "eslint-config-airbnb-base": "13.2.0",
     "eslint-plugin-import": "2.18.0",
+    "jest": "24.8.0",
     "nodemon": "^1.19.1"
   }
 }

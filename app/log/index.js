@@ -1,8 +1,6 @@
 const bunyan = require('bunyan');
 
-const index = bunyan.createLogger({
+module.exports = bunyan.createLogger({
     name: 'whats-up-doc',
-    level: process.env.WUT_LOG_LEVEL || 'info',
+    level: process.env.WUD_LOG_LEVEL || 'info',
 });
-
-module.exports = index;

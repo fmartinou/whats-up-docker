@@ -1,33 +1,29 @@
 const envProp = require('env-dot-prop');
 
-function getInputConfigurations() {
-    return envProp.get('wut.inputs', {
-        docker_sock: {
-            type: 'docker',
-            socketPath: '/var/run/docker.sock',
-            watchByDefault: true,
-        },
-    }, {
-        parse: true,
-    });
+/**
+ * Get Input configurations.
+ */
+function getWatcherConfigurations() {
+    return envProp.get('wud.watcher');
 }
 
-function getOutputConfigurations() {
-    return envProp.get('wut.outputs', {
-        log: {
-            type: 'log',
-        },
-    }, {
-        parse: true,
-    });
+/**
+ * Get output configurations.
+ */
+function getTriggerConfigurations() {
+    return envProp.get('wud.trigger');
 }
 
-function getPort() {
-    return envProp.get('wut.port', 3000);
+/**
+ * Get Input configurations.
+ */
+function getStoreConfiguration() {
+    return envProp.get('wud.store');
 }
+
 
 module.exports = {
-    getPort,
-    getInputConfigurations,
-    getOutputConfigurations,
+    getStoreConfiguration,
+    getWatcherConfigurations,
+    getTriggerConfigurations,
 };
