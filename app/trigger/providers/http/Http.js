@@ -15,6 +15,7 @@ class Http extends Trigger {
             url: this.joi.string().uri({
                 scheme: ['http', 'https'],
             }),
+            method: this.joi.string().allow('GET').allow('POST').default('POST'),
         });
     }
 
@@ -25,12 +26,17 @@ class Http extends Trigger {
      * @returns {Promise<void>}
      */
     async notify(image) {
-        return rp({
-            method: 'POST',
+        const options = {
+            method: this.configuration.method,
             uri: this.configuration.url,
-            body: image,
-            json: true,
-        });
+        };
+        if (this.configuration.method === 'POST') {
+            options.body = image;
+            options.json = true;
+        } else if (this.configuration.method === 'GET') {
+            options.qs = image;
+        }
+        return rp(options);
     }
 }
 

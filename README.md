@@ -1,35 +1,12 @@
-**What's up Docker?** notifies when a new version of a Docker image you use is found.
+What's up Docker?
+  [![Build Status](https://travis-ci.org/fmartinou/whats-up-docker.svg?branch=master)](https://travis-ci.org/fmartinou/whats-up-docker)
+  [![Maintainability](https://api.codeclimate.com/v1/badges/77856ed9690c0f5d81d7/maintainability)](https://codeclimate.com/github/fmartinou/whats-up-docker/maintainability)
+  [![Test Coverage](https://api.codeclimate.com/v1/badges/77856ed9690c0f5d81d7/test_coverage)](https://codeclimate.com/github/fmartinou/whats-up-docker/test_coverage)
+===========================================
 
-## How does it work?
+Get notified when a Docker Container you run can be updated.
 
-## How to start?
-### The Docker way
-Run the _What's up Docker?_ image with Docker.
-```shell script
-docker run \
-    -d \
-    --name wud \
-    -- env WUD_LOG_LEVEL=debug \
-    --volume /var/run/docker.sock:/var/run/docker.sock
-    fmartinou/whats-up-docker
-```
+- Easy to run
+- Multiple triggers (mail, webhook...)
 
-### The node.js way
-TODO
-
-## How to configure?
-All configuration is set using environment variables.
-
-### Schedulers
-| Env var                               | Description           | Default value  |
-| ------------------------------------- |:---------------------:|:--------------:| 
-| WUD_SCHEDULER_CRON_${_schedulerName_} | Valid CRON expression | * * * * *      |
-
-### Inputs
-TODO
-
-### Outputs
-TODO
-
-## How to contribute?
-All contributions are welcome!
+Check out the [documentation](https://fmartinou.github.io/whats-up-docker/)

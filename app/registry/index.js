@@ -30,18 +30,21 @@ function registerComponent(provider, name, configuration, path) {
 }
 
 function registerComponents(configurations, path) {
-    const providers = Object.keys(configurations);
-    return providers.map((provider) => {
-        log.info(`Register all components for provider ${provider}`);
-        const providerConfigurations = configurations[provider];
-        return Object.keys(providerConfigurations)
-            .map(configurationName => registerComponent(
-                provider,
-                configurationName,
-                providerConfigurations[configurationName],
-                path,
-            ));
-    }).flat();
+    if (configurations) {
+        const providers = Object.keys(configurations);
+        return providers.map((provider) => {
+            log.info(`Register all components for provider ${provider}`);
+            const providerConfigurations = configurations[provider];
+            return Object.keys(providerConfigurations)
+                .map(configurationName => registerComponent(
+                    provider,
+                    configurationName,
+                    providerConfigurations[configurationName],
+                    path,
+                ));
+        }).flat();
+    }
+    return [];
 }
 
 /**

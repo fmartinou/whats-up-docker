@@ -3,14 +3,9 @@
     "WUD_LOG_LEVEL": "debug",
     "WUD_STORE_PATH": ".store",
     "WUD_WATCHER_DOCKER_LOCAL_SOCKETPATH": "/var/run/docker.sock",
-    "WUD_WATCHER_DOCKER_LOCAL_CRON": "* * * * *",
+    "WUD_WATCHER_DOCKER_LOCAL_CRON": "0 * * * *",
     "WUD_WATCHER_DOCKER_LOCAL_WATCHBYDEFAULT": "true",
-    "WUD_TRIGGER_SMTP_GMAIL_HOST": "smtp.gmail.com",
-    "WUD_TRIGGER_SMTP_GMAIL_PORT": "465",
-    "WUD_TRIGGER_SMTP_GMAIL_USER": "xxx",
-    "WUD_TRIGGER_SMTP_GMAIL_PASS": "yyy",
-    "WUD_TRIGGER_SMTP_GMAIL_FROM": "admin@wud.com",
-    "WUD_TRIGGER_SMTP_GMAIL_TO": "xxx@yyy.com",
-    "WUD_TRIGGER_HTTP_TEST_URL": "http://localhost:3000"
+    "WUD_TRIGGER_HTTP_WEBHOOK_URL": "https://postb.in/1566726804207-7563307026866",
+    "WUD_TRIGGER_HTTP_WEBHOOK_METHOD": "GET"
   }
 }

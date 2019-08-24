@@ -79,10 +79,15 @@ class Docker extends Watcher {
                     return true;
                 }
                 const labels = container.data.Labels;
-                return Object.keys(labels).find(labelName => labelName.toLowerCase() === 'wud-watch') !== undefined;
+                return Object.keys(labels).find(labelName => labelName.toLowerCase() === 'wud.watch') !== undefined;
             });
         const imagesPromises = filteredContainers
-            .map(container => this.mapContainerToImage(container));
+            .map((container) => {
+                const labels = container.data.Labels;
+                const includeTags = Object.keys(labels).find(labelName => labelName.toLowerCase() === 'wud.tag.include') ? labels['wud.tag.include'] : undefined;
+                const excludeTags = Object.keys(labels).find(labelName => labelName.toLowerCase() === 'wud.tag.exclude') ? labels['wud.tag.exclude'] : undefined;
+                return this.mapContainerToImage(container, includeTags, excludeTags);
+            });
         return Promise.all(imagesPromises);
     }
 
@@ -100,6 +105,24 @@ class Docker extends Watcher {
                 // Filter on arch & os
                 const newTag = tags.results
                     .find((tag) => {
+                        // Match include tag regex
+                        if (image.includeTags) {
+                            const includeTagsRegex = new RegExp(image.includeTags);
+                            const includeTagsMatch = includeTagsRegex.test(tag.name);
+                            if (!includeTagsMatch) {
+                                return false;
+                            }
+                        }
+
+                        // Match exclude tag regex
+                        if (image.excludeTags) {
+                            const excludeTagsRegex = new RegExp(image.excludeTags);
+                            const excludeTagsMatch = excludeTagsRegex.test(tag.name);
+                            if (!excludeTagsMatch) {
+                                return false;
+                            }
+                        }
+
                         let newer = false;
 
                         // Semver comparison
@@ -134,7 +157,7 @@ class Docker extends Watcher {
         throw new Error('Unable to find tags on registry');
     }
 
-    async mapContainerToImage(container) {
+    async mapContainerToImage(container, includeTags, excludeTags) {
         // Get container image details
         const containerImage = await this.dockerApi.image
             .get(container.data.Image)
@@ -157,6 +180,8 @@ class Docker extends Watcher {
             architecture,
             os,
             size,
+            includeTags,
+            excludeTags,
         };
     }
 }
