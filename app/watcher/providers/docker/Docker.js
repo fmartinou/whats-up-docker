@@ -96,20 +96,29 @@ class Docker extends Watcher {
 
                 // Store next page
                 ({ next } = tags);
-                const newTag = tags.results.find((tag) => {
-                    // Semver comparison
-                    if (image.isSemver) {
-                        const foundVersion = semver.coerce(tag.name);
-                        return semver.valid(foundVersion)
-                            && semver.gt(foundVersion, image.version);
-                    }
-                    if (tag.name === image.version) {
-                        // is tag date after?
-                        const tagDate = moment(tag.last_updated);
-                        return tagDate.isAfter(image.date);
-                    }
-                    return false;
-                });
+
+                // Filter on arch & os
+                const newTag = tags.results
+                    .find((tag) => {
+                        let newer = false;
+
+                        // Semver comparison
+                        if (image.isSemver) {
+                            const foundVersion = semver.coerce(tag.name);
+                            newer = semver.valid(foundVersion)
+                                && semver.gt(foundVersion, image.version);
+                        } else if (tag.name === image.version) {
+                            // is tag date after?
+                            const tagDate = moment(tag.last_updated);
+                            newer = tagDate.isAfter(image.date);
+                        }
+                        // Available arch&os? Different size?
+                        const mathingImage = tag.images
+                            .find(tagImage => image.architecture === tagImage.architecture
+                                && image.os === tagImage.os
+                                && image.size !== tagImage.size);
+                        return newer && mathingImage;
+                    });
 
                 // New tag found? return it
                 if (newTag) {
@@ -126,18 +135,28 @@ class Docker extends Watcher {
     }
 
     async mapContainerToImage(container) {
+        // Get container image details
         const containerImage = await this.dockerApi.image
             .get(container.data.Image)
             .status();
-        const containerImageCreationDate = moment(containerImage.data.Created);
 
+        // Get useful properties
+        const architecture = containerImage.data.Architecture;
+        const os = containerImage.data.Os;
+        const size = containerImage.data.Size;
+        const creationDate = moment(containerImage.data.Created);
+
+        // Parse image to get registry, organization...
         const parsedImage = parse(container.data.Image);
         return {
             registry: parsedImage.registry || 'https://hub.docker.com',
             organization: parsedImage.namespace || 'library',
             image: parsedImage.repository,
             version: parsedImage.tag || 'latest',
-            date: containerImageCreationDate,
+            date: creationDate,
+            architecture,
+            os,
+            size,
         };
     }
 }
