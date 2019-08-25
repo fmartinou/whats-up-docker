@@ -7,8 +7,9 @@
     - [Watchers](configuration/watchers/)
         - [Docker](configuration/watchers/docker)
     - [Triggers](configuration/triggers/)
-        - [Smtp](configuration/triggers/smtp)
-        - [Http](configuration/triggers/http)
+        - [Http](configuration/triggers/http/)
+        - [Mqtt](configuration/triggers/mqtt/)
+        - [Smtp](configuration/triggers/smtp/)
     - [Storage](configuration/storage)
     - [Log](configuration/log)
 

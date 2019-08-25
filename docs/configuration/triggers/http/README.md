@@ -17,7 +17,7 @@ The ```http``` trigger lets you send HTTP Requests.
 WUD_TRIGGER_HTTP_MYREMOTEHOST_URL="https://my-remote-host/new-version"
 ```
 
-#### Example of received payload (POST)
+#### Example of payload (POST request)
 ```javascript
 {
   "registry": "https://hub.docker.com",
@@ -36,7 +36,7 @@ WUD_TRIGGER_HTTP_MYREMOTEHOST_URL="https://my-remote-host/new-version"
 }
 ```
 
-#### Example of query string (GET)
+#### Example of query string (GET request)
 ```bash
 registry=https://hub.docker.com&organization=library&image=traefik&version=1.7.13&date=2019-08-08T22:30:47.914Z&architecture=amd64&os=linux&size=79293686&isSemver=true&result[newVersion]=1.7.14&result[newVersionDate]=2019-08-15T07:50:43.122622Z
 ```

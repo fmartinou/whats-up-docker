@@ -13,6 +13,7 @@
   "repository": "fmartinou/whats-up-docker",
   "license": "MIT",
   "dependencies": {
+    "async-mqtt": "^2.4.2",
     "bunyan": "1.8.12",
     "capitalize": "^2.0.0",
     "docker-parse-image": "^3.0.1",
@@ -26,6 +27,7 @@
     "js-yaml": "3.13.1",
     "lokijs": "^1.5.7",
     "moment": "2.24.0",
+    "mqtt": "^3.0.0",
     "node-cron": "^2.0.3",
     "node-docker-api": "^1.1.22",
     "nodemailer": "6.3.0",
