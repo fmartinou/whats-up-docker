@@ -1,6 +1,6 @@
 ## Http
 
-The ```http``` trigger lets you send HTTP Requests.
+The ```http``` trigger lets you send image update notifications via HTTP.
 
 ### Variables
 

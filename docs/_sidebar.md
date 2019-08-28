@@ -9,6 +9,7 @@
     - [Triggers](configuration/triggers/)
         - [Http](configuration/triggers/http/)
         - [Mqtt](configuration/triggers/mqtt/)
+        - [Slack](configuration/triggers/slack/)
         - [Smtp](configuration/triggers/smtp/)
     - [Storage](configuration/storage)
     - [Log](configuration/log)

@@ -36,7 +36,7 @@ function registerComponents(configurations, path) {
             log.info(`Register all components for provider ${provider}`);
             const providerConfigurations = configurations[provider];
             return Object.keys(providerConfigurations)
-                .map(configurationName => registerComponent(
+                .map((configurationName) => registerComponent(
                     provider,
                     configurationName,
                     providerConfigurations[configurationName],

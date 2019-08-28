@@ -48,7 +48,7 @@ class Docker extends Watcher {
 
             };
         });
-        return Promise.all(Object.values(images).map(image => this.processImage(image)));
+        return Promise.all(Object.values(images).map((image) => this.processImage(image)));
     }
 
     async processImage(image) {
@@ -79,13 +79,13 @@ class Docker extends Watcher {
                     return true;
                 }
                 const labels = container.data.Labels;
-                return Object.keys(labels).find(labelName => labelName.toLowerCase() === 'wud.watch') !== undefined;
+                return Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.watch') !== undefined;
             });
         const imagesPromises = filteredContainers
             .map((container) => {
                 const labels = container.data.Labels;
-                const includeTags = Object.keys(labels).find(labelName => labelName.toLowerCase() === 'wud.tag.include') ? labels['wud.tag.include'] : undefined;
-                const excludeTags = Object.keys(labels).find(labelName => labelName.toLowerCase() === 'wud.tag.exclude') ? labels['wud.tag.exclude'] : undefined;
+                const includeTags = Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.tag.include') ? labels['wud.tag.include'] : undefined;
+                const excludeTags = Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.tag.exclude') ? labels['wud.tag.exclude'] : undefined;
                 return this.mapContainerToImage(container, includeTags, excludeTags);
             });
         return Promise.all(imagesPromises);
@@ -137,7 +137,7 @@ class Docker extends Watcher {
                         }
                         // Available arch&os? Different size?
                         const mathingImage = tag.images
-                            .find(tagImage => image.architecture === tagImage.architecture
+                            .find((tagImage) => image.architecture === tagImage.architecture
                                 && image.os === tagImage.os
                                 && image.size !== tagImage.size);
                         return newer && mathingImage;

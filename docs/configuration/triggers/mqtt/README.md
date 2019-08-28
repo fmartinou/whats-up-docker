@@ -1,7 +1,7 @@
 ## Mqtt
-![logo](mqtt.png ':size=200x200')
+![logo](mqtt.png)
 
-The ```mqtt``` trigger lets you send messages to an MQTT broker.
+The ```mqtt``` trigger lets you send image update notifications to an MQTT broker.
 
 ### Variables
 

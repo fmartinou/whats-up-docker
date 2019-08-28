@@ -4,7 +4,7 @@ const moment = require('moment');
 const Trigger = require('../Trigger');
 
 /**
- * SMTP Output implementation
+ * SMTP Trigger implementation
  */
 class Smtp extends Trigger {
     /**

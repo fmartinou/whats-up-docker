@@ -38,7 +38,7 @@ async function init() {
         fs.mkdirSync(configuration.path);
     }
     return new Promise((resolve, reject) => {
-        db.loadDatabase({}, err => loadDb(err, resolve, reject));
+        db.loadDatabase({}, (err) => loadDb(err, resolve, reject));
     });
 }
 
