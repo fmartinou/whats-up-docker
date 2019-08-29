@@ -37,13 +37,13 @@ after_script:
     # Build docker image
   - docker build -t $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH -f Dockerfile .
 
-  # Tag or dev branch? -> push
-  - if [ ! -z "$TRAVIS_TAG" ] || [ "$TRAVIS_BRANCH" == "dev" ] ; then
+  # Tag or master branch? -> push
+  - if [ ! -z "$TRAVIS_TAG" ] || [ "$TRAVIS_BRANCH" == "master" ] ; then
     docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
     docker push $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH;
     fi
 
-  # Tag? -> push latest
+  # Tag? -> push tag & latest
   - if [ ! -z "$TRAVIS_TAG" ] ; then
     docker tag $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH $DOCKER_USERNAME/whats-up-docker:latest;
     docker push $DOCKER_USERNAME/whats-up-docker:latest;
