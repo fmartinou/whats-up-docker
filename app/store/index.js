@@ -1,4 +1,4 @@
-const joi = require('joi');
+const joi = require('@hapi/joi');
 const Loki = require('lokijs');
 const fs = require('fs');
 const log = require('../log');

@@ -1,4 +1,4 @@
-const { ValidationError } = require('joi');
+const { ValidationError } = require('@hapi/joi');
 const Http = require('./Http');
 
 const http = new Http();

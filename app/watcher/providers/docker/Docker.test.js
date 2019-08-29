@@ -1,4 +1,4 @@
-const { ValidationError } = require('joi');
+const { ValidationError } = require('@hapi/joi');
 const Docker = require('./Docker');
 
 const docker = new Docker();

@@ -1,5 +1,5 @@
 const { Docker: DockerApi } = require('node-docker-api');
-const joi = require('joi-cron-expression')(require('joi'));
+const joi = require('joi-cron-expression')(require('@hapi/joi'));
 const parse = require('docker-parse-image');
 const rp = require('request-promise-native');
 const semver = require('semver');

@@ -4,6 +4,6 @@
     "WUD_STORE_PATH": ".store",
     "WUD_WATCHER_DOCKER_LOCAL_SOCKETPATH": "/var/run/docker.sock",
     "WUD_WATCHER_DOCKER_LOCAL_CRON": "0 * * * *",
-    "WUD_WATCHER_DOCKER_LOCAL_WATCHBYDEFAULT": "true"
+    "WUD_WATCHER_DOCKER_LOCAL_WATCHBYDEFAULT": "true",
   }
 }
