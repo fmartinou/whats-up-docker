@@ -8,6 +8,7 @@
         - [Docker](configuration/watchers/docker)
     - [Triggers](configuration/triggers/)
         - [Http](configuration/triggers/http/)
+        - [Ifttt](configuration/triggers/ifttt/)
         - [Kafka](configuration/triggers/kafka/)
         - [Mqtt](configuration/triggers/mqtt/)
         - [Slack](configuration/triggers/slack/)
