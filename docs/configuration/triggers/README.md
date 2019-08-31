@@ -8,4 +8,7 @@ Triggers are enabled using environment variables.
 WUD_TRIGGER_{{ trigger_type }}_{{trigger_name }}_{{ trigger_configuration_item }}=XXX
 ```
 
-See the subsection to discover which triggers are implemented and how to use them.
+!> Multiple triggers of the same type can be configured (for example multiple Http webhooks).  
+You just need to give them different names.
+
+?> See the _Trigger_ subsection to discover which triggers are implemented and how to use them.

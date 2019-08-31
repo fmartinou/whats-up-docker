@@ -52,7 +52,11 @@ function registerComponents(configurations, path) {
  */
 function registerWatchers() {
     const configurations = getWatcherConfigurations();
-    return registerComponents(configurations, '../watcher/providers');
+    if (configurations && configurations.length > 0) {
+        return registerComponents(configurations, '../watcher/providers');
+    }
+    log.info('No Watcher found => Init a default Docker one');
+    return [registerComponent('Docker', 'Local', {}, '../watcher/providers')];
 }
 
 /**

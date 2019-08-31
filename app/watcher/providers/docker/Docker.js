@@ -21,16 +21,23 @@ async function getTagsPage(url) {
 class Docker extends Watcher {
     getConfigurationSchema() {
         return joi.object().keys({
-            socketpath: this.joi.string().default('/var/run/docker.sock'),
+            socket: this.joi.string().default('/var/run/docker.sock'),
+            host: this.joi.string(),
+            port: this.joi.number().port().default(2375),
             cron: joi.string().cron().default('0 * * * *'),
             watchbydefault: this.joi.boolean().default(true),
         });
     }
 
     initWatcher() {
-        this.dockerApi = new DockerApi({
-            socketPath: this.configuration.socketpath,
-        });
+        const options = {};
+        if (this.configuration.host) {
+            options.host = this.configuration.host;
+            options.port = '2375';
+        } else {
+            options.socketPath = this.configuration.socket;
+        }
+        this.dockerApi = new DockerApi(options);
     }
 
     async watch() {

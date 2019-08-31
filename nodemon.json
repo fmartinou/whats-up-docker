@@ -1,9 +1,6 @@
 {
   "env": {
     "WUD_LOG_LEVEL": "debug",
-    "WUD_STORE_PATH": ".store",
-    "WUD_WATCHER_DOCKER_LOCAL_SOCKETPATH": "/var/run/docker.sock",
-    "WUD_WATCHER_DOCKER_LOCAL_CRON": "0 * * * *",
-    "WUD_WATCHER_DOCKER_LOCAL_WATCHBYDEFAULT": "true"
+    "WUD_STORE_PATH": ".store"
   }
 }

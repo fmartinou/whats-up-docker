@@ -4,7 +4,8 @@ const Docker = require('./Docker');
 const docker = new Docker();
 
 const configurationValid = {
-    socketpath: '/var/run/docker.sock',
+    socket: '/var/run/docker.sock',
+    port: 2375,
     watchbydefault: true,
     cron: '0 * * * *',
 };

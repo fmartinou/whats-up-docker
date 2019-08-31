@@ -4,9 +4,8 @@ The easiest way to start is to deploy the official WUD image and lets him monito
 
 ```bash
 docker run -d --name wud \
--e "WUD_LOG_LEVEL="DEBUG" # <- adjust log level to DEBUG to see things in the logs \
--e "WUD_WATCHER_DOCKER_LOCAL_SOCKETPATH="/var/run/docker.sock" \ # <- configure WUD sto listen to local Docker socket
--v "/var/run/docker.sock:/var/run/docker.sock" \                 # <- don't forget to mount local Docker socket from host to WUD container
+-e "WUD_LOG_LEVEL="DEBUG" \ 
+-v "/var/run/docker.sock:/var/run/docker.sock" \
 fmartinou/whats-up-docker
 ```
 
