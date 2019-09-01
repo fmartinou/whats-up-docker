@@ -18,6 +18,46 @@ async function getTagsPage(url) {
     });
 }
 
+function isNewerTag(image, tag) {
+    // Match include tag regex
+    if (image.includeTags) {
+        const includeTagsRegex = new RegExp(image.includeTags);
+        const includeTagsMatch = includeTagsRegex.test(tag.name);
+        if (!includeTagsMatch) {
+            return false;
+        }
+    }
+
+    // Match exclude tag regex
+    if (image.excludeTags) {
+        const excludeTagsRegex = new RegExp(image.excludeTags);
+        const excludeTagsMatch = excludeTagsRegex.test(tag.name);
+        if (!excludeTagsMatch) {
+            return false;
+        }
+    }
+
+    let newer = false;
+
+    // Semver comparison
+    if (image.isSemver) {
+        const foundVersion = semver.coerce(tag.name);
+        newer = semver.valid(foundVersion)
+            && semver.gt(foundVersion, image.version);
+    } else if (tag.name === image.version) {
+        // is tag date after?
+        const tagDate = moment(tag.last_updated);
+        newer = tagDate.isAfter(moment(image.date));
+    }
+
+    // Available arch&os? Different size?
+    const matchingImage = tag.images
+        .find((tagImage) => image.architecture === tagImage.architecture
+            && image.os === tagImage.os
+            && image.size !== tagImage.size);
+    return newer && matchingImage;
+}
+
 class Docker extends Watcher {
     getConfigurationSchema() {
         return joi.object().keys({
@@ -110,45 +150,7 @@ class Docker extends Watcher {
                 ({ next } = tags);
 
                 // Filter on arch & os
-                const newTag = tags.results
-                    .find((tag) => {
-                        // Match include tag regex
-                        if (image.includeTags) {
-                            const includeTagsRegex = new RegExp(image.includeTags);
-                            const includeTagsMatch = includeTagsRegex.test(tag.name);
-                            if (!includeTagsMatch) {
-                                return false;
-                            }
-                        }
-
-                        // Match exclude tag regex
-                        if (image.excludeTags) {
-                            const excludeTagsRegex = new RegExp(image.excludeTags);
-                            const excludeTagsMatch = excludeTagsRegex.test(tag.name);
-                            if (!excludeTagsMatch) {
-                                return false;
-                            }
-                        }
-
-                        let newer = false;
-
-                        // Semver comparison
-                        if (image.isSemver) {
-                            const foundVersion = semver.coerce(tag.name);
-                            newer = semver.valid(foundVersion)
-                                && semver.gt(foundVersion, image.version);
-                        } else if (tag.name === image.version) {
-                            // is tag date after?
-                            const tagDate = moment(tag.last_updated);
-                            newer = tagDate.isAfter(image.date);
-                        }
-                        // Available arch&os? Different size?
-                        const mathingImage = tag.images
-                            .find((tagImage) => image.architecture === tagImage.architecture
-                                && image.os === tagImage.os
-                                && image.size !== tagImage.size);
-                        return newer && mathingImage;
-                    });
+                const newTag = tags.results.find((tag) => isNewerTag(image, tag));
 
                 // New tag found? return it
                 if (newTag) {
@@ -157,11 +159,13 @@ class Docker extends Watcher {
                         newVersionDate: newTag.last_updated,
                     };
                 }
+                // continue with next tags...
             } catch (e) {
-                throw new Error('Unable to find tags on registry');
+                log.debug(e);
+                return undefined;
             }
         }
-        throw new Error('Unable to find tags on registry');
+        return undefined;
     }
 
     async mapContainerToImage(container, includeTags, excludeTags) {
@@ -174,7 +178,7 @@ class Docker extends Watcher {
         const architecture = containerImage.data.Architecture;
         const os = containerImage.data.Os;
         const size = containerImage.data.Size;
-        const creationDate = moment(containerImage.data.Created);
+        const creationDate = containerImage.data.Created;
 
         // Parse image to get registry, organization...
         const parsedImage = parse(container.data.Image);
