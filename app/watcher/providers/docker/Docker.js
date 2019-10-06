@@ -73,7 +73,7 @@ class Docker extends Watcher {
         const options = {};
         if (this.configuration.host) {
             options.host = this.configuration.host;
-            options.port = '2375';
+            options.port = this.configuration.port;
         } else {
             options.socketPath = this.configuration.socket;
         }

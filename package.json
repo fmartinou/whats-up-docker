@@ -33,10 +33,12 @@
     "node-cron": "2.0.3",
     "node-docker-api": "1.1.22",
     "nodemailer": "6.3.0",
+    "promise-queue": "^2.2.5",
     "request": "2.88.0",
     "request-promise-native": "1.0.7",
     "semver": "6.3.0",
-    "slack": "11.0.2"
+    "slack": "11.0.2",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "babel-jest": "24.9.0",
