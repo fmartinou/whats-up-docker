@@ -1,20 +1,28 @@
-sudo: required
+language: shell
+os: linux
 
 env:
   global:
+    - NODE_VERSION=12
     - CC_TEST_REPORTER_ID=46ef31dae5b656e0f4be410a86bd83bdcf73e7d27ab33a704c197e6fe4bf02a0
+    - DOCKER_CLI_EXPERIMENTAL=enabled
+    - IMAGE_VERSION=latest
 
-language: node_js
-node_js:
-  - "12"
+before_install:
 
-services:
-  - docker
+  # Install docker with buildx
+  - sudo rm -rf /var/lib/apt/lists/*
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - lsb_release -cs
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  #- docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker run --rm --privileged docker/binfmt:820fdd95a9972a5308930a2bdfb8573dd4447ad3
+  - cat /proc/sys/fs/binfmt_misc/qemu-aarch64
 
-install:
-  - npm ci
-
-before_script:
+  # Install Nodejs
+  - nvm install $NODE_VERSION
 
   # Init Code Climate
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -23,28 +31,26 @@ before_script:
 
 script:
 
+  # Install npm dependencies
+  - npm ci
+
   # Run Linter
   - npm run lint
 
   # Run Unit tests
   - npm test
 
+  # Report to Code Climate
+  - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT;
+
 after_script:
 
-  # Report to Code Climate
-  - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker version
+  - make prepare
 
-    # Build docker image
-  - docker build -t $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH -f Dockerfile .
+  # Override image version with tag name if any
+  - if [ ! -z "$TRAVIS_TAG" ] ; then export IMAGE_VERSION=$TRAVIS_TAG; fi
 
-  # Tag or master branch? -> push
-  - if [ ! -z "$TRAVIS_TAG" ] || [ "$TRAVIS_BRANCH" == "master" ] ; then
-    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-    docker push $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH;
-    fi
-
-  # Tag? -> push tag & latest
-  - if [ ! -z "$TRAVIS_TAG" ] ; then
-    docker tag $DOCKER_USERNAME/whats-up-docker:$TRAVIS_BRANCH $DOCKER_USERNAME/whats-up-docker:latest;
-    docker push $DOCKER_USERNAME/whats-up-docker:latest;
-    fi
+  # Buils & push image
+  - make build IMAGE_NAME=$DOCKER_USERNAME/whats-up-docker IMAGE_VERSION=$IMAGE_VERSION

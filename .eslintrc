@@ -2,7 +2,8 @@
     "extends": "airbnb-base",
     "plugins": ["jest"],
     "rules": {
-        "indent": ["error", 4]
+        "indent": ["error", 4],
+        "no-underscore-dangle": ["error", { "allow":  ["__get__"]}]
     },
     "env": {
         "jest/globals": true
