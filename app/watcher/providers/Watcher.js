@@ -16,6 +16,9 @@ function processImageResult(imageResult) {
             log.debug(`New image version found (${JSON.stringify(imageResult)})`);
             event.emitImageNewVersion(imageResult);
         }
+    } else {
+        log.debug('New image version already in store => Do not trigger');
+        log.debug(JSON.stringify(imageResult));
     }
 }
 

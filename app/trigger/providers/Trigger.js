@@ -10,6 +10,7 @@ class Trigger extends Component {
         this.initTrigger();
         event.registerImageNewVersion(async (imageResult) => {
             try {
+                log.debug(`Run trigger ${this.name} of type ${this.type}`);
                 await this.notify(imageResult);
             } catch (e) {
                 log.error(`Notify error (${e.message})`);
