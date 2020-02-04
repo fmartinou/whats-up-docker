@@ -6,7 +6,7 @@ env:
     - NODE_VERSION=12
     - CC_TEST_REPORTER_ID=46ef31dae5b656e0f4be410a86bd83bdcf73e7d27ab33a704c197e6fe4bf02a0
     - DOCKER_CLI_EXPERIMENTAL=enabled
-    - IMAGE_VERSION=latest
+    - IMAGE_VERSION=develop
 
 before_install:
 
@@ -48,6 +48,9 @@ after_script:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker version
   - make prepare
+
+  # Override image version with latest if master branch
+  - if [ "$TRAVIS_BRANCH" == "master" ] ; then export IMAGE_VERSION=latest; fi
 
   # Override image version with tag name if any
   - if [ ! -z "$TRAVIS_TAG" ] ; then export IMAGE_VERSION=$TRAVIS_TAG; fi
