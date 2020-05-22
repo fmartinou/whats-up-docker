@@ -10,5 +10,6 @@ prepare: install
 
 build:
 	docker buildx build --push \
-		--platform linux/arm/v7,linux/arm64/v8,linux/386,linux/amd64 \
+		--platform ${PLATFORMS} \
+		--build-arg BASE_IMAGE=${BASE_IMAGE} \
 		-t ${IMAGE_NAME}:${IMAGE_VERSION} .

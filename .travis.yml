@@ -3,7 +3,7 @@ os: linux
 
 env:
   global:
-    - NODE_VERSION=12
+    - NODE_VERSION=14
     - CC_TEST_REPORTER_ID=46ef31dae5b656e0f4be410a86bd83bdcf73e7d27ab33a704c197e6fe4bf02a0
     - DOCKER_CLI_EXPERIMENTAL=enabled
     - IMAGE_VERSION=develop
@@ -55,5 +55,5 @@ after_script:
   # Override image version with tag name if any
   - if [ ! -z "$TRAVIS_TAG" ] ; then export IMAGE_VERSION=$TRAVIS_TAG; fi
 
-  # Buils & push image
-  - make build IMAGE_NAME=$DOCKER_USERNAME/whats-up-docker IMAGE_VERSION=$IMAGE_VERSION
+  # Build & push image
+  - make build IMAGE_NAME=$DOCKER_USERNAME/whats-up-docker BASE_IMAGE=node:current-alpine IMAGE_VERSION=$IMAGE_VERSION PLATFORMS=linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/386,linux/amd64
