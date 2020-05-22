@@ -1,5 +1,4 @@
-ARG BASE_IMAGE=node:current-alpine
-FROM $BASE_IMAGE
+FROM node:14-alpine
 
 LABEL maintainer="fmartinou"
 EXPOSE 3000

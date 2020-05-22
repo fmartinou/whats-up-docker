@@ -56,4 +56,4 @@ after_script:
   - if [ ! -z "$TRAVIS_TAG" ] ; then export IMAGE_VERSION=$TRAVIS_TAG; fi
 
   # Build & push image
-  - make build IMAGE_NAME=$DOCKER_USERNAME/whats-up-docker BASE_IMAGE=node:current-alpine IMAGE_VERSION=$IMAGE_VERSION PLATFORMS=linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/386,linux/amd64
+  - make build IMAGE_NAME=$DOCKER_USERNAME/whats-up-docker BASE_IMAGE=node:current-alpine IMAGE_VERSION=$IMAGE_VERSION PLATFORMS=linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64
