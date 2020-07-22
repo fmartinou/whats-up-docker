@@ -21,7 +21,6 @@ function getStoreConfiguration() {
     return envProp.get('wud.store');
 }
 
-
 module.exports = {
     getStoreConfiguration,
     getWatcherConfigurations,
