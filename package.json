@@ -4,8 +4,8 @@
   "description": "What'up with your Docker images?",
   "main": "app/index.js",
   "scripts": {
-    "serve": "WUD_LOG_LEVEL=debug nodemon app/index.js | ./node_modules/.bin/bunyan",
-    "serve-doc": "node_modules/.bin/docsify serve ./docs",
+    "start": "WUD_LOG_LEVEL=debug nodemon app/index.js | ./node_modules/.bin/bunyan",
+    "doc": "node_modules/.bin/docsify serve ./docs",
     "lint": "eslint '**/*.js'",
     "test": "jest --coverage"
   },
@@ -21,31 +21,31 @@
     "docker-parse-image": "3.0.1",
     "docsify-cli": "4.4.1",
     "env-dot-prop": "3.0.0",
-    "eslint-plugin-jest": "23.18.0",
+    "eslint-plugin-jest": "23.20.0",
     "express": "4.17.1",
     "joi-cron-expression": "1.0.0",
     "js-yaml": "3.14.0",
     "kafkajs": "1.12.0",
-    "lokijs": "1.5.9",
+    "lokijs": "1.5.10",
     "moment": "2.27.0",
     "mqtt": "4.1.0",
     "node-cron": "2.0.3",
     "node-docker-api": "1.1.22",
-    "nodemailer": "6.4.10",
-    "promise-queue": "^2.2.5",
+    "nodemailer": "6.4.11",
+    "promise-queue": "2.2.5",
     "request": "2.88.2",
     "request-promise-native": "1.0.9",
     "semver": "7.3.2",
     "slack": "11.0.2",
-    "uuid": "^8.2.0"
+    "uuid": "8.3.0"
   },
   "devDependencies": {
-    "babel-jest": "26.1.0",
+    "babel-jest": "26.2.2",
     "babel-plugin-rewire": "1.2.0",
-    "eslint": "7.5.0",
+    "eslint": "7.6.0",
     "eslint-config-airbnb-base": "14.2.0",
     "eslint-plugin-import": "2.22.0",
-    "jest": "26.1.0",
+    "jest": "26.2.2",
     "nodemon": "2.0.4"
   }
 }

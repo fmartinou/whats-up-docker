@@ -1,7 +1,6 @@
 {
   "env": {
     "WUD_LOG_LEVEL": "debug",
-    "WUD_STORE_PATH": ".store",
-    "WUD_TRIGGER_MQTT_LOCAL_URL": "mqtt://localhost:1883"
+    "WUD_STORE_PATH": ".store"
   }
 }

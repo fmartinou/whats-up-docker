@@ -52,33 +52,4 @@ WUD_WATCHER_DOCKER_MYREMOTEHOST2_HOST="myremotehost2"
 ```
 
 ### Docker labels
-On every container you run, you can add some labels.  
-For example, if you disable ```WUD_WATCHER_DOCKER_{watcher_name}_WATCHBYDEFAULT```, you need to add the ```wud.watch=true``` label.
-
-#### Supported labels
-| Label                 | Description                         | Supported values       |
-| --------------------- |:-----------------------------------:|:----------------------:|
-| ```wud.watch```       | Watch this container                | Valid Boolean          |
-| ```wud.tag.include``` | Regex to include specific tags only | Valid JavaScript Regex |
-| ```wud.tag.exclude``` | Regex to exclude specific tags      | Valid JavaScript Regex |
-
-#### Examples
-
-##### Include only 3 digits semver tags
-
-```bash
-# Docker run example
-docker run -d --name mariadb --label wud.tag.include='^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$$' mariadb:10.4.5
-```
-
-```bash
-# Docker Compose example
-version: '3'
-
-services:
-
-    mariadb:
-        image: mariadb:10.4.5
-        labels:
-            - 'wud.tag.include=^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$$'
-```
+To fine-tune the behaviour of WUD, [you can add labels on your containers](configuration/watchers/labels).

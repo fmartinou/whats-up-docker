@@ -1,0 +1,11 @@
+{
+    "registry":"registry",
+    "organization":"organization",
+    "image":"image",
+    "date":"2019-05-20T12:02:06.307Z",
+    "version":"4.5",
+    "architecture":"arch",
+    "os":"os",
+    "size":20,
+    "isSemver":true
+  }

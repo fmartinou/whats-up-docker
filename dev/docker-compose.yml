@@ -3,27 +3,6 @@ version: '3'
 services:
 
     traefik:
-        image: traefik:1.7.13
-
-    portainer:
-        image: portainer/portainer:1.22.0
-
-    nextcloud:
-        image: nextcloud:16.0.3
-
-    mariadb:
-        image: mariadb:10.4.7
-
-    plex:
-        image: linuxserver/plex:1.16.3.1402-22929c8a2-ls43
-
-    homeassistant:
-        image: homeassistant/home-assistant:0.97.0
+        image: traefik:v2.2.8
         labels:
-          - 'wud.tag.include=^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$$'
-
-    pyload:
-        image: writl/pyload:latest
-
-    duplicati:
-        image: linuxserver/duplicati:v2.0.4.22-2.0.4.22_canary_2019-06-30-ls27
+            - 'wud.tag.include=^v[0-9]\d*\.[0-9]\d*\.[0-9]\d*$$'

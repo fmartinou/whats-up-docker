@@ -41,9 +41,10 @@ function isNewerTag(image, tag) {
 
     // Semver comparison
     if (image.isSemver) {
+        const currentVersion = semver.coerce(image.version);
         const foundVersion = semver.coerce(tag.name);
         newer = semver.valid(foundVersion)
-            && semver.gt(foundVersion, image.version);
+            && semver.gt(foundVersion, currentVersion);
     } else if (tag.name === image.version) {
         // is tag date after?
         const tagDate = moment(tag.last_updated);

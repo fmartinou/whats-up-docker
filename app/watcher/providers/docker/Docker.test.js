@@ -4,6 +4,7 @@ const rp = require('request-promise-native');
 const Docker = require('./Docker');
 
 const sampleSemver = require('./samples/semver.json');
+const sampleCoercedSemver = require('./samples/coercedSemver.json');
 const sampleNotSemver = require('./samples/notSemver.json');
 
 jest.mock('request-promise-native');
@@ -41,6 +42,18 @@ test('initWatcher should create a configured DockerApi instance', () => {
 
 test('isNewerTag should return true when current version is semver and new tag is found', () => {
     expect(Docker.__get__('isNewerTag')(sampleSemver, {
+        name: '7.8.9',
+        last_updated: '2019-05-25T12:02:06.307Z',
+        images: [{
+            architecture: 'arch',
+            os: 'os',
+            size: 10,
+        }],
+    })).toBeTruthy();
+});
+
+test('isNewerTag should return true when current version is coerced semver and new tag is found', () => {
+    expect(Docker.__get__('isNewerTag')(sampleCoercedSemver, {
         name: '7.8.9',
         last_updated: '2019-05-25T12:02:06.307Z',
         images: [{

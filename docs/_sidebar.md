@@ -6,6 +6,7 @@
 - Configuration
     - [Watchers](configuration/watchers/)
         - [Docker](configuration/watchers/docker)
+        - [Supported labels](configuration/watchers/labels)
     - [Triggers](configuration/triggers/)
         - [Http](configuration/triggers/http/)
         - [Ifttt](configuration/triggers/ifttt/)
@@ -19,3 +20,4 @@
 - Development
     - [How to contribute](development/how-to-contribute)
     - [How to create a new trigger](development/how-to-create-new-trigger)
+    - [Changelog](CHANGELOG.md)
