@@ -1,9 +1,9 @@
 # Changelog
 
-### x.y.z
+### 1.1.2
 - :fire: Fix error when current tag is a "coerced" semver
 - :star: Update dependencies
-- :star: improve documentation with regex examples
+- :star: improve documentation (label usage)
 
 ### 1.1.1
 - :star: Update dependencies
