@@ -1,23 +1,41 @@
-- Getting started
-    - [Quick start](getting-started/quick-start)
-    - [FAQ](getting-started/faq)
-    - [License](getting-started/license)
-    
-- Configuration
-    - [Watchers](configuration/watchers/)
-        - [Docker](configuration/watchers/docker)
-        - [Supported labels](configuration/watchers/labels)
-    - [Triggers](configuration/triggers/)
-        - [Http](configuration/triggers/http/)
-        - [Ifttt](configuration/triggers/ifttt/)
-        - [Kafka](configuration/triggers/kafka/)
-        - [Mqtt](configuration/triggers/mqtt/)
-        - [Slack](configuration/triggers/slack/)
-        - [Smtp](configuration/triggers/smtp/)
-    - [Storage](configuration/storage)
-    - [Log](configuration/log)
+- [**Quick start**](quick-start)
 
-- Development
-    - [How to contribute](development/how-to-contribute)
-    - [How to create a new trigger](development/how-to-create-new-trigger)
-    - [Changelog](CHANGELOG.md)
+- [**Triggers**](triggers/)
+    - [Http](triggers/http/)
+    - [Ifttt](triggers/ifttt/)
+    - [Kafka](triggers/kafka/)
+    - [Mqtt](triggers/mqtt/)
+    - [Slack](triggers/slack/)
+    - [Mock](triggers/smtp/)
+
+- [**Watchers**](watchers/)
+    - [Docker](watchers/docker)
+    - [Supported labels](watchers/labels)
+
+- [**Api**](api/)
+
+    - [Images](api/image/)
+        - [GET /api/images](api/image/get-images)
+        - [GET /api/images/:id](api/image/get-image)
+        - [POST /api/images/:id/refresh](api/image/refresh-image)
+        - [DELETE /api/images/:id](api/image/delete-image)
+
+    - [Triggers](api/trigger/)
+        - [GET /api/triggers](api/trigger/get-triggers)
+        - [GET /api/trigger/:id](api/trigger/get-trigger)
+
+    - [Watchers](api/watcher/)
+        - [GET /api/watchers](api/watcher/get-watchers)
+        - [GET /api/watchers/:id](api/watcher/get-watcher)
+
+    - [Store](api/store/)
+        - [GET /api/store](api/store/get-store)
+
+    - [Logs](api/log/)
+        - [GET /api/log](api/log/get-log)
+
+- [**Storage**](storage)
+
+- [**Logs**](logs)
+
+- [**Changelog**](CHANGELOG.md)

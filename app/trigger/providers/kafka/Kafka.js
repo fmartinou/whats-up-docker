@@ -28,6 +28,9 @@ class Kafka extends Trigger {
         });
     }
 
+    /**
+     * Init trigger.
+     */
     initTrigger() {
         const brokers = comma.parse(this.configuration.brokers, {
             padLeft: true,

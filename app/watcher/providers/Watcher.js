@@ -4,25 +4,61 @@ const log = require('../../log');
 const event = require('../../event');
 const store = require('../../store');
 
-function processImageResult(imageResult) {
-    // Find in db & compare
-    const resultInDb = store.findImage(imageResult);
-    const alreadyExists = JSON.stringify(imageResult) === JSON.stringify(resultInDb);
+/**
+ * Return true if Image in DB and Image with Result are identical.
+ * @param resultInDb
+ * @param imageWithResult
+ * @returns {boolean}
+ */
+function isSameResult(resultInDb, imageWithResult) {
+    if (!resultInDb.result && !imageWithResult.result) {
+        return false;
+    }
+    if (!resultInDb.result && imageWithResult.result) {
+        return true;
+    }
+    return resultInDb.result.equals(imageWithResult.result);
+}
 
-    // Emit event only if new version
-    if (!alreadyExists) {
-        store.addImage(imageResult);
-        if (imageResult.result) {
-            log.debug(`New image version found (${JSON.stringify(imageResult)})`);
-            event.emitImageNewVersion(imageResult);
+/**
+ * Process an Image Result.
+ * @param imageWithResult
+ */
+function processImageResult(imageWithResult) {
+    let trigger = false;
+
+    // Find image in db & compare
+    const resultInDb = store.findImage(imageWithResult);
+
+    // Not found in DB? => Save it
+    if (!resultInDb) {
+        log.debug(`Image watched for the first time (${JSON.stringify(imageWithResult)})`);
+        store.insertImage(imageWithResult);
+        if (imageWithResult.result) {
+            trigger = true;
+        } else {
+            log.debug(`No result found (${JSON.stringify(imageWithResult)})`);
         }
+
+    // Found in DB? => update it
     } else {
-        log.debug('New image version already in store => Do not trigger');
-        log.debug(JSON.stringify(imageResult));
+        trigger = !isSameResult(resultInDb, imageWithResult);
+        store.updateImage(imageWithResult);
+    }
+
+    // New version? => Emit event only if new version
+    if (trigger) {
+        log.debug(`New image version found (${JSON.stringify(imageWithResult)})`);
+        event.emitImageNewVersion(imageWithResult);
+    } else {
+        log.debug(`Result already processed => No need to trigger (${JSON.stringify(imageWithResult)})`);
     }
 }
 
-class Trigger extends Component {
+/**
+ * Base Watcher Component (to be overridden).
+ */
+class Watcher extends Component {
     /**
      * Init the Watcher.
      */
@@ -39,7 +75,7 @@ class Trigger extends Component {
     }
 
     /**
-     * Init Watcher. Can be overriden in trigger implementation class.
+     * Init Watcher. Can be overridden in trigger implementation class.
      */
     /* eslint-disable-next-line */
     initWatcher() {
@@ -47,12 +83,20 @@ class Trigger extends Component {
     }
 
     /**
-     * Execute watch method. Should be overriden in trigger implementation class.
+     * Execute watch method. Should be overridden in trigger implementation class.
      */
     /* eslint-disable-next-line */
     async watch() {
         // do nothing by default
     }
+
+    /**
+     * Find a new version of an image.
+     */
+    /* eslint-disable-next-line */
+    async findNewVersion(image) {
+        // do nothing by default
+    }
 }
 
-module.exports = Trigger;
+module.exports = Watcher;

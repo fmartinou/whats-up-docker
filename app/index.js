@@ -1,12 +1,16 @@
 const log = require('./log');
 const store = require('./store');
 const registry = require('./registry');
+const api = require('./api');
 
 log.info('What\'s up, docker? is starting');
 
 async function main() {
     // Init store
     await store.init();
+
+    // Init api
+    await api.init();
 
     // Register triggers
     registry.registerTriggers();
@@ -15,21 +19,3 @@ async function main() {
     registry.registerWatchers();
 }
 main();
-
-/*
-const app = express();
-
-app.get('/api/images', (req, res) => {
-    res.json([]);
-});
-
-app.post('/api/images', (req, res) => {
-    fetchService.fetch(inputs);
-    res.status(200).send();
-});
-
-const port = getPort();
-
-app.listen(port, () => {
-});
-log.info(`What's up, doc? is listening on port ${port}`); */

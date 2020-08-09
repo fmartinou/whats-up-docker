@@ -3,6 +3,6 @@ version: '3'
 services:
 
     traefik:
-        image: traefik:v2.2.8
+        image: traefik:v2.2.7
         labels:
             - 'wud.tag.include=^v[0-9]\d*\.[0-9]\d*\.[0-9]\d*$$'

@@ -7,7 +7,14 @@ const moment = require('moment');
 const event = require('../../../event');
 const log = require('../../../log');
 const Watcher = require('../Watcher');
+const Image = require('../../../model/Image');
+const Result = require('../../../model/Result');
 
+/**
+ * Get all tags for an API page.
+ * @param url
+ * @returns {Promise<*>}
+ */
 async function getTagsPage(url) {
     return rp({
         uri: url,
@@ -18,6 +25,12 @@ async function getTagsPage(url) {
     });
 }
 
+/**
+ * Return if a tag is newer or older.
+ * @param image
+ * @param tag
+ * @returns {boolean}
+ */
 function isNewerTag(image, tag) {
     // Match include tag regex
     if (image.includeTags) {
@@ -48,7 +61,7 @@ function isNewerTag(image, tag) {
     } else if (tag.name === image.version) {
         // is tag date after?
         const tagDate = moment(tag.last_updated);
-        newer = tagDate.isAfter(moment(image.date));
+        newer = tagDate.isAfter(moment(image.versionDate));
     }
 
     // Available arch&os? Different size?
@@ -59,6 +72,9 @@ function isNewerTag(image, tag) {
     return newer && matchingImage;
 }
 
+/**
+ * Docker Watcher Component.
+ */
 class Docker extends Watcher {
     getConfigurationSchema() {
         return joi.object().keys({
@@ -70,6 +86,9 @@ class Docker extends Watcher {
         });
     }
 
+    /**
+     * Init watcher.
+     */
     initWatcher() {
         const options = {};
         if (this.configuration.host) {
@@ -81,6 +100,10 @@ class Docker extends Watcher {
         this.dockerApi = new DockerApi(options);
     }
 
+    /**
+     * Watch main method.
+     * @returns {Promise<*[]>}
+     */
     async watch() {
         const imagesArray = await this.getImages();
         const images = {};
@@ -88,35 +111,34 @@ class Docker extends Watcher {
         // map to K/V map to remove duplicate items
         imagesArray.forEach((image) => {
             const key = `${image.organization}_${image.image}_${image.version}`;
-            const parsedVersion = semver.coerce(image.version);
-            const isSemver = parsedVersion !== null && parsedVersion !== undefined;
-            images[key] = {
-                ...image,
-                isSemver,
-
-            };
+            images[key] = image;
         });
         return Promise.all(Object.values(images).map((image) => this.processImage(image)));
     }
 
+    /**
+     * Process an Image.
+     * @param image
+     * @returns {Promise<*>}
+     */
     async processImage(image) {
+        const imageWithResult = image;
         log.debug(`Check ${image.registry}/${image.organization}/${image.image}:${image.version}`);
-        let result;
-        let error;
         try {
-            result = await this.findNewVersion(image);
+            imageWithResult.result = await this.findNewVersion(image);
         } catch (e) {
-            error = e;
+            imageWithResult.result = {
+                error: e.message,
+            };
         }
-        const imageResult = {
-            ...image,
-            result,
-            error,
-        };
-        event.emitImageResult(imageResult);
-        return imageResult;
+        event.emitImageResult(imageWithResult);
+        return imageWithResult;
     }
 
+    /**
+     * Get all images to watch.
+     * @returns {Promise<unknown[]>}
+     */
     async getImages() {
         const containers = await this.dockerApi.container.list();
         const filteredContainers = containers
@@ -139,6 +161,9 @@ class Docker extends Watcher {
         return Promise.all(imagesPromises);
     }
 
+    /**
+     * Find new version for an Image.
+     */
     /* eslint-disable-next-line */
     async findNewVersion(image) {
         let next = `${image.registry}/v2/repositories/${image.organization}/${image.image}/tags?page=1`;
@@ -155,10 +180,10 @@ class Docker extends Watcher {
 
                 // New tag found? return it
                 if (newTag) {
-                    return {
+                    return new Result({
                         newVersion: newTag.name,
                         newVersionDate: newTag.last_updated,
-                    };
+                    });
                 }
                 // continue with next tags...
             } catch (e) {
@@ -169,6 +194,13 @@ class Docker extends Watcher {
         return undefined;
     }
 
+    /**
+     * Map a Container Spec to an Image Model Object.
+     * @param container
+     * @param includeTags
+     * @param excludeTags
+     * @returns {Promise<Image>}
+     */
     async mapContainerToImage(container, includeTags, excludeTags) {
         // Get container image details
         const containerImage = await this.dockerApi.image
@@ -183,18 +215,22 @@ class Docker extends Watcher {
 
         // Parse image to get registry, organization...
         const parsedImage = parse(container.data.Image);
-        return {
+        const version = parsedImage.tag || 'latest';
+        const parsedVersion = semver.coerce(version);
+        const isSemver = parsedVersion !== null && parsedVersion !== undefined;
+        return new Image({
             registry: parsedImage.registry || 'https://hub.docker.com',
             organization: parsedImage.namespace || 'library',
             image: parsedImage.repository,
-            version: parsedImage.tag || 'latest',
-            date: creationDate,
+            version,
+            versionDate: creationDate,
+            isSemver,
             architecture,
             os,
             size,
             includeTags,
             excludeTags,
-        };
+        });
     }
 }
 

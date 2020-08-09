@@ -19,7 +19,7 @@ class Slack extends Trigger {
     }
 
     /*
-     * Init the Trigger.
+     * Init trigger.
      */
     initTrigger() {
         this.client = new SlackClient({

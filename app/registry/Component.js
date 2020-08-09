@@ -1,6 +1,9 @@
 const joi = require('@hapi/joi');
 const log = require('../log');
 
+/**
+ * Base Component Class.
+ */
 class Component {
     /**
      * Constructor.
@@ -62,6 +65,14 @@ class Component {
      */
     /* eslint-disable-next-line */
     init() {}
+
+    /**
+     * Get Component ID.
+     * @returns {string}
+     */
+    getId() {
+        return `${this.type}.${this.name}`;
+    }
 }
 
 module.exports = Component;

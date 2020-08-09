@@ -4,10 +4,11 @@
   "description": "What'up with your Docker images?",
   "main": "app/index.js",
   "scripts": {
-    "start": "WUD_LOG_LEVEL=debug nodemon app/index.js | ./node_modules/.bin/bunyan",
+    "start": "nodemon app/index.js | ./node_modules/.bin/bunyan",
     "doc": "node_modules/.bin/docsify serve ./docs",
     "lint": "eslint '**/*.js'",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "cucumber": "node node_modules/cucumber/bin/cucumber-js e2e/**/*.feature"
   },
   "author": "fmartinou",
   "repository": "fmartinou/whats-up-docker",
@@ -22,13 +23,14 @@
     "docsify-cli": "4.4.1",
     "env-dot-prop": "3.0.0",
     "eslint-plugin-jest": "23.20.0",
-    "express": "4.17.1",
+    "express": "^4.17.1",
     "joi-cron-expression": "1.0.0",
     "js-yaml": "3.14.0",
     "kafkajs": "1.12.0",
     "lokijs": "1.5.10",
     "moment": "2.27.0",
     "mqtt": "4.1.0",
+    "nocache": "2.1.0",
     "node-cron": "2.0.3",
     "node-docker-api": "1.1.22",
     "nodemailer": "6.4.11",
@@ -40,10 +42,13 @@
     "uuid": "8.3.0"
   },
   "devDependencies": {
+    "apickli": "2.3.3",
     "babel-jest": "26.2.2",
     "babel-plugin-rewire": "1.2.0",
+    "cucumber": "6.0.5",
     "eslint": "7.6.0",
     "eslint-config-airbnb-base": "14.2.0",
+    "eslint-plugin-cucumber": "1.4.0",
     "eslint-plugin-import": "2.22.0",
     "jest": "26.2.2",
     "nodemon": "2.0.4"

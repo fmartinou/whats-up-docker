@@ -1,9 +1,10 @@
 {
     "extends": "airbnb-base",
-    "plugins": ["jest"],
+    "plugins": ["jest", "cucumber"],
     "rules": {
         "indent": ["error", 4],
-        "no-underscore-dangle": ["error", { "allow":  ["__get__"]}]
+        "no-underscore-dangle": ["error", { "allow":  ["__get__"]}],
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": ["e2e/**/*.js"]}]
     },
     "env": {
         "jest/globals": true

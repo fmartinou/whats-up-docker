@@ -23,7 +23,7 @@ class Smtp extends Trigger {
     }
 
     /**
-     * Init the Trigger.
+     * Init trigger.
      */
     initTrigger() {
         this.transporter = nodemailer.createTransport({

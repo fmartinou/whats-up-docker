@@ -1,5 +1,11 @@
 # Changelog
 
+### x.y.z
+- :star: Add REST API
+
+!> **Breaking Change** \
+Data schema change => Delete _WUD_ store before update
+
 ### 1.1.2
 - :fire: Fix error when current tag is a "coerced" semver
 - :star: Update dependencies

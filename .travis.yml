@@ -43,6 +43,15 @@ script:
   # Report to Code Climate
   - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT;
 
+  # Build wud docker image
+  - docker build -t wud .
+
+  # Run wud docker image
+  - docker run -d --name wud -p 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -e WUD_TRIGGER_MOCK_EXAMPLE_MOCK=mock wud
+
+  # Run E2E Tests
+  - npm run cucumber
+
 after_script:
 
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"

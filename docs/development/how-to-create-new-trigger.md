@@ -1,3 +1,0 @@
-## How to create a new trigger
-
-Coming soon...

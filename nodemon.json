@@ -1,6 +1,6 @@
 {
   "env": {
-    "WUD_LOG_LEVEL": "debug",
-    "WUD_STORE_PATH": ".store"
+    "WUD_STORE_PATH": ".store",
+    "WUD_TRIGGER_MOCK_EXAMPLE_MOCK": "mock"
   }
 }

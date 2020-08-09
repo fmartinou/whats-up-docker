@@ -1,6 +1,8 @@
 const bunyan = require('bunyan');
+const { getLogLevel } = require('../configuration');
 
+// Init Bunyan logger
 module.exports = bunyan.createLogger({
     name: 'whats-up-doc',
-    level: process.env.WUD_LOG_LEVEL || 'info',
+    level: getLogLevel(),
 });

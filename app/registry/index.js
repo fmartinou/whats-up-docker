@@ -2,34 +2,49 @@ const capitalize = require('capitalize');
 const log = require('../log');
 const { getWatcherConfigurations, getTriggerConfigurations } = require('../configuration');
 
+const watchers = {};
+const triggers = {};
+
 /**
- * Register component.
+ * Register a component.
  *
  * @param {*} name
  * @param {*} configuration
  */
-function registerComponent(provider, name, configuration, path) {
-    const providerCapitalized = capitalize(provider);
-    const nameCapitalized = capitalize(name);
+function registerComponent(provider, name, configuration, path, state) {
+    const stateToUpdate = state;
+    const providerLowercase = provider.toLowerCase();
+    const nameLowercase = name.toLowerCase();
 
     let Component;
     try {
-        const componentFile = `${path}/${providerCapitalized.toLowerCase()}/${providerCapitalized}`;
+        const componentFile = `${path}/${providerLowercase.toLowerCase()}/${capitalize(provider)}`;
         /* eslint-disable-next-line */
         Component = require(componentFile);
     } catch (e) {
-        log.error(`Component ${providerCapitalized} does not exist`);
+        log.error(`Component ${providerLowercase} does not exist`);
     }
     if (Component) {
-        log.info(`Register component ${nameCapitalized} of type ${providerCapitalized} with configuration ${JSON.stringify(configuration)}`);
+        log.info(`Register component ${nameLowercase} of type ${providerLowercase} with configuration ${JSON.stringify(configuration)}`);
         const component = new Component();
-        component.register(providerCapitalized, nameCapitalized, configuration);
+        component.register(providerLowercase, nameLowercase, configuration);
+        stateToUpdate[component.getId()] = {
+            type: component.type,
+            name: component.name,
+            configuration: component.configuration,
+        };
         return component;
     }
     return undefined;
 }
 
-function registerComponents(configurations, path) {
+/**
+ * Register all found components.
+ * @param configurations
+ * @param path
+ * @returns {*[]}
+ */
+function registerComponents(configurations, path, state) {
     if (configurations) {
         const providers = Object.keys(configurations);
         return providers.map((provider) => {
@@ -41,6 +56,7 @@ function registerComponents(configurations, path) {
                     configurationName,
                     providerConfigurations[configurationName],
                     path,
+                    state,
                 ));
         }).flat();
     }
@@ -53,10 +69,10 @@ function registerComponents(configurations, path) {
 function registerWatchers() {
     const configurations = getWatcherConfigurations();
     if (configurations) {
-        return registerComponents(configurations, '../watcher/providers');
+        return registerComponents(configurations, '../watcher/providers', watchers);
     }
     log.info('No Watcher found => Init a default Docker one');
-    return [registerComponent('Docker', 'Local', {}, '../watcher/providers')];
+    return [registerComponent('docker', 'local', {}, '../watcher/providers', watchers)];
 }
 
 /**
@@ -64,10 +80,12 @@ function registerWatchers() {
  */
 function registerTriggers() {
     const configurations = getTriggerConfigurations();
-    return registerComponents(configurations, '../trigger/providers');
+    return registerComponents(configurations, '../trigger/providers', triggers);
 }
 
 module.exports = {
     registerWatchers,
     registerTriggers,
+    triggers,
+    watchers,
 };

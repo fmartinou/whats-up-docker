@@ -125,20 +125,20 @@ test('findNewVersion should return new image when found', () => {
     rp.mockImplementation(() => ({
         results: [foundVersion],
     }));
-    expect(docker.findNewVersion(sampleSemver)).resolves.toStrictEqual({
+    expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
         newVersion: foundVersion.name,
         newVersionDate: foundVersion.last_updated,
     });
 });
 
-test('findNewVersion should return undefined when no imagefound', () => {
+test('findNewVersion should return undefined when no image found', () => {
     rp.mockImplementation(() => ({
         results: [],
     }));
     expect(docker.findNewVersion(sampleSemver)).resolves.toStrictEqual(undefined);
 });
 
-test('mapContainerToImage should map a container definition to an image definition', () => {
+test('mapContainerToImage should map a container definition to an image definition', async () => {
     docker.dockerApi = {
         image: {
             get: () => ({
@@ -158,12 +158,14 @@ test('mapContainerToImage should map a container definition to an image definiti
             Image: 'registry/organization/image:version',
         },
     };
-    expect(docker.mapContainerToImage(container)).resolves.toStrictEqual({
+
+    const image = await docker.mapContainerToImage(container);
+    expect(image).toMatchObject({
         registry: 'registry',
         organization: 'organization',
         image: 'image',
         version: 'version',
-        date: '2019-05-20T12:02:06.307Z',
+        versionDate: '2019-05-20T12:02:06.307Z',
         architecture: 'arch',
         os: 'os',
         size: '10',
