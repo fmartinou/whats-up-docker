@@ -21,6 +21,7 @@
     "comma-separated-tokens": "1.0.8",
     "docker-parse-image": "3.0.1",
     "docsify-cli": "4.4.1",
+    "ejs": "3.1.3",
     "env-dot-prop": "3.0.0",
     "eslint-plugin-jest": "23.20.0",
     "express": "^4.17.1",
@@ -39,6 +40,7 @@
     "request-promise-native": "1.0.9",
     "semver": "7.3.2",
     "slack": "11.0.2",
+    "sort-es": "1.1.1",
     "uuid": "8.3.0"
   },
   "devDependencies": {

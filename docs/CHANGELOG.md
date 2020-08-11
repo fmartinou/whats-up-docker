@@ -2,6 +2,7 @@
 
 ### x.y.z
 - :star: Add REST API
+- :star: Add UI
 
 !> **Breaking Change** \
 Data schema change => Delete _WUD_ store before update

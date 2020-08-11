@@ -9,6 +9,15 @@ function init() {
     return component.init(watchers);
 }
 
+/**
+ * Get all watchers.
+ * @returns {{id: string}[]}
+ */
+function getAllWatchers() {
+    return component.mapComponentsToList(watchers);
+}
+
 module.exports = {
     init,
+    getAllWatchers,
 };

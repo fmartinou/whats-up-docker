@@ -1,11 +1,10 @@
+const path = require('path');
 const joi = require('@hapi/joi');
 const express = require('express');
 const log = require('../log');
-const logRouter = require('./log');
-const storeRouter = require('./store');
-const imageRouter = require('./image');
-const triggerRouter = require('./trigger');
-const watcherRouter = require('./watcher');
+const apiRouter = require('./api');
+const uiRouter = require('./ui');
+
 const { getApiConfiguration } = require('../configuration');
 
 // Configuration Schema
@@ -34,20 +33,15 @@ async function init() {
         // Init Express app
         const app = express();
 
-        // Mount log router
-        app.use('/api/log', logRouter.init());
+        // Setup EJS for view rendering
+        app.set('view engine', 'ejs');
+        app.set('views', path.join(`${__dirname}/../views`));
 
-        // Mount store router
-        app.use('/api/store', storeRouter.init());
+        // Mount API
+        app.use('/api', apiRouter.init());
 
-        // Mount images router
-        app.use('/api/images', imageRouter.init());
-
-        // Mount trigger router
-        app.use('/api/triggers', triggerRouter.init());
-
-        // Mount watcher router
-        app.use('/api/watchers', watcherRouter.init());
+        // Mount UI
+        app.use('/', uiRouter.init());
 
         // Listen
         app.listen(configuration.port, () => {

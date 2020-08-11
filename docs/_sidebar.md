@@ -12,6 +12,11 @@
     - [Docker](watchers/docker)
     - [Supported labels](watchers/labels)
 
+- [**UI**](ui/)
+    - [Images](ui/images)
+    - [Triggers](ui/triggers)
+    - [Watchers](ui/watchers)
+
 - [**Api**](api/)
 
     - [Images](api/image/)

@@ -5,13 +5,22 @@ const store = require('../store');
 const router = express.Router();
 
 /**
+ * Get images from store.
+ * @param query
+ * @returns {*}
+ */
+function getImagesFromStore(query) {
+    return store.getImages(query);
+}
+
+/**
  * Get all (filtered) images.
  * @param req
  * @param res
  */
 function getImages(req, res) {
     const { query } = req;
-    res.status(200).json(store.getImages(query));
+    res.status(200).json(getImagesFromStore(query));
 }
 
 /**
@@ -45,16 +54,6 @@ function deleteImage(req, res) {
     }
 }
 
-function refreshImage(req, res) {
-    const { id } = req.params;
-    const image = store.getImage(id);
-    if (image) {
-        res.sendStatus(202);
-    } else {
-        res.sendStatus(404);
-    }
-}
-
 /**
  * Init Router.
  * @returns {*}
@@ -63,11 +62,11 @@ function init() {
     router.use(nocache());
     router.get('/', getImages);
     router.get('/:id', getImage);
-    router.post('/:id/refresh', refreshImage);
     router.delete('/:id', deleteImage);
     return router;
 }
 
 module.exports = {
     init,
+    getImagesFromStore,
 };

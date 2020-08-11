@@ -1,6 +1,14 @@
+const { byValues, byString } = require('sort-es');
+
 const express = require('express');
 const nocache = require('nocache');
 
+/**
+ * Map a Component to a displayable (api/ui) item.
+ * @param key
+ * @param component
+ * @returns {{id: *}}
+ */
 function mapComponentToItem(key, component) {
     return {
         id: key,
@@ -14,7 +22,10 @@ function mapComponentToItem(key, component) {
  * @returns {{id: string}[]}
  */
 function mapComponentsToList(list) {
-    return Object.keys(list).map((key) => mapComponentToItem(key, list[key]));
+    return Object.keys(list).map((key) => mapComponentToItem(key, list[key])).sort(byValues({
+        type: byString(),
+        name: byString(),
+    }));
 }
 
 /**
@@ -26,6 +37,12 @@ function getAll(req, res, list) {
     res.status(200).json(mapComponentsToList(list));
 }
 
+/**
+ * Get a comopnent by id.
+ * @param req
+ * @param res
+ * @param list
+ */
 function getById(req, res, list) {
     const { id } = req.params;
     const component = list[id];
@@ -36,6 +53,11 @@ function getById(req, res, list) {
     }
 }
 
+/**
+ * Init the component router.
+ * @param list
+ * @returns {*|Router}
+ */
 function init(list) {
     const router = express.Router();
     router.use(nocache());
@@ -46,4 +68,5 @@ function init(list) {
 
 module.exports = {
     init,
+    mapComponentsToList,
 };

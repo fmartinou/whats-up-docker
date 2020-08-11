@@ -1,0 +1,57 @@
+<h1 class="title">Images</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Registry</th>
+      <th>Organization</th>
+      <th>Image</th>
+      <th>Version</th>
+      <th>Version date</th>
+      <th>Arch</th>
+      <th>Os</th>
+      <th>Size</th>
+      <th>Is semver</th>
+      <th>Include Tags</th>
+      <th>Exclude Tags</th>
+      <th>New version</th>
+      <th>New version date</th>
+      <th>Created</th>
+      <th>Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+      <% images.forEach((image) => { %>
+        <tr>
+          <td><%= image.registry %></td>
+          <td><%= image.organization %></td>
+          <td><%= image.image %></td>
+          <td><span class="tag"><%= image.version %></span></td>
+          <td><%= moment(image.versionDate).format('YYYY MM DD HH:MM:SS') %></td>
+          <td><%= image.architecture %></td>
+          <td>
+              <span class="icon is-large" title="<%= image.os %>">
+                <i class="fab fa-<%= image.os %> fa-2x"></i>
+              </span>
+          </td>
+          <td><%= (image.size / (1024 * 1024)).toFixed(2) %> MB</td>
+          <td>
+          <span class="icon">
+            <i class="fas <%= image.isSemver ? 'fa-check' : 'fa-times' %>"></i>
+          </span>
+          </td>
+          <td><%= image.includeTags %></td>
+          <td><%= image.excludeTags %></td>
+          <td>
+            <% if (image.result && image.result.newVersion) { %>
+                <span class="tag is-primary"><%= image.result ? image.result.newVersion : '' %></span>
+            <% }  %>
+
+          </td>
+          <td><%= image.result ? moment(image.result.newVersionDate).format('YYYY MM DD HH:MM:SS') : '' %></td>
+          <td><%= moment(image.created).format('YYYY MM DD HH:MM:SS') %></td>
+          <td><%= moment(image.updated).format('YYYY MM DD HH:MM:SS') %></td>
+        </tr>
+      <% }); %>
+  </tbody>
+</table>

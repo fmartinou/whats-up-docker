@@ -4,6 +4,11 @@ const { getLogLevel } = require('../configuration');
 
 const router = express.Router();
 
+/**
+ * Get log infos.
+ * @param req
+ * @param res
+ */
 function getLog(req, res) {
     res.status(200).json({
         level: getLogLevel(),

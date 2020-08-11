@@ -3,6 +3,7 @@ const Loki = require('lokijs');
 const fs = require('fs');
 const { v4: uuid } = require('uuid');
 const moment = require('moment');
+const { byString, byValues } = require('sort-es');
 const log = require('../log');
 const { getStoreConfiguration } = require('../configuration');
 const Image = require('../model/Image');
@@ -84,14 +85,16 @@ function findImage({ registry, organization, image }) {
  * @param image
  */
 function insertImage(image) {
+    const imageToReturn = {
+        ...image,
+        id: uuid(),
+        created: moment.utc().toISOString(),
+        updated: moment.utc().toISOString(),
+    };
     images.insert({
-        data: {
-            ...image,
-            id: uuid(),
-            created: moment.utc(),
-            updated: moment.utc(),
-        },
+        data: imageToReturn,
     });
+    return imageToReturn;
 }
 
 /**
@@ -100,6 +103,11 @@ function insertImage(image) {
  */
 function updateImage(image) {
     const imageToUpdate = findImage(image);
+    const imageToReturn = {
+        ...imageToUpdate,
+        result: image.result,
+        updated: moment.utc().toISOString(),
+    };
 
     // Remove
     images.chain().find({
@@ -109,12 +117,9 @@ function updateImage(image) {
     }).remove();
 
     images.insert({
-        data: {
-            ...imageToUpdate,
-            result: image.result,
-            updated: moment.utc(),
-        },
+        data: imageToReturn,
     });
+    return imageToReturn;
 }
 
 /**
@@ -127,7 +132,12 @@ function getImages(query = {}) {
     Object.keys(query).forEach((key) => {
         filter[`data.${key}`] = query[key];
     });
-    return images.find(filter).map((item) => new Image(item.data));
+    const imageList = images.find(filter).map((item) => new Image(item.data));
+    return imageList.sort(byValues({
+        registry: byString(),
+        organization: byString(),
+        image: byString(),
+    }));
 }
 
 /**

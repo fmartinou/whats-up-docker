@@ -12,7 +12,7 @@ const store = require('../../store');
  */
 function isSameResult(resultInDb, imageWithResult) {
     if (!resultInDb.result && !imageWithResult.result) {
-        return false;
+        return true;
     }
     if (!resultInDb.result && imageWithResult.result) {
         return true;
