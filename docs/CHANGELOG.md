@@ -1,6 +1,6 @@
 # Changelog
 
-### x.y.z
+### 2.0.0
 - :star: Add REST API
 - :star: Add UI
 
