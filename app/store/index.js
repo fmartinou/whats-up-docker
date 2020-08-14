@@ -68,9 +68,9 @@ async function init() {
  * @param image
  * @returns {null|Image}
  */
-function findImage({ registry, organization, image }) {
+function findImage({ registryUrl, organization, image }) {
     const imageInDb = images.findOne({
-        'data.registry': registry,
+        'data.registryUrl': registryUrl,
         'data.organization': organization,
         'data.image': image,
     });
@@ -111,7 +111,7 @@ function updateImage(image) {
 
     // Remove
     images.chain().find({
-        'data.registry': image.registry,
+        'data.registryUrl': image.registryUrl,
         'data.organization': image.organization,
         'data.image': image.image,
     }).remove();

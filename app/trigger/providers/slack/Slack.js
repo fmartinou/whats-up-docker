@@ -37,6 +37,7 @@ class Slack extends Trigger {
         const message = `
 *New version found for image ${image.image}* \n
 *Registry:* ${image.registry} \n
+*RegistryUrl:* ${image.registryUrl} \n
 *Organization:* ${image.organization} \n
 *Image:* ${image.image} \n
 *Current version:* ${image.version} \n

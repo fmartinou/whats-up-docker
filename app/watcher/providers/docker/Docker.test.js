@@ -155,13 +155,14 @@ test('mapContainerToImage should map a container definition to an image definiti
     };
     const container = {
         data: {
-            Image: 'registry/organization/image:version',
+            Image: 'organization/image:version',
         },
     };
 
     const image = await docker.mapContainerToImage(container);
     expect(image).toMatchObject({
-        registry: 'registry',
+        registry: 'hub',
+        registryUrl: 'https://hub.docker.com',
         organization: 'organization',
         image: 'image',
         version: 'version',

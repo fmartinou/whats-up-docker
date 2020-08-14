@@ -1,5 +1,8 @@
 # Changelog
 
+### x.y.z
+- :star: Add support for Docker Hub private repositories
+
 ### 2.0.0
 - :star: Add REST API
 - :star: Add UI

@@ -9,13 +9,13 @@ For fine tuning, you can also add some labels to the containers you run.
 
 | Env var                                            | Description                                | Supported values                               | Default value          |
 | -------------------------------------------------- |:------------------------------------------:|:----------------------------------------------:|:----------------------:| 
-| `WUD_WATCHER_DOCKER_{watcher_name}_SOCKET`         | Docker socket to watch                     | Valid unix socker                              | /var/run/docker.sock   |
+| `WUD_WATCHER_DOCKER_{watcher_name}_SOCKET`         | Docker socket to watch                     | Valid unix socket                              | /var/run/docker.sock   |
 | `WUD_WATCHER_DOCKER_{watcher_name}_HOST`           | Docker hostname or ip of the host to watch |                                                |                        |
 | `WUD_WATCHER_DOCKER_{watcher_name}_PORT`           | Docker port of the host to watch           |                                                | 2375                   |
 | `WUD_WATCHER_DOCKER_{watcher_name}_CRON`           | Scheduling options                         | [Valid CRON expression](https://crontab.guru/) | 0 * * * * (every hour) |
 | `WUD_WATCHER_DOCKER_{watcher_name}_WATCHBYDEFAULT` | If WUD monitors all containers by default  | Valid boolean                                  | true                   |
 
-!> Socker configuration and host/port configuration are mutually exclusive
+!> Socket configuration and host/port configuration are mutually exclusive
 
 !> If socket configuration is used, don't forget to mount the Docker socket on your WUD container.
 

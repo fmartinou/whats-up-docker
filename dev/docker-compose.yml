@@ -6,3 +6,7 @@ services:
         image: traefik:v2.2.7
         labels:
             - 'wud.tag.include=^v[0-9]\d*\.[0-9]\d*\.[0-9]\d*$$'
+    hidden:
+        image: fmartinou/hidden:1.0.0
+        labels:
+            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*\.[0-9]\d*$$'

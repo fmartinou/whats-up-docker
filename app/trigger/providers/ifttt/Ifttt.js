@@ -31,7 +31,7 @@ class Ifttt extends Trigger {
                 'Content-Type': 'application/json',
             },
             body: {
-                value1: `${image.registry}/${image.organization}/${image.image}`,
+                value1: `${image.registryUrl}/${image.organization}/${image.image}`,
                 value2: `${image.result.newVersion}`,
                 value3: JSON.stringify(image),
             },

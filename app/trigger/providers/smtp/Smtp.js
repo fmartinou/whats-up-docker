@@ -50,6 +50,7 @@ class Smtp extends Trigger {
             text: JSON.stringify(image),
             html: `
                 <p><strong>Registry:</strong>&nbsp;${image.registry}</p>
+                <p><strong>RegistryUrl:</strong>&nbsp;${image.registryUrl}</p>
                 <p><strong>Organization:</strong>&nbsp;${image.organization}</p>
                 <p><strong>Image:</strong>&nbsp;${image.image}</p>
                 <p><strong>Current version:&nbsp;</strong>${image.version}</p>

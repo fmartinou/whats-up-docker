@@ -7,6 +7,7 @@ class Image {
     constructor({
         id,
         registry,
+        registryUrl,
         organization,
         image,
         version,
@@ -23,6 +24,7 @@ class Image {
     }) {
         this.id = id;
         this.registry = registry;
+        this.registryUrl = registryUrl;
         this.organization = organization;
         this.image = image;
         this.version = version;
@@ -50,7 +52,7 @@ class Image {
      * @returns {boolean|boolean}
      */
     equals(other) {
-        return this.registry === other.registry
+        return this.registryUrl === other.registryUrl
         && this.organization === other.organization
         && this.image === other.image
         && this.version === other.version;

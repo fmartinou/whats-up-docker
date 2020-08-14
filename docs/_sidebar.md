@@ -9,8 +9,9 @@
     - [Mock](triggers/smtp/)
 
 - [**Watchers**](watchers/)
-    - [Docker](watchers/docker)
-    - [Supported labels](watchers/labels)
+    - [Docker](watchers/docker/)
+        - [Docker Hub](watchers/docker/hub)
+        - [Supported labels](watchers/docker/labels)
 
 - [**UI**](ui/)
     - [Images](ui/images)

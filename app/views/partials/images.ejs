@@ -4,6 +4,7 @@
   <thead>
     <tr>
       <th>Registry</th>
+      <th>Registry URL</th>
       <th>Organization</th>
       <th>Image</th>
       <th>Version</th>
@@ -24,6 +25,7 @@
       <% images.forEach((image) => { %>
         <tr>
           <td><%= image.registry %></td>
+          <td><%= image.registryUrl %></td>
           <td><%= image.organization %></td>
           <td><%= image.image %></td>
           <td><span class="tag"><%= image.version %></span></td>

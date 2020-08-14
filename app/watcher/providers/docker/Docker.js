@@ -9,20 +9,29 @@ const log = require('../../../log');
 const Watcher = require('../Watcher');
 const Image = require('../../../model/Image');
 const Result = require('../../../model/Result');
+const dockerHub = require('./registries/dockerHub');
+
+const registryProviders = {
+    hub: dockerHub,
+};
 
 /**
  * Get all tags for an API page.
  * @param url
  * @returns {Promise<*>}
  */
-async function getTagsPage(url) {
-    return rp({
+async function getTagsPage(url, token) {
+    const options = {
         uri: url,
         headers: {
             Accept: 'application/json',
         },
         json: true,
-    });
+    };
+    if (token) {
+        options.headers.Authorization = `Bearer ${token}`;
+    }
+    return rp(options);
 }
 
 /**
@@ -72,6 +81,15 @@ function isNewerTag(image, tag) {
     return newer && matchingImage;
 }
 
+function normalizeImage(image) {
+    const registryProvider = Object.values(registryProviders)
+        .find((provider) => provider.match(image));
+    if (!registryProvider) {
+        throw new Error(`No Registry Provider found for image ${JSON.stringify(image)}`);
+    }
+    return registryProvider.normalizeImage(image);
+}
+
 /**
  * Docker Watcher Component.
  */
@@ -83,6 +101,14 @@ class Docker extends Watcher {
             port: this.joi.number().port().default(2375),
             cron: joi.string().cron().default('0 * * * *'),
             watchbydefault: this.joi.boolean().default(true),
+            registries: joi.object().keys({
+                hub: joi.object().keys({
+                    auth: joi.object().keys({
+                        login: joi.string().required(),
+                        password: joi.string().required(),
+                    }),
+                }),
+            }),
         });
     }
 
@@ -123,9 +149,19 @@ class Docker extends Watcher {
      */
     async processImage(image) {
         const imageWithResult = image;
-        log.debug(`Check ${image.registry}/${image.organization}/${image.image}:${image.version}`);
+        let token;
+        log.debug(`Check ${image.registryUrl}/${image.organization}/${image.image}:${image.version}`);
+
+        // Authenticate
+        if (this.configuration.registries
+            && this.configuration.registries[image.registry]
+            && this.configuration.registries[image.registry].auth) {
+            const { auth } = this.configuration.registries[image.registry];
+            const registryProvider = registryProviders[image.registry];
+            token = await registryProvider.authenticate(auth);
+        }
         try {
-            imageWithResult.result = await this.findNewVersion(image);
+            imageWithResult.result = await this.findNewVersion(image, token);
         } catch (e) {
             imageWithResult.result = {
                 error: e.message,
@@ -165,12 +201,12 @@ class Docker extends Watcher {
      * Find new version for an Image.
      */
     /* eslint-disable-next-line */
-    async findNewVersion(image) {
-        let next = `${image.registry}/v2/repositories/${image.organization}/${image.image}/tags?page=1`;
+    async findNewVersion(image, token) {
+        let next = `${image.registryUrl}/v2/repositories/${image.organization}/${image.image}/tags?page=1`;
         while (next) {
             try {
                 /* eslint-disable-next-line */
-                const tags = await getTagsPage(next);
+                const tags = await getTagsPage(next, token);
 
                 // Store next page
                 ({ next } = tags);
@@ -218,9 +254,9 @@ class Docker extends Watcher {
         const version = parsedImage.tag || 'latest';
         const parsedVersion = semver.coerce(version);
         const isSemver = parsedVersion !== null && parsedVersion !== undefined;
-        return new Image({
-            registry: parsedImage.registry || 'https://hub.docker.com',
-            organization: parsedImage.namespace || 'library',
+        return normalizeImage(new Image({
+            registryUrl: parsedImage.registry,
+            organization: parsedImage.namespace,
             image: parsedImage.repository,
             version,
             versionDate: creationDate,
@@ -230,7 +266,7 @@ class Docker extends Watcher {
             size,
             includeTags,
             excludeTags,
-        });
+        }));
     }
 }
 
