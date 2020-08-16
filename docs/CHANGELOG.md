@@ -1,6 +1,6 @@
 # Changelog
 
-### x.y.z
+### 2.1.0
 - :star: Add support for Docker Hub private repositories
 
 ### 2.0.0
