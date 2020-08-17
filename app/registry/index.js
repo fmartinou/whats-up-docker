@@ -28,11 +28,7 @@ function registerComponent(provider, name, configuration, path, state) {
         log.info(`Register component ${nameLowercase} of type ${providerLowercase} with configuration ${JSON.stringify(configuration)}`);
         const component = new Component();
         component.register(providerLowercase, nameLowercase, configuration);
-        stateToUpdate[component.getId()] = {
-            type: component.type,
-            name: component.name,
-            configuration: component.configuration,
-        };
+        stateToUpdate[component.getId()] = component;
         return component;
     }
     return undefined;

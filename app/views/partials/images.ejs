@@ -1,59 +1,155 @@
 <h1 class="title">Images</h1>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Registry</th>
-      <th>Registry URL</th>
-      <th>Organization</th>
-      <th>Image</th>
-      <th>Version</th>
-      <th>Version date</th>
-      <th>Arch</th>
-      <th>Os</th>
-      <th>Size</th>
-      <th>Is semver</th>
-      <th>Include Tags</th>
-      <th>Exclude Tags</th>
-      <th>New version</th>
-      <th>New version date</th>
-      <th>Created</th>
-      <th>Updated</th>
-    </tr>
-  </thead>
-  <tbody>
-      <% images.forEach((image) => { %>
-        <tr>
-          <td><%= image.registry %></td>
-          <td><%= image.registryUrl %></td>
-          <td><%= image.organization %></td>
-          <td><%= image.image %></td>
-          <td><span class="tag"><%= image.version %></span></td>
-          <td><%= moment(image.versionDate).format('YYYY MM DD HH:MM:SS') %></td>
-          <td><%= image.architecture %></td>
-          <td>
-              <span class="icon is-large" title="<%= image.os %>">
-                <i class="fab fa-<%= image.os %> fa-2x"></i>
-              </span>
-          </td>
-          <td><%= (image.size / (1024 * 1024)).toFixed(2) %> MB</td>
-          <td>
-          <span class="icon">
-            <i class="fas <%= image.isSemver ? 'fa-check' : 'fa-times' %>"></i>
-          </span>
-          </td>
-          <td><%= image.includeTags %></td>
-          <td><%= image.excludeTags %></td>
-          <td>
-            <% if (image.result && image.result.newVersion) { %>
-                <span class="tag is-primary"><%= image.result ? image.result.newVersion : '' %></span>
-            <% }  %>
+<script>
+    const template = `
 
-          </td>
-          <td><%= image.result ? moment(image.result.newVersionDate).format('YYYY MM DD HH:MM:SS') : '' %></td>
-          <td><%= moment(image.created).format('YYYY MM DD HH:MM:SS') %></td>
-          <td><%= moment(image.updated).format('YYYY MM DD HH:MM:SS') %></td>
+    `
+</script>
+<div class="table-container">
+    <table class="table is-narrow ">
+        <thead>
+        <tr>
+            <th>Registry</th>
+            <th>Organization</th>
+            <th>Image</th>
+            <th>Version</th>
+            <th class="nowrap">Version date</th>
+            <th>Arch</th>
+            <th>Os</th>
+            <th>Size</th>
+            <th class="nowrap">Is semver</th>
+            <th class="nowrap">
+                Include Tags
+            </th>
+            <th class="nowrap">Exclude Tags
+            </th>
+            <th class="nowrap">New version</th>
+            <th class="nowrap">New version date</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th></th>
         </tr>
-      <% }); %>
-  </tbody>
-</table>
+        </thead>
+        <tbody>
+        <% images.forEach((image) => { %>
+            <tr>
+                <td>
+                <span class="icon is-large" title="<%= image.registryUrl %>">
+                    <% switch (image.registry) {
+                    case 'hub' : %>
+                    <i class="fab fa-docker fa-2x"></i>
+                    <% break;
+                    case 'gcr' : %>
+                    <i class="fab fa-google fa-2x"></i>
+                    <% break;
+                    case 'ecr' : %>
+                    <i class="fab fa-aws fa-2x"></i>
+                    <% break;
+                    } %>
+                </span>
+                </td>
+                <td><%= image.organization %></td>
+                <td><%= image.image %></td>
+                <td><span class="tag is-medium"><%= image.version %></span></td>
+                <td class="nowrap">
+                    <%= moment(image.versionDate).format('YYYY MM DD HH:MM:SS') %>
+                </td>
+                <td><%= image.architecture %></td>
+                <td>
+                  <span class="icon is-large" title="<%= image.os %>">
+                    <i class="fab fa-<%= image.os %> fa-2x"></i>
+                  </span>
+                </td>
+                <td class="nowrap">
+                    <%= (image.size / (1024 * 1024)).toFixed(2) %> MB
+                </td>
+                <td>
+              <span class="icon <%= image.isSemver ? 'has-text-primary' : 'has-text-danger' %>">
+                <i class="fas <%= image.isSemver ? 'fa-check' : 'fa-times' %>"></i>
+              </span>
+                </td>
+                <td class="nowrap">
+                    <%= image.includeTags %>
+                </td>
+                <td class="nowrap">
+                    <%= image.excludeTags %>
+                </td>
+                <td id="td-new-version-<%= image.id %>">
+                    <% if (image.result && image.result.newVersion) { %>
+                        <span class="tag is-primary is-medium"><%= image.result.newVersion %></span>
+                    <% } %>
+
+                </td>
+                <td class="nowrap" id="td-new-version-date-<%= image.id %>">
+                    <%= image.result ? moment(image.result.newVersionDate).format('YYYY MM DD HH:MM:SS') : '' %>
+                </td>
+                <td class="nowrap">
+                    <%= moment(image.created).format('YYYY MM DD HH:MM:SS') %>
+                </td>
+                <td class="nowrap" id="td-updated-<%= image.id %>">
+                    <%= moment(image.updated).format('YYYY MM DD HH:MM:SS') %>
+                </td>
+                <td>
+                    <button id="btn-watch-<%= image.id %>" class="button is-black" onclick="watch('<%= image.id %>')">
+                        Watch now
+                    </button>
+                </td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+    /**
+     * Patch Image with new result.
+     * @param image
+     */
+    function patchImage(image) {
+        const updated = image.updated ? moment(image.updated).format('YYYY MM DD HH:MM:SS') : '';
+        document.getElementById(`td-updated-${image.id}`).innerHTML = updated;
+
+        const newVersion = image.result && image.result.newVersion ? `<span class="tag is-primary is-medium">${image.result.newVersion}</span>` : '';
+        document.getElementById(`td-new-version-${image.id}`).innerHTML = newVersion;
+
+        let newVersionDate = image.result && image.result.newVersionDate ? moment(image.result.newVersionDate).format('YYYY MM DD HH:MM:SS') : '';
+        document.getElementById(`td-new-version-date-${image.id}`).innerHTML = newVersionDate;
+    }
+
+    /**
+     * Trigger watch image.
+     * @param imageId
+     * @returns {Promise<void>}
+     */
+    async function watch(imageId) {
+        const btnWatch = document.getElementById(`btn-watch-${imageId}`);
+        // Add loading spinner to the button
+        btnWatch.classList.add('is-loading');
+
+        // Call Watch API
+        try {
+            const response = await fetch(`/api/images/${imageId}/watch`, {method: 'POST'});
+            const image = await response.json();
+
+            // Patch image in UI
+            patchImage(image);
+
+            // Display success message
+            if (image.result && image.result.newVersion) {
+                window.message.display('New version found!', `A new version ${image.result.newVersion} has been found for ${image.image}`);
+            }
+        } catch (e) {
+            // Display error message
+            window.message.display('Oops... an error occurred', e.message ? e.message : 'Unknown error', true);
+        } finally {
+            btnWatch.classList.remove('is-loading');
+        }
+    }
+</script>
+
+<style>
+    td {
+        vertical-align: middle;
+    }
+</style>

@@ -1,5 +1,8 @@
 # Changelog
 
+### x.y.z
+- :star: Add ability to trigger individual searches (API & UI support)
+
 ### 2.1.0
 - :star: Add support for Docker Hub private repositories
 

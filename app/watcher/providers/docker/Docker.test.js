@@ -112,6 +112,67 @@ test('isNewerTag should return false when current version is not semver and no n
     })).toBeFalsy();
 });
 
+test('isNewerTag should return true when newer version match the include regex', () => {
+    expect(Docker.__get__('isNewerTag')({ ...sampleSemver, includeTags: '^[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, {
+        name: '7.8.9',
+        last_updated: '2019-05-15T12:02:06.307Z',
+        images: [{
+            architecture: 'arch',
+            os: 'os',
+            size: 10,
+        }],
+    })).toBeTruthy();
+});
+
+test('isNewerTag should return false when newer version but doesnt match the include regex', () => {
+    expect(Docker.__get__('isNewerTag')({ ...sampleSemver, includeTags: '^v[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, {
+        name: '7.8.9',
+        last_updated: '2019-05-15T12:02:06.307Z',
+        images: [{
+            architecture: 'arch',
+            os: 'os',
+            size: 10,
+        }],
+    })).toBeFalsy();
+});
+
+test('isNewerTag should return true when newer version doesnt match the exclude regex', () => {
+    expect(Docker.__get__('isNewerTag')({ ...sampleSemver, excludeTags: '^v[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, {
+        name: '7.8.9',
+        last_updated: '2019-05-15T12:02:06.307Z',
+        images: [{
+            architecture: 'arch',
+            os: 'os',
+            size: 10,
+        }],
+    })).toBeTruthy();
+});
+
+test('isNewerTag should return false when newer version and match the exclude regex', () => {
+    expect(Docker.__get__('isNewerTag')({ ...sampleSemver, excludeTags: '^[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, {
+        name: '7.8.9',
+        last_updated: '2019-05-15T12:02:06.307Z',
+        images: [{
+            architecture: 'arch',
+            os: 'os',
+            size: 10,
+        }],
+    })).toBeFalsy();
+});
+
+test('normalizeImage should return hub when applicable', () => {
+    expect(Docker.__get__('normalizeImage')({})).toStrictEqual({
+        registry: 'hub',
+        registryUrl: 'https://hub.docker.com',
+        organization: 'library',
+    });
+});
+test('normalizeImage should throw when no matching provider found', () => {
+    expect(() => Docker.__get__('normalizeImage')({
+        registryUrl: 'unknown',
+    })).toThrow('No Registry Provider found for image {"registryUrl":"unknown"}');
+});
+
 test('findNewVersion should return new image when found', () => {
     const foundVersion = {
         name: '7.8.9',
@@ -173,4 +234,75 @@ test('mapContainerToImage should map a container definition to an image definiti
         includeTags: undefined,
         excludeTags: undefined,
     });
+});
+
+test('watchImage should return new image when found', () => {
+    docker.configuration = {};
+    const foundVersion = {
+        name: '7.8.9',
+        last_updated: '2019-05-25T12:02:06.307Z',
+        images: [{
+            architecture: 'arch',
+            os: 'os',
+            size: 10,
+        }],
+    };
+    rp.mockImplementation(() => ({
+        results: [foundVersion],
+    }));
+    expect(docker.watchImage(sampleSemver)).resolves.toMatchObject({
+        result: {
+            newVersion: foundVersion.name,
+            newVersionDate: foundVersion.last_updated,
+        },
+    });
+});
+
+test('watchImage should return no result when no image found', () => {
+    docker.configuration = {};
+    rp.mockImplementation(() => ({
+        results: [],
+    }));
+    expect(docker.watchImage(sampleSemver)).resolves.toMatchObject({
+        result: undefined,
+    });
+});
+
+test('getImages should return a list of images found by the docker socket', () => {
+    const image1 = {
+        data: {
+            Image: 'image',
+            Architecture: 'arch',
+            Os: 'os',
+            Size: '10',
+            Created: '2019-05-20T12:02:06.307Z',
+            Labels: {},
+        },
+    };
+    docker.dockerApi = {
+        container: {
+            list: () => ([image1]),
+        },
+        image: {
+            get: () => ({
+                status: () => (image1),
+            }),
+        },
+    };
+
+    docker.configuration = {
+        watchbydefault: true,
+    };
+    expect(docker.watch()).resolves.toMatchObject([{
+        registry: 'hub',
+        registryUrl: 'https://hub.docker.com',
+        organization: 'library',
+        image: 'image',
+        version: 'latest',
+        versionDate: '2019-05-20T12:02:06.307Z',
+        architecture: 'arch',
+        os: 'os',
+        size: '10',
+        isSemver: false,
+    }]);
 });

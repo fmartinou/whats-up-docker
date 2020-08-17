@@ -1,20 +1,22 @@
 <h1 class="title">Triggers</h1>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Name</th>
-      <th>Configuration</th>
-    </tr>
-  </thead>
-  <tbody>
-      <% triggers.forEach((trigger) => { %>
+<div class="table-container">
+    <table class="table is-narrow ">
+        <thead>
         <tr>
-          <td><%= trigger.type %></td>
-          <td><%= trigger.name %></td>
-          <td><%= JSON.stringify(trigger.configuration) %></td>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Configuration</th>
         </tr>
-      <% }); %>
-  </tbody>
-</table>
+        </thead>
+        <tbody>
+        <% triggers.forEach((trigger) => { %>
+            <tr>
+                <td><%= trigger.type %></td>
+                <td><%= trigger.name %></td>
+                <td><%= JSON.stringify(trigger.configuration) %></td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>

@@ -5,11 +5,11 @@ const dockerHub = require('./dockerHub');
 jest.mock('request-promise-native');
 
 test('match should return true when no registry on the image', () => {
-    expect(dockerHub.match({})).toBe(true);
+    expect(dockerHub.match({})).toBeTruthy();
 });
 
 test('match should return false when registry on the image', () => {
-    expect(dockerHub.match({ registryUrl: 'registry' })).toBe(false);
+    expect(dockerHub.match({ registryUrl: 'registry' })).toBeFalsy();
 });
 
 test('normalizeImage should keep organization when defined', () => {

@@ -10,7 +10,7 @@ Feature: WUD Watcher API Exposure
     And response body path $[0].name should be local
     And response body path $[0].configuration.socket should be /var/run/docker.sock
     And response body path $[0].configuration.cron should be 0 * * * *
-    And response body path $[0].configuration.watchbydefault should be true
+    And response body path $[0].configuration.watchbydefault should be false
 
   Scenario: WUD must allow to get specific Watcher state
     When I GET /api/watchers/docker.local
@@ -21,4 +21,4 @@ Feature: WUD Watcher API Exposure
     And response body path $.name should be local
     And response body path $.configuration.socket should be /var/run/docker.sock
     And response body path $.configuration.cron should be 0 * * * *
-    And response body path $.configuration.watchbydefault should be true
+    And response body path $.configuration.watchbydefault should be false

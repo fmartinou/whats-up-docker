@@ -1,20 +1,23 @@
 <h1 class="title">Watchers</h1>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Name</th>
-      <th>Configuration</th>
-    </tr>
-  </thead>
-  <tbody>
-      <% watchers.forEach((watcher) => { %>
+<div class="table-container">
+    <table class="table is-narrow ">
+
+        <thead>
         <tr>
-          <td><%= watcher.type %></td>
-          <td><%= watcher.name %></td>
-          <td><%= JSON.stringify(watcher.configuration) %></td>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Configuration</th>
         </tr>
-      <% }); %>
-  </tbody>
-</table>
+        </thead>
+        <tbody>
+        <% watchers.forEach((watcher) => { %>
+            <tr>
+                <td><%= watcher.type %></td>
+                <td><%= watcher.name %></td>
+                <td><%= JSON.stringify(watcher.configuration) %></td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>

@@ -94,7 +94,7 @@ class Watcher extends Component {
      * Find a new version of an image.
      */
     /* eslint-disable-next-line */
-    async findNewVersion(image) {
+    async watchImage(image) {
         // do nothing by default
     }
 }

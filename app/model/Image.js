@@ -6,6 +6,7 @@ const Result = require('./Result');
 class Image {
     constructor({
         id,
+        watcher,
         registry,
         registryUrl,
         organization,
@@ -23,6 +24,7 @@ class Image {
         updated,
     }) {
         this.id = id;
+        this.watcher = watcher;
         this.registry = registry;
         this.registryUrl = registryUrl;
         this.organization = organization;

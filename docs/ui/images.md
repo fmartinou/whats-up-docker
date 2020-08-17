@@ -1,5 +1,5 @@
 ## Images
 
-This view list  all the watched images.
+This view lists all the watched images and allow to trigger searches for updates.
 
 ![image](./images.png)

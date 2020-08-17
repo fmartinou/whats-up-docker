@@ -29,7 +29,7 @@ before_install:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 
-script:
+install:
 
   # Install npm dependencies
   - npm ci
@@ -37,22 +37,30 @@ script:
   # Run Linter
   - npm run lint
 
-  # Run Unit tests
-  - npm test
-
-  # Report to Code Climate
-  - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT;
-
   # Build wud docker image
   - docker build -t wud .
 
+script:
+
+  # Run Unit tests
+  - npm test
+
+  # Run older nginx for tests
+  - docker run -d --name nginx --label "wud.watch=true" --label "wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$" nginx:1.10-alpine
+
+  # Run older traefik for tests (should not be detected)
+  - docker run -d --name traefik traefik:2.0.0
+
   # Run wud docker image
-  - docker run -d --name wud -p 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -e WUD_TRIGGER_MOCK_EXAMPLE_MOCK=mock wud
+  - docker run -d --name wud --publish 3000:3000 --volume /var/run/docker.sock:/var/run/docker.sock --env WUD_TRIGGER_MOCK_EXAMPLE_MOCK=mock --env WUD_WATCHER_DOCKER_LOCAL_WATCHBYDEFAULT=false wud
 
   # Run E2E Tests
   - npm run cucumber
 
-after_script:
+  # Report to Code Climate
+  - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT;
+
+after_success:
 
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker version

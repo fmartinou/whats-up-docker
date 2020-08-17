@@ -2,7 +2,10 @@ version: '3'
 
 services:
 
-    traefik:
-        image: traefik:v2.2.7
+    nginx:
+        image: nginx:1.10-alpine
         labels:
-            - 'wud.tag.include=^v[0-9]\d*\.[0-9]\d*\.[0-9]\d*$$'
+            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
+            - 'wud.watch=true'
+    traefik:
+        image: traefik:2.0.0

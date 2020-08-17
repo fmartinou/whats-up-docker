@@ -54,7 +54,7 @@ function isNewerTag(image, tag) {
     if (image.excludeTags) {
         const excludeTagsRegex = new RegExp(image.excludeTags);
         const excludeTagsMatch = excludeTagsRegex.test(tag.name);
-        if (!excludeTagsMatch) {
+        if (excludeTagsMatch) {
             return false;
         }
     }
@@ -139,15 +139,15 @@ class Docker extends Watcher {
             const key = `${image.organization}_${image.image}_${image.version}`;
             images[key] = image;
         });
-        return Promise.all(Object.values(images).map((image) => this.processImage(image)));
+        return Promise.all(Object.values(images).map((image) => this.watchImage(image)));
     }
 
     /**
-     * Process an Image.
+     * Watch an Image.
      * @param image
      * @returns {Promise<*>}
      */
-    async processImage(image) {
+    async watchImage(image) {
         const imageWithResult = image;
         let token;
         log.debug(`Check ${image.registryUrl}/${image.organization}/${image.image}:${image.version}`);
@@ -255,6 +255,7 @@ class Docker extends Watcher {
         const parsedVersion = semver.coerce(version);
         const isSemver = parsedVersion !== null && parsedVersion !== undefined;
         return normalizeImage(new Image({
+            watcher: this.getId(),
             registryUrl: parsedImage.registry,
             organization: parsedImage.namespace,
             image: parsedImage.repository,

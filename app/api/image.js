@@ -1,6 +1,7 @@
 const express = require('express');
 const nocache = require('nocache');
 const store = require('../store');
+const registry = require('../registry');
 
 const router = express.Router();
 
@@ -54,6 +55,31 @@ function deleteImage(req, res) {
     }
 }
 
+async function watchImage(req, res) {
+    const { id } = req.params;
+    const image = store.getImage(id);
+    if (image) {
+        const watcher = registry.watchers[image.watcher];
+        if (!watcher) {
+            res.status(500).json({
+                error: `No provider found for image ${id} and provider ${image.watcher}`,
+            });
+        } else {
+            try {
+                // Run watchImage from the Provider
+                const imageWithResult = await watcher.watchImage(image);
+                res.status(200).json(imageWithResult);
+            } catch (e) {
+                res.status(500).json({
+                    error: `Error when watching image ${id} (${e.message})`,
+                });
+            }
+        }
+    } else {
+        res.sendStatus(404);
+    }
+}
+
 /**
  * Init Router.
  * @returns {*}
@@ -63,6 +89,7 @@ function init() {
     router.get('/', getImages);
     router.get('/:id', getImage);
     router.delete('/:id', deleteImage);
+    router.post('/:id/watch', watchImage);
     return router;
 }
 
