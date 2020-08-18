@@ -1,6 +1,6 @@
 # Changelog
 
-### x.y.z
+### 2.2.0
 - :star: Add ability to trigger individual searches (API & UI support)
 
 ### 2.1.0
