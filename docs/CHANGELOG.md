@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.2.1
+- :fire: Fix some documentation typos
+
 ### 2.2.0
 - :star: Add ability to trigger individual searches (API & UI support)
 

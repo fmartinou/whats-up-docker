@@ -6,7 +6,7 @@
     - [Kafka](triggers/kafka/)
     - [Mqtt](triggers/mqtt/)
     - [Slack](triggers/slack/)
-    - [Mock](triggers/smtp/)
+    - [Smtp](triggers/smtp/)
 
 - [**Watchers**](watchers/)
     - [Docker](watchers/docker/)

@@ -1,5 +1,5 @@
 ## Watchers
 
-This view list  all the configured watchers.
+This view lists all the configured watchers.
 
 ![image](./watchers.png)

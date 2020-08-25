@@ -25,4 +25,4 @@ You can now watch the logs to check if everything is working as expected.
 ```
 
 Everything ok?  
-It's time to [add some triggers](/configuration/triggers/).
+It's time to [add some triggers](/triggers/).

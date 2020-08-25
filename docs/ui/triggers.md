@@ -1,5 +1,5 @@
 ## Triggers
 
-This view list  all the configured triggers.
+This view lists all the configured triggers.
 
 ![image](./triggers.png)

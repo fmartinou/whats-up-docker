@@ -1,4 +1,4 @@
-## Mock
+## Smtp
 
 The ```smtp``` trigger lets you send emails with smtp.
 
