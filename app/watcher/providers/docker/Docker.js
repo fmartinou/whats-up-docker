@@ -104,7 +104,7 @@ class Docker extends Watcher {
             registries: joi.object().keys({
                 hub: joi.object().keys({
                     auth: joi.object().keys({
-                        login: joi.string().required(),
+                        login: joi.string(),
                         password: joi.string().required(),
                     }),
                 }),

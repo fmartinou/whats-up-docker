@@ -1,5 +1,8 @@
 # Changelog
 
+### x.y.z
+- :star: Add support for Docker Hub Base64 Credentials
+
 ### 2.2.1
 - :fire: Fix some documentation typos
 

@@ -6,10 +6,30 @@ const log = require('../../../../log');
  * @param {*} image
  */
 function match(image) {
-    if (!image.registryUrl) {
-        return true;
+    return !image.registryUrl;
+}
+
+/**
+ * Base64decode username:password.
+ * @param auth
+ * @returns {{password: string, login: string}}
+ */
+function base64Decode(auth) {
+    log.debug('No login provided => Try to Base64Decode the password');
+    try {
+        const authBuffer = Buffer.from(auth, 'base64');
+        const authAscii = authBuffer.toString('utf-8');
+        const authArray = authAscii.split(':');
+        if (authArray.length !== 2) {
+            throw new Error('The Base64 decoded auth does not match with username:password pattern');
+        }
+        return {
+            login: authArray[0],
+            password: authArray[1],
+        };
+    } catch (e) {
+        throw new Error(`Error when trying to get the login/password from the Base64 String (${e.message})`);
     }
-    return false;
 }
 
 /**
@@ -29,7 +49,14 @@ function normalizeImage(image) {
  * @param {*} auth
  */
 async function authenticate({ login, password }) {
-    log.debug(`Authenticate on Docker Hub with login=${login} and password=****`);
+    let loginToSend = login;
+    let passwordToSend = password;
+    if (!login) {
+        const loginPassword = base64Decode(password);
+        loginToSend = loginPassword.login;
+        passwordToSend = loginPassword.password;
+    }
+    log.debug(`Authenticate on Docker Hub with login=${loginToSend} and password=****`);
     const response = await rp({
         method: 'POST',
         uri: 'https://hub.docker.com/v2/users/login',
@@ -37,8 +64,8 @@ async function authenticate({ login, password }) {
             Accept: 'application/json',
         },
         body: {
-            username: login,
-            password,
+            username: loginToSend,
+            password: passwordToSend,
         },
         json: true,
     });
@@ -47,6 +74,7 @@ async function authenticate({ login, password }) {
 
 module.exports = {
     match,
+    base64Decode,
     normalizeImage,
     authenticate,
 };

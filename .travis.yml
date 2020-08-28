@@ -54,6 +54,9 @@ script:
   # Run wud docker image
   - docker run -d --name wud --publish 3000:3000 --volume /var/run/docker.sock:/var/run/docker.sock --env WUD_TRIGGER_MOCK_EXAMPLE_MOCK=mock --env WUD_WATCHER_DOCKER_LOCAL_WATCHBYDEFAULT=false wud
 
+  # Wait a little bit before to run the tests
+  - sleep 5
+
   # Run E2E Tests
   - npm run cucumber
 
