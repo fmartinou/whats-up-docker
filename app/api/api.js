@@ -2,6 +2,7 @@ const express = require('express');
 const imageRouter = require('./image');
 const watcherRouter = require('./watcher');
 const triggerRouter = require('./trigger');
+const registryRouter = require('./registry');
 const logRouter = require('./log');
 const storeRouter = require('./store');
 
@@ -26,6 +27,9 @@ function init() {
 
     // Mount watcher router
     router.use('/watchers', watcherRouter.init());
+
+    // Mount registry router
+    router.use('/registries', registryRouter.init());
 
     // All other API routes => 404
     router.get('/*', (req, res) => res.sendStatus(404));

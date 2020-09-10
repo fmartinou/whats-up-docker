@@ -9,7 +9,6 @@ class Image {
         watcher,
         registry,
         registryUrl,
-        organization,
         image,
         version,
         isSemver,
@@ -27,7 +26,6 @@ class Image {
         this.watcher = watcher;
         this.registry = registry;
         this.registryUrl = registryUrl;
-        this.organization = organization;
         this.image = image;
         this.version = version;
         this.versionDate = versionDate;
@@ -55,7 +53,6 @@ class Image {
      */
     equals(other) {
         return this.registryUrl === other.registryUrl
-        && this.organization === other.organization
         && this.image === other.image
         && this.version === other.version;
     }

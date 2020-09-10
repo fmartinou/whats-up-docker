@@ -15,6 +15,9 @@ async function main() {
     // Register triggers
     registry.registerTriggers();
 
+    // Register registries
+    registry.registerRegistries();
+
     // Register watchers
     registry.registerWatchers();
 }

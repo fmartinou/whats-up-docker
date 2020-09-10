@@ -3,7 +3,7 @@
     "plugins": ["jest", "cucumber"],
     "rules": {
         "indent": ["error", 4],
-        "no-underscore-dangle": ["error", { "allow":  ["__get__"]}],
+        "no-underscore-dangle": ["error", { "allow":  ["__get__", "__set__"]}],
         "import/no-extraneous-dependencies": ["error", {"devDependencies": ["e2e/**/*.js"]}]
     },
     "env": {

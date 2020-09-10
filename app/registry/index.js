@@ -1,9 +1,20 @@
 const capitalize = require('capitalize');
 const log = require('../log');
-const { getWatcherConfigurations, getTriggerConfigurations } = require('../configuration');
+const {
+    getWatcherConfigurations,
+    getTriggerConfigurations,
+    getRegistryConfigurations,
+} = require('../configuration');
 
-const watchers = {};
-const triggers = {};
+const state = {
+    triggers: {},
+    watchers: {},
+    registries: {},
+};
+
+function getState() {
+    return state;
+}
 
 /**
  * Register a component.
@@ -11,8 +22,7 @@ const triggers = {};
  * @param {*} name
  * @param {*} configuration
  */
-function registerComponent(provider, name, configuration, path, state) {
-    const stateToUpdate = state;
+function registerComponent(kind, provider, name, configuration, path) {
     const providerLowercase = provider.toLowerCase();
     const nameLowercase = name.toLowerCase();
 
@@ -22,13 +32,13 @@ function registerComponent(provider, name, configuration, path, state) {
         /* eslint-disable-next-line */
         Component = require(componentFile);
     } catch (e) {
-        log.error(`Component ${providerLowercase} does not exist`);
+        log.error(`Component ${providerLowercase} does not exist (${e.message})`);
     }
     if (Component) {
-        log.info(`Register component ${nameLowercase} of type ${providerLowercase} with configuration ${JSON.stringify(configuration)}`);
+        log.info(`Register ${kind} ${nameLowercase} of type ${providerLowercase} with configuration ${JSON.stringify(configuration)}`);
         const component = new Component();
         component.register(providerLowercase, nameLowercase, configuration);
-        stateToUpdate[component.getId()] = component;
+        state[kind][component.getId()] = component;
         return component;
     }
     return undefined;
@@ -40,7 +50,7 @@ function registerComponent(provider, name, configuration, path, state) {
  * @param path
  * @returns {*[]}
  */
-function registerComponents(configurations, path, state) {
+function registerComponents(kind, configurations, path) {
     if (configurations) {
         const providers = Object.keys(configurations);
         return providers.map((provider) => {
@@ -48,27 +58,29 @@ function registerComponents(configurations, path, state) {
             const providerConfigurations = configurations[provider];
             return Object.keys(providerConfigurations)
                 .map((configurationName) => registerComponent(
+                    kind,
                     provider,
                     configurationName,
                     providerConfigurations[configurationName],
                     path,
-                    state,
                 ));
         }).flat();
     }
     return [];
 }
 
-/**
- * Register inputs.
- */
 function registerWatchers() {
     const configurations = getWatcherConfigurations();
-    if (configurations) {
-        return registerComponents(configurations, '../watcher/providers', watchers);
+
+    Object.keys(configurations).forEach((watcherKey) => {
+        const watcherKeyNormalize = watcherKey.toLowerCase();
+        registerComponent('watchers', 'docker', watcherKeyNormalize, configurations[watcherKeyNormalize], '../watchers/providers');
+    });
+
+    if (Object.keys(configurations).length === 0) {
+        log.info('No Watcher configured => Init a default one (Docker with default options)');
+        registerComponent('watchers', 'docker', 'local', {}, '../watchers/providers');
     }
-    log.info('No Watcher found => Init a default Docker one');
-    return [registerComponent('docker', 'local', {}, '../watcher/providers', watchers)];
 }
 
 /**
@@ -76,12 +88,24 @@ function registerWatchers() {
  */
 function registerTriggers() {
     const configurations = getTriggerConfigurations();
-    return registerComponents(configurations, '../trigger/providers', triggers);
+    registerComponents('triggers', configurations, '../triggers/providers');
+}
+
+function registerRegistries() {
+    const configurations = getRegistryConfigurations();
+    Object.keys(configurations).forEach((registryKey) => {
+        const registryKeyNormalize = registryKey.toLowerCase();
+        registerComponent('registries', registryKeyNormalize, registryKeyNormalize, configurations[registryKeyNormalize], '../registries/providers');
+    });
+    if (Object.keys(configurations).length === 0) {
+        log.info('No Registry configured => Init a default one (Docker Hub with default options)');
+        registerComponent('registries', 'hub', 'hub', {}, '../registries/providers');
+    }
 }
 
 module.exports = {
     registerWatchers,
     registerTriggers,
-    triggers,
-    watchers,
+    registerRegistries,
+    getState,
 };

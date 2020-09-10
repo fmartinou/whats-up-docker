@@ -3,6 +3,7 @@ const moment = require('moment');
 const imageRouter = require('./image');
 const watcherRouter = require('./watcher');
 const triggerRouter = require('./trigger');
+const registryRouter = require('./registry');
 
 /**
  * Init the UI router.
@@ -23,14 +24,21 @@ function init() {
 
     router.get('/watchers', (req, res) => {
         res.render('watchers', {
-            watchers: watcherRouter.getAllWatchers(req.query),
+            watchers: watcherRouter.getAllWatchers(),
             moment,
         });
     });
 
     router.get('/triggers', (req, res) => {
         res.render('triggers', {
-            triggers: triggerRouter.getAllTriggers(req.query),
+            triggers: triggerRouter.getAllTriggers(),
+            moment,
+        });
+    });
+
+    router.get('/registries', (req, res) => {
+        res.render('registries', {
+            registries: registryRouter.getAllRegistries(),
             moment,
         });
     });

@@ -6,6 +6,14 @@ const registry = require('../registry');
 const router = express.Router();
 
 /**
+ * Return registered watchers.
+ * @returns {{id: string}[]}
+ */
+function getWatchers() {
+    return registry.getState().watchers;
+}
+
+/**
  * Get images from store.
  * @param query
  * @returns {*}
@@ -59,7 +67,7 @@ async function watchImage(req, res) {
     const { id } = req.params;
     const image = store.getImage(id);
     if (image) {
-        const watcher = registry.watchers[image.watcher];
+        const watcher = getWatchers()[image.watcher];
         if (!watcher) {
             res.status(500).json({
                 error: `No provider found for image ${id} and provider ${image.watcher}`,

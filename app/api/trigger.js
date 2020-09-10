@@ -1,12 +1,19 @@
-const { triggers } = require('../registry');
+const registry = require('../registry');
 const component = require('./component');
 
+/**
+ * Return registered triggers.
+ * @returns {{id: string}[]}
+ */
+function getTriggers() {
+    return registry.getState().triggers;
+}
 /**
  * Init Router.
  * @returns {*}
  */
 function init() {
-    return component.init(triggers);
+    return component.init(getTriggers);
 }
 
 /**
@@ -14,7 +21,7 @@ function init() {
  * @returns {{id: string}[]}
  */
 function getAllTriggers() {
-    return component.mapComponentsToList(triggers);
+    return component.mapComponentsToList(getTriggers);
 }
 
 module.exports = {

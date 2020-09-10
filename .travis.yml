@@ -17,7 +17,6 @@ before_install:
   - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-  #- docker run --rm --privileged multiarch/qemu-user-static:register --reset
   - docker run --rm --privileged docker/binfmt:820fdd95a9972a5308930a2bdfb8573dd4447ad3
   - cat /proc/sys/fs/binfmt_misc/qemu-aarch64
 
@@ -45,17 +44,40 @@ script:
   # Run Unit tests
   - npm test
 
-  # Run older nginx for tests
-  - docker run -d --name nginx --label "wud.watch=true" --label "wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$" nginx:1.10-alpine
+  # Pull nginx as a test image
+  - docker pull nginx:1.10-alpine
 
-  # Run older traefik for tests (should not be detected)
-  - docker run -d --name traefik traefik:2.0.0
+  # Tag nginx as if it was coming from private Hub, ECR...
+
+  - docker tag nginx:1.10-alpine fmartinou/test:1.0.0
+  - docker tag nginx:1.10-alpine 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
+  - docker tag nginx:1.10-alpine 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/test:1.0.0
+  - docker tag nginx:1.10-alpine 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/sub/test:1.0.0
+
+  # Run containers for tests
+  - docker run -d --name hub_library_nginx --label "wud.watch=true" --label "wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$" nginx:1.10-alpine
+  - docker run -d --name hub_private       --label "wud.watch=true" fmartinou/test:1.0.0
+  - docker run -d --name ecr_test          --label "wud.watch=true" 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
+  - docker run -d --name ecr_sub_test      --label "wud.watch=true" 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/test:1.0.0
+  - docker run -d --name ecr_sub_sub_test  --label "wud.watch=true" 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/sub/test:1.0.0
 
   # Run wud docker image
-  - docker run -d --name wud --publish 3000:3000 --volume /var/run/docker.sock:/var/run/docker.sock --env WUD_TRIGGER_MOCK_EXAMPLE_MOCK=mock --env WUD_WATCHER_DOCKER_LOCAL_WATCHBYDEFAULT=false wud
+  - >
+    docker run -d
+    --name wud
+    --publish 3000:3000
+    --volume /var/run/docker.sock:/var/run/docker.sock
+    --env WUD_TRIGGER_MOCK_EXAMPLE_MOCK=mock
+    --env WUD_WATCHER_LOCAL_WATCHBYDEFAULT=false
+    --env WUD_REGISTRY_HUB_LOGIN="$DOCKER_USERNAME"
+    --env WUD_REGISTRY_HUB_TOKEN="$DOCKER_PASSWORD"
+    --env WUD_REGISTRY_ECR_ACCESSKEYID="$AWS_ACCESSKEY_ID"
+    --env WUD_REGISTRY_ECR_SECRETACCESSKEY="$AWS_SECRET_ACCESSKEY"
+    --env WUD_REGISTRY_ECR_REGION=eu-west-1
+    wud
 
-  # Wait a little bit before to run the tests
-  - sleep 5
+  # Give wud a little time to fetch all available updates
+  - sleep 10
 
   # Run E2E Tests
   - npm run cucumber

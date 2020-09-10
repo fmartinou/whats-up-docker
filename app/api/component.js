@@ -12,20 +12,24 @@ const nocache = require('nocache');
 function mapComponentToItem(key, component) {
     return {
         id: key,
-        ...component,
+        type: component.type,
+        name: component.name,
+        configuration: component.maskConfiguration(),
     };
 }
 
 /**
  * Return a list instead of a map.
- * @param list
+ * @param listFunction
  * @returns {{id: string}[]}
  */
-function mapComponentsToList(list) {
-    return Object.keys(list).map((key) => mapComponentToItem(key, list[key])).sort(byValues({
-        type: byString(),
-        name: byString(),
-    }));
+function mapComponentsToList(listFunction) {
+    return Object.keys(listFunction())
+        .map((key) => mapComponentToItem(key, listFunction()[key]))
+        .sort(byValues({
+            type: byString(),
+            name: byString(),
+        }));
 }
 
 /**
@@ -33,19 +37,19 @@ function mapComponentsToList(list) {
  * @param req
  * @param res
  */
-function getAll(req, res, list) {
-    res.status(200).json(mapComponentsToList(list));
+function getAll(req, res, listFunction) {
+    res.status(200).json(mapComponentsToList(listFunction));
 }
 
 /**
- * Get a comopnent by id.
+ * Get a component by id.
  * @param req
  * @param res
- * @param list
+ * @param listFunction
  */
-function getById(req, res, list) {
+function getById(req, res, listFunction) {
     const { id } = req.params;
-    const component = list[id];
+    const component = listFunction()[id];
     if (component) {
         res.status(200).json(mapComponentToItem(id, component));
     } else {
@@ -55,14 +59,14 @@ function getById(req, res, list) {
 
 /**
  * Init the component router.
- * @param list
+ * @param listFunction
  * @returns {*|Router}
  */
-function init(list) {
+function init(listFunction) {
     const router = express.Router();
     router.use(nocache());
-    router.get('/', (req, res) => getAll(req, res, list));
-    router.get('/:id', (req, res) => getById(req, res, list));
+    router.get('/', (req, res) => getAll(req, res, listFunction));
+    router.get('/:id', (req, res) => getById(req, res, listFunction));
     return router;
 }
 

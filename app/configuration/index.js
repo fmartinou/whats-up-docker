@@ -4,17 +4,25 @@ function getLogLevel() {
     return process.env.WUD_LOG_LEVEL || 'info';
 }
 /**
- * Get Input configurations.
+ * Get watcher configuration.
  */
 function getWatcherConfigurations() {
-    return envProp.get('wud.watcher');
+    return envProp.get('wud.watcher') || {};
 }
 
 /**
- * Get output configurations.
+ * Get trigger configurations.
  */
 function getTriggerConfigurations() {
-    return envProp.get('wud.trigger');
+    return envProp.get('wud.trigger') || {};
+}
+
+/**
+ * Get registry configurations.
+ * @returns {*}
+ */
+function getRegistryConfigurations() {
+    return envProp.get('wud.registry') || {};
 }
 
 /**
@@ -36,5 +44,6 @@ module.exports = {
     getStoreConfiguration,
     getWatcherConfigurations,
     getTriggerConfigurations,
+    getRegistryConfigurations,
     getApiConfiguration,
 };

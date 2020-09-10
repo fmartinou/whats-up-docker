@@ -47,12 +47,12 @@ class Component {
         if (schemaValidated.error) {
             throw schemaValidated.error;
         }
-        return schemaValidated.value;
+        return schemaValidated.value ? schemaValidated.value : {};
     }
 
     /**
      * Get the component configuration schema.
-     * Can be overriden by the component implementation class
+     * Can be overridden by the component implementation class
      * @returns {*}
      */
     getConfigurationSchema() {
@@ -61,10 +61,18 @@ class Component {
 
     /**
      * Init the component.
-     * Can be overriden by the component implementation class
+     * Can be overridden by the component implementation class
      */
     /* eslint-disable-next-line */
     init() {}
+
+    /**
+     * Sanitize sensitive data
+     * @returns {*}
+     */
+    maskConfiguration() {
+        return this.configuration;
+    }
 
     /**
      * Get Component ID.
@@ -72,6 +80,24 @@ class Component {
      */
     getId() {
         return `${this.type}.${this.name}`;
+    }
+
+    /**
+     * Mask a String
+     * @param value the value to mask
+     * @param nb the number of chars to keep start/end
+     * @param char the replacement char
+     * @returns {string|undefined} the masked string
+     */
+    static mask(value, nb = 1, char = '*') {
+        if (!value) {
+            return undefined;
+        }
+        if (value.length < (2 * nb)) {
+            return char.repeat(value.length);
+        }
+        return `${value.substring(0, nb)}${char.repeat(Math
+            .max(0, value.length - (nb * 2)))}${value.substring(value.length - nb, value.length)}`;
     }
 }
 

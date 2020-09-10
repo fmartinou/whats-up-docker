@@ -10,7 +10,6 @@
         <thead>
         <tr>
             <th>Registry</th>
-            <th>Organization</th>
             <th>Image</th>
             <th>Version</th>
             <th class="nowrap">Version date</th>
@@ -24,7 +23,6 @@
             <th class="nowrap">Exclude Tags
             </th>
             <th class="nowrap">New version</th>
-            <th class="nowrap">New version date</th>
             <th>Created</th>
             <th>Updated</th>
             <th></th>
@@ -48,7 +46,6 @@
                     } %>
                 </span>
                 </td>
-                <td><%= image.organization %></td>
                 <td><%= image.image %></td>
                 <td><span class="tag is-medium"><%= image.version %></span></td>
                 <td class="nowrap">
@@ -80,9 +77,6 @@
                     <% } %>
 
                 </td>
-                <td class="nowrap" id="td-new-version-date-<%= image.id %>">
-                    <%= image.result ? moment(image.result.newVersionDate).format('YYYY MM DD HH:MM:SS') : '' %>
-                </td>
                 <td class="nowrap">
                     <%= moment(image.created).format('YYYY MM DD HH:MM:SS') %>
                 </td>
@@ -112,9 +106,6 @@
 
         const newVersion = image.result && image.result.newVersion ? `<span class="tag is-primary is-medium">${image.result.newVersion}</span>` : '';
         document.getElementById(`td-new-version-${image.id}`).innerHTML = newVersion;
-
-        let newVersionDate = image.result && image.result.newVersionDate ? moment(image.result.newVersionDate).format('YYYY MM DD HH:MM:SS') : '';
-        document.getElementById(`td-new-version-date-${image.id}`).innerHTML = newVersionDate;
     }
 
     /**

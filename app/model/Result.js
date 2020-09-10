@@ -2,9 +2,8 @@
  * Result model Class.
  */
 class Result {
-    constructor({ newVersion, newVersionDate }) {
+    constructor({ newVersion }) {
         this.newVersion = newVersion;
-        this.newVersionDate = newVersionDate;
     }
 
     /**
@@ -13,8 +12,7 @@ class Result {
      * @returns {boolean|boolean}
      */
     equals(other) {
-        return this.newVersion === other.newVersion
-        && this.newVersionDate === other.newVersionDate;
+        return this.newVersion === other.newVersion;
     }
 }
 

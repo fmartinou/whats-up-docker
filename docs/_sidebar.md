@@ -1,5 +1,9 @@
 - [**Quick start**](quick-start)
 
+- [**Registries**](registries/)
+    - [Ecr](registries/ecr/)
+    - [Hub](registries/hub/)
+
 - [**Triggers**](triggers/)
     - [Http](triggers/http/)
     - [Ifttt](triggers/ifttt/)
@@ -15,6 +19,7 @@
 
 - [**UI**](ui/)
     - [Images](ui/images)
+    - [Registries](ui/registries)
     - [Triggers](ui/triggers)
     - [Watchers](ui/watchers)
 
@@ -25,6 +30,10 @@
         - [GET /api/images/:id](api/image/get-image)
         - [POST /api/images/:id/watch](api/image/watch-image)
         - [DELETE /api/images/:id](api/image/delete-image)
+
+    - [Registries](api/registry/)
+        - [GET /api/registries](api/registry/get-registries)
+        - [GET /api/registry/:id](api/registry/get-registry)
 
     - [Triggers](api/trigger/)
         - [GET /api/triggers](api/trigger/get-triggers)

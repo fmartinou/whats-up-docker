@@ -62,16 +62,14 @@ async function init() {
 }
 
 /**
- * Find unique Image by registry + organization + image.
+ * Find unique Image by registry + image.
  * @param registry
- * @param organization
  * @param image
  * @returns {null|Image}
  */
-function findImage({ registryUrl, organization, image }) {
+function findImage({ registryUrl, image }) {
     const imageInDb = images.findOne({
         'data.registryUrl': registryUrl,
-        'data.organization': organization,
         'data.image': image,
     });
     if (imageInDb !== null) {
@@ -112,7 +110,6 @@ function updateImage(image) {
     // Remove
     images.chain().find({
         'data.registryUrl': image.registryUrl,
-        'data.organization': image.organization,
         'data.image': image.image,
     }).remove();
 
@@ -135,7 +132,6 @@ function getImages(query = {}) {
     const imageList = images.find(filter).map((item) => new Image(item.data));
     return imageList.sort(byValues({
         registry: byString(),
-        organization: byString(),
         image: byString(),
     }));
 }

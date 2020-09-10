@@ -1,12 +1,20 @@
-const { watchers } = require('../registry');
+const registry = require('../registry');
 const component = require('./component');
+
+/**
+ * Return registered watchers.
+ * @returns {{id: string}[]}
+ */
+function getWatchers() {
+    return registry.getState().watchers;
+}
 
 /**
  * Init Router.
  * @returns {*}
  */
 function init() {
-    return component.init(watchers);
+    return component.init(getWatchers);
 }
 
 /**
@@ -14,7 +22,7 @@ function init() {
  * @returns {{id: string}[]}
  */
 function getAllWatchers() {
-    return component.mapComponentsToList(watchers);
+    return component.mapComponentsToList(getWatchers);
 }
 
 module.exports = {

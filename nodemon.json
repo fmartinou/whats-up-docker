@@ -2,5 +2,11 @@
   "env": {
     "WUD_STORE_PATH": ".store",
     "WUD_TRIGGER_MOCK_EXAMPLE_MOCK": "mock",
+    "WUD_LOG_LEVEL": "debug",
+    "WUD_REGISTRY_HUB_LOGIN": "fmartinou",
+    "WUD_REGISTRY_HUB_TOKEN": "xxx",
+    "WUD_REGISTRY_ECR_ACCESSKEYID": "xxx",
+    "WUD_REGISTRY_ECR_SECRETACCESSKEY": "xxx",
+    "WUD_REGISTRY_ECR_REGION": "eu-west-1"
   }
 }
