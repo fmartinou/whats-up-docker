@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.3.1
+- :fire: Fix missing Http Trigger
+
 ### 2.3.0
 - :star: Add support for Docker Hub Base64 Credentials
 
