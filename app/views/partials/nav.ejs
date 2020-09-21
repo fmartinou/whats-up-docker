@@ -3,7 +3,7 @@
         <span class="navbar-item is-size-4">
             What's up Docker?
         </span>
-        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false">
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" onclick="toggleMenu()">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
@@ -27,3 +27,9 @@
         </div>
     </div>
 </nav>
+
+<script>
+    function toggleMenu() {
+        document.querySelector('.navbar-menu').classList.toggle('is-active');
+    }
+</script>

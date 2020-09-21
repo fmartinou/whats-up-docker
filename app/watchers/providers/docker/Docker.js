@@ -112,7 +112,10 @@ function normalizeImage(image) {
         .find((provider) => provider.match(image));
     if (!registryProvider) {
         log.warn(`No Registry Provider found for image ${JSON.stringify(image)}`);
-        return image;
+        return {
+            ...image,
+            registry: 'unknown',
+        };
     }
     return registryProvider.normalizeImage(image);
 }
@@ -250,12 +253,12 @@ class Docker extends Component {
             tagsResult.tags.reverse();
 
             // Get candidates (based on tag name)
-            const tagsCondidate = getTagsCandidate(image, tagsResult.tags);
+            const tagsCandidate = getTagsCandidate(image, tagsResult.tags);
 
             // Fetch tag manifests (arch, os...)
-            if (tagsCondidate && tagsCondidate.length > 0) {
+            if (tagsCandidate && tagsCandidate.length > 0) {
                 return new Result({
-                    newVersion: tagsCondidate[0],
+                    newVersion: tagsCandidate[0],
                 });
             }
             return undefined;

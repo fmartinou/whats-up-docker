@@ -44,14 +44,14 @@ test('validatedConfiguration should throw error when secretaccesskey is missing'
     }).toThrow('"region" is required');
 });
 
-test('match should return true when registryUrl is from aws', () => {
+test('match should return true when registryUrl is from ecr', () => {
     expect(ecr.match({
-        registryUrl: '123456789.dkr.ecr.eu-west-1.amazonaws.com/test:latest',
+        registryUrl: '123456789.dkr.ecr.eu-west-1.amazonaws.com',
     })).toBeTruthy();
 });
 
-test('match should return false when registryUrl is not from aws', () => {
+test('match should return false when registryUrl is not from ecr', () => {
     expect(ecr.match({
-        registryUrl: '123456789.dkr.ecr.eu-west-1.acme.com/test:latest',
+        registryUrl: '123456789.dkr.ecr.eu-west-1.acme.com',
     })).toBeFalsy();
 });

@@ -35,11 +35,13 @@ function registerComponent(kind, provider, name, configuration, path) {
         log.error(`Component ${providerLowercase} does not exist (${e.message})`);
     }
     if (Component) {
-        log.info(`Register ${kind} ${nameLowercase} of type ${providerLowercase} with configuration ${JSON.stringify(configuration)}`);
         const component = new Component();
-        component.register(providerLowercase, nameLowercase, configuration);
-        state[kind][component.getId()] = component;
-        return component;
+        const componentRegistered = component
+            .register(providerLowercase, nameLowercase, configuration);
+        if (componentRegistered) {
+            state[kind][component.getId()] = component;
+        }
+        return componentRegistered;
     }
     return undefined;
 }

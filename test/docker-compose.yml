@@ -8,29 +8,40 @@ services:
             - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
             - 'wud.watch=true'
 
+    hub_private:
+        image: fmartinou/test:1.0.0
+        labels:
+            - 'wud.watch=true'
+
+    traefik_ignore:
+        image: traefik:2.0.0
+
     ecr_test:
         image: 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
         labels:
-            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
             - 'wud.watch=true'
 
     ecr_sub_test:
         image: 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/test:1.0.0
         labels:
-            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
             - 'wud.watch=true'
 
     ecr_sub_sub_test:
         image: 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/sub/test:1.0.0
         labels:
-            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
             - 'wud.watch=true'
 
-    hub_private:
-        image: fmartinou/test:1.0.0
+    gcr_test:
+        image: gcr.io/wud-test/test:1.0.0
         labels:
-            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
             - 'wud.watch=true'
 
-    traefik_ignore:
-        image: traefik:2.0.0
+    gcr_sub_test:
+        image: gcr.io/wud-test/sub/test:1.0.0
+        labels:
+            - 'wud.watch=true'
+
+    gcr_sub_sub_test:
+        image: gcr.io/wud-test/sub/sub/test:1.0.0
+        labels:
+            - 'wud.watch=true'

@@ -2,6 +2,7 @@
 
 - [**Registries**](registries/)
     - [Ecr](registries/ecr/)
+    - [Gcr](registries/gcr/)
     - [Hub](registries/hub/)
 
 - [**Triggers**](triggers/)
@@ -13,9 +14,7 @@
     - [Smtp](triggers/smtp/)
 
 - [**Watchers**](watchers/)
-    - [Docker](watchers/docker/)
-        - [Docker Hub](watchers/docker/hub)
-        - [Supported labels](watchers/docker/labels)
+    - [Supported labels](watchers/labels)
 
 - [**UI**](ui/)
     - [Images](ui/images)

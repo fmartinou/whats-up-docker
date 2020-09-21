@@ -1,12 +1,11 @@
-const ECR = require('aws-sdk/clients/ecr');
+const rp = require('request-promise-native');
 const Registry = require('../../Registry');
 
-class Ecr extends Registry {
+class Gcr extends Registry {
     getConfigurationSchema() {
         return this.joi.object().keys({
-            accesskeyid: this.joi.string().required(),
-            secretaccesskey: this.joi.string().required(),
-            region: this.joi.string().required(),
+            clientemail: this.joi.string().required(),
+            privatekey: this.joi.string().required(),
         });
     }
 
@@ -17,8 +16,7 @@ class Ecr extends Registry {
     maskConfiguration() {
         return {
             ...this.configuration,
-            accesskeyid: Ecr.mask(this.configuration.accesskeyid),
-            secretaccesskey: Ecr.mask(this.configuration.secretaccesskey),
+            privatekey: Gcr.mask(this.configuration.privatekey),
         };
     }
 
@@ -29,7 +27,7 @@ class Ecr extends Registry {
      */
     // eslint-disable-next-line class-methods-use-this
     match(image) {
-        return /^.*\.dkr\.ecr\..*\.amazonaws\.com$/.test(image.registryUrl);
+        return /^.*\.?gcr.io$/.test(image.registryUrl);
     }
 
     /**
@@ -40,7 +38,7 @@ class Ecr extends Registry {
     // eslint-disable-next-line class-methods-use-this
     normalizeImage(image) {
         const imageNormalized = image;
-        imageNormalized.registry = 'ecr';
+        imageNormalized.registry = 'gcr';
         if (!imageNormalized.registryUrl.startsWith('https://')) {
             imageNormalized.registryUrl = `https://${imageNormalized.registryUrl}/v2`;
         }
@@ -48,19 +46,24 @@ class Ecr extends Registry {
     }
 
     async authenticate(image, requestOptions) {
-        const ecr = new ECR({
-            credentials: {
-                accessKeyId: this.configuration.accesskeyid,
-                secretAccessKey: this.configuration.secretaccesskey,
+        const request = {
+            method: 'GET',
+            uri: `https://gcr.io/v2/token?scope=repository:${image.image}:pull`,
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Basic ${Gcr.base64Encode('_json_key', JSON.stringify({
+                    client_email: this.configuration.clientemail,
+                    private_key: this.configuration.privatekey,
+                }))}`,
             },
-            region: this.configuration.region,
-        });
-        const authorizationToken = await ecr.getAuthorizationToken().promise();
-        const tokenValue = authorizationToken.authorizationData[0].authorizationToken;
+            json: true,
+        };
+
+        const response = await rp(request);
         const requestOptionsWithAuth = requestOptions;
-        requestOptionsWithAuth.headers.Authorization = `Basic ${tokenValue}`;
+        requestOptionsWithAuth.headers.Authorization = `Bearer ${response.token}`;
         return requestOptionsWithAuth;
     }
 }
 
-module.exports = Ecr;
+module.exports = Gcr;

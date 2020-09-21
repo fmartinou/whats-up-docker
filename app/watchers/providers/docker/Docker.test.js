@@ -2,6 +2,7 @@ const { ValidationError } = require('@hapi/joi');
 const Docker = require('./Docker');
 const Hub = require('../../../registries/providers/hub/Hub');
 const Ecr = require('../../../registries/providers/ecr/Ecr');
+const Gcr = require('../../../registries/providers/gcr/Gcr');
 
 const sampleSemver = require('../../samples/semver.json');
 const sampleCoercedSemver = require('../../samples/coercedSemver.json');
@@ -10,13 +11,14 @@ const sampleNotSemver = require('../../samples/notSemver.json');
 jest.mock('request-promise-native');
 
 const docker = new Docker();
-
 const hub = new Hub();
 const ecr = new Ecr();
+const gcr = new Gcr();
 
 Docker.__set__('getRegistries', () => ({
-    hub,
     ecr,
+    gcr,
+    hub,
 }));
 
 const configurationValid = {
@@ -98,15 +100,24 @@ test('normalizeImage should return hub when applicable', () => {
 
 test('normalizeImage should return ecr when applicable', () => {
     expect(Docker.__get__('normalizeImage')({
-        registryUrl: '123456789.dkr.ecr.eu-west-1.amazonaws.com/test:latest',
+        registryUrl: '123456789.dkr.ecr.eu-west-1.amazonaws.com',
     })).toStrictEqual({
         registry: 'ecr',
-        registryUrl: 'https://123456789.dkr.ecr.eu-west-1.amazonaws.com/test:latest/v2',
+        registryUrl: 'https://123456789.dkr.ecr.eu-west-1.amazonaws.com/v2',
+    });
+});
+
+test('normalizeImage should return gcr when applicable', () => {
+    expect(Docker.__get__('normalizeImage')({
+        registryUrl: 'us.gcr.io',
+    })).toStrictEqual({
+        registry: 'gcr',
+        registryUrl: 'https://us.gcr.io/v2',
     });
 });
 
 test('normalizeImage should return original image when no matching provider found', () => {
-    expect(Docker.__get__('normalizeImage')({ registryUrl: 'unknown' })).toEqual({ registryUrl: 'unknown' });
+    expect(Docker.__get__('normalizeImage')({ registryUrl: 'xxx' })).toEqual({ registryUrl: 'xxx', registry: 'unknown' });
 });
 
 test('findNewVersion should return new image when found', () => {

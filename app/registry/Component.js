@@ -23,15 +23,18 @@ class Component {
             this.type = type;
             this.name = name;
             this.configuration = this.validateConfiguration(configuration);
+            log.info(`Register component ${name} of type ${type} with configuration ${JSON.stringify(this.maskConfiguration(configuration))}`);
         } catch (e) {
             log.error(`Disable component ${name} of type ${type} because configuration is invalid (${e.message})`);
-            return;
+            return undefined;
         }
         try {
             this.init();
+            return this;
         } catch (e) {
             log.error(`Disable component ${name} of type ${type} (init failed)`);
             log.error(e);
+            return undefined;
         }
     }
 

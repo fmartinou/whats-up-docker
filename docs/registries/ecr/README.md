@@ -1,7 +1,7 @@
 ## ECR (Amazon Elastic Container Registry)
 ![logo](ecr.png)
 
-The ```ecr```registry lets you configure [ECR](https://aws.amazon.com/ecr/) integration so that WUD can find updates.
+The ```ecr```registry lets you configure [ECR](https://aws.amazon.com/ecr/) integration.
 
 ### Variables
 

@@ -14,7 +14,7 @@ To fine-tune the behaviour of WUD, you can add labels on your containers.
 ##### Watch only specific containers
 Configure WUD to watch "labeled" containers only
 ```bash
-WUD_WATCHER_DOCKER_{watcher_name}_WATCHBYDEFAULT=false
+WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT=false
 ```
 
 Then add the labels on the containers you want to watch.

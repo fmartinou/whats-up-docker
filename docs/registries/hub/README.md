@@ -1,7 +1,7 @@
 ## HUB (Docker Hub incl private repositories)
 ![logo](docker.png)
 
-The ```hub```registry lets you configure [Docker Hub](https://hub.docker.com/) integration so that WUD can find updates.
+The ```hub```registry lets you configure [Docker Hub](https://hub.docker.com/) integration.
 
 Currently, the supported credentials are:
 - Docker Hub login + Docker Hub Access Token
@@ -52,6 +52,4 @@ For example,
 ```bash
 WUD_REGISTRY_HUB_AUTH=am9obmRvZToyYzFiZDg3Mi1lZmI2LTRmM2EtODFhYS03MjQ1MThhMGE1OTI=
 ```
-
-### How to create a Docker Hub Access Token?
 
