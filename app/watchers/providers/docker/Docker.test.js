@@ -3,6 +3,7 @@ const Docker = require('./Docker');
 const Hub = require('../../../registries/providers/hub/Hub');
 const Ecr = require('../../../registries/providers/ecr/Ecr');
 const Gcr = require('../../../registries/providers/gcr/Gcr');
+const Acr = require('../../../registries/providers/acr/Acr');
 
 const sampleSemver = require('../../samples/semver.json');
 const sampleCoercedSemver = require('../../samples/coercedSemver.json');
@@ -14,11 +15,13 @@ const docker = new Docker();
 const hub = new Hub();
 const ecr = new Ecr();
 const gcr = new Gcr();
+const acr = new Acr();
 
 Docker.__set__('getRegistries', () => ({
     ecr,
     gcr,
     hub,
+    acr,
 }));
 
 const configurationValid = {
@@ -113,6 +116,15 @@ test('normalizeImage should return gcr when applicable', () => {
     })).toStrictEqual({
         registry: 'gcr',
         registryUrl: 'https://us.gcr.io/v2',
+    });
+});
+
+test('normalizeImage should return acr when applicable', () => {
+    expect(Docker.__get__('normalizeImage')({
+        registryUrl: 'test.azurecr.io',
+    })).toStrictEqual({
+        registry: 'acr',
+        registryUrl: 'https://test.azurecr.io/v2',
     });
 });
 

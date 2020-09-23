@@ -47,8 +47,7 @@ script:
   # Pull nginx as a test image
   - docker pull nginx:1.10-alpine
 
-  # Tag nginx as if it was coming from private Hub, ECR...
-
+  # Tag nginx as if it was coming from private Hub, ECR, GCR, ACR...
   - docker tag nginx:1.10-alpine fmartinou/test:1.0.0
   - docker tag nginx:1.10-alpine 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
   - docker tag nginx:1.10-alpine 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/test:1.0.0
@@ -56,6 +55,9 @@ script:
   - docker tag nginx:1.10-alpine gcr.io/wud-test/test:1.0.0
   - docker tag nginx:1.10-alpine gcr.io/wud-test/sub/test:1.0.0
   - docker tag nginx:1.10-alpine gcr.io/wud-test/sub/sub/test:1.0.0
+  - docker tag nginx:1.10-alpine wudtest.azurecr.io/test:1.0.0
+  - docker tag nginx:1.10-alpine wudtest.azurecr.io/sub/test:1.0.0
+  - docker tag nginx:1.10-alpine wudtest.azurecr.io/sub/sub/test:1.0.0
 
   # Run containers for tests
 
@@ -73,6 +75,11 @@ script:
   - docker run -d --name gcr_sub_test      --label "wud.watch=true" gcr.io/wud-test/sub/test:1.0.0
   - docker run -d --name gcr_sub_sub_test  --label "wud.watch=true" gcr.io/wud-test/sub/sub/test:1.0.0
 
+  # ACR
+  - docker run -d --name acr_test          --label "wud.watch=true" wudtest.azurecr.io/test:1.0.0
+  - docker run -d --name acr_sub_test      --label "wud.watch=true" wudtest.azurecr.io/sub/test:1.0.0
+  - docker run -d --name acr_sub_sub_test  --label "wud.watch=true" wudtest.azurecr.io/sub/sub/test:1.0.0
+
   # Run wud docker image
   - >
     docker run -d
@@ -88,6 +95,8 @@ script:
     --env WUD_REGISTRY_ECR_REGION=eu-west-1
     --env WUD_REGISTRY_GCR_CLIENTEMAIL="$GCR_CLIENT_EMAIL"
     --env WUD_REGISTRY_GCR_PRIVATEKEY="$GCR_PRIVATE_KEY"
+    --env WUD_REGISTRY_ACR_CLIENTID="$ACR_CLIENT_ID"
+    --env WUD_REGISTRY_ACR_CLIENTSECRET="$ACR_CLIENT_SECRET"
     wud
 
   # Give wud a little time to fetch all available updates

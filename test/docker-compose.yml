@@ -45,3 +45,18 @@ services:
         image: gcr.io/wud-test/sub/sub/test:1.0.0
         labels:
             - 'wud.watch=true'
+
+    acr_test:
+        image: wudtest.azurecr.io/test:1.0.0
+        labels:
+            - 'wud.watch=true'
+
+    acr_sub_test:
+        image: wudtest.azurecr.io/sub/test:1.0.0
+        labels:
+            - 'wud.watch=true'
+
+    acr_sub_sub_test:
+        image: wudtest.azurecr.io/sub/sub/test:1.0.0
+        labels:
+            - 'wud.watch=true'

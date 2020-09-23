@@ -1,6 +1,7 @@
 - [**Quick start**](quick-start)
 
 - [**Registries**](registries/)
+    - [Acr](registries/acr/)
     - [Ecr](registries/ecr/)
     - [Gcr](registries/gcr/)
     - [Hub](registries/hub/)

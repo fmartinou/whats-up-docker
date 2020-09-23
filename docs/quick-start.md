@@ -26,3 +26,9 @@ You can now watch the logs to check if everything is working as expected.
 
 Everything ok?  
 It's time to [add some triggers](/triggers/).
+
+Need to finely configure how WUD must watch your containers?  
+Take a look at the [watcher documentation](/watchers/).
+
+Need to configure specific registries? (ECR, GCR...)?  
+Take a look at the [registry documentation](/registries/).

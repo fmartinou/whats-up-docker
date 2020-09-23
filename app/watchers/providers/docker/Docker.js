@@ -182,7 +182,7 @@ class Docker extends Component {
 
         // map to K/V map to remove duplicate items
         imagesArray.forEach((image) => {
-            const key = `${image.image}_${image.version}`;
+            const key = `${image.registry}_${image.image}_${image.version}`;
             images[key] = image;
         });
         return Promise.all(Object.values(images).map((image) => this.watchImage(image)));
