@@ -1,6 +1,6 @@
 # Changelog
 
-### x.y.z
+### 3.0.0
 - :star: Add Registry Concept
 - :star: Add ACR
 - :star: Add ECR
