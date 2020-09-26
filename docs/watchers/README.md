@@ -13,16 +13,18 @@ The ```docker``` watcher lets you configure which Docker hosts you want to watch
 | `WUD_WATCHER_{watcher_name}_CRON`           | Scheduling options                         | [Valid CRON expression](https://crontab.guru/)     | 0 * * * * (every hour) |
 | `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` | If WUD must monitor all containers by default  | Valid boolean                                  | true                   |
 
-!> Multiple watchers of the same type can be configured (for example multiple Docker hosts to watch).  
+!> Multiple watchers can be configured (if you have multiple Docker hosts to watch).  
 You just need to give them different names.
 
-!> Socket configuration and host/port configuration are mutually exclusive
+!> Socket configuration and host/port configuration are mutually exclusive.
 
 !> If socket configuration is used, don't forget to mount the Docker socket on your WUD container.
 
-!> If host/port configuration is used, don't forget to enable the Docker remote API ([See dockerd documentation](https://docs.docker.com/v17.09/engine/reference/commandline/dockerd/#description)).
+!> If host/port configuration is used, don't forget to enable the Docker remote API  
+[See dockerd documentation](https://docs.docker.com/v17.09/engine/reference/commandline/dockerd/#description)
 
-!> If no watcher is configured, a default one named `LOCAL` will be automatically created (watching local Docker socket)
+!> If no watcher is configured, a default one named `local` will be automatically created.  
+(watching local Docker socket)
 
 
 ### Examples

@@ -26,3 +26,6 @@ curl http://wud:3000/api/registries
     }
 ]
 ```
+
+?> Need to add a new Registry?  
+[Take a look at the documentation.](/registries/)

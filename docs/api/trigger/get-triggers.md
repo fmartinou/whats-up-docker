@@ -21,3 +21,6 @@ curl http://wud:3000/api/triggers
    }
 ]
 ```
+
+?> Need to add a new Trigger?  
+[Take a look at the documentation.](/triggers/)

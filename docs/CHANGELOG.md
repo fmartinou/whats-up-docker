@@ -1,5 +1,20 @@
 # Changelog
 
+### x.y.z
+- :star: Add Registry Concept
+- :star: Add ACR
+- :star: Add ECR
+- :star: Add GCR
+- :fire: Fix toggle menu in UI
+
+!> **Breaking Change** \
+Some configuration variables have been changed \
+Please review the documentation and make the necessary adjustments  
+
+!> **Breaking Change** \
+Data schema has changed \
+Delete _WUD_ store before update
+
 ### 2.3.1
 - :fire: Fix missing Http Trigger
 
@@ -20,7 +35,8 @@
 - :star: Add UI
 
 !> **Breaking Change** \
-Data schema change => Delete _WUD_ store before update
+Data schema has changed \
+Delete _WUD_ store before update
 
 ### 1.1.2
 - :fire: Fix error when current tag is a "coerced" semver
