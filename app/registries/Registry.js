@@ -1,5 +1,12 @@
 const rp = require('request-promise-native');
 const Component = require('../registry/Component');
+const { summary } = require('../prometheus');
+
+const summaryGetTags = summary({
+    name: 'wud_registry_response',
+    help: 'The Registry response time (in second)',
+    labelNames: ['type', 'name'],
+});
 
 /**
  * Docker Registry Abstract class.
@@ -50,6 +57,7 @@ class Registry extends Component {
      * @returns {*}
      */
     async getTags(image) {
+        const start = new Date().getTime();
         const url = `${image.registryUrl}/${image.image}/tags/list`;
 
         // Request options
@@ -62,7 +70,10 @@ class Registry extends Component {
         };
 
         const getTagsOptionsWithAuth = await this.authenticate(image, getTagsOptions);
-        return rp(getTagsOptionsWithAuth);
+        const response = await rp(getTagsOptionsWithAuth);
+        const end = new Date().getTime();
+        summaryGetTags.observe({ type: this.type, name: this.name }, (end - start) / 1000);
+        return response;
     }
 
     /**

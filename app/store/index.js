@@ -1,4 +1,4 @@
-const joi = require('@hapi/joi');
+const joi = require('joi');
 const Loki = require('lokijs');
 const fs = require('fs');
 const { v4: uuid } = require('uuid');

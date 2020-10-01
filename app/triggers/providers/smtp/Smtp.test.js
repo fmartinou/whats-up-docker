@@ -1,4 +1,4 @@
-const { ValidationError } = require('@hapi/joi');
+const { ValidationError } = require('joi');
 const Smtp = require('./Smtp');
 
 const smtp = new Smtp();

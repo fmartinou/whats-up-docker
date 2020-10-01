@@ -1,9 +1,10 @@
 const path = require('path');
-const joi = require('@hapi/joi');
+const joi = require('joi');
 const express = require('express');
 const log = require('../log');
 const apiRouter = require('./api');
 const uiRouter = require('./ui');
+const prometheusRouter = require('./prometheus');
 
 const { getApiConfiguration } = require('../configuration');
 
@@ -39,6 +40,9 @@ async function init() {
 
         // Mount API
         app.use('/api', apiRouter.init());
+
+        // Mount Prometheus metrics
+        app.use('/metrics', prometheusRouter.init());
 
         // Mount UI
         app.use('/', uiRouter.init());

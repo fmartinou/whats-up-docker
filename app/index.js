@@ -2,6 +2,7 @@ const log = require('./log');
 const store = require('./store');
 const registry = require('./registry');
 const api = require('./api');
+const prometheus = require('./prometheus');
 
 log.info('What\'s up, docker? is starting');
 
@@ -20,5 +21,10 @@ async function main() {
 
     // Register watchers
     registry.registerWatchers();
+
+    // Start Prometheus registry
+    prometheus.startRegistry();
+
+    setTimeout(() => prometheus.output(), 2000);
 }
 main();

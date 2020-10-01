@@ -1,4 +1,4 @@
-const { ValidationError } = require('@hapi/joi');
+const { ValidationError } = require('joi');
 const Ifttt = require('./Ifttt');
 
 const ifttt = new Ifttt();

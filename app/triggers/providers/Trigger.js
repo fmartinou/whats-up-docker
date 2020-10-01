@@ -1,6 +1,14 @@
 const Component = require('../../registry/Component');
 const event = require('../../event');
 const log = require('../../log');
+const { counter } = require('../../prometheus');
+
+// Init prometheus metrics
+const triggerCounter = counter({
+    name: 'wud_trigger_count',
+    help: 'Total count of trigger events',
+    labelNames: ['type', 'name', 'status'],
+});
 
 class Trigger extends Component {
     /**
@@ -9,12 +17,16 @@ class Trigger extends Component {
     init() {
         this.initTrigger();
         event.registerImageNewVersion(async (imageResult) => {
+            let status = 'error';
             try {
                 log.debug(`Run trigger ${this.name} of type ${this.type}`);
                 await this.notify(imageResult);
+                status = 'success';
             } catch (e) {
                 log.error(`Notify error (${e.message})`);
                 log.debug(e);
+            } finally {
+                triggerCounter.inc({ type: this.type, name: this.name, status });
             }
         });
     }

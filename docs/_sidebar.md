@@ -49,8 +49,10 @@
     - [Logs](api/log/)
         - [GET /api/log](api/log/get-log)
 
-- [**Storage**](storage)
+- [**Storage**](storage/)
 
-- [**Logs**](logs)
+- [**Logs**](logs/)
+
+- [**Prometheus**](prometheus/)
 
 - [**Changelog**](CHANGELOG.md)

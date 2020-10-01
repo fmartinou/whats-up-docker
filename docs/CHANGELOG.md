@@ -1,5 +1,9 @@
 # Changelog
 
+### x.y.z
+- :star: Add Prometheus metrics
+- :star: Update dependencies
+
 ### 3.0.0
 - :star: Add Registry Concept
 - :star: Add ACR

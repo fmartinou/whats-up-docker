@@ -1,4 +1,4 @@
-const { ValidationError } = require('@hapi/joi');
+const { ValidationError } = require('joi');
 const Docker = require('./Docker');
 const Hub = require('../../../registries/providers/hub/Hub');
 const Ecr = require('../../../registries/providers/ecr/Ecr');
@@ -228,9 +228,11 @@ test('getImages should return a list of images found by the docker socket', () =
         },
     };
 
+    // Fake conf
     docker.configuration = {
         watchbydefault: true,
     };
+
     expect(docker.watch()).resolves.toMatchObject([{
         registry: 'hub',
         registryUrl: 'https://registry-1.docker.io/v2',

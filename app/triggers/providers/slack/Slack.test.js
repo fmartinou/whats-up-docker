@@ -1,4 +1,4 @@
-const { ValidationError } = require('@hapi/joi');
+const { ValidationError } = require('joi');
 const Slack = require('./Slack');
 
 const slack = new Slack();

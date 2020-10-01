@@ -1,5 +1,5 @@
 const { Docker: DockerApi } = require('node-docker-api');
-const joi = require('joi-cron-expression')(require('@hapi/joi'));
+const joi = require('joi-cron-expression')(require('joi'));
 const cron = require('node-cron');
 const parse = require('parse-docker-image-name');
 const semver = require('semver');
@@ -10,6 +10,14 @@ const Component = require('../../../registry/Component');
 const Image = require('../../../model/Image');
 const Result = require('../../../model/Result');
 const registry = require('../../../registry');
+const { gauge } = require('../../../prometheus');
+
+// Init prometheus metrics
+const gaugeWatchImages = gauge({
+    name: 'wud_watcher_total',
+    help: 'The number of watched images',
+    labelNames: ['type', 'name'],
+});
 
 /**
  * Return all supported registries
@@ -185,6 +193,7 @@ class Docker extends Component {
             const key = `${image.registry}_${image.image}_${image.version}`;
             images[key] = image;
         });
+        gaugeWatchImages.set({ type: this.type, name: this.name }, Object.keys(images).length);
         return Promise.all(Object.values(images).map((image) => this.watchImage(image)));
     }
 

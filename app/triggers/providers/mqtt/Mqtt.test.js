@@ -1,4 +1,4 @@
-const { ValidationError } = require('@hapi/joi');
+const { ValidationError } = require('joi');
 const Mqtt = require('./Mqtt');
 
 const mqtt = new Mqtt();
