@@ -2,6 +2,7 @@
 
 ### x.y.z
 - :star: Add Prometheus metrics
+- :star: Add HealthCheck endpoint
 - :star: Update dependencies
 
 ### 3.0.0

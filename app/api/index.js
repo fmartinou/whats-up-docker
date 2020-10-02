@@ -5,6 +5,7 @@ const log = require('../log');
 const apiRouter = require('./api');
 const uiRouter = require('./ui');
 const prometheusRouter = require('./prometheus');
+const healthRouter = require('./health');
 
 const { getApiConfiguration } = require('../configuration');
 
@@ -40,6 +41,9 @@ async function init() {
 
         // Mount API
         app.use('/api', apiRouter.init());
+
+        // Mount Healthcheck
+        app.use('/health', healthRouter.init());
 
         // Mount Prometheus metrics
         app.use('/metrics', prometheusRouter.init());

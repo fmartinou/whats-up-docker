@@ -53,6 +53,8 @@
 
 - [**Logs**](logs/)
 
+- [**HealthCheck**](healthcheck/)
+
 - [**Prometheus**](prometheus/)
 
 - [**Changelog**](CHANGELOG.md)

@@ -10,8 +10,8 @@ async function main() {
     // Init store
     await store.init();
 
-    // Init api
-    await api.init();
+    // Start Prometheus registry
+    prometheus.startRegistry();
 
     // Register triggers
     registry.registerTriggers();
@@ -22,9 +22,7 @@ async function main() {
     // Register watchers
     registry.registerWatchers();
 
-    // Start Prometheus registry
-    prometheus.startRegistry();
-
-    setTimeout(() => prometheus.output(), 2000);
+    // Init api
+    await api.init();
 }
 main();
