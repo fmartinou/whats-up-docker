@@ -1,6 +1,6 @@
 # Changelog
 
-### x.y.z
+### 3.1.0
 - :star: Add Prometheus metrics
 - :star: Add HealthCheck endpoint
 - :star: Update dependencies
