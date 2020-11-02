@@ -1,6 +1,6 @@
 # Changelog
 
-### x.y.z
+### 3.1.1
 - :star: Add watched images as Prometheus metrics
 - :fire: Handle identical images with different versions
 - :fire: Fix semver candidates filter
