@@ -1,5 +1,11 @@
 # Changelog
 
+### x.y.z
+- :star: Add watched images as Prometheus metrics
+- :fire: Handle identical images with different versions
+- :fire: Fix semver candidates filter
+- :fire: Fix 'Cannot read property 'newVersion' of undefined' when no tag candidate found
+
 ### 3.1.0
 - :star: Add Prometheus metrics
 - :star: Add HealthCheck endpoint

@@ -1,14 +1,7 @@
 const Component = require('../../registry/Component');
 const event = require('../../event');
 const log = require('../../log');
-const { counter } = require('../../prometheus');
-
-// Init prometheus metrics
-const triggerCounter = counter({
-    name: 'wud_trigger_count',
-    help: 'Total count of trigger events',
-    labelNames: ['type', 'name', 'status'],
-});
+const { getTriggerCounter } = require('../../prometheus/trigger');
 
 class Trigger extends Component {
     /**
@@ -26,7 +19,7 @@ class Trigger extends Component {
                 log.error(`Notify error (${e.message})`);
                 log.debug(e);
             } finally {
-                triggerCounter.inc({ type: this.type, name: this.name, status });
+                getTriggerCounter().inc({ type: this.type, name: this.name, status });
             }
         });
     }

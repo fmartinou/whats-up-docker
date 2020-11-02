@@ -56,13 +56,13 @@ class Smtp extends Trigger {
         await this.transporter.sendMail({
             from: this.configuration.from,
             to: this.configuration.to,
-            subject: `[WUD] New version found for image ${image.image}`,
+            subject: `[WUD] New version found for image ${image.image} => ${image.result.newVersion}`,
             text: JSON.stringify(image),
             html: `
                 <p><strong>Registry:</strong>&nbsp;${image.registry}</p>
                 <p><strong>RegistryUrl:</strong>&nbsp;${image.registryUrl}</p>
                 <p><strong>Image:</strong>&nbsp;${image.image}</p>
-                <p><strong>Current version:&nbsp;</strong>${image.version}</p>
+                <p><strong>Current version:</strong> ${image.version}</p>
                 <p><strong>New version:</strong>&nbsp;${image.result.newVersion}</p>
             `,
         });

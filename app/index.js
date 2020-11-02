@@ -11,7 +11,7 @@ async function main() {
     await store.init();
 
     // Start Prometheus registry
-    prometheus.startRegistry();
+    prometheus.init();
 
     // Register triggers
     registry.registerTriggers();

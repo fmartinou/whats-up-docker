@@ -57,4 +57,6 @@
 
 - [**Prometheus**](prometheus/)
 
+- [**Grafana**](grafana/)
+
 - [**Changelog**](CHANGELOG.md)

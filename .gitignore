@@ -4,7 +4,6 @@
 
 ### Node ###
 # Logs
-logs
 *.index
 npm-debug.index*
 yarn-debug.index*

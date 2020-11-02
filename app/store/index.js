@@ -67,10 +67,19 @@ async function init() {
  * @param image
  * @returns {null|Image}
  */
-function findImage({ registryUrl, image }) {
+function findImage({
+    registryUrl,
+    image,
+    version,
+    includeTags,
+    excludeTags,
+}) {
     const imageInDb = images.findOne({
         'data.registryUrl': registryUrl,
         'data.image': image,
+        'data.version': version,
+        'data.includeTags': includeTags,
+        'data.excludeTags': excludeTags,
     });
     if (imageInDb !== null) {
         return new Image(imageInDb.data);
@@ -111,6 +120,9 @@ function updateImage(image) {
     images.chain().find({
         'data.registryUrl': image.registryUrl,
         'data.image': image.image,
+        'data.version': image.version,
+        'data.includeTags': image.includeTags,
+        'data.excludeTags': image.excludeTags,
     }).remove();
 
     images.insert({

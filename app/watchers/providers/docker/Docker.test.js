@@ -10,7 +10,6 @@ const sampleCoercedSemver = require('../../samples/coercedSemver.json');
 const sampleNotSemver = require('../../samples/notSemver.json');
 
 jest.mock('request-promise-native');
-
 const docker = new Docker();
 const hub = new Hub();
 const ecr = new Ecr();
@@ -23,6 +22,8 @@ Docker.__set__('getRegistries', () => ({
     hub,
     acr,
 }));
+
+Docker.__set__('getWatchImageGauge', () => ({ set: () => {} }));
 
 const configurationValid = {
     socket: '/var/run/docker.sock',
@@ -91,6 +92,10 @@ test('getTagsCandidate should return all greater tags', () => {
 
 test('getTagsCandidate should return all greater tags when current tag is not a semver', () => {
     expect(Docker.__get__('getTagsCandidate')(sampleNotSemver, ['10.11.12', '7.8.9', 'notasemver', '1.2.3'])).toEqual(['10.11.12', '7.8.9']);
+});
+
+test('getTagsCandidate should return greater tags when digit over 9', () => {
+    expect(Docker.__get__('getTagsCandidate')({ version: '1.9.0', isSemver: true }, ['1.10.0', '1.2.3'])).toEqual(['1.10.0']);
 });
 
 test('normalizeImage should return hub when applicable', () => {

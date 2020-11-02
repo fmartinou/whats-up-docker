@@ -12,6 +12,12 @@ class Result {
      * @returns {boolean|boolean}
      */
     equals(other) {
+        if (!other) {
+            return false;
+        }
+        if (!this.newVersion && !other.newVersion) {
+            return true;
+        }
         return this.newVersion === other.newVersion;
     }
 }

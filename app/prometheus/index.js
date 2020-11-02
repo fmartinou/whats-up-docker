@@ -1,12 +1,21 @@
-const {
-    collectDefaultMetrics, register, Gauge, Counter, Summary,
-} = require('prom-client');
+const { collectDefaultMetrics, register } = require('prom-client');
+
+const log = require('../log');
+const image = require('./image');
+const trigger = require('./trigger');
+const watcher = require('./watcher');
+const registry = require('./registry');
 
 /**
  * Start the Prometheus registry.
  */
-function startRegistry() {
+function init() {
+    log.info('Init Prometheus module');
     collectDefaultMetrics();
+    image.init();
+    registry.init();
+    trigger.init();
+    watcher.init();
 }
 
 /**
@@ -17,36 +26,7 @@ function output() {
     return register.metrics();
 }
 
-/**
- * Return a Prometheus Gauge.
- * @param configuration
- * @returns {Gauge<string>}
- */
-function gauge(configuration) {
-    return new Gauge(configuration);
-}
-
-/**
- * Return a Prometheus Counter.
- * @param configuration
- * @returns {Counter<string>}
- */
-function counter(configuration) {
-    return new Counter(configuration);
-}
-
-/**
- * Return a Prometheus Summary.
- * @param configuration
- * @returns {Summary<string>}
- */
-function summary(configuration) {
-    return new Summary(configuration);
-}
 module.exports = {
-    startRegistry,
+    init,
     output,
-    gauge,
-    counter,
-    summary,
 };

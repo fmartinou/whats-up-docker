@@ -10,14 +10,7 @@ const Component = require('../../../registry/Component');
 const Image = require('../../../model/Image');
 const Result = require('../../../model/Result');
 const registry = require('../../../registry');
-const { gauge } = require('../../../prometheus');
-
-// Init prometheus metrics
-const gaugeWatchImages = gauge({
-    name: 'wud_watcher_total',
-    help: 'The number of watched images',
-    labelNames: ['type', 'name'],
-});
+const { getWatchImageGauge } = require('../../../prometheus/watcher');
 
 /**
  * Return all supported registries
@@ -86,12 +79,6 @@ function processImageResult(imageWithResult) {
 function getTagsCandidate(image, tags) {
     let filteredTags = tags;
 
-    // Only keep newer tags
-    const currentTagIndex = tags.findIndex((tag) => tag === image.version);
-    if (currentTagIndex !== -1) {
-        filteredTags = tags.slice(0, currentTagIndex);
-    }
-
     // Match include tag regex
     if (image.includeTags) {
         const includeTagsRegex = new RegExp(image.includeTags);
@@ -107,10 +94,24 @@ function getTagsCandidate(image, tags) {
     // If semver, filter on greater semver versions
     if (image.isSemver) {
         const currentVersion = semver.coerce(image.version);
-        filteredTags = filteredTags.filter((tag) => {
-            const tagVersion = semver.coerce(tag);
-            return semver.valid(tagVersion) && semver.gt(tagVersion, currentVersion);
+
+        // Keep semver only
+        filteredTags = filteredTags.filter((tag) => semver.valid(semver.coerce(tag)));
+
+        // Apply semver sort desc
+        filteredTags.sort((t1, t2) => {
+            const greater = semver.gt(semver.coerce(t2), semver.coerce(t1));
+            return greater ? 1 : -1;
         });
+
+        // Keep only greater semver
+        filteredTags = filteredTags.filter((tag) => semver.gt(semver.coerce(tag), currentVersion));
+    } else {
+        // Filter on higher lexically value
+        const currentTagIndex = tags.findIndex((tag) => tag === image.version);
+        if (currentTagIndex !== -1) {
+            filteredTags = tags.slice(0, currentTagIndex);
+        }
     }
     return filteredTags;
 }
@@ -190,10 +191,13 @@ class Docker extends Component {
 
         // map to K/V map to remove duplicate items
         imagesArray.forEach((image) => {
-            const key = `${image.registry}_${image.image}_${image.version}`;
+            const key = `${image.registry}_${image.image}_${image.version}_${image.includeTags}_${image.excludeTags}`;
             images[key] = image;
         });
-        gaugeWatchImages.set({ type: this.type, name: this.name }, Object.keys(images).length);
+        getWatchImageGauge().set({
+            type: this.type,
+            name: this.name,
+        }, Object.keys(images).length);
         return Promise.all(Object.values(images).map((image) => this.watchImage(image)));
     }
 
