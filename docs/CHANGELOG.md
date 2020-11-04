@@ -1,5 +1,8 @@
 # Changelog
 
+### x.y.z
+- :star: Update dependencies
+
 ### 3.1.1
 - :star: Add watched images as Prometheus metrics
 - :fire: Handle identical images with different versions
