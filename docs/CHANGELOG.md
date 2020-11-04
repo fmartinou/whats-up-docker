@@ -1,6 +1,6 @@
 # Changelog
 
-### x.y.z
+### 3.1.2
 - :star: Update dependencies
 
 ### 3.1.1
