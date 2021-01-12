@@ -1,6 +1,6 @@
 # Changelog
 
-### x.y.z
+### 3.1.3
 - :fire: Fix IFTTT trigger & documentation
 
 ### 3.1.2
