@@ -2,8 +2,6 @@
   "env": {
     "WUD_STORE_PATH": ".store",
     "WUD_TRIGGER_MOCK_EXAMPLE_MOCK": "mock",
-    "WUD_WATCHER_LOCAL_WATCHBYDEFAULT": false,
-    "WUD_TRIGGER_IFTTT_TEST_KEY": "dTyQweHI2u7JZcqbhJ2DOP9ejSpyKgFXc1ZI00l1Xvi",
-    "WUD_LOG_LEVEL": "debug"
+    "WUD_WATCHER_LOCAL_WATCHBYDEFAULT": false
   }
 }
