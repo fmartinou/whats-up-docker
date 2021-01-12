@@ -1,5 +1,8 @@
 # Changelog
 
+### x.y.z
+- :fire: Fix IFTTT trigger & documentation
+
 ### 3.1.2
 - :star: Update dependencies
 
