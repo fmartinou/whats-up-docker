@@ -52,9 +52,9 @@ script:
   - docker tag nginx:1.10-alpine 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
   - docker tag nginx:1.10-alpine 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/test:1.0.0
   - docker tag nginx:1.10-alpine 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/sub/test:1.0.0
-  - docker tag nginx:1.10-alpine gcr.io/wud-test/test:1.0.0
-  - docker tag nginx:1.10-alpine gcr.io/wud-test/sub/test:1.0.0
-  - docker tag nginx:1.10-alpine gcr.io/wud-test/sub/sub/test:1.0.0
+#  - docker tag nginx:1.10-alpine gcr.io/wud-test/test:1.0.0
+#  - docker tag nginx:1.10-alpine gcr.io/wud-test/sub/test:1.0.0
+#  - docker tag nginx:1.10-alpine gcr.io/wud-test/sub/sub/test:1.0.0
 #  - docker tag nginx:1.10-alpine wudtest.azurecr.io/test:1.0.0
 #  - docker tag nginx:1.10-alpine wudtest.azurecr.io/sub/test:1.0.0
 #  - docker tag nginx:1.10-alpine wudtest.azurecr.io/sub/sub/test:1.0.0
@@ -72,9 +72,9 @@ script:
   - docker run -d --name ecr_sub_sub_test  --label "wud.watch=true" 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/sub/test:1.0.0
 
   # GCR
-  - docker run -d --name gcr_test          --label "wud.watch=true" gcr.io/wud-test/test:1.0.0
-  - docker run -d --name gcr_sub_test      --label "wud.watch=true" gcr.io/wud-test/sub/test:1.0.0
-  - docker run -d --name gcr_sub_sub_test  --label "wud.watch=true" gcr.io/wud-test/sub/sub/test:1.0.0
+#  - docker run -d --name gcr_test          --label "wud.watch=true" gcr.io/wud-test/test:1.0.0
+#  - docker run -d --name gcr_sub_test      --label "wud.watch=true" gcr.io/wud-test/sub/test:1.0.0
+#  - docker run -d --name gcr_sub_sub_test  --label "wud.watch=true" gcr.io/wud-test/sub/sub/test:1.0.0
 
   # ACR
 #  - docker run -d --name acr_test          --label "wud.watch=true" wudtest.azurecr.io/test:1.0.0

@@ -26,8 +26,5 @@ Feature: Prometheus exposure
       | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/sub/test   | 1.0.0       | 2.0.0       |
       | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test       | 1.0.0       | 2.0.0       |
       | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test           | 1.0.0       | 2.0.0       |
-      | gcr      | https://gcr.io/v2                                       | sub/sub/test   | 1.0.0       | 2.0.0       |
-      | gcr      | https://gcr.io/v2                                       | sub/test       | 1.0.0       | 2.0.0       |
-      | gcr      | https://gcr.io/v2                                       | test           | 1.0.0       | 2.0.0       |
       | hub      | https://registry-1.docker.io/v2                         | fmartinou/test | 1.0.0       | 2.0.0       |
       | hub      | https://registry-1.docker.io/v2                         | library/nginx  | 1.10-alpine | 1.19-alpine |

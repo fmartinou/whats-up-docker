@@ -9,7 +9,7 @@ Feature: WUD Image API Exposure
     When I GET /api/images
     Then response code should be 200
     And response body should be valid json
-    And response body path $ should be of type array with length 8
+    And response body path $ should be of type array with length 5
     And response body path $[<index>].registry should be <registry>
     And response body path $[<index>].registryUrl should be <registryUrl>
     And response body path $[<index>].image should be <image>
@@ -20,11 +20,8 @@ Feature: WUD Image API Exposure
       | 0     | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/sub/test   | 1.0.0       | 2.0.0       |
       | 1     | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test       | 1.0.0       | 2.0.0       |
       | 2     | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test           | 1.0.0       | 2.0.0       |
-      | 3     | gcr      | https://gcr.io/v2                                       | sub/sub/test   | 1.0.0       | 2.0.0       |
-      | 4     | gcr      | https://gcr.io/v2                                       | sub/test       | 1.0.0       | 2.0.0       |
-      | 5     | gcr      | https://gcr.io/v2                                       | test           | 1.0.0       | 2.0.0       |
-      | 6     | hub      | https://registry-1.docker.io/v2                         | fmartinou/test | 1.0.0       | 2.0.0       |
-      | 7     | hub      | https://registry-1.docker.io/v2                         | library/nginx  | 1.10-alpine | 1.19-alpine |
+      | 3     | hub      | https://registry-1.docker.io/v2                         | fmartinou/test | 1.0.0       | 2.0.0       |
+      | 4     | hub      | https://registry-1.docker.io/v2                         | library/nginx  | 1.10-alpine | 1.19-alpine |
 
   Scenario: WUD must allow to get first image
     Given I GET /api/images

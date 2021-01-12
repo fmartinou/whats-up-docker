@@ -37,7 +37,7 @@ class Ifttt extends Trigger {
     async notify(image) {
         const options = {
             method: 'POST',
-            uri: `https://maker.ifttt.com/trigger/wud/with/key/${this.configuration.key}`,
+            uri: `https://maker.ifttt.com/trigger/${this.configuration.event}/with/key/${this.configuration.key}`,
             headers: {
                 'Content-Type': 'application/json',
             },

@@ -22,7 +22,7 @@ On Webhook call, Ifttt captures the following ingredients:
 
 #### Configuration
 ```bash
-WUD_TRIGGER_IFTTT_KEY="xxx"
+WUD_TRIGGER_IFTTT_PROD_KEY="*******************************************"
 ```
 
 #### Ifttt captured ingredients
@@ -30,4 +30,37 @@ WUD_TRIGGER_IFTTT_KEY="xxx"
 - OccuredAt: `August 30, 2019 at 06:51PM`
 - Value1: `https://hub.docker.com/library/mariadb`
 - Value2: `10.5.4-focal`
-- Value3: `{"id":"657a87c8-7926-4e97-815b-60bb9fdada2a","trigger":"https://hub.docker.com","image":"library/mariadb","version":"10.3.13","versionDate":"2019-03-12T01:01:32.052509774Z","architecture":"amd64","os":"linux","size":368482149,"isSemver":true,"result":{"newVersion":"10.5.4-focal"},"created":"2020-08-09T17:19:42.789Z","updated":"2020-08-10T11:00:01.365Z"}`
+- Value3: `{"watcher":"docker.local","registry":"hub","registryUrl":"https://registry-1.docker.io/v2","image":"library/nginx","version":"1.8-alpine","versionDate":"2016-04-05T19:06:30.86000223Z","architecture":"amd64","os":"linux","size":15474931,"includeTags":"^[0-9]\\d*\\.[0-9]\\d*-alpine$","isSemver":true,"result":{"newVersion":"1.19-alpine"}}`
+
+### How to find the IFTTT key
+#### Open the Webhook channel & Connect
+[Click here](https://ifttt.com/maker_webhooks)
+
+And click on `Connect`
+![image](./ifttt_connect.jpg)
+
+#### Get the key from the settings
+[Click here](https://ifttt.com/maker_webhooks/settings)
+
+And copy the key from the URL
+![image](./ifttt_key.png)
+
+### How to create an IFTTT receipt
+#### Create a new receipt & add a "this" trigger
+[Click here to create a new receipt](https://ifttt.com/create)
+
+![image](./ifttt_add_this.png)
+
+#### Add the Webhook service
+![image](./ifttt_search_webhook.png)
+
+#### Select the 'Receive a web request' trigger
+![image](./ifttt_request_trigger.png)
+
+#### Enter the trigger event name (wud-image by default)
+![image](./ifttt_event.png)
+
+#### Define the 'then that' action
+![image](./ifttt_then_that.png)
+
+It's up to you :) Send an email...
