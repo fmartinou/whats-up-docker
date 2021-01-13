@@ -1,6 +1,6 @@
 # Changelog
 
-### x.y.z
+### 3.2.0
 - :star: Add Pushover trigger
 
 ### 3.1.3
