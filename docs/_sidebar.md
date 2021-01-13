@@ -11,6 +11,7 @@
     - [Ifttt](triggers/ifttt/)
     - [Kafka](triggers/kafka/)
     - [Mqtt](triggers/mqtt/)
+    - [Pushover](triggers/pushover/)
     - [Slack](triggers/slack/)
     - [Smtp](triggers/smtp/)
 

@@ -1,0 +1,100 @@
+const Push = require('pushover-notifications');
+
+const Trigger = require('../Trigger');
+
+/**
+ * Ifttt Trigger implementation
+ */
+class Pushover extends Trigger {
+    /**
+     * Get the Trigger configuration schema.
+     * @returns {*}
+     */
+    getConfigurationSchema() {
+        return this.joi.object().keys({
+            user: this.joi.string().required(),
+            token: this.joi.string().required(),
+            device: this.joi.string(),
+            sound: this.joi.string().allow(
+                'alien',
+                'bike',
+                'bugle',
+                'cashregister',
+                'classical',
+                'climb',
+                'cosmic',
+                'echo',
+                'falling',
+                'gamelan',
+                'incoming',
+                'intermission',
+                'magic',
+                'mechanical',
+                'none',
+                'persistent',
+                'pianobar',
+                'pushover',
+                'siren',
+                'spacealarm',
+                'tugboat',
+                'updown',
+                'vibrate',
+            ).default('pushover'),
+            priority: this.joi
+                .number()
+                .integer()
+                .min(-2)
+                .max(2)
+                .default(0),
+        });
+    }
+
+    /**
+     * Sanitize sensitive data
+     * @returns {*}
+     */
+    maskConfiguration() {
+        return {
+            ...this.configuration,
+            user: Pushover.mask(this.configuration.user),
+            token: Pushover.mask(this.configuration.token),
+        };
+    }
+
+    /**
+     * Init trigger.
+     */
+    initTrigger() {
+        // Init PushOver client
+        this.push = new Push({
+            user: this.configuration.user,
+            token: this.configuration.token,
+        });
+    }
+
+    /**
+     * Send a Pushover notification with new image version details.
+     *
+     * @param image the image
+     * @returns {Promise<void>}
+     */
+    async notify(image) {
+        const message = {
+            title: `[WUD] New version found for image ${image.image} => ${image.result.newVersion}`,
+            html: 1,
+            message: `
+                <p><b>Registry:</b>&nbsp;${image.registry}</p>
+                <p><b>RegistryUrl:</b>&nbsp;${image.registryUrl}</p>
+                <p><b>Image:</b>&nbsp;${image.image}</p>
+                <p><b>Current version:</b> ${image.version}</p>
+                <p><b>New version:</b>&nbsp;${image.result.newVersion}</p>
+            `,
+            sound: this.configuration.sound,
+            device: this.configuration.device,
+            priority: this.configuration.priority,
+        };
+        this.push.send(message);
+    }
+}
+
+module.exports = Pushover;
