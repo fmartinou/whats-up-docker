@@ -1,6 +1,6 @@
 # Changelog
 
-### x.y;z
+### 3.2.1
 - :fire: Fix duplicated images
 
 ### 3.2.0
