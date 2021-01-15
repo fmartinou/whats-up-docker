@@ -142,6 +142,38 @@ function getRegistry(registryName) {
 }
 
 /**
+ * Get old images to prune.
+ * @param newImages
+ * @param imagesFromTheStore
+ * @returns {*[]|*}
+ */
+function getOldImages(newImages, imagesFromTheStore) {
+    if (!imagesFromTheStore || !imagesFromTheStore) {
+        return [];
+    }
+    return imagesFromTheStore.filter((imageFromStore) => {
+        const isImageStillToWatch = newImages
+            .find((newImage) => newImage.watcher === imageFromStore.watcher
+                && newImage.registryUrl === imageFromStore.registryUrl
+                && newImage.image === imageFromStore.image
+                && newImage.version === imageFromStore.version
+                && newImage.includeTags === imageFromStore.includeTags
+                && newImage.excludeTags === imageFromStore.excludeTags);
+        return isImageStillToWatch === undefined;
+    });
+}
+
+/**
+ * Prune old images from the store.
+ * @param newImages
+ * @param imagesFromTheStore
+ */
+function pruneOldImages(newImages, imagesFromTheStore) {
+    const imagesToRemove = getOldImages(newImages, imagesFromTheStore);
+    imagesToRemove.forEach((imageToRemove) => store.deleteImage(imageToRemove.id));
+}
+
+/**
  * Docker Watcher Component.
  */
 class Docker extends Component {
@@ -186,7 +218,13 @@ class Docker extends Component {
      * @returns {Promise<*[]>}
      */
     async watch() {
+        // List images to watch
         const imagesArray = await this.getImages();
+
+        // Prune old images from the store
+        const imagesFromTheStore = store.getImages({ watcher: this.getId() });
+        pruneOldImages(imagesArray, imagesFromTheStore);
+
         const images = {};
 
         // map to K/V map to remove duplicate items

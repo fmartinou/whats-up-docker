@@ -1,5 +1,8 @@
 # Changelog
 
+### x.y;z
+- :fire: Fix duplicated images
+
 ### 3.2.0
 - :star: Add Pushover trigger
 

@@ -68,6 +68,7 @@ async function init() {
  * @returns {null|Image}
  */
 function findImage({
+    watcher,
     registryUrl,
     image,
     version,
@@ -75,6 +76,7 @@ function findImage({
     excludeTags,
 }) {
     const imageInDb = images.findOne({
+        'data.watcher': watcher,
         'data.registryUrl': registryUrl,
         'data.image': image,
         'data.version': version,
@@ -132,7 +134,7 @@ function updateImage(image) {
 }
 
 /**
- * Get alll (filtered) images.
+ * Get all (filtered) images.
  * @param query
  * @returns {*}
  */
@@ -141,10 +143,15 @@ function getImages(query = {}) {
     Object.keys(query).forEach((key) => {
         filter[`data.${key}`] = query[key];
     });
+    if (!images) {
+        return [];
+    }
     const imageList = images.find(filter).map((item) => new Image(item.data));
     return imageList.sort(byValues({
+        watcher: byString(),
         registry: byString(),
         image: byString(),
+        version: byString(),
     }));
 }
 

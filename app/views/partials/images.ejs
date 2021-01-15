@@ -9,6 +9,7 @@
     <table class="table is-narrow ">
         <thead>
         <tr>
+            <th>Watcher</th>
             <th>Registry</th>
             <th>Image</th>
             <th>Version</th>
@@ -31,6 +32,7 @@
         <tbody>
         <% images.forEach((image) => { %>
             <tr>
+                <td><%= image.watcher %></td>
                 <td>
                 <span class="icon is-large" title="<%= image.registryUrl %>">
                     <% switch (image.registry) {
@@ -55,7 +57,7 @@
                 <td><%= image.image %></td>
                 <td><span class="tag is-medium"><%= image.version %></span></td>
                 <td class="nowrap">
-                    <%= moment(image.versionDate).format('YYYY MM DD HH:MM:SS') %>
+                    <%= moment(image.versionDate).format('DD-MM-YYYY HH:MM:SS') %>
                 </td>
                 <td><%= image.architecture %></td>
                 <td>
@@ -84,10 +86,10 @@
 
                 </td>
                 <td class="nowrap">
-                    <%= moment(image.created).format('YYYY MM DD HH:MM:SS') %>
+                    <%= moment(image.created).format('DD-MM-YYYY HH:MM:SS') %>
                 </td>
                 <td class="nowrap" id="td-updated-<%= image.id %>">
-                    <%= moment(image.updated).format('YYYY MM DD HH:MM:SS') %>
+                    <%= moment(image.updated).format('DD-MM-YYYY HH:MM:SS') %>
                 </td>
                 <td>
                     <button id="btn-watch-<%= image.id %>" class="button is-black" onclick="watch('<%= image.id %>')">
@@ -107,7 +109,7 @@
      * @param image
      */
     function patchImage(image) {
-        const updated = image.updated ? moment(image.updated).format('YYYY MM DD HH:MM:SS') : '';
+        const updated = image.updated ? moment(image.updated).format('DD-MM-YYYY HH:MM:SS') : '';
         document.getElementById(`td-updated-${image.id}`).innerHTML = updated;
 
         const newVersion = image.result && image.result.newVersion ? `<span class="tag is-primary is-medium">${image.result.newVersion}</span>` : '';
@@ -134,7 +136,7 @@
 
             // Display success message
             if (image.result && image.result.newVersion) {
-                window.message.display('New version found!', `A new version ${image.result.newVersion} has been found for ${image.image}`);
+                window.message.display('New version found!', `A new version ${image.result.newVersion} has been found for ${image.image}:${image.version}`);
             }
         } catch (e) {
             // Display error message

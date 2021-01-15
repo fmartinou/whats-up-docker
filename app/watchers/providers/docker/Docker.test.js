@@ -10,6 +10,7 @@ const sampleCoercedSemver = require('../../samples/coercedSemver.json');
 const sampleNotSemver = require('../../samples/notSemver.json');
 
 jest.mock('request-promise-native');
+
 const docker = new Docker();
 const hub = new Hub();
 const ecr = new Ecr();
@@ -210,8 +211,7 @@ test('watchImage should return no result when no image found', () => {
         result: undefined,
     });
 });
-
-test('getImages should return a list of images found by the docker socket', () => {
+test('watch should return a list of images found by the docker socket', () => {
     const image1 = {
         data: {
             Image: 'image',
@@ -249,4 +249,43 @@ test('getImages should return a list of images found by the docker socket', () =
         size: '10',
         isSemver: false,
     }]);
+});
+
+test('pruneOldImages should prune old images', () => {
+    const oldImages = [{
+        watcher: 'watcher',
+        registryUrl: 'registryUrl',
+        image: 'image',
+        version: 'version1',
+        includeTags: 'includeTags',
+        excludeTags: 'excludeTags',
+    }, {
+        watcher: 'watcher',
+        registryUrl: 'registryUrl',
+        image: 'image',
+        version: 'version2',
+        includeTags: 'includeTags',
+        excludeTags: 'excludeTags',
+    }];
+    const newImages = [{
+        watcher: 'watcher',
+        registryUrl: 'registryUrl',
+        image: 'image',
+        version: 'version2',
+        includeTags: 'includeTags',
+        excludeTags: 'excludeTags',
+    }];
+    expect(Docker.__get__('getOldImages')(newImages, oldImages)).toEqual([{
+        watcher: 'watcher',
+        registryUrl: 'registryUrl',
+        image: 'image',
+        version: 'version1',
+        includeTags: 'includeTags',
+        excludeTags: 'excludeTags',
+    }]);
+});
+
+test('pruneOldImages should operate when lists are empty or undefined', () => {
+    expect(Docker.__get__('getOldImages')([], [])).toEqual([]);
+    expect(Docker.__get__('getOldImages')(undefined, undefined)).toEqual([]);
 });
