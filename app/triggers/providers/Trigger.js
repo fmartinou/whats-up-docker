@@ -12,11 +12,11 @@ class Trigger extends Component {
         event.registerImageNewVersion(async (imageResult) => {
             let status = 'error';
             try {
-                log.debug(`Run trigger ${this.name} of type ${this.type}`);
+                log.debug(`Run trigger ${this.getId()}`);
                 await this.notify(imageResult);
                 status = 'success';
             } catch (e) {
-                log.error(`Notify error (${e.message})`);
+                log.error(`Notify error from ${this.getId()} (${e.message})`);
                 log.debug(e);
             } finally {
                 getTriggerCounter().inc({ type: this.type, name: this.name, status });

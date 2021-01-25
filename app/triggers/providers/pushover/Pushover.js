@@ -62,17 +62,6 @@ class Pushover extends Trigger {
     }
 
     /**
-     * Init trigger.
-     */
-    initTrigger() {
-        // Init PushOver client
-        this.push = new Push({
-            user: this.configuration.user,
-            token: this.configuration.token,
-        });
-    }
-
-    /**
      * Send a Pushover notification with new image version details.
      *
      * @param image the image
@@ -93,7 +82,22 @@ class Pushover extends Trigger {
             device: this.configuration.device,
             priority: this.configuration.priority,
         };
-        this.push.send(message);
+        return new Promise((resolve, reject) => {
+            const push = new Push({
+                user: this.configuration.user,
+                token: this.configuration.token,
+            });
+
+            push.onerror = (err) => { reject(new Error(err)); };
+
+            push.send(message, (err, res) => {
+                if (err) {
+                    reject(new Error(err));
+                } else {
+                    resolve(res);
+                }
+            });
+        });
     }
 }
 

@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.2.2
+- :fire: Fix WUD crash when Pushover userKey or applicationToken is invalid
+
 ### 3.2.1
 - :fire: Fix duplicated images
 
