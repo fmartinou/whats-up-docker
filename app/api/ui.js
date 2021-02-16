@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const moment = require('moment');
 const imageRouter = require('./image');
@@ -12,7 +13,6 @@ const registryRouter = require('./registry');
 function init() {
     const router = express.Router();
 
-    // Mount UI
     router.get('/', (req, res) => res.redirect('/images'));
 
     router.get('/images', (req, res) => {
@@ -42,6 +42,9 @@ function init() {
             moment,
         });
     });
+
+    // Serve static assets
+    router.use('/static', express.static(path.join(__dirname, '..', 'views', 'static')));
 
     // Catch all and redirect to home page
     router.get('*', (req, res) => res.redirect('/'));
