@@ -54,6 +54,8 @@
 
 - [**Logs**](logs/)
 
+- [**Assets**](assets/)
+
 - [**HealthCheck**](healthcheck/)
 
 - [**Prometheus**](prometheus/)

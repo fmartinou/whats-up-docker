@@ -1,5 +1,9 @@
 const envProp = require('env-dot-prop');
 
+function getLocalAssetsSupport() {
+  return process.env.WUD_LOCAL_ASSETS;
+}
+
 function getLogLevel() {
     return process.env.WUD_LOG_LEVEL || 'info';
 }
@@ -40,6 +44,7 @@ function getApiConfiguration() {
 }
 
 module.exports = {
+    getLocalAssetsSupport,
     getLogLevel,
     getStoreConfiguration,
     getWatcherConfigurations,

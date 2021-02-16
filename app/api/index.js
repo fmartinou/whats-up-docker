@@ -7,7 +7,7 @@ const uiRouter = require('./ui');
 const prometheusRouter = require('./prometheus');
 const healthRouter = require('./health');
 
-const { getApiConfiguration } = require('../configuration');
+const { getApiConfiguration, getLocalAssetsSupport } = require('../configuration');
 
 // Configuration Schema
 const configurationSchema = joi.object().keys({
@@ -47,6 +47,11 @@ async function init() {
 
         // Mount Prometheus metrics
         app.use('/metrics', prometheusRouter.init());
+
+        // Serve static assets
+        if(getLocalAssetsSupport()) {
+          app.use('/static', express.static(path.join(__dirname, '..', 'public')))
+        }
 
         // Mount UI
         app.use('/', uiRouter.init());
