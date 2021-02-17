@@ -339,7 +339,7 @@ class Docker extends Component {
         const creationDate = containerImage.data.Created;
 
         // Parse image to get registry, organization...
-        const parsedImage = parse(container.data.Image);
+        const parsedImage = parse((containerImage.data.RepoTags || [])[0] || container.data.Image);
         const version = parsedImage.tag || 'latest';
         const parsedVersion = semver.coerce(version);
         const isSemver = parsedVersion !== null && parsedVersion !== undefined;
