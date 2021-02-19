@@ -1,7 +1,10 @@
 # Changelog
 
+### x.y.z
+- :star: Support sha256 image references
+
 ### 3.2.3
-- :star: Load local assets instead of relying on external CDN 
+- :star: Load local assets instead of relying on external CDN
 
 ### 3.2.2
 - :fire: Fix WUD crash when Pushover userKey or applicationToken is invalid
