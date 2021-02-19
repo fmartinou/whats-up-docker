@@ -282,7 +282,10 @@ class Docker extends Component {
                 const excludeTags = Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.tag.exclude') ? labels['wud.tag.exclude'] : undefined;
                 return this.mapContainerToImage(container, includeTags, excludeTags);
             });
-        return Promise.all(imagesPromises);
+        const images = await Promise.all(imagesPromises);
+
+        // Return defined images to process
+        return images.filter((imagePromise) => imagePromise !== undefined);
     }
 
     /**
@@ -339,7 +342,16 @@ class Docker extends Component {
         const creationDate = containerImage.data.Created;
 
         // Parse image to get registry, organization...
-        const parsedImage = parse((containerImage.data.RepoTags || [])[0] || container.data.Image);
+        let imageNameToParse = container.data.Image;
+        if (imageNameToParse.includes('sha256:')) {
+            if (!containerImage.data.RepoTags || containerImage.data.RepoTags.length === 0) {
+                log.warn(`Cannot get a reliable tag for this image [${imageNameToParse}]`);
+                return Promise.resolve();
+            }
+            // Get the first repo tag (better than nothing ;)
+            [imageNameToParse] = containerImage.data.RepoTags;
+        }
+        const parsedImage = parse(imageNameToParse);
         const version = parsedImage.tag || 'latest';
         const parsedVersion = semver.coerce(version);
         const isSemver = parsedVersion !== null && parsedVersion !== undefined;
