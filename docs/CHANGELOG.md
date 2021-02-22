@@ -1,7 +1,8 @@
 # Changelog
 
-### x.y.z
+### 3.3.0
 - :star: Support sha256 image references
+- :star: Update dependencies
 
 ### 3.2.3
 - :star: Load local assets instead of relying on external CDN
