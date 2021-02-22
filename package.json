@@ -7,7 +7,7 @@
     "start": "nodemon app/index.js | ./node_modules/.bin/bunyan",
     "doc": "node_modules/.bin/docsify serve ./docs",
     "lint": "eslint '**/*.js'",
-    "test": "node --unhandled-rejections=strict node_modules/.bin/jest --coverage",
+    "test": "node node_modules/.bin/jest --coverage",
     "cucumber": "node node_modules/cucumber/bin/cucumber-js e2e/**/*.feature"
   },
   "author": "fmartinou",
