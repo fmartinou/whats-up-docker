@@ -22,7 +22,7 @@ function init() {
  * Return all metrics as string for Prometheus scrapping.
  * @returns {string}
  */
-function output() {
+async function output() {
     return register.metrics();
 }
 

@@ -147,12 +147,12 @@ function getImages(query = {}) {
         return [];
     }
     const imageList = images.find(filter).map((item) => new Image(item.data));
-    return imageList.sort(byValues({
-        watcher: byString(),
-        registry: byString(),
-        image: byString(),
-        version: byString(),
-    }));
+    return imageList.sort(byValues([
+        ['watcher', byString()],
+        ['registry', byString()],
+        ['image', byString()],
+        ['version', byString()],
+    ]));
 }
 
 /**

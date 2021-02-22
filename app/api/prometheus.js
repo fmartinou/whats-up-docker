@@ -13,8 +13,8 @@ const router = express.Router();
  * @param req
  * @param res
  */
-function outputMetrics(req, res) {
-    res.status(200).type('text').send(output());
+async function outputMetrics(req, res) {
+    res.status(200).type('text').send(await output());
 }
 
 /**
