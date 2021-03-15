@@ -6,7 +6,7 @@ class Hub extends Registry {
         return this.joi.object().keys({
             login: this.joi.alternatives().conditional('token', { not: undefined, then: this.joi.string().required(), otherwise: this.joi.any().forbidden() }),
             token: this.joi.alternatives().conditional('login', { not: undefined, then: this.joi.string().required(), otherwise: this.joi.any().forbidden() }),
-            auth: this.joi.alternatives().conditional('login', { not: undefined, then: this.joi.any().forbidden(), otherwise: this.joi.string().base64() }),
+            auth: this.joi.alternatives().conditional('login', { not: undefined, then: this.joi.any().forbidden(), otherwise: this.joi.alternatives().try(this.joi.string().base64(), this.joi.string().valid('')) }),
         });
     }
 

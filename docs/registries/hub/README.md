@@ -8,17 +8,23 @@ Currently, the supported credentials are:
 - Docker Base64 credentials (like in [.docker/config.json](https://docs.docker.com/engine/reference/commandline/login/))
 - Docker Hub login + Docker Hub password (not recommended)
 
-!> Configuration is required only if you're using [Docker Hub Private Repositories](https://docs.docker.com/docker-hub/repos/#private-repositories).
+!> By default, if you don't configure any registries, WUD will configure a default one with anonymous access. \
+Don't forget to configure authentication if you're using [Docker Hub Private Repositories](https://docs.docker.com/docker-hub/repos/#private-repositories).
 
 ### Variables
 
-| Env var                  | Description                           | Supported values                                  | Default value |
-| ------------------------ |:-------------------------------------:|:-------------------------------------------------:|:-------------:| 
-| `WUD_REGISTRY_HUB_LOGIN` | A valid Docker Hub Login              | WUD_REGISTRY_HUB_TOKEN must be defined            |               |
-| `WUD_REGISTRY_HUB_TOKEN` | A valid Docker Hub Token              | WUD_REGISTRY_HUB_LOGIN must be defined            |               |
-| `WUD_REGISTRY_HUB_AUTH`  | A valid Docker Hub Base64 Auth String | WUD_REGISTRY_HUB_LOGIN/TOKEN  must not be defined |               |
+| Env var                  | Description                                                               | Supported values                                  | Default value |
+| ------------------------ |:-------------------------------------------------------------------------:|:-------------------------------------------------:|:-------------:| 
+| `WUD_REGISTRY_HUB_LOGIN` | A valid Docker Hub Login                                                  | WUD_REGISTRY_HUB_TOKEN must be defined            |               |
+| `WUD_REGISTRY_HUB_TOKEN` | A valid Docker Hub Token                                                  | WUD_REGISTRY_HUB_LOGIN must be defined            |               |
+| `WUD_REGISTRY_HUB_AUTH`  | A valid Docker Hub Base64 Auth String (empty string for anonymous access) | WUD_REGISTRY_HUB_LOGIN/TOKEN  must not be defined |               |
 
 ### Examples
+
+#### Configure for anonymous access
+```bash
+WUD_REGISTRY_HUB_AUTH=""
+```
 
 #### Configure Authentication using Login/Token
 
@@ -47,7 +53,7 @@ Concatenate `$login:$password` and [encode with Base64](https://www.base64encode
 For example,
 - if your login is `johndoe`
 - and your password is `2c1bd872-efb6-4f3a-81aa-724518a0a592`
-- the resulted encoding string would be `am9obmRvZToyYzFiZDg3Mi1lZmI2LTRmM2EtODFhYS03MjQ1MThhMGE1OTI=`
+- the resulting encoded string would be `am9obmRvZToyYzFiZDg3Mi1lZmI2LTRmM2EtODFhYS03MjQ1MThhMGE1OTI=`
 
 ```bash
 WUD_REGISTRY_HUB_AUTH=am9obmRvZToyYzFiZDg3Mi1lZmI2LTRmM2EtODFhYS03MjQ1MThhMGE1OTI=

@@ -136,7 +136,7 @@ function normalizeImage(image) {
 function getRegistry(registryName) {
     const registryToReturn = getRegistries()[registryName];
     if (!registryToReturn) {
-        throw new Error(`Unsupported Registry ${registry}`);
+        throw new Error(`Unsupported Registry ${registryName}`);
     }
     return registryToReturn;
 }
