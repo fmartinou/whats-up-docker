@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.3.1
+- :fire: Allow anonymous Hub configuration
+
 ### 3.3.0
 - :star: Support sha256 image references
 - :star: Update dependencies
