@@ -61,6 +61,11 @@ wud_watcher_total{type="docker",name="local"} 11
 wud_images{registry="hub",registry_url="https://registry-1.docker.io/v2",image="library/nginx",version="1.10-alpine",version_date="2017-03-03T22:03:51.199773111Z",architecture="amd64",os="linux",size="54042627",is_semver="true",include_tags="^[0-9]\\d*\\.[0-9]\\d*-alpine$",exclude_tags="undefined",new_version="1.19-alpine"} 1
 ```
 
+# HELP wud_update_available Images available for update
+# TYPE wud_update_available gauge
+wud_update_available{registry="hub",registry_url="https://registry-1.docker.io/v2",image="library/nginx",architecture="amd64",os="linux"} 1
+wud_update_available{registry="hub",registry_url="https://registry-1.docker.io/v2",image="library/redis",architecture="amd64",os="linux"} 0
+
 #### Standard process metrics
 ```bash
 # HELP process_cpu_user_seconds_total Total user CPU time spent in seconds.

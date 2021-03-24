@@ -12,6 +12,9 @@ Feature: Prometheus exposure
     And response body should contain wud_images{registry="hub"
     And response body should contain wud_images{registry="hub"
 
+    And response body should contain wud_update_available{registry="hub"
+    And response body should contain wud_update_available{registry="hub"
+
 
   Scenario Outline: WUD must expose watched images
     When I GET /metrics
