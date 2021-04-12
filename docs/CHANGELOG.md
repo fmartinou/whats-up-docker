@@ -1,5 +1,8 @@
 # Changelog
 
+### develop
+- :star: Update all dependencies
+
 ### 3.3.1
 - :fire: Allow anonymous Hub configuration
 
