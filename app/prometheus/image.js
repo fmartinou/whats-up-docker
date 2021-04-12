@@ -8,6 +8,7 @@ let gaugeImage;
  * Populate gauge.
  */
 function populateGauge() {
+    gaugeImage.reset();
     store.getImages().forEach((image) => {
         try {
             gaugeImage.set({
@@ -23,6 +24,9 @@ function populateGauge() {
                 include_tags: image.includeTags,
                 exclude_tags: image.excludeTags,
                 new_version: image.result ? image.result.newVersion : undefined,
+                to_be_updated: image.result
+                    && image.result.newVersion
+                    && image.result.newVersion !== image.version,
             }, 1);
         } catch (e) {
             log.warn(`Error when adding image ${image.registryUrl}/${image.image}:${image.version} to the metrics`);
@@ -49,6 +53,7 @@ function init() {
             'new_version',
             'created',
             'updated',
+            'to_be_updated',
         ],
     });
     log.debug('Start image metrics interval');

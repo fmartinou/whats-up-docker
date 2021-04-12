@@ -11,6 +11,8 @@ You can also display WUD watched images on Grafana.
 ![image](./grafana_table.png)
 
 ```
-# Example of Prometheus query
 sum by(registry_url, image, os, architecture, version, new_version, updated) (wud_images)
+
+# or if you want to display images to be updated only 
+sum by(registry_url, image, os, architecture, version, new_version, updated) (wud_images{to_be_updated="true"})
 ```

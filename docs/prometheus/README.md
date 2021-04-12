@@ -58,7 +58,7 @@ wud_watcher_total{type="docker",name="local"} 11
 
 # HELP wud_images The watched images
 # TYPE wud_images gauge
-wud_images{registry="hub",registry_url="https://registry-1.docker.io/v2",image="library/nginx",version="1.10-alpine",version_date="2017-03-03T22:03:51.199773111Z",architecture="amd64",os="linux",size="54042627",is_semver="true",include_tags="^[0-9]\\d*\\.[0-9]\\d*-alpine$",exclude_tags="undefined",new_version="1.19-alpine"} 1
+wud_images{registry="hub",registry_url="https://registry-1.docker.io/v2",image="library/nginx",version="1.10-alpine",version_date="2017-03-03T22:03:51.199773111Z",architecture="amd64",os="linux",size="54042627",is_semver="true",include_tags="^[0-9]\\d*\\.[0-9]\\d*-alpine$",exclude_tags="undefined",new_version="1.19-alpine", to_be_updated="true"} 1
 ```
 
 #### Standard process metrics

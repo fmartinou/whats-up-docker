@@ -1,6 +1,7 @@
 # Changelog
 
 ### develop
+- :star: Add to_be_updated prometheus metric tag
 - :star: Update all dependencies
 
 ### 3.3.1
