@@ -14,13 +14,13 @@ async function main() {
     prometheus.init();
 
     // Register triggers
-    registry.registerTriggers();
+    await registry.registerTriggers();
 
     // Register registries
-    registry.registerRegistries();
+    await registry.registerRegistries();
 
     // Register watchers
-    registry.registerWatchers();
+    await registry.registerWatchers();
 
     // Init api
     await api.init();

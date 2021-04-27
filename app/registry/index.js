@@ -19,10 +19,13 @@ function getState() {
 /**
  * Register a component.
  *
+ * @param {*} kind
+ * @param {*} provider
  * @param {*} name
  * @param {*} configuration
+ * @param {*} path
  */
-function registerComponent(kind, provider, name, configuration, path) {
+async function registerComponent(kind, provider, name, configuration, path) {
     const providerLowercase = provider.toLowerCase();
     const nameLowercase = name.toLowerCase();
 
@@ -36,7 +39,7 @@ function registerComponent(kind, provider, name, configuration, path) {
     }
     if (Component) {
         const component = new Component();
-        const componentRegistered = component
+        const componentRegistered = await component
             .register(providerLowercase, nameLowercase, configuration);
         if (componentRegistered) {
             state[kind][component.getId()] = component;
@@ -48,6 +51,7 @@ function registerComponent(kind, provider, name, configuration, path) {
 
 /**
  * Register all found components.
+ * @param kind
  * @param configurations
  * @param path
  * @returns {*[]}
@@ -71,7 +75,7 @@ function registerComponents(kind, configurations, path) {
     return [];
 }
 
-function registerWatchers() {
+async function registerWatchers() {
     const configurations = getWatcherConfigurations();
 
     Object.keys(configurations).forEach((watcherKey) => {
@@ -81,7 +85,7 @@ function registerWatchers() {
 
     if (Object.keys(configurations).length === 0) {
         log.info('No Watcher configured => Init a default one (Docker with default options)');
-        registerComponent('watchers', 'docker', 'local', {}, '../watchers/providers');
+        await registerComponent('watchers', 'docker', 'local', {}, '../watchers/providers');
     }
 }
 
@@ -93,7 +97,7 @@ function registerTriggers() {
     registerComponents('triggers', configurations, '../triggers/providers');
 }
 
-function registerRegistries() {
+async function registerRegistries() {
     const configurations = getRegistryConfigurations();
     Object.keys(configurations).forEach((registryKey) => {
         const registryKeyNormalize = registryKey.toLowerCase();
@@ -101,7 +105,7 @@ function registerRegistries() {
     });
     if (Object.keys(configurations).length === 0) {
         log.info('No Registry configured => Init a default one (Docker Hub with default options)');
-        registerComponent('registries', 'hub', 'hub', {}, '../registries/providers');
+        await registerComponent('registries', 'hub', 'hub', {}, '../registries/providers');
     }
 }
 

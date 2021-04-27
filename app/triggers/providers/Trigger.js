@@ -7,8 +7,8 @@ class Trigger extends Component {
     /**
      * Init the Trigger.
      */
-    init() {
-        this.initTrigger();
+    async init() {
+        await this.initTrigger();
         event.registerImageNewVersion(async (imageResult) => {
             let status = 'error';
             try {

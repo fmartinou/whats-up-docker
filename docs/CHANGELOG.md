@@ -1,5 +1,8 @@
 # Changelog
 
+### develop
+- :star: Add [Home-Assistant](https://www.home-assistant.io/) MQTT integration
+
 ### 3.4.0
 - :star: Add `to_be_updated` prometheus metric tag
 - :star: Update all dependencies

@@ -18,7 +18,7 @@ class Component {
      * @param name the name of the component
      * @param configuration the configuration of the component
      */
-    register(type, name, configuration) {
+    async register(type, name, configuration) {
         try {
             this.type = type;
             this.name = name;
@@ -29,7 +29,7 @@ class Component {
             return undefined;
         }
         try {
-            this.init();
+            await this.init();
             return this;
         } catch (e) {
             log.error(`Disable component ${name} of type ${type} (init failed)`);
