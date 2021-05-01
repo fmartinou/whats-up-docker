@@ -43,7 +43,7 @@ class Ifttt extends Trigger {
             },
             body: {
                 value1: `${image.registryUrl}/${image.image}`,
-                value2: `${image.result.newVersion}`,
+                value2: `${image.result.tag}`,
                 value3: JSON.stringify(image),
             },
             json: true,

@@ -12,18 +12,17 @@
             <th>Watcher</th>
             <th>Registry</th>
             <th>Image</th>
-            <th>Version</th>
+            <th>Tag</th>
+            <th>Digest</th>
             <th class="nowrap">Version date</th>
             <th>Arch</th>
             <th>Os</th>
             <th>Size</th>
             <th class="nowrap">Is semver</th>
-            <th class="nowrap">
-                Include Tags
-            </th>
-            <th class="nowrap">Exclude Tags
-            </th>
-            <th class="nowrap">New version</th>
+            <th class="nowrap">Include Tags</th>
+            <th class="nowrap">Exclude Tags</th>
+            <th class="nowrap">New tag</th>
+            <th class="nowrap">New digest</th>
             <th>Created</th>
             <th>Updated</th>
             <th></th>
@@ -55,7 +54,8 @@
                 </span>
                 </td>
                 <td><%= image.image %></td>
-                <td><span class="tag is-medium"><%= image.version %></span></td>
+                <td><span class="tag is-medium"><%= image.tag %></span></td>
+                <td><span class="tag is-medium"><%= image.digest %></span></td>
                 <td class="nowrap">
                     <%= moment(image.versionDate).format('DD-MM-YYYY HH:MM:SS') %>
                 </td>
@@ -79,11 +79,11 @@
                 <td class="nowrap">
                     <%= image.excludeTags %>
                 </td>
-                <td id="td-new-version-<%= image.id %>">
-                    <% if (image.result && image.result.newVersion) { %>
-                        <span class="tag is-primary is-medium"><%= image.result.newVersion %></span>
-                    <% } %>
-
+                <td id="td-new-tag-<%= image.id %>">
+                    <span class="tag is-primary is-medium"><%= image.result.tag %></span>
+                </td>
+                <td id="td-new-digest-<%= image.id %>">
+                    <span class="tag is-primary is-medium"><%= image.result.digest %></span>
                 </td>
                 <td class="nowrap">
                     <%= moment(image.created).format('DD-MM-YYYY HH:MM:SS') %>
@@ -109,11 +109,12 @@
      * @param image
      */
     function patchImage(image) {
-        const updated = image.updated ? moment(image.updated).format('DD-MM-YYYY HH:MM:SS') : '';
-        document.getElementById(`td-updated-${image.id}`).innerHTML = updated;
+        document.getElementById(`td-updated-${image.id}`).innerHTML = image.updated ? moment(image.updated).format('DD-MM-YYYY HH:MM:SS') : '';
 
-        const newVersion = image.result && image.result.newVersion ? `<span class="tag is-primary is-medium">${image.result.newVersion}</span>` : '';
-        document.getElementById(`td-new-version-${image.id}`).innerHTML = newVersion;
+        const resultTag = image.result.tag ? `<span class="tag is-primary is-medium">${image.result.tag}</span>` : '';
+        const resultDigest = image.result.digest ? `<span class="tag is-primary is-medium">${image.result.digest}</span>` : '';
+        document.getElementById(`td-new-tag-${image.id}`).innerHTML = resultTag;
+        document.getElementById(`td-new-digest-${image.id}`).innerHTML = resultDigest;
     }
 
     /**
@@ -135,8 +136,8 @@
             patchImage(image);
 
             // Display success message
-            if (image.result && image.result.newVersion) {
-                window.message.display('New version found!', `A new version ${image.result.newVersion} has been found for ${image.image}:${image.version}`);
+            if (image.toBeUpdated) {
+                window.message.display('New version found!', `A new version has been found for ${image.image}:${image.tag}`);
             }
         } catch (e) {
             // Display error message

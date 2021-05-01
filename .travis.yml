@@ -6,7 +6,6 @@ env:
     - NODE_VERSION=14
     - CC_TEST_REPORTER_ID=46ef31dae5b656e0f4be410a86bd83bdcf73e7d27ab33a704c197e6fe4bf02a0
     - DOCKER_CLI_EXPERIMENTAL=enabled
-    - IMAGE_VERSION=develop
 
 before_install:
 
@@ -109,8 +108,7 @@ script:
   # Report to Code Climate
   - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT;
 
-after_success:
-
+  - export IMAGE_VERSION=${TRAVIS_BRANCH//\//\_}
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker version
   - make prepare

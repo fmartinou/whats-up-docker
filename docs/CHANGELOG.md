@@ -1,5 +1,8 @@
 # Changelog
 
+### develop
+- :star: Add Support for Non Semver image versions
+
 ### 3.5.0
 - :star: Add [Home-Assistant](https://www.home-assistant.io/) MQTT integration
 

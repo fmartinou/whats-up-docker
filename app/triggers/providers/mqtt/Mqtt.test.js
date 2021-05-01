@@ -1,5 +1,6 @@
 const { ValidationError } = require('joi');
 const Mqtt = require('./Mqtt');
+const Image = require('../../../model/Image');
 
 const mqtt = new Mqtt();
 
@@ -50,10 +51,10 @@ test('syncHassDevice should publish message to expected hass discovery topic', a
             }
         },
     };
-    await mqtt.syncHassDevice({
+    await mqtt.syncHassDevice(new Image({
         registry: 'hub',
         image: 'org/test',
-    });
+    }));
     expect(mqtt.client.topic).toEqual('homeassistant/binary_sensor/wud_image_hub_org_test/config');
     expect(JSON.parse(mqtt.client.message)).toStrictEqual({
         unique_id: 'wud_image_hub_org_test',

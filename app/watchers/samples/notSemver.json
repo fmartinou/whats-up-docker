@@ -1,7 +1,7 @@
 {
     "registry":"registry",
     "image":"organization/image",
-    "version":"notasemver",
+    "tag":"notasemver",
     "versionDate":"2019-05-20T12:02:06.307Z",
     "architecture":"arch",
     "os":"os",

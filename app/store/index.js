@@ -1,7 +1,6 @@
 const joi = require('joi');
 const Loki = require('lokijs');
 const fs = require('fs');
-const { v4: uuid } = require('uuid');
 const moment = require('moment');
 const { byString, byValues } = require('sort-es');
 const log = require('../log');
@@ -71,7 +70,7 @@ function findImage({
     watcher,
     registryUrl,
     image,
-    version,
+    tag,
     includeTags,
     excludeTags,
 }) {
@@ -79,7 +78,7 @@ function findImage({
         'data.watcher': watcher,
         'data.registryUrl': registryUrl,
         'data.image': image,
-        'data.version': version,
+        'data.tag': tag,
         'data.includeTags': includeTags,
         'data.excludeTags': excludeTags,
     });
@@ -94,16 +93,10 @@ function findImage({
  * @param image
  */
 function insertImage(image) {
-    const imageToReturn = {
-        ...image,
-        id: uuid(),
-        created: moment.utc().toISOString(),
-        updated: moment.utc().toISOString(),
-    };
     images.insert({
-        data: imageToReturn,
+        data: image,
     });
-    return imageToReturn;
+    return image;
 }
 
 /**
@@ -112,21 +105,23 @@ function insertImage(image) {
  */
 function updateImage(image) {
     const imageToUpdate = findImage(image);
-    const imageToReturn = {
+    const imageToReturn = new Image({
         ...imageToUpdate,
         result: image.result,
         updated: moment.utc().toISOString(),
-    };
+    });
 
-    // Remove
+    // Remove existing image
     images.chain().find({
         'data.registryUrl': image.registryUrl,
         'data.image': image.image,
-        'data.version': image.version,
+        'data.tag': image.tag,
+        'data.digest': image.digest,
         'data.includeTags': image.includeTags,
         'data.excludeTags': image.excludeTags,
     }).remove();
 
+    // Insert new one
     images.insert({
         data: imageToReturn,
     });
@@ -151,7 +146,7 @@ function getImages(query = {}) {
         ['watcher', byString()],
         ['registry', byString()],
         ['image', byString()],
-        ['version', byString()],
+        ['tag', byString()],
     ]));
 }
 

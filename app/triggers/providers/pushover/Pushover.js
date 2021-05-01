@@ -69,14 +69,15 @@ class Pushover extends Trigger {
      */
     async notify(image) {
         const message = {
-            title: `[WUD] New version found for image ${image.image} => ${image.result.newVersion}`,
+            title: `[WUD] New version found for image ${image.image}`,
             html: 1,
             message: `
                 <p><b>Registry:</b>&nbsp;${image.registry}</p>
                 <p><b>RegistryUrl:</b>&nbsp;${image.registryUrl}</p>
                 <p><b>Image:</b>&nbsp;${image.image}</p>
-                <p><b>Current version:</b> ${image.version}</p>
-                <p><b>New version:</b>&nbsp;${image.result.newVersion}</p>
+                <p><b>Current tag:</b> ${image.tag}</p>
+                <p><b>Current digest:</b> ${image.digest}</p>
+                <p><b>New digest:</b>&nbsp;${image.result.digest}</p>
             `,
             sound: this.configuration.sound,
             device: this.configuration.device,

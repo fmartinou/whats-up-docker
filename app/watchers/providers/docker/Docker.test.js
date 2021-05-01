@@ -7,7 +7,7 @@ const Acr = require('../../../registries/providers/acr/Acr');
 
 const sampleSemver = require('../../samples/semver.json');
 const sampleCoercedSemver = require('../../samples/coercedSemver.json');
-const sampleNotSemver = require('../../samples/notSemver.json');
+// const sampleNotSemver = require('../../samples/notSemver.json');
 
 jest.mock('request-promise-native');
 
@@ -55,48 +55,44 @@ test('initTrigger should create a configured DockerApi instance', () => {
     expect(docker.dockerApi.modem.socketPath).toBe(configurationValid.socket);
 });
 
-test('getTagsCandidate should match when current version is semver and new tag is found', () => {
-    expect(Docker.__get__('getTagsCandidate')(sampleSemver, ['7.8.9'])).toEqual(['7.8.9']);
+test('getSemverTagsCandidate should match when current version is semver and new tag is found', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
-test('getTagsCandidate should match when current version is coerced semver and new tag is found', () => {
-    expect(Docker.__get__('getTagsCandidate')(sampleCoercedSemver, ['7.8.9'])).toEqual(['7.8.9']);
+test('getSemverTagsCandidate should match when current version is coerced semver and new tag is found', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')(sampleCoercedSemver, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
-test('getTagsCandidate should not match when current version is semver and no new tag is found', () => {
-    expect(Docker.__get__('getTagsCandidate')(sampleSemver, [])).toEqual([]);
+test('getSemverTagsCandidate should not match when current version is semver and no new tag is found', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, [])).toEqual([]);
 });
 
-test('getTagsCandidate should match when newer version match the include regex', () => {
-    expect(Docker.__get__('getTagsCandidate')({ ...sampleSemver, includeTags: '^[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual(['7.8.9']);
+test('getSemverTagsCandidate should match when newer version match the include regex', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, includeTags: '^[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
-test('getTagsCandidate should not match when newer version but doesnt match the include regex', () => {
-    expect(Docker.__get__('getTagsCandidate')({ ...sampleSemver, includeTags: '^v[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual([]);
+test('getSemverTagsCandidate should not match when newer version but doesnt match the include regex', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, includeTags: '^v[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual([]);
 });
 
-test('getTagsCandidate should match when newer version doesnt match the exclude regex', () => {
-    expect(Docker.__get__('getTagsCandidate')({ ...sampleSemver, excludeTags: '^v[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual(['7.8.9']);
+test('getSemverTagsCandidate should match when newer version doesnt match the exclude regex', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, excludeTags: '^v[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
-test('getTagsCandidate should not match when newer version and match the exclude regex', () => {
-    expect(Docker.__get__('getTagsCandidate')({ ...sampleSemver, excludeTags: '^[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual([]);
+test('getSemverTagsCandidate should not match when newer version and match the exclude regex', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, excludeTags: '^[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual([]);
 });
 
-test('getTagsCandidate should return only greater tags than current', () => {
-    expect(Docker.__get__('getTagsCandidate')(sampleSemver, ['7.8.9', '4.5.6', '1.2.3'])).toEqual(['7.8.9']);
+test('getSemverTagsCandidate should return only greater tags than current', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, ['7.8.9', '4.5.6', '1.2.3'])).toEqual(['7.8.9']);
 });
 
-test('getTagsCandidate should return all greater tags', () => {
-    expect(Docker.__get__('getTagsCandidate')(sampleSemver, ['10.11.12', '7.8.9', '4.5.6', '1.2.3'])).toEqual(['10.11.12', '7.8.9']);
+test('getSemverTagsCandidate should return all greater tags', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, ['10.11.12', '7.8.9', '4.5.6', '1.2.3'])).toEqual(['10.11.12', '7.8.9']);
 });
 
-test('getTagsCandidate should return all greater tags when current tag is not a semver', () => {
-    expect(Docker.__get__('getTagsCandidate')(sampleNotSemver, ['10.11.12', '7.8.9', 'notasemver', '1.2.3'])).toEqual(['10.11.12', '7.8.9']);
-});
-
-test('getTagsCandidate should return greater tags when digit over 9', () => {
-    expect(Docker.__get__('getTagsCandidate')({ version: '1.9.0', isSemver: true }, ['1.10.0', '1.2.3'])).toEqual(['1.10.0']);
+test('getSemverTagsCandidate should return greater tags when digit over 9', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')({ tag: '1.9.0', isSemver: true }, ['1.10.0', '1.2.3'])).toEqual(['1.10.0']);
 });
 
 test('normalizeImage should return hub when applicable', () => {
@@ -138,20 +134,24 @@ test('normalizeImage should return original image when no matching provider foun
     expect(Docker.__get__('normalizeImage')({ registryUrl: 'xxx' })).toEqual({ registryUrl: 'xxx', registry: 'unknown' });
 });
 
-test('findNewVersion should return new image when found', () => {
+test('findNewVersion should return new image when found', async () => {
     hub.getTags = () => ({
         tags: ['7.8.9'],
     });
-    expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
-        newVersion: '7.8.9',
+    await expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
+        tag: '7.8.9',
+        digest: undefined,
     });
 });
 
-test('findNewVersion should return undefined when no image found', () => {
+test('findNewVersion should return empty result when no image found', async () => {
     hub.getTags = () => ({
         tags: [],
     });
-    expect(docker.findNewVersion(sampleSemver)).resolves.toBe(undefined);
+    await expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
+        tag: undefined,
+        digest: undefined,
+    });
 });
 
 test('mapContainerToImage should map a container definition to an image definition', async () => {
@@ -164,6 +164,9 @@ test('mapContainerToImage should map a container definition to an image definiti
                         Os: 'os',
                         Size: '10',
                         Created: '2019-05-20T12:02:06.307Z',
+                        Config: {
+                            Image: 'sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba',
+                        },
                     },
                 }),
             }),
@@ -180,7 +183,7 @@ test('mapContainerToImage should map a container definition to an image definiti
         registry: 'hub',
         registryUrl: 'https://registry-1.docker.io/v2',
         image: 'organization/image',
-        version: 'version',
+        tag: 'version',
         versionDate: '2019-05-20T12:02:06.307Z',
         architecture: 'arch',
         os: 'os',
@@ -197,21 +200,24 @@ test('watchImage should return new image when found', () => {
     });
     expect(docker.watchImage(sampleSemver)).resolves.toMatchObject({
         result: {
-            newVersion: '7.8.9',
+            tag: '7.8.9',
         },
     });
 });
 
-test('watchImage should return no result when no image found', () => {
+test('watchImage should return no result when no image found', async () => {
     docker.configuration = {};
     hub.getTags = () => ({
         tags: [],
     });
-    expect(docker.watchImage(sampleSemver)).resolves.toMatchObject({
-        result: undefined,
+    await expect(docker.watchImage(sampleSemver)).resolves.toMatchObject({
+        result: {
+            tag: undefined,
+            digest: undefined,
+        },
     });
 });
-test('watch should return a list of images found by the docker socket', () => {
+test('watch should return a list of images found by the docker socket', async () => {
     const image1 = {
         data: {
             Image: 'image',
@@ -220,6 +226,9 @@ test('watch should return a list of images found by the docker socket', () => {
             Size: '10',
             Created: '2019-05-20T12:02:06.307Z',
             Labels: {},
+            Config: {
+                Image: 'sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba',
+            },
         },
     };
     docker.dockerApi = {
@@ -238,11 +247,11 @@ test('watch should return a list of images found by the docker socket', () => {
         watchbydefault: true,
     };
 
-    expect(docker.watch()).resolves.toMatchObject([{
+    await expect(docker.watch()).resolves.toMatchObject([{
         registry: 'hub',
         registryUrl: 'https://registry-1.docker.io/v2',
         image: 'library/image',
-        version: 'latest',
+        tag: 'latest',
         versionDate: '2019-05-20T12:02:06.307Z',
         architecture: 'arch',
         os: 'os',
@@ -256,14 +265,14 @@ test('pruneOldImages should prune old images', () => {
         watcher: 'watcher',
         registryUrl: 'registryUrl',
         image: 'image',
-        version: 'version1',
+        tag: 'version1',
         includeTags: 'includeTags',
         excludeTags: 'excludeTags',
     }, {
         watcher: 'watcher',
         registryUrl: 'registryUrl',
         image: 'image',
-        version: 'version2',
+        tag: 'version2',
         includeTags: 'includeTags',
         excludeTags: 'excludeTags',
     }];
@@ -271,7 +280,7 @@ test('pruneOldImages should prune old images', () => {
         watcher: 'watcher',
         registryUrl: 'registryUrl',
         image: 'image',
-        version: 'version2',
+        tag: 'version2',
         includeTags: 'includeTags',
         excludeTags: 'excludeTags',
     }];
@@ -279,7 +288,7 @@ test('pruneOldImages should prune old images', () => {
         watcher: 'watcher',
         registryUrl: 'registryUrl',
         image: 'image',
-        version: 'version1',
+        tag: 'version1',
         includeTags: 'includeTags',
         excludeTags: 'excludeTags',
     }]);

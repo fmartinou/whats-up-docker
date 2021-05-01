@@ -49,8 +49,10 @@ class Slack extends Trigger {
 *Registry:* ${image.registry} \n
 *RegistryUrl:* ${image.registryUrl} \n
 *Image:* ${image.image} \n
-*Current version:* ${image.version} \n
-*New version:* ${image.result.newVersion}`;
+*Current tag:* ${image.tag} \n
+*Current digest:* ${image.digest} \n
+*New tag:* ${image.result.tag} \n
+*New digest:* ${image.result.digest}`;
         return this.client.chat.postMessage({
             channel: this.configuration.channel,
             text: message,

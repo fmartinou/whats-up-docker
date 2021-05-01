@@ -7,6 +7,16 @@ const { getSummaryTags } = require('../prometheus/registry');
  */
 class Registry extends Component {
     /**
+     * Encode Bse64(login:password)
+     * @param login
+     * @param token
+     * @returns {string}
+     */
+    static base64Encode(login, token) {
+        return Buffer.from(`${login}:${token}`, 'utf-8').toString('base64');
+    }
+
+    /**
      * Override getId to return the name only (hub, ecr...).
      * @returns {string}
      */
@@ -51,33 +61,52 @@ class Registry extends Component {
      * @returns {*}
      */
     async getTags(image) {
+        const tagsResult = await this.callRegistry({
+            image,
+            url: `${image.registryUrl}/${image.image}/tags/list`,
+        });
+
+        // Sort alpha then reverse to get higher values first
+        tagsResult.tags.sort();
+        tagsResult.tags.reverse();
+        return tagsResult;
+    }
+
+    async getImageDigest(image) {
+        const response = await this.callRegistry({
+            image,
+            url: `${image.registryUrl}/${image.image}/manifests/${image.tag}`,
+            headers: {
+                Accept: 'application/vnd.docker.distribution.manifest.v1+json',
+            },
+        });
+        const latestManifest = JSON.parse(response.history[0].v1Compatibility);
+        return latestManifest.config.Image;
+    }
+
+    async callRegistry({
+        image,
+        url,
+        method = 'get',
+        headers = {
+            Accept: 'application/json',
+        },
+    }) {
         const start = new Date().getTime();
-        const url = `${image.registryUrl}/${image.image}/tags/list`;
 
         // Request options
-        const getTagsOptions = {
+        const getRequestOptions = {
             uri: url,
-            headers: {
-                Accept: 'application/json',
-            },
+            method,
+            headers,
             json: true,
         };
 
-        const getTagsOptionsWithAuth = await this.authenticate(image, getTagsOptions);
-        const response = await rp(getTagsOptionsWithAuth);
+        const getRequestOptionsWithAuth = await this.authenticate(image, getRequestOptions);
+        const response = await rp(getRequestOptionsWithAuth);
         const end = new Date().getTime();
         getSummaryTags().observe({ type: this.type, name: this.name }, (end - start) / 1000);
         return response;
-    }
-
-    /**
-     * Encode Bse64(login:password)
-     * @param login
-     * @param token
-     * @returns {string}
-     */
-    static base64Encode(login, token) {
-        return Buffer.from(`${login}:${token}`, 'utf-8').toString('base64');
     }
 }
 

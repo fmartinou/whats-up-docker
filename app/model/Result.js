@@ -2,8 +2,9 @@
  * Result model Class.
  */
 class Result {
-    constructor({ newVersion }) {
-        this.newVersion = newVersion;
+    constructor({ tag, digest }) {
+        this.tag = tag;
+        this.digest = digest;
     }
 
     /**
@@ -12,13 +13,9 @@ class Result {
      * @returns {boolean|boolean}
      */
     equals(other) {
-        if (!other) {
-            return false;
-        }
-        if (!this.newVersion && !other.newVersion) {
-            return true;
-        }
-        return this.newVersion === other.newVersion;
+        return other !== undefined
+            && this.tag === other.tag
+            && this.digest === other.digest;
     }
 }
 

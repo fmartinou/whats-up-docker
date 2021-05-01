@@ -19,27 +19,13 @@ const { getWatchImageGauge } = require('../../../prometheus/watcher');
 function getRegistries() {
     return registry.getState().registries;
 }
-/**
- * Return true if Image in DB and Image with Result are identical.
- * @param resultInDb
- * @param imageWithResult
- * @returns {boolean}
- */
-function isSameResult(resultInDb, imageWithResult) {
-    if (!resultInDb.result && !imageWithResult.result) {
-        return true;
-    }
-    if (!resultInDb.result && imageWithResult.result) {
-        return true;
-    }
-    return resultInDb.result.equals(imageWithResult.result);
-}
 
 /**
  * Process an Image Result.
  * @param imageWithResult
  */
 function processImageResult(imageWithResult) {
+    let imageToTrigger;
     let trigger = false;
 
     // Find image in db & compare
@@ -48,8 +34,8 @@ function processImageResult(imageWithResult) {
     // Not found in DB? => Save it
     if (!resultInDb) {
         log.debug(`Image watched for the first time (${JSON.stringify(imageWithResult)})`);
-        store.insertImage(imageWithResult);
-        if (imageWithResult.result) {
+        imageToTrigger = store.insertImage(imageWithResult);
+        if (imageWithResult.toBeUpdated) {
             trigger = true;
         } else {
             log.debug(`No result found (${JSON.stringify(imageWithResult)})`);
@@ -57,14 +43,14 @@ function processImageResult(imageWithResult) {
 
         // Found in DB? => update it
     } else {
-        trigger = !isSameResult(resultInDb, imageWithResult);
-        store.updateImage(imageWithResult);
+        imageToTrigger = store.updateImage(imageWithResult);
+        trigger = !resultInDb.result.equals(imageToTrigger.result);
     }
 
-    // New version? => Emit event only if new version
+    // Emit event only if new version not already emitted
     if (trigger) {
         log.debug(`New image version found (${JSON.stringify(imageWithResult)})`);
-        event.emitImageNewVersion(imageWithResult);
+        event.emitImageNewVersion(imageToTrigger);
     } else {
         log.debug(`Result already processed => No need to trigger (${JSON.stringify(imageWithResult)})`);
     }
@@ -76,7 +62,7 @@ function processImageResult(imageWithResult) {
  * @param tags
  * @returns {*}
  */
-function getTagsCandidate(image, tags) {
+function getSemverTagsCandidate(image, tags) {
     let filteredTags = tags;
 
     // Match include tag regex
@@ -90,29 +76,19 @@ function getTagsCandidate(image, tags) {
         const excludeTagsRegex = new RegExp(image.excludeTags);
         filteredTags = filteredTags.filter((tag) => !excludeTagsRegex.test(tag));
     }
+    const currentTag = semver.coerce(image.tag);
 
-    // If semver, filter on greater semver versions
-    if (image.isSemver) {
-        const currentVersion = semver.coerce(image.version);
+    // Keep semver only
+    filteredTags = filteredTags.filter((tag) => semver.valid(semver.coerce(tag)));
 
-        // Keep semver only
-        filteredTags = filteredTags.filter((tag) => semver.valid(semver.coerce(tag)));
+    // Apply semver sort desc
+    filteredTags.sort((t1, t2) => {
+        const greater = semver.gt(semver.coerce(t2), semver.coerce(t1));
+        return greater ? 1 : -1;
+    });
 
-        // Apply semver sort desc
-        filteredTags.sort((t1, t2) => {
-            const greater = semver.gt(semver.coerce(t2), semver.coerce(t1));
-            return greater ? 1 : -1;
-        });
-
-        // Keep only greater semver
-        filteredTags = filteredTags.filter((tag) => semver.gt(semver.coerce(tag), currentVersion));
-    } else {
-        // Filter on higher lexically value
-        const currentTagIndex = tags.findIndex((tag) => tag === image.version);
-        if (currentTagIndex !== -1) {
-            filteredTags = tags.slice(0, currentTagIndex);
-        }
-    }
+    // Keep only greater semver
+    filteredTags = filteredTags.filter((tag) => semver.gt(semver.coerce(tag), currentTag));
     return filteredTags;
 }
 
@@ -156,7 +132,8 @@ function getOldImages(newImages, imagesFromTheStore) {
             .find((newImage) => newImage.watcher === imageFromStore.watcher
                 && newImage.registryUrl === imageFromStore.registryUrl
                 && newImage.image === imageFromStore.image
-                && newImage.version === imageFromStore.version
+                && newImage.tag === imageFromStore.tag
+                && newImage.digest === imageFromStore.digest
                 && newImage.includeTags === imageFromStore.includeTags
                 && newImage.excludeTags === imageFromStore.excludeTags);
         return isImageStillToWatch === undefined;
@@ -229,7 +206,7 @@ class Docker extends Component {
 
         // map to K/V map to remove duplicate items
         imagesArray.forEach((image) => {
-            const key = `${image.registry}_${image.image}_${image.version}_${image.includeTags}_${image.excludeTags}`;
+            const key = `${image.registry}_${image.image}_${image.tag}_${image.digest}_${image.includeTags}_${image.excludeTags}`;
             images[key] = image;
         });
         getWatchImageGauge().set({
@@ -246,7 +223,7 @@ class Docker extends Component {
      */
     async watchImage(image) {
         const imageWithResult = image;
-        log.debug(`Check ${image.registryUrl}/${image.image}:${image.version}`);
+        log.debug(`Check ${image.registryUrl}/${image.image}:${image.tag}`);
 
         try {
             imageWithResult.result = await this.findNewVersion(image);
@@ -291,34 +268,36 @@ class Docker extends Component {
     /**
      * Find new version for an Image.
      */
-
     /* eslint-disable-next-line */
     async findNewVersion(image) {
         const registryProvider = getRegistry(image.registry);
+        const result = new Result({ tag: undefined, digest: undefined });
         if (!registryProvider) {
             log.error(`Unsupported registry ${image.registry}`);
-            return undefined;
-        }
-        try {
-            const tagsResult = await registryProvider.getTags(image);
+        } else {
+            try {
+                // Semver & non Server versions with digest -> Find if digest changed on registry
+                if (image.digest) {
+                    result.digest = await registryProvider.getImageDigest(image);
+                }
 
-            // Sort alpha then reverse to get higher values first
-            tagsResult.tags.sort();
-            tagsResult.tags.reverse();
+                // Semver image -> find higher semver tag
+                if (image.isSemver) {
+                    const tagsResult = await registryProvider.getTags(image);
 
-            // Get candidates (based on tag name)
-            const tagsCandidate = getTagsCandidate(image, tagsResult.tags);
+                    // Get candidates (based on tag name)
+                    const semverTagsCandidate = getSemverTagsCandidate(image, tagsResult.tags);
 
-            // Fetch tag manifests (arch, os...)
-            if (tagsCandidate && tagsCandidate.length > 0) {
-                return new Result({
-                    newVersion: tagsCandidate[0],
-                });
+                    // The first one in the array is the highest
+                    if (semverTagsCandidate && semverTagsCandidate.length > 0) {
+                        [result.tag] = semverTagsCandidate;
+                    }
+                }
+                return result;
+            } catch (e) {
+                log.debug(e);
+                return undefined;
             }
-            return undefined;
-        } catch (e) {
-            log.debug(e);
-            return undefined;
         }
     }
 
@@ -340,6 +319,7 @@ class Docker extends Component {
         const os = containerImage.data.Os;
         const size = containerImage.data.Size;
         const creationDate = containerImage.data.Created;
+        const digest = containerImage.data.Config.Image;
 
         // Parse image to get registry, organization...
         let imageNameToParse = container.data.Image;
@@ -352,14 +332,16 @@ class Docker extends Component {
             [imageNameToParse] = containerImage.data.RepoTags;
         }
         const parsedImage = parse(imageNameToParse);
-        const version = parsedImage.tag || 'latest';
-        const parsedVersion = semver.coerce(version);
-        const isSemver = parsedVersion !== null && parsedVersion !== undefined;
+        const tag = parsedImage.tag || 'latest';
+        const parsedTag = semver.coerce(tag);
+        const isSemver = parsedTag !== null && parsedTag !== undefined;
+
         return normalizeImage(new Image({
             watcher: this.getId(),
             registryUrl: parsedImage.domain,
             image: parsedImage.path,
-            version,
+            tag,
+            digest,
             versionDate: creationDate,
             isSemver,
             architecture,

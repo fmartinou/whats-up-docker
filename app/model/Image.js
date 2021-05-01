@@ -1,3 +1,5 @@
+const moment = require('moment');
+const { v4: uuid } = require('uuid');
 const Result = require('./Result');
 
 /**
@@ -5,12 +7,13 @@ const Result = require('./Result');
  */
 class Image {
     constructor({
-        id,
+        id = uuid(),
         watcher,
         registry,
         registryUrl,
         image,
-        version,
+        tag,
+        digest,
         isSemver,
         versionDate,
         architecture,
@@ -18,16 +21,17 @@ class Image {
         size,
         includeTags,
         excludeTags,
-        result,
-        created,
-        updated,
+        created = moment.utc().toISOString(),
+        updated = moment.utc().toISOString(),
+        result = new Result({ tag: undefined, digest: undefined }),
     }) {
         this.id = id;
         this.watcher = watcher;
         this.registry = registry;
         this.registryUrl = registryUrl;
         this.image = image;
-        this.version = version;
+        this.digest = digest;
+        this.tag = tag;
         this.versionDate = versionDate;
         this.architecture = architecture;
         this.os = os;
@@ -36,25 +40,36 @@ class Image {
         this.excludeTags = excludeTags;
         this.isSemver = isSemver;
         this.result = result;
-
-        if (this.result && !(this.result instanceof Result)) {
-            this.result = new Result(this.result);
-        }
-
-        // Created / Updated dates
         this.created = created;
         this.updated = updated;
+
+        if (!(this.result instanceof Result)) {
+            this.result = new Result(this.result);
+        }
+        // Computed properties
+        this.defineComputedProperties();
     }
 
     /**
-     * Compare 2 images.
-     * @param other
-     * @returns {boolean|boolean}
+     * Define computed properties.
+      * @returns {boolean}
      */
-    equals(other) {
-        return this.registryUrl === other.registryUrl
-        && this.image === other.image
-        && this.version === other.version;
+    defineComputedProperties() {
+        Object.defineProperty(this,
+            'toBeUpdated',
+            {
+                enumerable: true,
+                get() {
+                    if (this.tag !== undefined
+                        && this.result.tag !== undefined
+                        && this.tag !== this.result.tag) {
+                        return true;
+                    }
+                    return this.digest !== undefined
+                        && this.result.digest !== undefined
+                        && this.digest !== this.result.digest;
+                },
+            });
     }
 }
 

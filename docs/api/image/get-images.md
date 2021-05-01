@@ -17,7 +17,7 @@ curl http://wud:3000/api/images
       "size":368482149,
       "isSemver":true,
       "result":{
-         "newVersion":"10.5.4-focal"
+         "tag":"10.5.4-focal"
       },
       "created":"2020-08-09T17:19:42.789Z",
       "updated":"2020-08-10T11:00:01.365Z"
@@ -33,7 +33,7 @@ curl http://wud:3000/api/images
       "size":790379171,
       "isSemver":true,
       "result":{
-         "newVersion":"7.8.1"
+         "tag":"7.8.1"
       },
       "created":"2020-08-09T17:19:42.734Z",
       "updated":"2020-08-10T11:00:01.423Z"

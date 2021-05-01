@@ -19,10 +19,10 @@ Feature: Prometheus exposure
     And response body should contain registry="<registry>"
     And response body should contain registry_url="<registryUrl>"
     And response body should contain image="<image>"
-    And response body should contain version="<version>"
-    And response body should contain new_version="<newVersion>"
+    And response body should contain tag="<tag>"
+    And response body should contain result_tag="<resultTag>"
     Examples:
-      | registry | registryUrl                                             | image          | version     | newVersion  |
+      | registry | registryUrl                                             | image          | tag         | resultTag   |
       | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/sub/test   | 1.0.0       | 2.0.0       |
       | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test       | 1.0.0       | 2.0.0       |
       | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test           | 1.0.0       | 2.0.0       |

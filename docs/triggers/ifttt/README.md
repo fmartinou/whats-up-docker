@@ -30,7 +30,7 @@ WUD_TRIGGER_IFTTT_PROD_KEY="*******************************************"
 - OccuredAt: `August 30, 2019 at 06:51PM`
 - Value1: `https://hub.docker.com/library/mariadb`
 - Value2: `10.5.4-focal`
-- Value3: `{"watcher":"docker.local","registry":"hub","registryUrl":"https://registry-1.docker.io/v2","image":"library/nginx","version":"1.8-alpine","versionDate":"2016-04-05T19:06:30.86000223Z","architecture":"amd64","os":"linux","size":15474931,"includeTags":"^[0-9]\\d*\\.[0-9]\\d*-alpine$","isSemver":true,"result":{"newVersion":"1.19-alpine"}}`
+- Value3: `{"watcher":"docker.local","registry":"hub","registryUrl":"https://registry-1.docker.io/v2","image":"library/nginx","version":"1.8-alpine","versionDate":"2016-04-05T19:06:30.86000223Z","architecture":"amd64","os":"linux","size":15474931,"includeTags":"^[0-9]\\d*\\.[0-9]\\d*-alpine$","isSemver":true,"result":{"tag":"1.19-alpine"}}`
 
 ### How to find the IFTTT key
 #### Open the Webhook channel & Connect

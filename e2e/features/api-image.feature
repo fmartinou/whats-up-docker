@@ -13,10 +13,10 @@ Feature: WUD Image API Exposure
     And response body path $[<index>].registry should be <registry>
     And response body path $[<index>].registryUrl should be <registryUrl>
     And response body path $[<index>].image should be <image>
-    And response body path $[<index>].version should be <version>
-    And response body path $[<index>].result.newVersion should be <newVersion>
+    And response body path $[<index>].tag should be <tag>
+    And response body path $[<index>].result.tag should be <resultTag>
     Examples:
-      | index | registry | registryUrl                                             | image          | version     | newVersion  |
+      | index | registry | registryUrl                                             | image          | tag         | resultTag   |
       | 0     | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/sub/test   | 1.0.0       | 2.0.0       |
       | 1     | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test       | 1.0.0       | 2.0.0       |
       | 2     | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test           | 1.0.0       | 2.0.0       |
@@ -33,7 +33,7 @@ Feature: WUD Image API Exposure
     And response body path $.registry should be ecr
     And response body path $.registryUrl should be https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2
     And response body path $.image should be sub/sub/test
-    And response body path $.version should be 1.0.0
+    And response body path $.tag should be 1.0.0
     And response body path $.architecture should be amd64
     And response body path $.os should be linux
     And response body path $.size should be 54042627
@@ -45,4 +45,4 @@ Feature: WUD Image API Exposure
     When I POST to /api/images/`imageId`/watch
     Then response code should be 200
     And response body should be valid json
-    And response body path $.result.newVersion should be 2.0.0
+    And response body path $.result.tag should be 2.0.0

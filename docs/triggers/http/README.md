@@ -30,7 +30,7 @@ WUD_TRIGGER_HTTP_MYREMOTEHOST_URL="https://my-remote-host/new-version"
   "size":368482149,
   "isSemver":true,
   "result":{
-     "newVersion":"10.5.4-focal"
+     "tag":"10.5.4-focal"
   },
   "created":"2020-08-09T17:19:42.789Z",
   "updated":"2020-08-10T11:00:01.365Z"
@@ -39,5 +39,5 @@ WUD_TRIGGER_HTTP_MYREMOTEHOST_URL="https://my-remote-host/new-version"
 
 #### Example of query string (GET request)
 ```bash
-trigger=https://hub.docker.com&image=library%2Ftraefik&version=1.7.13&date=2019-08-08T22:30:47.914Z&architecture=amd64&os=linux&size=79293686&isSemver=true&result[newVersion]=1.7.14
+trigger=https://hub.docker.com&image=library%2Ftraefik&version=1.7.13&date=2019-08-08T22:30:47.914Z&architecture=amd64&os=linux&size=79293686&isSemver=true&result[tag]=1.7.14
 ```

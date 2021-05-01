@@ -16,7 +16,7 @@ curl http://wud:3000/api/images/657a87c8-7926-4e97-815b-60bb9fdada2a
       "size":368482149,
       "isSemver":true,
       "result":{
-         "newVersion":"10.5.4-focal"
+         "tag":"10.5.4-focal"
       },
       "created":"2020-08-09T17:19:42.789Z",
       "updated":"2020-08-10T11:00:01.365Z"

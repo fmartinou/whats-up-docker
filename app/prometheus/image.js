@@ -15,7 +15,8 @@ function populateGauge() {
                 registry: image.registry,
                 registry_url: image.registryUrl,
                 image: image.image,
-                version: image.version,
+                tag: image.tag,
+                digest: image.digest,
                 version_date: image.versionDate,
                 architecture: image.architecture,
                 os: image.os,
@@ -23,13 +24,13 @@ function populateGauge() {
                 is_semver: image.isSemver,
                 include_tags: image.includeTags,
                 exclude_tags: image.excludeTags,
-                new_version: image.result ? image.result.newVersion : undefined,
-                to_be_updated: image.result
-                    && image.result.newVersion
-                    && image.result.newVersion !== image.version,
+                result_tag: image.result.tag,
+                result_digest: image.result.digest,
+                to_be_updated: image.toBeUpdated,
             }, 1);
         } catch (e) {
-            log.warn(`Error when adding image ${image.registryUrl}/${image.image}:${image.version} to the metrics`);
+            log.warn(`Error when adding image ${image.registryUrl}/${image.image}:${image.tag} to the metrics`);
+            log.debug(e);
         }
     });
 }
@@ -42,7 +43,8 @@ function init() {
             'registry',
             'registry_url',
             'image',
-            'version',
+            'tag',
+            'digest',
             'version_date',
             'architecture',
             'os',
@@ -50,7 +52,8 @@ function init() {
             'is_semver',
             'include_tags',
             'exclude_tags',
-            'new_version',
+            'result_tag',
+            'result_digest',
             'created',
             'updated',
             'to_be_updated',

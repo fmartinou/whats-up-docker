@@ -14,16 +14,14 @@ services:
             - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
             - 'wud.watch=true'
 
-    hub_library_nginx:
-        image: nginx:1.10-alpine
+    nginx_latest:
+        image: nginx
         labels:
-            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
             - 'wud.watch=true'
 
-    hub_library_nginx_duplicate:
-        image: nginx:1.10-alpine
+    nginx_latest_duplicate:
+        image: nginx
         labels:
-            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
             - 'wud.watch=true'
 
     # hub_private:

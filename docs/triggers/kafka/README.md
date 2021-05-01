@@ -42,7 +42,7 @@ The ```kafka``` trigger lets you publish image update notifications to a Kafka t
   "size":368482149,
   "isSemver":true,
   "result":{
-     "newVersion":"10.5.4-focal"
+     "tag":"10.5.4-focal"
   },
   "created":"2020-08-09T17:19:42.789Z",
   "updated":"2020-08-10T11:00:01.365Z"
