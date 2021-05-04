@@ -2,6 +2,8 @@
 
 ### develop
 - :star: Add Support for Non Semver image versions
+- :star: Add TLS support for Remote Docker API over TCP
+- :star: Add Log format (text by default instead of json)
 
 ### 3.5.0
 - :star: Add [Home-Assistant](https://www.home-assistant.io/) MQTT integration

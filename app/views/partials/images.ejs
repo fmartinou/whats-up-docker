@@ -80,10 +80,14 @@
                     <%= image.excludeTags %>
                 </td>
                 <td id="td-new-tag-<%= image.id %>">
-                    <span class="tag is-primary is-medium"><%= image.result.tag %></span>
+                    <% if (image.result.tag) { %>
+                        <span class="tag is-primary is-medium"><%= image.result.tag %></span>
+                    <% } %>
                 </td>
                 <td id="td-new-digest-<%= image.id %>">
-                    <span class="tag is-primary is-medium"><%= image.result.digest %></span>
+                    <% if (image.result.digest) { %>
+                        <span class="tag is-primary is-medium"><%= image.result.digest %></span>
+                    <% } %>
                 </td>
                 <td class="nowrap">
                     <%= moment(image.created).format('DD-MM-YYYY HH:MM:SS') %>

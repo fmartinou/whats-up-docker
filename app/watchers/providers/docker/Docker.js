@@ -1,4 +1,5 @@
-const { Docker: DockerApi } = require('node-docker-api');
+const fs = require('fs');
+const Dockerode = require('dockerode');
 const joi = require('joi-cron-expression')(require('joi'));
 const cron = require('node-cron');
 const parse = require('parse-docker-image-name');
@@ -159,6 +160,9 @@ class Docker extends Component {
             socket: this.joi.string().default('/var/run/docker.sock'),
             host: this.joi.string(),
             port: this.joi.number().port().default(2375),
+            cafile: this.joi.string(),
+            certfile: this.joi.string(),
+            keyfile: this.joi.string(),
             cron: joi.string().cron().default('0 * * * *'),
             watchbydefault: this.joi.boolean().default(true),
         });
@@ -184,10 +188,19 @@ class Docker extends Component {
         if (this.configuration.host) {
             options.host = this.configuration.host;
             options.port = this.configuration.port;
+            if (this.configuration.cafile) {
+                options.ca = fs.readFileSync(this.configuration.cafile);
+            }
+            if (this.configuration.certfile) {
+                options.cert = fs.readFileSync(this.configuration.certfile);
+            }
+            if (this.configuration.keyfile) {
+                options.key = fs.readFileSync(this.configuration.keyfile);
+            }
         } else {
             options.socketPath = this.configuration.socket;
         }
-        this.dockerApi = new DockerApi(options);
+        this.dockerApi = new Dockerode(options);
     }
 
     /**
@@ -241,7 +254,7 @@ class Docker extends Component {
      * @returns {Promise<unknown[]>}
      */
     async getImages() {
-        const containers = await this.dockerApi.container.list();
+        const containers = await this.dockerApi.listContainers();
         const filteredContainers = containers
 
             // Filter containers on labels
@@ -249,12 +262,12 @@ class Docker extends Component {
                 if (this.configuration.watchbydefault) {
                     return true;
                 }
-                const labels = container.data.Labels;
+                const labels = container.Labels;
                 return Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.watch') !== undefined;
             });
         const imagesPromises = filteredContainers
             .map((container) => {
-                const labels = container.data.Labels;
+                const labels = container.Labels;
                 const includeTags = Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.tag.include') ? labels['wud.tag.include'] : undefined;
                 const excludeTags = Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.tag.exclude') ? labels['wud.tag.exclude'] : undefined;
                 return this.mapContainerToImage(container, includeTags, excludeTags);
@@ -310,26 +323,24 @@ class Docker extends Component {
      */
     async mapContainerToImage(container, includeTags, excludeTags) {
         // Get container image details
-        const containerImage = await this.dockerApi.image
-            .get(container.data.Image)
-            .status();
+        const containerImage = await this.dockerApi.getImage(container.Image).inspect();
 
         // Get useful properties
-        const architecture = containerImage.data.Architecture;
-        const os = containerImage.data.Os;
-        const size = containerImage.data.Size;
-        const creationDate = containerImage.data.Created;
-        const digest = containerImage.data.Config.Image;
+        const architecture = containerImage.Architecture;
+        const os = containerImage.Os;
+        const size = containerImage.Size;
+        const creationDate = containerImage.Created;
+        const digest = containerImage.Config.Image;
 
         // Parse image to get registry, organization...
-        let imageNameToParse = container.data.Image;
+        let imageNameToParse = container.Image;
         if (imageNameToParse.includes('sha256:')) {
-            if (!containerImage.data.RepoTags || containerImage.data.RepoTags.length === 0) {
+            if (!containerImage.RepoTags || containerImage.RepoTags.length === 0) {
                 log.warn(`Cannot get a reliable tag for this image [${imageNameToParse}]`);
                 return Promise.resolve();
             }
             // Get the first repo tag (better than nothing ;)
-            [imageNameToParse] = containerImage.data.RepoTags;
+            [imageNameToParse] = containerImage.RepoTags;
         }
         const parsedImage = parse(imageNameToParse);
         const tag = parsedImage.tag || 'latest';

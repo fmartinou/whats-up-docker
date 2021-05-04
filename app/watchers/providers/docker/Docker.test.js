@@ -156,26 +156,20 @@ test('findNewVersion should return empty result when no image found', async () =
 
 test('mapContainerToImage should map a container definition to an image definition', async () => {
     docker.dockerApi = {
-        image: {
-            get: () => ({
-                status: () => ({
-                    data: {
-                        Architecture: 'arch',
-                        Os: 'os',
-                        Size: '10',
-                        Created: '2019-05-20T12:02:06.307Z',
-                        Config: {
-                            Image: 'sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba',
-                        },
-                    },
-                }),
+        getImage: () => ({
+            inspect: () => ({
+                Architecture: 'arch',
+                Os: 'os',
+                Size: '10',
+                Created: '2019-05-20T12:02:06.307Z',
+                Config: {
+                    Image: 'sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba',
+                },
             }),
-        },
+        }),
     };
     const container = {
-        data: {
-            Image: 'organization/image:version',
-        },
+        Image: 'organization/image:version',
     };
 
     const image = await docker.mapContainerToImage(container);
@@ -219,27 +213,21 @@ test('watchImage should return no result when no image found', async () => {
 });
 test('watch should return a list of images found by the docker socket', async () => {
     const image1 = {
-        data: {
-            Image: 'image',
-            Architecture: 'arch',
-            Os: 'os',
-            Size: '10',
-            Created: '2019-05-20T12:02:06.307Z',
-            Labels: {},
-            Config: {
-                Image: 'sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba',
-            },
+        Image: 'image',
+        Architecture: 'arch',
+        Os: 'os',
+        Size: '10',
+        Created: '2019-05-20T12:02:06.307Z',
+        Labels: {},
+        Config: {
+            Image: 'sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba',
         },
     };
     docker.dockerApi = {
-        container: {
-            list: () => ([image1]),
-        },
-        image: {
-            get: () => ({
-                status: () => (image1),
-            }),
-        },
+        listContainers: () => ([image1]),
+        getImage: () => ({
+            inspect: () => (image1),
+        }),
     };
 
     // Fake conf

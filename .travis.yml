@@ -109,6 +109,7 @@ script:
   - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT;
 
   - export IMAGE_VERSION=${TRAVIS_BRANCH//\//\_}
+  - export IMAGE_VERSION=${IMAGE_VERSION//\#/\_}
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker version
   - make prepare
