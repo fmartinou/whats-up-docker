@@ -30,6 +30,7 @@ const configurationValid = {
     socket: '/var/run/docker.sock',
     port: 2375,
     watchbydefault: true,
+    watchall: false,
     cron: '0 * * * *',
 };
 

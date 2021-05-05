@@ -3,6 +3,7 @@
 ### develop
 - :star: Add Support for Non Semver image versions
 - :star: Add TLS support for Remote Docker API over TCP
+- :star: Add Option to watch all containers (not only the running ones)
 - :star: Add Log format (text by default instead of json)
 
 ### 3.5.0

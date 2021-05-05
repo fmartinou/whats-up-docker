@@ -64,7 +64,8 @@ class Smtp extends Trigger {
                 <p><strong>Image:</strong>&nbsp;${image.image}</p>
                 <p><strong>Current tag:</strong> ${image.tag}</p>
                 <p><strong>Current digest:</strong> ${image.digest}</p>
-                <p><strong>New digest:</strong>&nbsp;${image.result.digest}</p>
+                <p><strong>Result tag:</strong> ${image.result.tag}</p>
+                <p><strong>Result digest:</strong>&nbsp;${image.result.digest}</p>
             `,
         });
     }

@@ -165,6 +165,7 @@ class Docker extends Component {
             keyfile: this.joi.string(),
             cron: joi.string().cron().default('0 * * * *'),
             watchbydefault: this.joi.boolean().default(true),
+            watchall: this.joi.boolean().default(false),
         });
     }
 
@@ -254,7 +255,11 @@ class Docker extends Component {
      * @returns {Promise<unknown[]>}
      */
     async getImages() {
-        const containers = await this.dockerApi.listContainers();
+        const listContainersOptions = {};
+        if (this.configuration.watchall) {
+            listContainersOptions.all = true;
+        }
+        const containers = await this.dockerApi.listContainers(listContainersOptions);
         const filteredContainers = containers
 
             // Filter containers on labels
