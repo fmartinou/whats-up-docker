@@ -1,6 +1,6 @@
 # Changelog
 
-### develop
+### 4.0.1
 - :star: Add Container name
 - :fire: Fix missing digest for images with v2 manifests
 
