@@ -1,11 +1,11 @@
-## REST API
+### REST API
 
 You can access _**WUD**_ state using the HTTP REST API. \
 (see API details below)
 
 By default, the API is enabled and exposed on port `3000`.
 
-You can override this behaviour using the followinf environment variables.
+You can override this behaviour using the following environment variables.
 ### Variables
 
 | Env var               | Description                   | Supported values | Default value  |

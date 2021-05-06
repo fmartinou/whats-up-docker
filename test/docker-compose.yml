@@ -6,22 +6,22 @@ services:
 #    nginx18:
 #        image: nginx:1.8-alpine
 #        labels:
-#            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
+#            - 'wud.tag.include=^\d+\.\d+-alpine$$'
 #            - 'wud.watch=true'
 
     # V2 manifest
     nginx119:
         image: nginx:1.19-alpine
         labels:
-            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
-            - 'wud.watch=true'
+            - wud.tag.include=^\d+\.\d+-alpine$$
+            - wud.watch=true
 
     # V2 Manifest
     nginx_latest:
         image: nginx
         labels:
-            - 'wud.watch=true'
-            - 'wud.watch.digest=true'
+            - wud.watch=true
+            - wud.watch.digest=true
 
 #
 #    nginx_latest_duplicate:
@@ -34,7 +34,7 @@ services:
 #        image: portainer/portainer-ce:2.5.1-alpine
 #        labels:
 #            - 'wud.watch=true'
-#            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
+#            - 'wud.tag.include=^\d+\.\d+-alpine$$'
 #
 #    pyload:
 #        image: writl/pyload
@@ -50,7 +50,7 @@ services:
 #            - API=X
 #        labels:
 #            - 'wud.watch=true'
-#            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*$$'
+#            - 'wud.tag.include=^\d+\.\d+$$'
 
     # hub_private:
     #     image: fmartinou/test:1.0.0

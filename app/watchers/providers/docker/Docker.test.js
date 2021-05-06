@@ -68,19 +68,19 @@ test('getSemverTagsCandidate should not match when current version is semver and
 });
 
 test('getSemverTagsCandidate should match when newer version match the include regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, includeTags: '^[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual(['7.8.9']);
+    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, includeTags: '^\\d+\\.\\d+\\.\\d+$' }, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
 test('getSemverTagsCandidate should not match when newer version but doesnt match the include regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, includeTags: '^v[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual([]);
+    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, includeTags: '^v\\d+\\.\\d+\\.\\d+$' }, ['7.8.9'])).toEqual([]);
 });
 
 test('getSemverTagsCandidate should match when newer version doesnt match the exclude regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, excludeTags: '^v[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual(['7.8.9']);
+    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, excludeTags: '^v\\d+\\.\\d+\\.\\d+$' }, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
 test('getSemverTagsCandidate should not match when newer version and match the exclude regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, excludeTags: '^[0-9]\\d*\\.[0-9]\\d*\\.[0-9]\\d*$' }, ['7.8.9'])).toEqual([]);
+    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, excludeTags: '\\d+\\.\\d+\\.\\d+$' }, ['7.8.9'])).toEqual([]);
 });
 
 test('getSemverTagsCandidate should return only greater tags than current', () => {
