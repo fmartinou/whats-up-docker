@@ -151,6 +151,17 @@ function pruneOldImages(newImages, imagesFromTheStore) {
     imagesToRemove.forEach((imageToRemove) => store.deleteImage(imageToRemove.id));
 }
 
+function getContainerName(container) {
+    let containerName;
+    const names = container.Names;
+    if (names && names.length > 0) {
+        [containerName] = names;
+    }
+    // Strip ugly forward slash
+    containerName = containerName.replace(/\//, '');
+    return containerName;
+}
+
 /**
  * Get image digest.
  * @param containerImage
@@ -347,6 +358,9 @@ class Docker extends Component {
         // Get container image details
         const containerImage = await this.dockerApi.getImage(container.Image).inspect();
 
+        // TODO quickfix to provide the container name
+        const containerName = getContainerName(container);
+
         // Get useful properties
         const architecture = containerImage.Architecture;
         const os = containerImage.Os;
@@ -373,6 +387,7 @@ class Docker extends Component {
             watcher: this.getId(),
             registryUrl: parsedImage.domain,
             image: parsedImage.path,
+            containerName,
             tag,
             digest,
             versionDate: creationDate,

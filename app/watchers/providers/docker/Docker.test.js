@@ -165,6 +165,7 @@ test('mapContainerToImage should map a container definition to an image definiti
                 Os: 'os',
                 Size: '10',
                 Created: '2019-05-20T12:02:06.307Z',
+                Names: ['test'],
                 Config: {
                     Image: 'sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba',
                 },
@@ -173,6 +174,7 @@ test('mapContainerToImage should map a container definition to an image definiti
     };
     const container = {
         Image: 'organization/image:version',
+        Names: ['/test'],
     };
 
     const image = await docker.mapContainerToImage(container);
@@ -180,6 +182,7 @@ test('mapContainerToImage should map a container definition to an image definiti
         registry: 'hub',
         registryUrl: 'https://registry-1.docker.io/v2',
         image: 'organization/image',
+        containerName: 'test',
         tag: 'version',
         versionDate: '2019-05-20T12:02:06.307Z',
         architecture: 'arch',
@@ -219,6 +222,7 @@ test('watchImage should return no result when no image found', async () => {
 test('watch should return a list of images found by the docker socket', async () => {
     const image1 = {
         Image: 'image',
+        Names: ['/test'],
         Architecture: 'arch',
         Os: 'os',
         Size: '10',
@@ -244,6 +248,7 @@ test('watch should return a list of images found by the docker socket', async ()
         registry: 'hub',
         registryUrl: 'https://registry-1.docker.io/v2',
         image: 'library/image',
+        containerName: 'test',
         tag: 'latest',
         versionDate: '2019-05-20T12:02:06.307Z',
         architecture: 'arch',

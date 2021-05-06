@@ -12,6 +12,7 @@ class Image {
         registry,
         registryUrl,
         image,
+        containerName,
         tag,
         digest,
         isSemver,
@@ -30,6 +31,7 @@ class Image {
         this.registry = registry;
         this.registryUrl = registryUrl;
         this.image = image;
+        this.containerName = containerName;
         this.digest = digest;
         this.tag = tag;
         this.versionDate = versionDate;
