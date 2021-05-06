@@ -152,6 +152,25 @@ function pruneOldImages(newImages, imagesFromTheStore) {
 }
 
 /**
+ * Get image digest.
+ * @param containerImage
+ * @returns {*} digest
+ */
+function getDigest(containerImage) {
+    let digest = containerImage.Id;
+
+    // Check if it's not an legacy v1 digest
+    if (containerImage.Config.Image) {
+        const digestSplit = containerImage.Config.Image.split(':');
+        // Should looks like sha256:aaabbb... if not ? that's a v1 digest
+        if (digestSplit.length === 1) {
+            digest = containerImage.Config.Image;
+        }
+    }
+    return digest;
+}
+
+/**
  * Docker Watcher Component.
  */
 class Docker extends Component {
@@ -295,9 +314,7 @@ class Docker extends Component {
         } else {
             try {
                 // Semver & non Server versions with digest -> Find if digest changed on registry
-                if (image.digest) {
-                    result.digest = await registryProvider.getImageDigest(image);
-                }
+                result.digest = await registryProvider.getImageDigest(image);
 
                 // Semver image -> find higher semver tag
                 if (image.isSemver) {
@@ -335,7 +352,7 @@ class Docker extends Component {
         const os = containerImage.Os;
         const size = containerImage.Size;
         const creationDate = containerImage.Created;
-        const digest = containerImage.Config.Image;
+        const digest = getDigest(containerImage);
 
         // Parse image to get registry, organization...
         let imageNameToParse = container.Image;

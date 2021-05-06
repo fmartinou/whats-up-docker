@@ -1,5 +1,8 @@
 # Changelog
 
+### develop
+- :fire: Fix missing digest for images with v2 manifests
+
 ### 4.0.0
 - :star: Add Support for Non Semver image versions
 - :star: Add TLS support for Remote Docker API over TCP

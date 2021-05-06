@@ -139,9 +139,10 @@ test('findNewVersion should return new image when found', async () => {
     hub.getTags = () => ({
         tags: ['7.8.9'],
     });
+    hub.getImageDigest = () => 'sha256:abcdef';
     await expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
         tag: '7.8.9',
-        digest: undefined,
+        digest: 'sha256:abcdef',
     });
 });
 
@@ -149,9 +150,10 @@ test('findNewVersion should return empty result when no image found', async () =
     hub.getTags = () => ({
         tags: [],
     });
+    hub.getImageDigest = () => 'sha256:abcdef';
     await expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
         tag: undefined,
-        digest: undefined,
+        digest: 'sha256:abcdef',
     });
 });
 
@@ -205,13 +207,15 @@ test('watchImage should return no result when no image found', async () => {
     hub.getTags = () => ({
         tags: [],
     });
+    hub.getImageDigest = () => 'sha256:abcdef';
     await expect(docker.watchImage(sampleSemver)).resolves.toMatchObject({
         result: {
             tag: undefined,
-            digest: undefined,
+            digest: 'sha256:abcdef',
         },
     });
 });
+
 test('watch should return a list of images found by the docker socket', async () => {
     const image1 = {
         Image: 'image',

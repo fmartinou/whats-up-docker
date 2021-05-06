@@ -73,14 +73,26 @@ class Registry extends Component {
     }
 
     async getImageDigest(image) {
-        const response = await this.callRegistry({
+        const responseV2 = await this.callRegistry({
+            image,
+            url: `${image.registryUrl}/${image.image}/manifests/${image.tag}`,
+            headers: {
+                Accept: 'application/vnd.docker.distribution.manifest.v2+json',
+            },
+        });
+        if (responseV2.schemaVersion === 2) {
+            return responseV2.config.digest;
+        }
+
+        // Fallback to v1
+        const responseV1 = await this.callRegistry({
             image,
             url: `${image.registryUrl}/${image.image}/manifests/${image.tag}`,
             headers: {
                 Accept: 'application/vnd.docker.distribution.manifest.v1+json',
             },
         });
-        const latestManifest = JSON.parse(response.history[0].v1Compatibility);
+        const latestManifest = JSON.parse(responseV1.history[0].v1Compatibility);
         return latestManifest.config.Image;
     }
 

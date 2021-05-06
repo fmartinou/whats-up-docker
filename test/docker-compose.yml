@@ -2,25 +2,34 @@ version: '3'
 
 services:
 
+    # V1 manifest
     nginx18:
         image: nginx:1.8-alpine
         labels:
             - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
             - 'wud.watch=true'
 
-    nginx19:
-        image: nginx:1.9-alpine
+    # V2 manifest
+    nginx119:
+        image: nginx:1.19-alpine
         labels:
             - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
             - 'wud.watch=true'
 
+    # V2 Manifest
     nginx_latest:
         image: nginx
         labels:
             - 'wud.watch=true'
+#
+#    nginx_latest_duplicate:
+#        image: nginx
+#        labels:
+#            - 'wud.watch=true'
 
-    nginx_latest_duplicate:
-        image: nginx
+    # V2 Manifest
+    portainer:
+        image: portainer/portainer-ce
         labels:
             - 'wud.watch=true'
 
