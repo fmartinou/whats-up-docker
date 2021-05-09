@@ -1,5 +1,9 @@
 const envProp = require('env-dot-prop');
 
+function getVersion() {
+    return process.env.WUD_VERSION || 'unknown';
+}
+
 function getLogLevel() {
     return process.env.WUD_LOG_LEVEL || 'info';
 }
@@ -40,6 +44,7 @@ function getApiConfiguration() {
 }
 
 module.exports = {
+    getVersion,
     getLogLevel,
     getStoreConfiguration,
     getWatcherConfigurations,

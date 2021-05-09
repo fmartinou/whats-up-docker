@@ -82,8 +82,8 @@ class Mqtt extends Trigger {
     async notify(image) {
         const imageTopic = getImageTopic({ baseTopic: this.configuration.topic, image });
 
-        const resultTag = image.result.tag ? image.result.tag : undefined;
-        const resultDigest = image.result.digest ? image.result.digest : undefined;
+        const resultTag = image.result.tag;
+        const resultDigest = image.result.digest;
 
         log.debug(`Publish image result [${imageTopic}]`);
         return this.client.publish(imageTopic, JSON.stringify({

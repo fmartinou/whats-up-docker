@@ -2,9 +2,10 @@
  * Result model Class.
  */
 class Result {
-    constructor({ tag, digest }) {
+    constructor({ tag = undefined, digest = undefined, error = undefined }) {
         this.tag = tag;
         this.digest = digest;
+        this.error = error;
     }
 
     /**

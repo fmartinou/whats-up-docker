@@ -45,7 +45,7 @@ function processImageResult(imageWithResult) {
         // Found in DB? => update it
     } else {
         imageToTrigger = store.updateImage(imageWithResult);
-        trigger = !resultInDb.result.equals(imageToTrigger.result);
+        trigger = !resultInDb.result.equals(imageToTrigger.result) && imageWithResult.toBeUpdated;
     }
 
     // Emit event only if new version not already emitted
@@ -272,6 +272,8 @@ class Docker extends Component {
         try {
             imageWithResult.result = await this.findNewVersion(image);
         } catch (e) {
+            log.warn(`${image.image}:${image.tag} - Error when trying to find new version (${e.message})`);
+            log.debug(e);
             imageWithResult.result = {
                 error: e.message,
             };
@@ -319,31 +321,26 @@ class Docker extends Component {
     /* eslint-disable-next-line */
     async findNewVersion(image) {
         const registryProvider = getRegistry(image.registry);
-        const result = new Result({ tag: undefined, digest: undefined });
+        const result = new Result({});
         if (!registryProvider) {
             log.error(`Unsupported registry ${image.registry}`);
         } else {
-            try {
-                // Semver & non Server versions with digest -> Find if digest changed on registry
-                result.digest = await registryProvider.getImageDigest(image);
+            // Semver & non Server versions with digest -> Find if digest changed on registry
+            result.digest = await registryProvider.getImageDigest(image);
 
-                // Semver image -> find higher semver tag
-                if (image.isSemver) {
-                    const tagsResult = await registryProvider.getTags(image);
+            // Semver image -> find higher semver tag
+            if (image.isSemver) {
+                const tagsResult = await registryProvider.getTags(image);
 
-                    // Get candidates (based on tag name)
-                    const semverTagsCandidate = getSemverTagsCandidate(image, tagsResult.tags);
+                // Get candidates (based on tag name)
+                const semverTagsCandidate = getSemverTagsCandidate(image, tagsResult.tags);
 
-                    // The first one in the array is the highest
-                    if (semverTagsCandidate && semverTagsCandidate.length > 0) {
-                        [result.tag] = semverTagsCandidate;
-                    }
+                // The first one in the array is the highest
+                if (semverTagsCandidate && semverTagsCandidate.length > 0) {
+                    [result.tag] = semverTagsCandidate;
                 }
-                return result;
-            } catch (e) {
-                log.debug(e);
-                return undefined;
             }
+            return result;
         }
     }
 

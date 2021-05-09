@@ -1,10 +1,11 @@
+const { getVersion } = require('./configuration');
 const log = require('./log');
 const store = require('./store');
 const registry = require('./registry');
 const api = require('./api');
 const prometheus = require('./prometheus');
 
-log.info('What\'s up, docker? is starting');
+log.info(`What's up Docker? is starting (version = ${getVersion()})`);
 
 async function main() {
     // Init store

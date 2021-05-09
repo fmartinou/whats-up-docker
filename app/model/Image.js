@@ -24,7 +24,7 @@ class Image {
         excludeTags,
         created = moment.utc().toISOString(),
         updated = moment.utc().toISOString(),
-        result = new Result({ tag: undefined, digest: undefined }),
+        result = new Result({}),
     }) {
         this.id = id;
         this.watcher = watcher;
@@ -54,7 +54,7 @@ class Image {
 
     /**
      * Define computed properties.
-      * @returns {boolean}
+     * @returns {boolean}
      */
     defineComputedProperties() {
         Object.defineProperty(this,
@@ -62,12 +62,14 @@ class Image {
             {
                 enumerable: true,
                 get() {
-                    if (this.tag !== undefined
+                    if (this.result !== undefined
+                        && this.tag !== undefined
                         && this.result.tag !== undefined
                         && this.tag !== this.result.tag) {
                         return true;
                     }
-                    return this.digest !== undefined
+                    return this.result !== undefined
+                        && this.digest !== undefined
                         && this.result.digest !== undefined
                         && this.digest !== this.result.digest;
                 },

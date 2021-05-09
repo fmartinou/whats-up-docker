@@ -9,6 +9,9 @@ env:
 
 before_install:
 
+  - export IMAGE_VERSION=${TRAVIS_BRANCH//\//\_}
+  - export IMAGE_VERSION=${IMAGE_VERSION//\#/\_}
+
   # Install docker with buildx
   - sudo rm -rf /var/lib/apt/lists/*
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -36,7 +39,7 @@ install:
   - npm run lint
 
   # Build wud docker image
-  - docker build -t wud .
+  - docker build -t wud --build-arg WUD_VERSION=$IMAGE_VERSION .
 
 script:
 
@@ -107,9 +110,6 @@ script:
 
   # Report to Code Climate
   - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT;
-
-  - export IMAGE_VERSION=${TRAVIS_BRANCH//\//\_}
-  - export IMAGE_VERSION=${IMAGE_VERSION//\#/\_}
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker version
   - make prepare
@@ -121,4 +121,4 @@ script:
   - if [ ! -z "$TRAVIS_TAG" ] ; then export IMAGE_VERSION=$TRAVIS_TAG; fi
 
   # Build & push image
-  - make build IMAGE_NAME=$DOCKER_USERNAME/whats-up-docker BASE_IMAGE=node:current-alpine IMAGE_VERSION=$IMAGE_VERSION PLATFORMS=linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64
+  - make build IMAGE_NAME=$DOCKER_USERNAME/whats-up-docker IMAGE_VERSION=$IMAGE_VERSION PLATFORMS=linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64
