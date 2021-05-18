@@ -134,7 +134,6 @@ function getOldImages(newImages, imagesFromTheStore) {
                 && newImage.registryUrl === imageFromStore.registryUrl
                 && newImage.image === imageFromStore.image
                 && newImage.tag === imageFromStore.tag
-                && newImage.digest === imageFromStore.digest
                 && newImage.includeTags === imageFromStore.includeTags
                 && newImage.excludeTags === imageFromStore.excludeTags);
         return isImageStillToWatch === undefined;
@@ -148,7 +147,10 @@ function getOldImages(newImages, imagesFromTheStore) {
  */
 function pruneOldImages(newImages, imagesFromTheStore) {
     const imagesToRemove = getOldImages(newImages, imagesFromTheStore);
-    imagesToRemove.forEach((imageToRemove) => store.deleteImage(imageToRemove.id));
+    imagesToRemove.forEach((imageToRemove) => {
+        store.deleteImage(imageToRemove.id);
+        event.emitImageRemoved(imageToRemove);
+    });
 }
 
 function getContainerName(container) {
@@ -163,22 +165,14 @@ function getContainerName(container) {
 }
 
 /**
- * Get image digest.
+ * Get image repo digest.
  * @param containerImage
  * @returns {*} digest
  */
-function getDigest(containerImage) {
-    let digest = containerImage.Id;
-
-    // Check if it's not an legacy v1 digest
-    if (containerImage.Config.Image) {
-        const digestSplit = containerImage.Config.Image.split(':');
-        // Should looks like sha256:aaabbb... if not ? that's a v1 digest
-        if (digestSplit.length === 1) {
-            digest = containerImage.Config.Image;
-        }
-    }
-    return digest;
+function getRepoDigest(containerImage) {
+    const fullDigest = containerImage.RepoDigests[0];
+    const digestSplit = fullDigest.split('@');
+    return digestSplit[1];
 }
 
 /**
@@ -318,22 +312,38 @@ class Docker extends Component {
     /**
      * Find new version for an Image.
      */
+
     /* eslint-disable-next-line */
     async findNewVersion(image) {
         const registryProvider = getRegistry(image.registry);
-        const result = new Result({});
+        const result = new Result({ tag: image.tag });
         if (!registryProvider) {
             log.error(`Unsupported registry ${image.registry}`);
         } else {
-            // Semver & non Server versions with digest -> Find if digest changed on registry
-            result.digest = await registryProvider.getImageDigest(image);
+            // Find digest on registry
+            const remoteDigest = await registryProvider.getImageManifestDigest(image);
+            result.digest = remoteDigest.digest;
+
+            if (remoteDigest.version === 2) {
+                // Regular v2 manifest => Get manifest digest
+                /*  eslint-disable no-param-reassign */
+                const digestV2 = await registryProvider.getImageManifestDigest(
+                    image,
+                    image.repoDigest,
+                );
+                image.digest = digestV2.digest;
+            } else {
+                // Legacy v1 image => take Image digest as reference for comparison
+                /*  eslint-disable no-param-reassign */
+                image.digest = image.imageId;
+            }
 
             // Semver image -> find higher semver tag
             if (image.isSemver) {
-                const tagsResult = await registryProvider.getTags(image);
+                const tags = await registryProvider.getTags(image);
 
                 // Get candidates (based on tag name)
-                const semverTagsCandidate = getSemverTagsCandidate(image, tagsResult.tags);
+                const semverTagsCandidate = getSemverTagsCandidate(image, tags);
 
                 // The first one in the array is the highest
                 if (semverTagsCandidate && semverTagsCandidate.length > 0) {
@@ -361,9 +371,11 @@ class Docker extends Component {
         // Get useful properties
         const architecture = containerImage.Architecture;
         const os = containerImage.Os;
+        const variant = containerImage.Variant;
         const size = containerImage.Size;
         const creationDate = containerImage.Created;
-        const digest = getDigest(containerImage);
+        const repoDigest = getRepoDigest(containerImage);
+        const imageId = containerImage.Config.Image;
 
         // Parse image to get registry, organization...
         let imageNameToParse = container.Image;
@@ -386,11 +398,13 @@ class Docker extends Component {
             image: parsedImage.path,
             containerName,
             tag,
-            digest,
+            repoDigest,
+            imageId,
             versionDate: creationDate,
             isSemver,
             architecture,
             os,
+            variant,
             size,
             includeTags,
             excludeTags,

@@ -3,11 +3,11 @@ version: '3'
 services:
 
     # V1 manifest
-    nginx18:
-        image: nginx:1.8-alpine
-        labels:
-            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
-            - 'wud.watch=true'
+#    nginx18:
+#        image: nginx:1.8-alpine
+#        labels:
+#            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
+#            - 'wud.watch=true'
 
     # V2 manifest
     nginx119:
@@ -21,6 +21,7 @@ services:
         image: nginx
         labels:
             - 'wud.watch=true'
+
 #
 #    nginx_latest_duplicate:
 #        image: nginx
@@ -28,23 +29,37 @@ services:
 #            - 'wud.watch=true'
 
     # V2 Manifest
-    portainer:
-        image: portainer/portainer-ce
-        labels:
-            - 'wud.watch=true'
+#    portainer:
+#        image: portainer/portainer-ce:2.5.1-alpine
+#        labels:
+#            - 'wud.watch=true'
+#            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*-alpine$$'
+#
+#    pyload:
+#        image: writl/pyload
+#        labels:
+#            - 'wud.watch=true'
+
+#    cloudflare:
+#        image: joshuaavalon/cloudflare-ddns:1.3.0
+#        environment:
+#            - ZONE=X
+#            - HOST=X
+#            - EMAIL=X
+#            - API=X
+#        labels:
+#            - 'wud.watch=true'
+#            - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*$$'
 
     # hub_private:
     #     image: fmartinou/test:1.0.0
     #     labels:
     #         - 'wud.watch=true'
 
-    # traefik_ignore:
-    #     image: traefik:2.0.0
-
-    # ecr_test:
-    #     image: 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
-    #     labels:
-    #         - 'wud.watch=true'
+#     ecr_test:
+#         image: 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
+#         labels:
+#             - 'wud.watch=true'
 
     # ecr_sub_test:
     #     image: 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/test:1.0.0

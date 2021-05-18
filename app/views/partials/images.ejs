@@ -9,22 +9,20 @@
     <table class="table is-narrow ">
         <thead>
         <tr>
-            <th>Watcher</th>
-            <th>Registry</th>
-            <th>Image</th>
-            <th>Tag</th>
-            <th>Digest</th>
-            <th class="nowrap">Version date</th>
-            <th>Arch</th>
-            <th>Os</th>
-            <th>Size</th>
-            <th class="nowrap">Is semver</th>
+            <th class="nowrap"></th>
+            <th class="nowrap">Watcher</th>
+            <th class="nowrap">Registry</th>
+            <th class="nowrap">Image</th>
+            <th class="nowrap">Tag</th>
+            <th class="nowrap">Semver?</th>
+            <th class="nowrap">Digest</th>
+            <th class="nowrap">Date</th>
+            <th class="nowrap">Arch/Os</th>
+            <th class="nowrap">Size</th>
             <th class="nowrap">Include Tags</th>
             <th class="nowrap">Exclude Tags</th>
-            <th class="nowrap">New tag</th>
-            <th class="nowrap">New digest</th>
-            <th>Created</th>
-            <th>Updated</th>
+            <th class="nowrap">Result tag</th>
+            <th class="nowrap">Result digest</th>
             <th>
                 <button id="btn-watch-all" class="button is-black watch" onclick="watchAll()">
                     Watch all now
@@ -35,6 +33,14 @@
         <tbody>
         <% images.forEach((image) => { %>
             <tr>
+                <td>
+                    <span
+                            class="icon
+                            <%= image.toBeUpdated ? 'has-text-danger' : 'has-text-primary' %>"
+                            title="<%= image.toBeUpdated ? 'Update available' : 'Up to date' %>">
+                    <i class="fas <%= image.toBeUpdated ? 'fa-exclamation-triangle' : 'fa-check' %>"></i>
+                  </span>
+                </td>
                 <td><%= image.watcher %></td>
                 <td>
                 <span class="icon is-large" title="<%= image.registryUrl %>">
@@ -59,23 +65,18 @@
                 </td>
                 <td><%= image.image %></td>
                 <td><span class="tag is-medium"><%= image.tag %></span></td>
-                <td><span class="tag is-medium"><%= image.digest %></span></td>
+                <td>
+                    <span class="icon <%= image.isSemver ? 'has-text-primary' : 'has-text-danger' %>">
+                        <i class="fas <%= image.isSemver ? 'fa-check' : 'fa-times' %>"></i>
+                  </span>
+                </td>
+                <td><span class="tag is-medium" title="<%= image.digest %>"><%= image.digest.substring(0, 15) %>...</span></td>
                 <td class="nowrap">
                     <%= moment(image.versionDate).format('DD-MM-YYYY HH:MM:SS') %>
                 </td>
-                <td><%= image.architecture %></td>
-                <td>
-                  <span class="icon is-large" title="<%= image.os %>">
-                    <i class="fab fa-<%= image.os %> fa-2x"></i>
-                  </span>
-                </td>
+                <td><%= image.os %>/<%= image.architecture %></td>
                 <td class="nowrap">
                     <%= (image.size / (1024 * 1024)).toFixed(2) %> MB
-                </td>
-                <td>
-              <span class="icon <%= image.isSemver ? 'has-text-primary' : 'has-text-danger' %>">
-                <i class="fas <%= image.isSemver ? 'fa-check' : 'fa-times' %>"></i>
-              </span>
                 </td>
                 <td class="nowrap">
                     <%= image.includeTags %>
@@ -85,19 +86,13 @@
                 </td>
                 <td id="td-new-tag-<%= image.id %>">
                     <% if (image.result.tag) { %>
-                        <span class="tag is-primary is-medium"><%= image.result.tag %></span>
+                        <span class="tag is-medium"><%= image.result.tag %></span>
                     <% } %>
                 </td>
                 <td id="td-new-digest-<%= image.id %>">
                     <% if (image.result.digest) { %>
-                        <span class="tag is-primary is-medium"><%= image.result.digest %></span>
+                        <span class="tag is-medium" title="<%= image.result.digest %>"><%= image.result.digest.substring(0, 15) %>...</span>
                     <% } %>
-                </td>
-                <td class="nowrap">
-                    <%= moment(image.created).format('DD-MM-YYYY HH:MM:SS') %>
-                </td>
-                <td class="nowrap" id="td-updated-<%= image.id %>">
-                    <%= moment(image.updated).format('DD-MM-YYYY HH:MM:SS') %>
                 </td>
                 <td>
                     <button id="btn-watch-<%= image.id %>" class="button is-black watch" onclick="watch('<%= image.id %>')">
@@ -117,10 +112,8 @@
      * @param image
      */
     function patchImage(image) {
-        document.getElementById(`td-updated-${image.id}`).innerHTML = image.updated ? moment(image.updated).format('DD-MM-YYYY HH:MM:SS') : '';
-
-        const resultTag = image.result.tag ? `<span class="tag is-primary is-medium">${image.result.tag}</span>` : '';
-        const resultDigest = image.result.digest ? `<span class="tag is-primary is-medium">${image.result.digest}</span>` : '';
+        const resultTag = image.result.tag ? `<span class="tag is-medium">${image.result.tag}</span>` : '';
+        const resultDigest = image.result.digest ? `<span class="tag is-medium" title="${image.result.digest}">${image.result.digest.substring(0, 15)}...</span>` : '';
         document.getElementById(`td-new-tag-${image.id}`).innerHTML = resultTag;
         document.getElementById(`td-new-digest-${image.id}`).innerHTML = resultDigest;
     }
@@ -145,7 +138,7 @@
 
             // Display success message
             if (image.toBeUpdated) {
-                window.message.display('New version found!', `A new version has been found for ${image.image}:${image.tag}`);
+                window.message.display('New version found', `A new version for ${image.image}:${image.tag} is available!`);
             }
         } catch (e) {
             // Display error message

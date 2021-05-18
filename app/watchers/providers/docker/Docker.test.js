@@ -7,7 +7,6 @@ const Acr = require('../../../registries/providers/acr/Acr');
 
 const sampleSemver = require('../../samples/semver.json');
 const sampleCoercedSemver = require('../../samples/coercedSemver.json');
-// const sampleNotSemver = require('../../samples/notSemver.json');
 
 jest.mock('request-promise-native');
 
@@ -136,23 +135,19 @@ test('normalizeImage should return original image when no matching provider foun
 });
 
 test('findNewVersion should return new image when found', async () => {
-    hub.getTags = () => ({
-        tags: ['7.8.9'],
-    });
-    hub.getImageDigest = () => 'sha256:abcdef';
+    hub.getTags = () => (['7.8.9']);
+    hub.getImageManifestDigest = () => ({ digest: 'sha256:abcdef', version: 2 });
     await expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
         tag: '7.8.9',
         digest: 'sha256:abcdef',
     });
 });
 
-test('findNewVersion should return empty result when no image found', async () => {
-    hub.getTags = () => ({
-        tags: [],
-    });
-    hub.getImageDigest = () => 'sha256:abcdef';
+test('findNewVersion should return same result as current when no image found', async () => {
+    hub.getTags = () => ([]);
+    hub.getImageManifestDigest = () => ({ digest: 'sha256:abcdef', version: 2 });
     await expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
-        tag: undefined,
+        tag: '4.5.6',
         digest: 'sha256:abcdef',
     });
 });
@@ -166,8 +161,9 @@ test('mapContainerToImage should map a container definition to an image definiti
                 Size: '10',
                 Created: '2019-05-20T12:02:06.307Z',
                 Names: ['test'],
+                RepoDigests: ['test/test@sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba'],
                 Config: {
-                    Image: 'sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba',
+                    Image: 'sha256:c724d57be8bfda30b526396da9f53adb6f6ef15f7886df17b0a0bb8349f1ad79',
                 },
             }),
         }),
@@ -195,9 +191,7 @@ test('mapContainerToImage should map a container definition to an image definiti
 
 test('watchImage should return new image when found', () => {
     docker.configuration = {};
-    hub.getTags = () => ({
-        tags: ['7.8.9'],
-    });
+    hub.getTags = () => (['7.8.9']);
     expect(docker.watchImage(sampleSemver)).resolves.toMatchObject({
         result: {
             tag: '7.8.9',
@@ -205,15 +199,13 @@ test('watchImage should return new image when found', () => {
     });
 });
 
-test('watchImage should return no result when no image found', async () => {
+test('watchImage should return same result as current when no image found', async () => {
     docker.configuration = {};
-    hub.getTags = () => ({
-        tags: [],
-    });
-    hub.getImageDigest = () => 'sha256:abcdef';
+    hub.getTags = () => ([]);
+    hub.getImageManifestDigest = () => ({ digest: 'sha256:abcdef', version: 2 });
     await expect(docker.watchImage(sampleSemver)).resolves.toMatchObject({
         result: {
-            tag: undefined,
+            tag: '4.5.6',
             digest: 'sha256:abcdef',
         },
     });
@@ -228,8 +220,9 @@ test('watch should return a list of images found by the docker socket', async ()
         Size: '10',
         Created: '2019-05-20T12:02:06.307Z',
         Labels: {},
+        RepoDigests: ['test/test@sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba'],
         Config: {
-            Image: 'sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba',
+            Image: 'sha256:c724d57be8bfda30b526396da9f53adb6f6ef15f7886df17b0a0bb8349f1ad79',
         },
     };
     docker.dockerApi = {

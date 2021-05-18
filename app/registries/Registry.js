@@ -1,4 +1,5 @@
 const rp = require('request-promise-native');
+const log = require('../log');
 const Component = require('../registry/Component');
 const { getSummaryTags } = require('../prometheus/registry');
 
@@ -69,31 +70,79 @@ class Registry extends Component {
         // Sort alpha then reverse to get higher values first
         tagsResult.tags.sort();
         tagsResult.tags.reverse();
-        return tagsResult;
+        return tagsResult.tags;
     }
 
-    async getImageDigest(image) {
-        const responseV2 = await this.callRegistry({
-            image,
-            url: `${image.registryUrl}/${image.image}/manifests/${image.tag}`,
-            headers: {
-                Accept: 'application/vnd.docker.distribution.manifest.v2+json',
-            },
-        });
-        if (responseV2.schemaVersion === 2) {
-            return responseV2.config.digest;
+    /**
+     * Get image manifest for a remote tag.
+     * @param image
+     * @param digest (optional)
+     * @returns {Promise<undefined|*>}
+     */
+    async getImageManifestDigest(image, digest) {
+        const tagOrDigest = digest || image.tag;
+        let responseManifests;
+        let manifestDigestFound;
+        let manifestMediaType;
+        try {
+            responseManifests = await this.callRegistry({
+                image,
+                url: `${image.registryUrl}/${image.image}/manifests/${tagOrDigest}`,
+                headers: {
+                    Accept: 'application/vnd.docker.distribution.manifest.list.v2+json',
+                },
+            });
+        } catch (e) {
+            log.warn(`Error when looking for local image manifest ${image.registryUrl}/${image.image}/${tagOrDigest} (${e.message})`);
         }
-
-        // Fallback to v1
-        const responseV1 = await this.callRegistry({
-            image,
-            url: `${image.registryUrl}/${image.image}/manifests/${image.tag}`,
-            headers: {
-                Accept: 'application/vnd.docker.distribution.manifest.v1+json',
-            },
-        });
-        const latestManifest = JSON.parse(responseV1.history[0].v1Compatibility);
-        return latestManifest.config.Image;
+        if (responseManifests) {
+            if (responseManifests.schemaVersion === 2) {
+                if (responseManifests.mediaType === 'application/vnd.docker.distribution.manifest.list.v2+json') {
+                    const manifestFound = responseManifests.manifests
+                        .find((manifest) => manifest.platform.architecture === image.architecture
+                            && manifest.platform.os === image.os);
+                    if (manifestFound) {
+                        manifestDigestFound = manifestFound.digest;
+                        manifestMediaType = manifestFound.mediaType;
+                    }
+                } else if (responseManifests.mediaType === 'application/vnd.docker.distribution.manifest.v2+json') {
+                    manifestDigestFound = responseManifests.config.digest;
+                    manifestMediaType = responseManifests.config.mediaType;
+                }
+            } else if (responseManifests.schemaVersion === 1) {
+                return {
+                    digest: JSON.parse(responseManifests.history[0].v1Compatibility).config.Image,
+                    version: 1,
+                };
+            }
+            if (manifestDigestFound && manifestMediaType === 'application/vnd.docker.distribution.manifest.v2+json') {
+                try {
+                    const responseManifest = await this.callRegistry({
+                        image,
+                        method: 'head',
+                        url: `${image.registryUrl}/${image.image}/manifests/${manifestDigestFound}`,
+                        headers: {
+                            Accept: manifestMediaType,
+                        },
+                        resolveWithFullResponse: true,
+                    });
+                    return {
+                        digest: responseManifest.headers['docker-content-digest'],
+                        version: 2,
+                    };
+                } catch (e) {
+                    log.warn(`Error when looking for remote image manifest ${image.registryUrl}/${image.image}/${tagOrDigest} (${e.message})`);
+                }
+            }
+            if (manifestDigestFound && manifestMediaType === 'application/vnd.docker.container.image.v1+json') {
+                return {
+                    digest: manifestDigestFound,
+                    version: 1,
+                };
+            }
+        }
+        // Empty result...
+        return {};
     }
 
     async callRegistry({
@@ -103,6 +152,7 @@ class Registry extends Component {
         headers = {
             Accept: 'application/json',
         },
+        resolveWithFullResponse = false,
     }) {
         const start = new Date().getTime();
 
@@ -112,6 +162,7 @@ class Registry extends Component {
             method,
             headers,
             json: true,
+            resolveWithFullResponse,
         };
 
         const getRequestOptionsWithAuth = await this.authenticate(image, getRequestOptions);

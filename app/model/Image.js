@@ -15,10 +15,13 @@ class Image {
         containerName,
         tag,
         digest,
+        repoDigest,
+        imageId,
         isSemver,
         versionDate,
         architecture,
         os,
+        variant,
         size,
         includeTags,
         excludeTags,
@@ -33,10 +36,13 @@ class Image {
         this.image = image;
         this.containerName = containerName;
         this.digest = digest;
+        this.repoDigest = repoDigest;
+        this.imageId = imageId;
         this.tag = tag;
         this.versionDate = versionDate;
         this.architecture = architecture;
         this.os = os;
+        this.variant = variant;
         this.size = size;
         this.includeTags = includeTags;
         this.excludeTags = excludeTags;

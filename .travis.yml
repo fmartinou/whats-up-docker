@@ -108,6 +108,9 @@ script:
   # Run E2E Tests
   - npm run cucumber
 
+  # Display wud logs
+  - docker container logs wud
+
   # Report to Code Climate
   - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT;
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"

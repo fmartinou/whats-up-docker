@@ -34,7 +34,7 @@ test('validateConfiguration should throw error when invalid', () => {
     }).toThrowError(ValidationError);
 });
 
-test('syncHassDevice should publish message to expected hass discovery topic', async () => {
+test('createOrUpdateHassDevice should publish message to expected hass discovery topic', async () => {
     mqtt.configuration = mqtt.validateConfiguration({
         url: 'mqtt://host:1883',
         hass: {
@@ -51,7 +51,7 @@ test('syncHassDevice should publish message to expected hass discovery topic', a
             }
         },
     };
-    await mqtt.syncHassDevice(new Image({
+    await mqtt.createOrUpdateHassDevice(new Image({
         registry: 'hub',
         image: 'org/test',
     }));
@@ -73,4 +73,29 @@ test('syncHassDevice should publish message to expected hass discovery topic', a
         payload_off: false,
         payload_on: true,
     });
+});
+
+test('removeHassDevice should publish empty json message to expected hass discovery topic', async () => {
+    mqtt.configuration = mqtt.validateConfiguration({
+        url: 'mqtt://host:1883',
+        hass: {
+            enabled: true,
+        },
+    });
+    mqtt.client = {
+        calls: 0,
+        publish(topic, message) {
+            this.calls += 1;
+            if (this.calls === 1) {
+                this.topic = topic;
+                this.message = message;
+            }
+        },
+    };
+    await mqtt.removeHassDevice(new Image({
+        registry: 'hub',
+        image: 'org/test',
+    }));
+    expect(mqtt.client.topic).toEqual('homeassistant/binary_sensor/wud_image_hub_org_test/config');
+    expect(JSON.parse(mqtt.client.message)).toStrictEqual({});
 });

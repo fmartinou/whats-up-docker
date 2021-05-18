@@ -1,5 +1,9 @@
 # Changelog
 
+### develop
+- :fire: Fix wrong digests for arch different from amd64
+- :fire: Remove the hass sensor when the container goes away
+
 ### 4.0.2
 - :fire: Fix false-positive notifications
 - :star: Add WUD current version in the logs

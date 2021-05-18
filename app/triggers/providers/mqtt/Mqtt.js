@@ -57,8 +57,8 @@ class Mqtt extends Trigger {
         this.client = await mqtt.connectAsync(this.configuration.url, options);
 
         if (this.configuration.hass.enabled) {
-            // Subscribe to image results to sync hass devices
-            event.registerImageResult((image) => this.syncHassDevice(image));
+            event.registerImageResult((image) => this.createOrUpdateHassDevice(image));
+            event.registerImageRemoved((image) => this.removeHassDevice(image));
         }
     }
 
@@ -95,7 +95,12 @@ class Mqtt extends Trigger {
         });
     }
 
-    async syncHassDevice(image) {
+    /**
+     * Create / Update Home-Assistant device.
+     * @param image
+     * @returns {Promise<void>}
+     */
+    async createOrUpdateHassDevice(image) {
         // Image topic
         const imageTopic = getImageTopic({ baseTopic: this.configuration.topic, image });
 
@@ -127,6 +132,27 @@ class Mqtt extends Trigger {
         });
 
         await this.notify(image);
+    }
+
+    /**
+     * Remove Home-Assistant device.
+     * @param image
+     * @returns {Promise<void>}
+     */
+    async removeHassDevice(image) {
+        // Image topic
+        const imageTopic = getImageTopic({ baseTopic: this.configuration.topic, image });
+
+        // Entity id & name
+        const entityId = getHassEntityId(imageTopic);
+
+        // Hass discovery topic
+        const discoveryTopic = `${this.configuration.hass.prefix}/binary_sensor/${entityId}/config`;
+
+        log.debug(`Remove hass device [id=${entityId}]`);
+        await this.client.publish(discoveryTopic, JSON.stringify({}), {
+            retain: true,
+        });
     }
 }
 
