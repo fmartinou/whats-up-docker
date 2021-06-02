@@ -25,7 +25,11 @@
             <th class="nowrap">New digest</th>
             <th>Created</th>
             <th>Updated</th>
-            <th></th>
+            <th>
+                <button id="btn-watch-all" class="button is-black watch" onclick="watchAll()">
+                    Watch all now
+                </button>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -96,7 +100,7 @@
                     <%= moment(image.updated).format('DD-MM-YYYY HH:MM:SS') %>
                 </td>
                 <td>
-                    <button id="btn-watch-<%= image.id %>" class="button is-black" onclick="watch('<%= image.id %>')">
+                    <button id="btn-watch-<%= image.id %>" class="button is-black watch" onclick="watch('<%= image.id %>')">
                         Watch now
                     </button>
                 </td>
@@ -150,10 +154,33 @@
             btnWatch.classList.remove('is-loading');
         }
     }
+
+    async function watchAll() {
+        const btnWatch = document.getElementById(`btn-watch-all`);
+        // Add loading spinner to the button
+        btnWatch.classList.add('is-loading');
+
+        // Call Watch API
+        try {
+            const response = await fetch(`/api/images/watch`, {method: 'POST'});
+            const images = await response.json();
+
+            images.forEach((image) => patchImage(image));
+        } catch (e) {
+            // Display error message
+            window.message.display('Oops... an error occurred', e.message ? e.message : 'Unknown error', true);
+        } finally {
+            btnWatch.classList.remove('is-loading');
+        }
+    }
 </script>
 
 <style>
     td {
         vertical-align: middle;
+    }
+
+    button.watch {
+        width: 150px;
     }
 </style>

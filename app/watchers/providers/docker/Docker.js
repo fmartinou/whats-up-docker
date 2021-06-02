@@ -203,7 +203,7 @@ class Docker extends Component {
      * Init the Watcher.
      */
     init() {
-        this.initTrigger();
+        this.initWatcher();
         log.info(`Schedule runner (${this.configuration.cron})`);
         cron.schedule(this.configuration.cron, () => this.watch());
 
@@ -214,7 +214,7 @@ class Docker extends Component {
         this.watch();
     }
 
-    initTrigger() {
+    initWatcher() {
         const options = {};
         if (this.configuration.host) {
             options.host = this.configuration.host;

@@ -63,6 +63,29 @@ function deleteImage(req, res) {
     }
 }
 
+/**
+ * Watch all images.
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
+async function watchImages(req, res) {
+    try {
+        await Promise.all(Object.values(getWatchers()).map((watcher) => watcher.watch()));
+        getImages(req, res);
+    } catch (e) {
+        res.status(500).json({
+            error: `Error when watching images (${e.message})`,
+        });
+    }
+}
+
+/**
+ * Watch an image.
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 async function watchImage(req, res) {
     const { id } = req.params;
     const image = store.getImage(id);
@@ -95,6 +118,7 @@ async function watchImage(req, res) {
 function init() {
     router.use(nocache());
     router.get('/', getImages);
+    router.post('/watch', watchImages);
     router.get('/:id', getImage);
     router.delete('/:id', deleteImage);
     router.post('/:id/watch', watchImage);

@@ -50,9 +50,9 @@ test('validatedConfiguration should failed when configuration is invalid', () =>
     }).toThrowError(ValidationError);
 });
 
-test('initTrigger should create a configured DockerApi instance', () => {
+test('initWatcher should create a configured DockerApi instance', () => {
     docker.configuration = docker.validateConfiguration(configurationValid);
-    docker.initTrigger();
+    docker.initWatcher();
     expect(docker.dockerApi.modem.socketPath).toBe(configurationValid.socket);
 });
 
