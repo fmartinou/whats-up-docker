@@ -21,6 +21,7 @@ services:
         image: nginx
         labels:
             - 'wud.watch=true'
+            - 'wud.watch.digest=true'
 
 #
 #    nginx_latest_duplicate:

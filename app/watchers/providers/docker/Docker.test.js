@@ -171,6 +171,7 @@ test('mapContainerToImage should map a container definition to an image definiti
     const container = {
         Image: 'organization/image:version',
         Names: ['/test'],
+        Labels: {},
     };
 
     const image = await docker.mapContainerToImage(container);

@@ -6,5 +6,6 @@
     "architecture":"arch",
     "os":"os",
     "size":20,
-    "isSemver":true
+    "isSemver":true,
+    "watchDigest": true
   }

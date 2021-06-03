@@ -3,11 +3,12 @@
 To fine-tune the behaviour of WUD, you can add labels on your containers.
 
 #### Supported labels
-| Label                 | Description                         | Supported values       |
-| --------------------- |:-----------------------------------:|:----------------------:|
-| ```wud.watch```       | Watch this container                | Valid Boolean          |
-| ```wud.tag.include``` | Regex to include specific tags only | Valid JavaScript Regex |
-| ```wud.tag.exclude``` | Regex to exclude specific tags      | Valid JavaScript Regex |
+| Label                  | Description                         | Supported values       | Default value       |
+| ---------------------- |:-----------------------------------:|:----------------------:|:-------------------:|
+| ```wud.watch```        | Watch this container                | Valid Boolean          | false               |
+| ```wud.watch.digest``` | Watch this container digest         | Valid Boolean          | false               |
+| ```wud.tag.include```  | Regex to include specific tags only | Valid JavaScript Regex |                     |
+| ```wud.tag.exclude```  | Regex to exclude specific tags      | Valid JavaScript Regex |                     |
 
 #### Examples
 
@@ -39,4 +40,22 @@ services:
         image: mariadb:10.4.5
         labels:
             - 'wud.tag.include=^[0-9]\d*\.[0-9]\d*\.[0-9]\d*$$'
+```
+
+##### Enable digest watching
+Additionally to greater semver tags, you can also track if the digest associated to the local tag has been updated.  
+It can be convenient to monitor image tags known to be overridden (`latest`, `10`, `10.6`...)
+```bash
+# Docker run example
+docker run -d --name mariadb --label wud.tag.include='^[0-9]\d*\.[0-9]\d*\.[0-9]\d*$$' mariadb:10.4.5
+
+# Docker Compose example
+version: '3'
+
+services:
+
+    mariadb:
+        image: mariadb:10
+        labels:
+            - 'wud.watch.digest=true
 ```

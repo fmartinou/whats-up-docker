@@ -312,7 +312,6 @@ class Docker extends Component {
     /**
      * Find new version for an Image.
      */
-
     /* eslint-disable-next-line */
     async findNewVersion(image) {
         const registryProvider = getRegistry(image.registry);
@@ -320,22 +319,24 @@ class Docker extends Component {
         if (!registryProvider) {
             log.error(`Unsupported registry ${image.registry}`);
         } else {
-            // Find digest on registry
-            const remoteDigest = await registryProvider.getImageManifestDigest(image);
-            result.digest = remoteDigest.digest;
+            // Must watch digest? => Find local/remote digests on registry
+            if (image.watchDigest) {
+                const remoteDigest = await registryProvider.getImageManifestDigest(image);
+                result.digest = remoteDigest.digest;
 
-            if (remoteDigest.version === 2) {
-                // Regular v2 manifest => Get manifest digest
-                /*  eslint-disable no-param-reassign */
-                const digestV2 = await registryProvider.getImageManifestDigest(
-                    image,
-                    image.repoDigest,
-                );
-                image.digest = digestV2.digest;
-            } else {
-                // Legacy v1 image => take Image digest as reference for comparison
-                /*  eslint-disable no-param-reassign */
-                image.digest = image.imageId;
+                if (remoteDigest.version === 2) {
+                    // Regular v2 manifest => Get manifest digest
+                    /*  eslint-disable no-param-reassign */
+                    const digestV2 = await registryProvider.getImageManifestDigest(
+                        image,
+                        image.repoDigest,
+                    );
+                    image.digest = digestV2.digest;
+                } else {
+                    // Legacy v1 image => take Image digest as reference for comparison
+                    /*  eslint-disable no-param-reassign */
+                    image.digest = image.imageId;
+                }
             }
 
             // Semver image -> find higher semver tag
@@ -392,6 +393,13 @@ class Docker extends Component {
         const parsedTag = semver.coerce(tag);
         const isSemver = parsedTag !== null && parsedTag !== undefined;
 
+        let watchDigest = false;
+        const watchDigestLabel = Object.keys(container.Labels || {}).find((labelName) => labelName.toLowerCase() === 'wud.watch.digest');
+        if (watchDigestLabel) {
+            const watchDigestLabelValue = container.Labels[watchDigestLabel];
+            watchDigest = watchDigestLabelValue && watchDigestLabelValue.toLowerCase() === 'true';
+        }
+
         return normalizeImage(new Image({
             watcher: this.getId(),
             registryUrl: parsedImage.domain,
@@ -399,6 +407,7 @@ class Docker extends Component {
             containerName,
             tag,
             repoDigest,
+            watchDigest,
             imageId,
             versionDate: creationDate,
             isSemver,

@@ -16,6 +16,7 @@ class Image {
         tag,
         digest,
         repoDigest,
+        watchDigest,
         imageId,
         isSemver,
         versionDate,
@@ -37,6 +38,7 @@ class Image {
         this.containerName = containerName;
         this.digest = digest;
         this.repoDigest = repoDigest;
+        this.watchDigest = watchDigest;
         this.imageId = imageId;
         this.tag = tag;
         this.versionDate = versionDate;
@@ -68,16 +70,18 @@ class Image {
             {
                 enumerable: true,
                 get() {
-                    if (this.result !== undefined
+                    let toBeUpdated = this.result !== undefined
                         && this.tag !== undefined
                         && this.result.tag !== undefined
-                        && this.tag !== this.result.tag) {
-                        return true;
+                        && this.tag !== this.result.tag;
+
+                    if (this.watchDigest) {
+                        toBeUpdated = toBeUpdated || (this.result !== undefined
+                            && this.digest !== undefined
+                            && this.result.digest !== undefined
+                            && this.digest !== this.result.digest);
                     }
-                    return this.result !== undefined
-                        && this.digest !== undefined
-                        && this.result.digest !== undefined
-                        && this.digest !== this.result.digest;
+                    return toBeUpdated;
                 },
             });
     }

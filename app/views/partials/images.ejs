@@ -68,9 +68,16 @@
                 <td>
                     <span class="icon <%= image.isSemver ? 'has-text-primary' : 'has-text-danger' %>">
                         <i class="fas <%= image.isSemver ? 'fa-check' : 'fa-times' %>"></i>
-                  </span>
+                    </span>
                 </td>
-                <td><span class="tag is-medium" title="<%= image.digest %>"><%= image.digest.substring(0, 15) %>...</span></td>
+                <td nowrap="true">
+                <% if (image.watchDigest) { %>
+                    <span class="tag is-medium" title="<%= image.digest %>"><%= image.digest.substring(0, 15)%>...</span>
+                <%} else { %>
+                    <span class="icon"><i class="fas fa-times"></i></span>
+                    <span>(disabled)</span>
+                <% } %>
+                </td>
                 <td class="nowrap">
                     <%= moment(image.versionDate).format('DD-MM-YYYY HH:MM:SS') %>
                 </td>
@@ -90,8 +97,11 @@
                     <% } %>
                 </td>
                 <td id="td-new-digest-<%= image.id %>">
-                    <% if (image.result.digest) { %>
-                        <span class="tag is-medium" title="<%= image.result.digest %>"><%= image.result.digest.substring(0, 15) %>...</span>
+                    <% if (image.watchDigest) { %>
+                        <span class="tag is-medium" title="<%= image.result.digest %>"><%= image.result.digest ? image.result.digest.substring(0, 15) : '' %>...</span>
+                    <%} else { %>
+                        <span class="icon"><i class="fas fa-times"></i></span>
+                        <span>(disabled)</span>
                     <% } %>
                 </td>
                 <td>
@@ -113,7 +123,11 @@
      */
     function patchImage(image) {
         const resultTag = image.result.tag ? `<span class="tag is-medium">${image.result.tag}</span>` : '';
-        const resultDigest = image.result.digest ? `<span class="tag is-medium" title="${image.result.digest}">${image.result.digest.substring(0, 15)}...</span>` : '';
+        let resultDigest = '<span class="icon"><i class="fas fa-times"></i></span><span>(disabled)</span>';
+        if (image.watchDigest) {
+            resultDigest = image.result.digest ? `<span class="tag is-medium" title="${image.result.digest}">${image.result.digest.substring(0, 15)}...</span>` : '';
+        }
+
         document.getElementById(`td-new-tag-${image.id}`).innerHTML = resultTag;
         document.getElementById(`td-new-digest-${image.id}`).innerHTML = resultDigest;
     }
