@@ -1,6 +1,6 @@
 # Changelog
 
-## develop
+## 4.1.0
 - :star: Revamp documentation
 
 
