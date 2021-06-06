@@ -1,4 +1,3 @@
-const path = require('path');
 const joi = require('joi');
 const express = require('express');
 const log = require('../log');
@@ -35,10 +34,6 @@ async function init() {
         // Init Express app
         const app = express();
 
-        // Setup EJS for view rendering
-        app.set('view engine', 'ejs');
-        app.set('views', path.join(`${__dirname}/../views`));
-
         // Mount API
         app.use('/api', apiRouter.init());
 
@@ -48,7 +43,7 @@ async function init() {
         // Mount Prometheus metrics
         app.use('/metrics', prometheusRouter.init());
 
-        // Mount UI
+        // Serve ui (resulting from ui built & copied on docker build)
         app.use('/', uiRouter.init());
 
         // Listen

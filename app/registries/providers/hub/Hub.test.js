@@ -53,30 +53,42 @@ test('validatedConfiguration should throw error when auth is not base64', () => 
 });
 
 test('match should return true when no registry on the image', () => {
-    expect(hub.match({})).toBeTruthy();
+    expect(hub.match({
+        registry: {},
+    })).toBeTruthy();
 });
 
 test('match should return false when registry on the image', () => {
-    expect(hub.match({ registryUrl: 'registry' })).toBeFalsy();
+    expect(hub.match({
+        registry: {
+            url: 'registry',
+        },
+    })).toBeFalsy();
 });
 
 test('normalizeImage should prefix with library when no organization', () => {
     expect(hub.normalizeImage({
-        image: 'test',
+        name: 'test',
+        registry: {},
     })).toStrictEqual({
-        registry: 'hub',
-        registryUrl: 'https://registry-1.docker.io/v2',
-        image: 'library/test',
+        name: 'library/test',
+        registry: {
+            name: 'hub',
+            url: 'https://registry-1.docker.io/v2',
+        },
     });
 });
 
 test('normalizeImage should not prefix with library when existing organization', () => {
     expect(hub.normalizeImage({
-        image: 'myorga/test',
+        name: 'myorga/test',
+        registry: {},
     })).toStrictEqual({
-        registry: 'hub',
-        registryUrl: 'https://registry-1.docker.io/v2',
-        image: 'myorga/test',
+        name: 'myorga/test',
+        registry: {
+            name: 'hub',
+            url: 'https://registry-1.docker.io/v2',
+        },
     });
 });
 

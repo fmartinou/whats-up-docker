@@ -31,10 +31,10 @@ class Ifttt extends Trigger {
     /**
      * Send an HTTP Request to Ifttt Webhook with new image version details.
      *
-     * @param image the image
+     * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(image) {
+    async notify(container) {
         const options = {
             method: 'POST',
             uri: `https://maker.ifttt.com/trigger/${this.configuration.event}/with/key/${this.configuration.key}`,
@@ -42,9 +42,9 @@ class Ifttt extends Trigger {
                 'Content-Type': 'application/json',
             },
             body: {
-                value1: `${image.registryUrl}/${image.image}`,
-                value2: `${image.result.tag}`,
-                value3: JSON.stringify(image),
+                value1: container.name,
+                value2: container.result.tag,
+                value3: JSON.stringify(container),
             },
             json: true,
         };

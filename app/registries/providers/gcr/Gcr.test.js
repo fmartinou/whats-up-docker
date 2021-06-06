@@ -21,13 +21,33 @@ test('validatedConfiguration should throw error when configuration is missing', 
     }).toThrow('"clientemail" is required');
 });
 
-test('match should return true when registryUrl is from gcr', () => {
-    expect(ecr.match({ registryUrl: 'gcr.io' })).toBeTruthy();
-    expect(ecr.match({ registryUrl: 'us.gcr.io' })).toBeTruthy();
-    expect(ecr.match({ registryUrl: 'eu.gcr.io' })).toBeTruthy();
-    expect(ecr.match({ registryUrl: 'asia.gcr.io' })).toBeTruthy();
+test('match should return true when registry url is from gcr', () => {
+    expect(ecr.match({
+        registry: {
+            url: 'gcr.io',
+        },
+    })).toBeTruthy();
+    expect(ecr.match({
+        registry: {
+            url: 'us.gcr.io',
+        },
+    })).toBeTruthy();
+    expect(ecr.match({
+        registry: {
+            url: 'eu.gcr.io',
+        },
+    })).toBeTruthy();
+    expect(ecr.match({
+        registry: {
+            url: 'asia.gcr.io',
+        },
+    })).toBeTruthy();
 });
 
-test('match should return false when registryUrl is not from gcr', () => {
-    expect(ecr.match({ registryUrl: 'grr.io' })).toBeFalsy();
+test('match should return false when registry url is not from gcr', () => {
+    expect(ecr.match({
+        registry: {
+            url: 'grr.io',
+        },
+    })).toBeFalsy();
 });

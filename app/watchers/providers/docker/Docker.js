@@ -5,13 +5,12 @@ const cron = require('node-cron');
 const parse = require('parse-docker-image-name');
 const semver = require('semver');
 const event = require('../../../event');
-const store = require('../../../store');
+const storeContainer = require('../../../store/container');
 const log = require('../../../log');
 const Component = require('../../../registry/Component');
-const Image = require('../../../model/Image');
-const Result = require('../../../model/Result');
+const { validate: validateContainer } = require('../../../model/container');
 const registry = require('../../../registry');
-const { getWatchImageGauge } = require('../../../prometheus/watcher');
+const { getWatchContainerGauge } = require('../../../prometheus/watcher');
 
 /**
  * Return all supported registries
@@ -22,62 +21,63 @@ function getRegistries() {
 }
 
 /**
- * Process an Image Result.
- * @param imageWithResult
+ * Process a Container Result.
+ * @param containerWithResult
  */
-function processImageResult(imageWithResult) {
-    let imageToTrigger;
+function processContainerResult(containerWithResult) {
+    let containerToTrigger;
     let trigger = false;
 
-    // Find image in db & compare
-    const resultInDb = store.findImage(imageWithResult);
+    // Find container in db & compare
+    const containerInDb = storeContainer.getContainer(containerWithResult.id);
 
     // Not found in DB? => Save it
-    if (!resultInDb) {
-        log.debug(`Image watched for the first time (${JSON.stringify(imageWithResult)})`);
-        imageToTrigger = store.insertImage(imageWithResult);
-        if (imageWithResult.toBeUpdated) {
+    if (!containerInDb) {
+        log.debug(`${containerWithResult.id} - Container watched for the first time`);
+        containerToTrigger = storeContainer.insertContainer(containerWithResult);
+        if (containerWithResult.updateAvailable) {
             trigger = true;
         } else {
-            log.debug(`No result found (${JSON.stringify(imageWithResult)})`);
+            log.debug(`${containerWithResult.id} - No update available`);
         }
 
         // Found in DB? => update it
     } else {
-        imageToTrigger = store.updateImage(imageWithResult);
-        trigger = !resultInDb.result.equals(imageToTrigger.result) && imageWithResult.toBeUpdated;
+        containerToTrigger = storeContainer.updateContainer(containerWithResult);
+        trigger = !containerInDb.resultChanged(containerToTrigger)
+            && containerWithResult.updateAvailable;
     }
 
     // Emit event only if new version not already emitted
     if (trigger) {
-        log.debug(`New image version found (${JSON.stringify(imageWithResult)})`);
-        event.emitImageNewVersion(imageToTrigger);
+        log.info(`${containerWithResult.id} - Update available`);
+        event.emitContainerNewVersion(containerToTrigger);
     } else {
-        log.debug(`Result already processed => No need to trigger (${JSON.stringify(imageWithResult)})`);
+        log.debug(`${containerWithResult.id} - Result already processed => No need to trigger`);
     }
 }
 
 /**
  * Filter candidate tags (based on tag name).
- * @param image
+ * @param container
  * @param tags
  * @returns {*}
  */
-function getSemverTagsCandidate(image, tags) {
+function getSemverTagsCandidate(container, tags) {
     let filteredTags = tags;
 
     // Match include tag regex
-    if (image.includeTags) {
-        const includeTagsRegex = new RegExp(image.includeTags);
+    if (container.includeTags) {
+        const includeTagsRegex = new RegExp(container.includeTags);
         filteredTags = filteredTags.filter((tag) => includeTagsRegex.test(tag));
     }
 
     // Match exclude tag regex
-    if (image.excludeTags) {
-        const excludeTagsRegex = new RegExp(image.excludeTags);
+    if (container.excludeTags) {
+        const excludeTagsRegex = new RegExp(container.excludeTags);
         filteredTags = filteredTags.filter((tag) => !excludeTagsRegex.test(tag));
     }
-    const currentTag = semver.coerce(image.tag);
+    const currentTag = semver.coerce(container.image.tag.value);
 
     // Keep semver only
     filteredTags = filteredTags.filter((tag) => semver.valid(semver.coerce(tag)));
@@ -93,17 +93,17 @@ function getSemverTagsCandidate(image, tags) {
     return filteredTags;
 }
 
-function normalizeImage(image) {
+function normalizeContainer(container) {
+    const containerWithNormalizedImage = container;
     const registryProvider = Object.values(getRegistries())
-        .find((provider) => provider.match(image));
+        .find((provider) => provider.match(container.image));
     if (!registryProvider) {
-        log.warn(`No Registry Provider found for image ${JSON.stringify(image)}`);
-        return {
-            ...image,
-            registry: 'unknown',
-        };
+        log.warn(`${container.id} - No Registry Provider found`);
+        containerWithNormalizedImage.image.registry.name = 'unknown';
+    } else {
+        containerWithNormalizedImage.image = registryProvider.normalizeImage(container.image);
     }
-    return registryProvider.normalizeImage(image);
+    return validateContainer(containerWithNormalizedImage);
 }
 
 /**
@@ -119,37 +119,31 @@ function getRegistry(registryName) {
 }
 
 /**
- * Get old images to prune.
- * @param newImages
- * @param imagesFromTheStore
+ * Get old containers to prune.
+ * @param newContainers
+ * @param containersFromTheStore
  * @returns {*[]|*}
  */
-function getOldImages(newImages, imagesFromTheStore) {
-    if (!imagesFromTheStore || !imagesFromTheStore) {
+function getOldContainers(newContainers, containersFromTheStore) {
+    if (!containersFromTheStore || !containersFromTheStore) {
         return [];
     }
-    return imagesFromTheStore.filter((imageFromStore) => {
-        const isImageStillToWatch = newImages
-            .find((newImage) => newImage.watcher === imageFromStore.watcher
-                && newImage.registryUrl === imageFromStore.registryUrl
-                && newImage.image === imageFromStore.image
-                && newImage.tag === imageFromStore.tag
-                && newImage.includeTags === imageFromStore.includeTags
-                && newImage.excludeTags === imageFromStore.excludeTags);
-        return isImageStillToWatch === undefined;
+    return containersFromTheStore.filter((containerFromStore) => {
+        const isContainerStillToWatch = newContainers
+            .find((newContainer) => newContainer.id === containerFromStore.id);
+        return isContainerStillToWatch === undefined;
     });
 }
 
 /**
- * Prune old images from the store.
- * @param newImages
- * @param imagesFromTheStore
+ * Prune old containers from the store.
+ * @param newContainers
+ * @param containersFromTheStore
  */
-function pruneOldImages(newImages, imagesFromTheStore) {
-    const imagesToRemove = getOldImages(newImages, imagesFromTheStore);
-    imagesToRemove.forEach((imageToRemove) => {
-        store.deleteImage(imageToRemove.id);
-        event.emitImageRemoved(imageToRemove);
+function pruneOldContainers(newContainers, containersFromTheStore) {
+    const containersToRemove = getOldContainers(newContainers, containersFromTheStore);
+    containersToRemove.forEach((containerToRemove) => {
+        storeContainer.deleteContainer(containerToRemove.id);
     });
 }
 
@@ -205,10 +199,10 @@ class Docker extends Component {
         cron.schedule(this.configuration.cron, () => this.watch());
 
         // Subscribe to image result events
-        event.registerImageResult(processImageResult);
+        event.registerContainerResult(processContainerResult);
 
-        // watch at startup
-        this.watch();
+        // watch at startup (after all components have been registered)
+        setTimeout(() => this.watch(), 1000);
     }
 
     initWatcher() {
@@ -236,37 +230,29 @@ class Docker extends Component {
      * @returns {Promise<*[]>}
      */
     async watch() {
-        let imagesArray = [];
+        let containers = [];
 
         // List images to watch
         try {
-            imagesArray = await this.getImages();
+            containers = await this.getContainers();
         } catch (e) {
-            log.error(`Error when trying to get the image list (${e.message})`);
+            log.error(`Error when trying to get the containers list to watch (${e.message})`);
         }
 
-        // Prune old images from the store
+        // Prune old containers from the store
         try {
-            const imagesFromTheStore = store.getImages({ watcher: this.getId() });
-            pruneOldImages(imagesArray, imagesFromTheStore);
+            const containersFromTheStore = storeContainer.getContainers({ watcher: this.getId() });
+            pruneOldContainers(containers, containersFromTheStore);
         } catch (e) {
-            log.error(`Error when trying to prune the old images (${e.message})`);
+            log.error(`Error when trying to prune the old containers (${e.message})`);
         }
-
-        const images = {};
-
-        // map to K/V map to remove duplicate items
-        imagesArray.forEach((image) => {
-            const key = `${image.registry}_${image.image}_${image.tag}_${image.digest}_${image.includeTags}_${image.excludeTags}`;
-            images[key] = image;
-        });
-        getWatchImageGauge().set({
+        getWatchContainerGauge().set({
             type: this.type,
             name: this.name,
-        }, Object.keys(images).length);
+        }, containers.length);
 
         try {
-            return await Promise.all(Object.values(images).map((image) => this.watchImage(image)));
+            return Promise.all(containers.map((container) => this.watchContainer(container)));
         } catch (e) {
             log.error(`Error when processing images (${e.message})`);
             return [];
@@ -274,32 +260,32 @@ class Docker extends Component {
     }
 
     /**
-     * Watch an Image.
-     * @param image
+     * Watch a Container.
+     * @param container
      * @returns {Promise<*>}
      */
-    async watchImage(image) {
-        const imageWithResult = image;
-        log.debug(`Check ${image.registryUrl}/${image.image}:${image.tag}`);
+    async watchContainer(container) {
+        const containerWithResult = container;
+        log.debug(`${container.id} - Watch container`);
 
         try {
-            imageWithResult.result = await this.findNewVersion(image);
+            containerWithResult.result = await this.findNewVersion(container);
         } catch (e) {
-            log.warn(`${image.image}:${image.tag} - Error when trying to find new version (${e.message})`);
+            log.warn(`${container.id} - Error when trying to find new version (${e.message})`);
             log.debug(e);
-            imageWithResult.result = {
-                error: e.message,
+            containerWithResult.error = {
+                message: e.message,
             };
         }
-        event.emitImageResult(imageWithResult);
-        return imageWithResult;
+        event.emitContainerResult(containerWithResult);
+        return containerWithResult;
     }
 
     /**
-     * Get all images to watch.
+     * Get all containers to watch.
      * @returns {Promise<unknown[]>}
      */
-    async getImages() {
+    async getContainers() {
         const listContainersOptions = {};
         if (this.configuration.watchall) {
             listContainersOptions.all = true;
@@ -315,55 +301,56 @@ class Docker extends Component {
                 const labels = container.Labels;
                 return Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.watch') !== undefined;
             });
-        const imagesPromises = filteredContainers
+        const containerPromises = filteredContainers
             .map((container) => {
                 const labels = container.Labels;
                 const includeTags = Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.tag.include') ? labels['wud.tag.include'] : undefined;
                 const excludeTags = Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.tag.exclude') ? labels['wud.tag.exclude'] : undefined;
-                return this.mapContainerToImage(container, includeTags, excludeTags);
+                return this.addImageDetailsToContainer(container, includeTags, excludeTags);
             });
-        const images = await Promise.all(imagesPromises);
+        const containersWithImage = await Promise.all(containerPromises);
 
-        // Return defined images to process
-        return images.filter((imagePromise) => imagePromise !== undefined);
+        // Return containers to process
+        return containersWithImage.filter((imagePromise) => imagePromise !== undefined);
     }
 
     /**
-     * Find new version for an Image.
+     * Find new version for a Container.
      */
+
     /* eslint-disable-next-line */
-    async findNewVersion(image) {
-        const registryProvider = getRegistry(image.registry);
-        const result = new Result({ tag: image.tag });
+    async findNewVersion(container) {
+        const registryProvider = getRegistry(container.image.registry.name);
+        const result = { tag: container.image.tag.value };
         if (!registryProvider) {
-            log.error(`Unsupported registry ${image.registry}`);
+            log.error(`${container.id} - Unsupported registry (${container.image.registry.name})`);
         } else {
             // Must watch digest? => Find local/remote digests on registry
-            if (image.watchDigest && image.repoDigest) {
-                const remoteDigest = await registryProvider.getImageManifestDigest(image);
+            if (container.image.digest.watch && container.image.digest.repo) {
+                const remoteDigest = await registryProvider.getImageManifestDigest(container.image);
                 result.digest = remoteDigest.digest;
 
                 if (remoteDigest.version === 2) {
                     // Regular v2 manifest => Get manifest digest
                     /*  eslint-disable no-param-reassign */
                     const digestV2 = await registryProvider.getImageManifestDigest(
-                        image,
-                        image.repoDigest,
+                        container.image,
+                        container.image.digest.repo,
                     );
-                    image.digest = digestV2.digest;
+                    container.image.digest.value = digestV2.digest;
                 } else {
                     // Legacy v1 image => take Image digest as reference for comparison
                     /*  eslint-disable no-param-reassign */
-                    image.digest = image.imageId;
+                    container.image.digest.value = container.image.id;
                 }
             }
 
             // Semver image -> find higher semver tag
-            if (image.isSemver) {
-                const tags = await registryProvider.getTags(image);
+            if (container.image.tag.semver) {
+                const tags = await registryProvider.getTags(container.image);
 
                 // Get candidates (based on tag name)
-                const semverTagsCandidate = getSemverTagsCandidate(image, tags);
+                const semverTagsCandidate = getSemverTagsCandidate(container, tags);
 
                 // The first one in the array is the highest
                 if (semverTagsCandidate && semverTagsCandidate.length > 0) {
@@ -375,41 +362,47 @@ class Docker extends Component {
     }
 
     /**
-     * Map a Container Spec to an Image Model Object.
+     * Add image detail to Container.
      * @param container
      * @param includeTags
      * @param excludeTags
      * @returns {Promise<Image>}
      */
-    async mapContainerToImage(container, includeTags, excludeTags) {
-        // Get container image details
-        const containerImage = await this.dockerApi.getImage(container.Image).inspect();
+    async addImageDetailsToContainer(container, includeTags, excludeTags) {
+        const containerId = container.Id;
 
-        // TODO quickfix to provide the container name
-        const containerName = getContainerName(container);
+        // Is container already in store? just return it :)
+        const containerInStore = storeContainer.getContainer(containerId);
+        if (containerInStore !== undefined) {
+            log.debug(`${containerInStore.id} - Container already in store`);
+            return containerInStore;
+        }
+
+        // Get container image details
+        const image = await this.dockerApi.getImage(container.Image).inspect();
 
         // Get useful properties
-        const architecture = containerImage.Architecture;
-        const os = containerImage.Os;
-        const variant = containerImage.Variant;
-        const size = containerImage.Size;
-        const creationDate = containerImage.Created;
-        const repoDigest = getRepoDigest(containerImage);
-        const imageId = containerImage.Config.Image;
+        const containerName = getContainerName(container);
+        const architecture = image.Architecture;
+        const os = image.Os;
+        const variant = image.Variant;
+        const created = image.Created;
+        const repoDigest = getRepoDigest(image);
+        const imageId = image.Id;
 
         // Parse image to get registry, organization...
         let imageNameToParse = container.Image;
         if (imageNameToParse.includes('sha256:')) {
-            if (!containerImage.RepoTags || containerImage.RepoTags.length === 0) {
-                log.warn(`Cannot get a reliable tag for this image [${imageNameToParse}]`);
+            if (!image.RepoTags || image.RepoTags.length === 0) {
+                log.warn(`${containerId} - Cannot get a reliable tag for this image [${imageNameToParse}]`);
                 return Promise.resolve();
             }
             // Get the first repo tag (better than nothing ;)
-            [imageNameToParse] = containerImage.RepoTags;
+            [imageNameToParse] = image.RepoTags;
         }
         const parsedImage = parse(imageNameToParse);
-        const tag = parsedImage.tag || 'latest';
-        const parsedTag = semver.coerce(tag);
+        const tagName = parsedImage.tag || 'latest';
+        const parsedTag = semver.coerce(tagName);
         const isSemver = parsedTag !== null && parsedTag !== undefined;
 
         let watchDigest = false;
@@ -418,25 +411,35 @@ class Docker extends Component {
             const watchDigestLabelValue = container.Labels[watchDigestLabel];
             watchDigest = watchDigestLabelValue && watchDigestLabelValue.toLowerCase() === 'true';
         }
-
-        return normalizeImage(new Image({
-            watcher: this.getId(),
-            registryUrl: parsedImage.domain,
-            image: parsedImage.path,
-            containerName,
-            tag,
-            repoDigest,
-            watchDigest,
-            imageId,
-            versionDate: creationDate,
-            isSemver,
-            architecture,
-            os,
-            variant,
-            size,
+        return normalizeContainer({
+            id: containerId,
+            name: containerName,
+            watcher: this.name,
             includeTags,
             excludeTags,
-        }));
+            image: {
+                id: imageId,
+                registry: {
+                    url: parsedImage.domain,
+                },
+                name: parsedImage.path,
+                tag: {
+                    value: tagName,
+                    semver: isSemver,
+                },
+                digest: {
+                    watch: watchDigest,
+                    repo: repoDigest,
+                },
+                architecture,
+                os,
+                variant,
+                created,
+            },
+            result: {
+                tag: tagName,
+            },
+        });
     }
 }
 

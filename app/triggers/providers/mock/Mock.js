@@ -24,11 +24,11 @@ class Mock extends Trigger {
 
     /**
      * Mock trigger only logs a dummy line...
-     * @param image
+     * @param container
      * @returns {Promise<void>}
      */
-    async notify(image) {
-        this.log.info(`MOCK triggered (${JSON.stringify(image)})`);
+    async notify(container) {
+        this.log.info(`MOCK triggered (${JSON.stringify(container)})`);
     }
 }
 

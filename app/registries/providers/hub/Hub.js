@@ -23,13 +23,13 @@ class Hub extends Registry {
     }
 
     /**
-     * Return true if image has not registryUrl.
+     * Return true if image has no registry url.
      * @param image the image
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
     match(image) {
-        return !image.registryUrl;
+        return !image.registry.url;
     }
 
     /**
@@ -40,10 +40,10 @@ class Hub extends Registry {
     // eslint-disable-next-line class-methods-use-this
     normalizeImage(image) {
         const imageNormalized = image;
-        imageNormalized.registry = 'hub';
-        imageNormalized.registryUrl = 'https://registry-1.docker.io/v2';
-        if (imageNormalized.image) {
-            imageNormalized.image = imageNormalized.image.includes('/') ? imageNormalized.image : `library/${imageNormalized.image}`;
+        imageNormalized.registry.name = 'hub';
+        imageNormalized.registry.url = 'https://registry-1.docker.io/v2';
+        if (imageNormalized.name) {
+            imageNormalized.name = imageNormalized.name.includes('/') ? imageNormalized.name : `library/${imageNormalized.name}`;
         }
         return imageNormalized;
     }
@@ -58,7 +58,7 @@ class Hub extends Registry {
     async authenticate(image, requestOptions) {
         const request = {
             method: 'GET',
-            uri: `https://auth.docker.io/token?service=registry.docker.io&scope=repository:${image.image}:pull&grant_type=password`,
+            uri: `https://auth.docker.io/token?service=registry.docker.io&scope=repository:${image.name}:pull&grant_type=password`,
             headers: {
                 Accept: 'application/json',
             },

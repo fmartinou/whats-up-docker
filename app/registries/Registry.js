@@ -64,7 +64,7 @@ class Registry extends Component {
     async getTags(image) {
         const tagsResult = await this.callRegistry({
             image,
-            url: `${image.registryUrl}/${image.image}/tags/list`,
+            url: `${image.registry.url}/${image.name}/tags/list`,
         });
 
         // Sort alpha then reverse to get higher values first
@@ -80,27 +80,28 @@ class Registry extends Component {
      * @returns {Promise<undefined|*>}
      */
     async getImageManifestDigest(image, digest) {
-        const tagOrDigest = digest || image.tag;
+        const tagOrDigest = digest || image.tag.value;
         let responseManifests;
         let manifestDigestFound;
         let manifestMediaType;
         try {
             responseManifests = await this.callRegistry({
                 image,
-                url: `${image.registryUrl}/${image.image}/manifests/${tagOrDigest}`,
+                url: `${image.registry.url}/${image.name}/manifests/${tagOrDigest}`,
                 headers: {
                     Accept: 'application/vnd.docker.distribution.manifest.list.v2+json',
                 },
             });
         } catch (e) {
-            log.warn(`Error when looking for local image manifest ${image.registryUrl}/${image.image}/${tagOrDigest} (${e.message})`);
+            log.warn(`Error when looking for local image manifest ${image.registry.url}/${image.name}/${tagOrDigest} (${e.message})`);
         }
         if (responseManifests) {
             if (responseManifests.schemaVersion === 2) {
                 if (responseManifests.mediaType === 'application/vnd.docker.distribution.manifest.list.v2+json') {
                     const manifestFound = responseManifests.manifests
                         .find((manifest) => manifest.platform.architecture === image.architecture
-                            && manifest.platform.os === image.os);
+                            && manifest.platform.os === image.os
+                            && manifest.platform.variant === image.variant);
                     if (manifestFound) {
                         manifestDigestFound = manifestFound.digest;
                         manifestMediaType = manifestFound.mediaType;
@@ -120,7 +121,7 @@ class Registry extends Component {
                     const responseManifest = await this.callRegistry({
                         image,
                         method: 'head',
-                        url: `${image.registryUrl}/${image.image}/manifests/${manifestDigestFound}`,
+                        url: `${image.registry.url}/${image.name}/manifests/${manifestDigestFound}`,
                         headers: {
                             Accept: manifestMediaType,
                         },
@@ -131,7 +132,7 @@ class Registry extends Component {
                         version: 2,
                     };
                 } catch (e) {
-                    log.warn(`Error when looking for remote image manifest ${image.registryUrl}/${image.image}/${tagOrDigest} (${e.message})`);
+                    log.warn(`Error when looking for remote image manifest ${image.registry.url}/${image.name}/${tagOrDigest} (${e.message})`);
                 }
             }
             if (manifestDigestFound && manifestMediaType === 'application/vnd.docker.container.image.v1+json') {

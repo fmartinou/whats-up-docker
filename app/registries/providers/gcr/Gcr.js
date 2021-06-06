@@ -21,13 +21,13 @@ class Gcr extends Registry {
     }
 
     /**
-     * Return true if image has not registryUrl.
+     * Return true if image has not registry url.
      * @param image the image
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
     match(image) {
-        return /^.*\.?gcr.io$/.test(image.registryUrl);
+        return /^.*\.?gcr.io$/.test(image.registry.url);
     }
 
     /**
@@ -38,9 +38,9 @@ class Gcr extends Registry {
     // eslint-disable-next-line class-methods-use-this
     normalizeImage(image) {
         const imageNormalized = image;
-        imageNormalized.registry = 'gcr';
-        if (!imageNormalized.registryUrl.startsWith('https://')) {
-            imageNormalized.registryUrl = `https://${imageNormalized.registryUrl}/v2`;
+        imageNormalized.registry.name = 'gcr';
+        if (!imageNormalized.registry.url.startsWith('https://')) {
+            imageNormalized.registry.url = `https://${imageNormalized.registry.url}/v2`;
         }
         return imageNormalized;
     }
@@ -48,7 +48,7 @@ class Gcr extends Registry {
     async authenticate(image, requestOptions) {
         const request = {
             method: 'GET',
-            uri: `https://gcr.io/v2/token?scope=repository:${image.image}:pull`,
+            uri: `https://gcr.io/v2/token?scope=repository:${image.name}:pull`,
             headers: {
                 Accept: 'application/json',
                 Authorization: `Basic ${Gcr.base64Encode('_json_key', JSON.stringify({

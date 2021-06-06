@@ -1,5 +1,6 @@
 const express = require('express');
-const imageRouter = require('./image');
+const appRouter = require('./app');
+const containerRouter = require('./container');
 const watcherRouter = require('./watcher');
 const triggerRouter = require('./trigger');
 const registryRouter = require('./registry');
@@ -13,14 +14,17 @@ const storeRouter = require('./store');
 function init() {
     const router = express.Router();
 
+    // Mount app router
+    router.use('/app', appRouter.init());
+
     // Mount log router
     router.use('/log', logRouter.init());
 
     // Mount store router
     router.use('/store', storeRouter.init());
 
-    // Mount images router
-    router.use('/images', imageRouter.init());
+    // Mount container router
+    router.use('/containers', containerRouter.init());
 
     // Mount trigger router
     router.use('/triggers', triggerRouter.init());

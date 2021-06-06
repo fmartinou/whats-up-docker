@@ -1,0 +1,7 @@
+{
+    "extends": "airbnb-base",
+    "plugins": ["cucumber"],
+    "rules": {
+        "indent": ["error", 4]
+    }
+}

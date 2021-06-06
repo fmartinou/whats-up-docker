@@ -22,19 +22,19 @@ class Http extends Trigger {
     /**
      * Send an HTTP Request with new image version details.
      *
-     * @param image the image
+     * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(image) {
+    async notify(container) {
         const options = {
             method: this.configuration.method,
             uri: this.configuration.url,
         };
         if (this.configuration.method === 'POST') {
-            options.body = image;
+            options.body = container;
             options.json = true;
         } else if (this.configuration.method === 'GET') {
-            options.qs = image;
+            options.qs = container;
         }
         return rp(options);
     }

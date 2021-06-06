@@ -9,11 +9,11 @@ class Trigger extends Component {
      */
     async init() {
         await this.initTrigger();
-        event.registerImageNewVersion(async (imageResult) => {
+        event.registerContainerNewVersion(async (containerResult) => {
             let status = 'error';
             try {
                 log.debug(`Run trigger ${this.getId()}`);
-                await this.notify(imageResult);
+                await this.notify(containerResult);
                 status = 'success';
             } catch (e) {
                 log.error(`Notify error from ${this.getId()} (${e.message})`);
@@ -25,7 +25,7 @@ class Trigger extends Component {
     }
 
     /**
-     * Init Trigger. Can be overriden in trigger implementation class.
+     * Init Trigger. Can be overridden in trigger implementation class.
      */
     /* eslint-disable-next-line */
     initTrigger() {

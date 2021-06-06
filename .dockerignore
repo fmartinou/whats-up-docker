@@ -1,2 +1,5 @@
-node_modules/
-samples/
+**/node_modules/
+coverage/
+docs/
+e2e/
+test/

@@ -26,10 +26,10 @@ function mapComponentToItem(key, component) {
 function mapComponentsToList(listFunction) {
     return Object.keys(listFunction())
         .map((key) => mapComponentToItem(key, listFunction()[key]))
-        .sort(byValues({
-            type: byString(),
-            name: byString(),
-        }));
+        .sort(byValues([
+            ['type', byString()],
+            ['name', byString()],
+        ]));
 }
 
 /**

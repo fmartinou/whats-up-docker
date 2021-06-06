@@ -1,20 +1,20 @@
 const { Gauge } = require('prom-client');
 
-let watchImageGauge;
+let watchContainerGauge;
 
 function init() {
-    watchImageGauge = new Gauge({
+    watchContainerGauge = new Gauge({
         name: 'wud_watcher_total',
-        help: 'The number of watched images',
+        help: 'The number of watched containers',
         labelNames: ['type', 'name'],
     });
 }
 
-function getWatchImageGauge() {
-    return watchImageGauge;
+function getWatchContainerGauge() {
+    return watchContainerGauge;
 }
 
 module.exports = {
     init,
-    getWatchImageGauge,
+    getWatchContainerGauge,
 };

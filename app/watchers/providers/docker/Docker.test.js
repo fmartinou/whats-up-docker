@@ -1,5 +1,6 @@
 const { ValidationError } = require('joi');
 const Docker = require('./Docker');
+const storeContainer = require('../../../store/container');
 const Hub = require('../../../registries/providers/hub/Hub');
 const Ecr = require('../../../registries/providers/ecr/Ecr');
 const Gcr = require('../../../registries/providers/gcr/Gcr');
@@ -11,6 +12,8 @@ const sampleCoercedSemver = require('../../samples/coercedSemver.json');
 jest.mock('request-promise-native');
 
 const docker = new Docker();
+docker.name = 'test';
+
 const hub = new Hub();
 const ecr = new Ecr();
 const gcr = new Gcr();
@@ -23,7 +26,10 @@ Docker.__set__('getRegistries', () => ({
     acr,
 }));
 
-Docker.__set__('getWatchImageGauge', () => ({ set: () => {} }));
+Docker.__set__('getWatchContainerGauge', () => ({
+    set: () => {
+    },
+}));
 
 const configurationValid = {
     socket: '/var/run/docker.sock',
@@ -68,19 +74,31 @@ test('getSemverTagsCandidate should not match when current version is semver and
 });
 
 test('getSemverTagsCandidate should match when newer version match the include regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, includeTags: '^\\d+\\.\\d+\\.\\d+$' }, ['7.8.9'])).toEqual(['7.8.9']);
+    expect(Docker.__get__('getSemverTagsCandidate')({
+        ...sampleSemver,
+        includeTags: '^\\d+\\.\\d+\\.\\d+$',
+    }, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
 test('getSemverTagsCandidate should not match when newer version but doesnt match the include regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, includeTags: '^v\\d+\\.\\d+\\.\\d+$' }, ['7.8.9'])).toEqual([]);
+    expect(Docker.__get__('getSemverTagsCandidate')({
+        ...sampleSemver,
+        includeTags: '^v\\d+\\.\\d+\\.\\d+$',
+    }, ['7.8.9'])).toEqual([]);
 });
 
 test('getSemverTagsCandidate should match when newer version doesnt match the exclude regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, excludeTags: '^v\\d+\\.\\d+\\.\\d+$' }, ['7.8.9'])).toEqual(['7.8.9']);
+    expect(Docker.__get__('getSemverTagsCandidate')({
+        ...sampleSemver,
+        excludeTags: '^v\\d+\\.\\d+\\.\\d+$',
+    }, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
 test('getSemverTagsCandidate should not match when newer version and match the exclude regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, excludeTags: '\\d+\\.\\d+\\.\\d+$' }, ['7.8.9'])).toEqual([]);
+    expect(Docker.__get__('getSemverTagsCandidate')({
+        ...sampleSemver,
+        excludeTags: '\\d+\\.\\d+\\.\\d+$',
+    }, ['7.8.9'])).toEqual([]);
 });
 
 test('getSemverTagsCandidate should return only greater or equal tags than current', () => {
@@ -92,49 +110,255 @@ test('getSemverTagsCandidate should return all greater or equal tags', () => {
 });
 
 test('getSemverTagsCandidate should return greater tags when digit over 9', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({ tag: '1.9.0', isSemver: true }, ['1.10.0', '1.2.3'])).toEqual(['1.10.0']);
+    expect(Docker.__get__('getSemverTagsCandidate')({
+        image: {
+            tag: {
+                value: '1.9.0',
+                semver: true,
+            },
+        },
+    }, ['1.10.0', '1.2.3'])).toEqual(['1.10.0']);
 });
 
-test('normalizeImage should return hub when applicable', () => {
-    expect(Docker.__get__('normalizeImage')({ image: 'image' })).toStrictEqual({
-        registry: 'hub',
-        registryUrl: 'https://registry-1.docker.io/v2',
-        image: 'library/image',
+test('normalizeContainer should return hub when applicable', () => {
+    expect(Docker.__get__('normalizeContainer')({
+        id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
+        name: 'homeassistant',
+        watcher: 'local',
+        includeTags: '^\\d+\\.\\d+.\\d+$',
+        image: {
+            id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+            registry: {},
+            name: 'test',
+            tag: {
+                value: '2021.6.4',
+                semver: true,
+            },
+            digest: {
+                watch: false,
+                repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+            },
+            architecture: 'amd64',
+            os: 'linux',
+            created: '2021-06-12T05:33:38.440Z',
+        },
+        result: {
+            tag: '2021.6.5',
+        },
+    }).image).toStrictEqual({
+        id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+        registry: {
+            name: 'hub',
+            url: 'https://registry-1.docker.io/v2',
+        },
+        name: 'library/test',
+        tag: {
+            value: '2021.6.4',
+            semver: true,
+        },
+        digest: {
+            watch: false,
+            repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+        },
+        architecture: 'amd64',
+        os: 'linux',
+        created: '2021-06-12T05:33:38.440Z',
     });
 });
 
-test('normalizeImage should return ecr when applicable', () => {
-    expect(Docker.__get__('normalizeImage')({
-        registryUrl: '123456789.dkr.ecr.eu-west-1.amazonaws.com',
-    })).toStrictEqual({
-        registry: 'ecr',
-        registryUrl: 'https://123456789.dkr.ecr.eu-west-1.amazonaws.com/v2',
+test('normalizeContainer should return ecr when applicable', () => {
+    expect(Docker.__get__('normalizeContainer')({
+        id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
+        name: 'homeassistant',
+        watcher: 'local',
+        includeTags: '^\\d+\\.\\d+.\\d+$',
+        image: {
+            id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+            registry: {
+                url: '123456789.dkr.ecr.eu-west-1.amazonaws.com',
+            },
+            name: 'test',
+            tag: {
+                value: '2021.6.4',
+                semver: true,
+            },
+            digest: {
+                watch: false,
+                repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+            },
+            architecture: 'amd64',
+            os: 'linux',
+            created: '2021-06-12T05:33:38.440Z',
+        },
+        result: {
+            tag: '2021.6.5',
+        },
+    }).image).toStrictEqual({
+        id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+        registry: {
+            name: 'ecr',
+            url: 'https://123456789.dkr.ecr.eu-west-1.amazonaws.com/v2',
+        },
+        name: 'test',
+        tag: {
+            value: '2021.6.4',
+            semver: true,
+        },
+        digest: {
+            watch: false,
+            repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+        },
+        architecture: 'amd64',
+        os: 'linux',
+        created: '2021-06-12T05:33:38.440Z',
     });
 });
 
-test('normalizeImage should return gcr when applicable', () => {
-    expect(Docker.__get__('normalizeImage')({
-        registryUrl: 'us.gcr.io',
-    })).toStrictEqual({
-        registry: 'gcr',
-        registryUrl: 'https://us.gcr.io/v2',
+test('normalizeContainer should return gcr when applicable', () => {
+    expect(Docker.__get__('normalizeContainer')({
+        id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
+        name: 'homeassistant',
+        watcher: 'local',
+        includeTags: '^\\d+\\.\\d+.\\d+$',
+        image: {
+            id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+            registry: {
+                url: 'us.gcr.io',
+            },
+            name: 'test',
+            tag: {
+                value: '2021.6.4',
+                semver: true,
+            },
+            digest: {
+                watch: false,
+                repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+            },
+            architecture: 'amd64',
+            os: 'linux',
+            created: '2021-06-12T05:33:38.440Z',
+        },
+        result: {
+            tag: '2021.6.5',
+        },
+    }).image).toStrictEqual({
+        id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+        registry: {
+            name: 'gcr',
+            url: 'https://us.gcr.io/v2',
+        },
+        name: 'test',
+        tag: {
+            value: '2021.6.4',
+            semver: true,
+        },
+        digest: {
+            watch: false,
+            repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+        },
+        architecture: 'amd64',
+        os: 'linux',
+        created: '2021-06-12T05:33:38.440Z',
     });
 });
 
-test('normalizeImage should return acr when applicable', () => {
-    expect(Docker.__get__('normalizeImage')({
-        registryUrl: 'test.azurecr.io',
-    })).toStrictEqual({
-        registry: 'acr',
-        registryUrl: 'https://test.azurecr.io/v2',
+test('normalizeContainer should return acr when applicable', () => {
+    expect(Docker.__get__('normalizeContainer')({
+        id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
+        name: 'homeassistant',
+        watcher: 'local',
+        includeTags: '^\\d+\\.\\d+.\\d+$',
+        image: {
+            id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+            registry: {
+                url: 'test.azurecr.io',
+            },
+            name: 'test',
+            tag: {
+                value: '2021.6.4',
+                semver: true,
+            },
+            digest: {
+                watch: false,
+                repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+            },
+            architecture: 'amd64',
+            os: 'linux',
+            created: '2021-06-12T05:33:38.440Z',
+        },
+        result: {
+            tag: '2021.6.5',
+        },
+    }).image).toStrictEqual({
+        id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+        registry: {
+            name: 'acr',
+            url: 'https://test.azurecr.io/v2',
+        },
+        name: 'test',
+        tag: {
+            value: '2021.6.4',
+            semver: true,
+        },
+        digest: {
+            watch: false,
+            repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+        },
+        architecture: 'amd64',
+        os: 'linux',
+        created: '2021-06-12T05:33:38.440Z',
     });
 });
 
-test('normalizeImage should return original image when no matching provider found', () => {
-    expect(Docker.__get__('normalizeImage')({ registryUrl: 'xxx' })).toEqual({ registryUrl: 'xxx', registry: 'unknown' });
+test('normalizeContainer should return original container when no matching provider found', () => {
+    expect(Docker.__get__('normalizeContainer')({
+        id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
+        name: 'homeassistant',
+        watcher: 'local',
+        includeTags: '^\\d+\\.\\d+.\\d+$',
+        image: {
+            id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+            registry: {
+                url: 'xxx',
+            },
+            name: 'test',
+            tag: {
+                value: '2021.6.4',
+                semver: true,
+            },
+            digest: {
+                watch: false,
+                repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+            },
+            architecture: 'amd64',
+            os: 'linux',
+            created: '2021-06-12T05:33:38.440Z',
+        },
+        result: {
+            tag: '2021.6.5',
+        },
+    }).image).toEqual({
+        id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+        registry: {
+            name: 'unknown',
+            url: 'xxx',
+        },
+        name: 'test',
+        tag: {
+            value: '2021.6.4',
+            semver: true,
+        },
+        digest: {
+            watch: false,
+            repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+        },
+        architecture: 'amd64',
+        os: 'linux',
+        created: '2021-06-12T05:33:38.440Z',
+    });
 });
 
-test('findNewVersion should return new image when found', async () => {
+test('findNewVersion should return new image version when found', async () => {
     hub.getTags = () => (['7.8.9']);
     hub.getImageManifestDigest = () => ({ digest: 'sha256:abcdef', version: 2 });
     await expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
@@ -143,7 +367,7 @@ test('findNewVersion should return new image when found', async () => {
     });
 });
 
-test('findNewVersion should return same result as current when no image found', async () => {
+test('findNewVersion should return same result as current when no image version found', async () => {
     hub.getTags = () => ([]);
     hub.getImageManifestDigest = () => ({ digest: 'sha256:abcdef', version: 2 });
     await expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
@@ -152,14 +376,16 @@ test('findNewVersion should return same result as current when no image found', 
     });
 });
 
-test('mapContainerToImage should map a container definition to an image definition', async () => {
+test('addImageDetailsToContainer should add an image definition to the container', async () => {
+    storeContainer.getContainer = () => (undefined);
     docker.dockerApi = {
         getImage: () => ({
             inspect: () => ({
+                Id: 'image-123456789',
                 Architecture: 'arch',
                 Os: 'os',
                 Size: '10',
-                Created: '2019-05-20T12:02:06.307Z',
+                Created: '2021-06-12T05:33:38.440Z',
                 Names: ['test'],
                 RepoDigests: ['test/test@sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba'],
                 Config: {
@@ -169,42 +395,54 @@ test('mapContainerToImage should map a container definition to an image definiti
         }),
     };
     const container = {
+        Id: 'container-123456789',
         Image: 'organization/image:version',
         Names: ['/test'],
         Labels: {},
     };
 
-    const image = await docker.mapContainerToImage(container);
-    expect(image).toMatchObject({
-        registry: 'hub',
-        registryUrl: 'https://registry-1.docker.io/v2',
-        image: 'organization/image',
-        containerName: 'test',
-        tag: 'version',
-        versionDate: '2019-05-20T12:02:06.307Z',
-        architecture: 'arch',
-        os: 'os',
-        size: '10',
-        includeTags: undefined,
-        excludeTags: undefined,
+    const containerWithImage = await docker.addImageDetailsToContainer(container);
+    expect(containerWithImage).toMatchObject({
+        id: 'container-123456789',
+        name: 'test',
+        watcher: 'test',
+        image: {
+            id: 'image-123456789',
+            registry: {},
+            name: 'organization/image',
+            tag: {
+                value: 'version',
+                semver: false,
+            },
+            digest: {
+                watch: false,
+                repo: 'sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba',
+            },
+            architecture: 'arch',
+            os: 'os',
+            created: '2021-06-12T05:33:38.440Z',
+        },
+        result: {
+            tag: 'version',
+        },
     });
 });
 
-test('watchImage should return new image when found', () => {
+test('watchContainer should return new image version when found', () => {
     docker.configuration = {};
     hub.getTags = () => (['7.8.9']);
-    expect(docker.watchImage(sampleSemver)).resolves.toMatchObject({
+    expect(docker.watchContainer(sampleSemver)).resolves.toMatchObject({
         result: {
             tag: '7.8.9',
         },
     });
 });
 
-test('watchImage should return same result as current when no image found', async () => {
+test('watchContainer should return same result as current when no image version found', async () => {
     docker.configuration = {};
     hub.getTags = () => ([]);
     hub.getImageManifestDigest = () => ({ digest: 'sha256:abcdef', version: 2 });
-    await expect(docker.watchImage(sampleSemver)).resolves.toMatchObject({
+    await expect(docker.watchContainer(sampleSemver)).resolves.toMatchObject({
         result: {
             tag: '4.5.6',
             digest: 'sha256:abcdef',
@@ -212,9 +450,11 @@ test('watchImage should return same result as current when no image found', asyn
     });
 });
 
-test('watch should return a list of images found by the docker socket', async () => {
-    const image1 = {
-        Image: 'image',
+test('watch should return a list of containers found by the docker socket', async () => {
+    storeContainer.getContainer = () => (undefined);
+    const container1 = {
+        Id: 'container-123456789',
+        Image: 'organization/image:version',
         Names: ['/test'],
         Architecture: 'arch',
         Os: 'os',
@@ -227,9 +467,14 @@ test('watch should return a list of images found by the docker socket', async ()
         },
     };
     docker.dockerApi = {
-        listContainers: () => ([image1]),
+        listContainers: () => ([container1]),
         getImage: () => ({
-            inspect: () => (image1),
+            inspect: () => ({
+                Architecture: 'arch',
+                Os: 'os',
+                Created: '2021-06-12T05:33:38.440Z',
+                Id: 'image-123456789',
+            }),
         }),
     };
 
@@ -239,54 +484,38 @@ test('watch should return a list of images found by the docker socket', async ()
     };
 
     await expect(docker.watch()).resolves.toMatchObject([{
-        registry: 'hub',
-        registryUrl: 'https://registry-1.docker.io/v2',
-        image: 'library/image',
-        containerName: 'test',
-        tag: 'latest',
-        versionDate: '2019-05-20T12:02:06.307Z',
-        architecture: 'arch',
-        os: 'os',
-        size: '10',
-        isSemver: false,
+        id: 'container-123456789',
+        name: 'test',
+        watcher: 'test',
+        image: {
+            id: 'image-123456789',
+            registry: {},
+            name: 'organization/image',
+            tag: {
+                value: 'version',
+                semver: false,
+            },
+            digest: {
+                watch: false,
+                repo: undefined,
+            },
+            architecture: 'arch',
+            os: 'os',
+            created: '2021-06-12T05:33:38.440Z',
+        },
+        result: {
+            tag: 'version',
+        },
     }]);
 });
 
-test('pruneOldImages should prune old images', () => {
-    const oldImages = [{
-        watcher: 'watcher',
-        registryUrl: 'registryUrl',
-        image: 'image',
-        tag: 'version1',
-        includeTags: 'includeTags',
-        excludeTags: 'excludeTags',
-    }, {
-        watcher: 'watcher',
-        registryUrl: 'registryUrl',
-        image: 'image',
-        tag: 'version2',
-        includeTags: 'includeTags',
-        excludeTags: 'excludeTags',
-    }];
-    const newImages = [{
-        watcher: 'watcher',
-        registryUrl: 'registryUrl',
-        image: 'image',
-        tag: 'version2',
-        includeTags: 'includeTags',
-        excludeTags: 'excludeTags',
-    }];
-    expect(Docker.__get__('getOldImages')(newImages, oldImages)).toEqual([{
-        watcher: 'watcher',
-        registryUrl: 'registryUrl',
-        image: 'image',
-        tag: 'version1',
-        includeTags: 'includeTags',
-        excludeTags: 'excludeTags',
-    }]);
+test('pruneOldContainers should prune old containers', () => {
+    const oldContainers = [{ id: 1 }, { id: 2 }];
+    const newContainers = [{ id: 1 }];
+    expect(Docker.__get__('getOldContainers')(newContainers, oldContainers)).toEqual([{ id: 2 }]);
 });
 
-test('pruneOldImages should operate when lists are empty or undefined', () => {
-    expect(Docker.__get__('getOldImages')([], [])).toEqual([]);
-    expect(Docker.__get__('getOldImages')(undefined, undefined)).toEqual([]);
+test('pruneOldContainers should operate when lists are empty or undefined', () => {
+    expect(Docker.__get__('getOldContainers')([], [])).toEqual([]);
+    expect(Docker.__get__('getOldContainers')(undefined, undefined)).toEqual([]);
 });

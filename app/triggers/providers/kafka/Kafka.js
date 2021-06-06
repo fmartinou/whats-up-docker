@@ -12,7 +12,7 @@ class Kafka extends Trigger {
     getConfigurationSchema() {
         return this.joi.object().keys({
             brokers: this.joi.string().required(),
-            topic: this.joi.string().default('wud-image'),
+            topic: this.joi.string().default('wud-container'),
             clientId: this.joi.string().default('wud'),
             ssl: this.joi.boolean().default(false),
             authentication: this.joi.object({
@@ -65,17 +65,17 @@ class Kafka extends Trigger {
     }
 
     /**
-     * Send a record to a Kafka topic with new image version details.
+     * Send a record to a Kafka topic with new container version details.
      *
-     * @param image the image
+     * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(image) {
+    async notify(container) {
         const producer = this.kafka.producer();
         await producer.connect();
         return producer.send({
             topic: this.configuration.topic,
-            messages: [{ value: JSON.stringify(image) }],
+            messages: [{ value: JSON.stringify(container) }],
         });
     }
 }

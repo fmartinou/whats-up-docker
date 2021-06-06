@@ -19,10 +19,18 @@ test('validatedConfiguration should throw error when configuration item is missi
     }).toThrow('"clientid" is required');
 });
 
-test('match should return true when registryUrl is from acr', () => {
-    expect(acr.match({ registryUrl: 'test.azurecr.io' })).toBeTruthy();
+test('match should return true when registry url is from acr', () => {
+    expect(acr.match({
+        registry: {
+            url: 'test.azurecr.io',
+        },
+    })).toBeTruthy();
 });
 
-test('match should return false when registryUrl is not from acr', () => {
-    expect(acr.match({ registryUrl: 'est.notme.io' })).toBeFalsy();
+test('match should return false when registry url is not from acr', () => {
+    expect(acr.match({
+        registry: {
+            url: 'est.notme.io',
+        },
+    })).toBeFalsy();
 });

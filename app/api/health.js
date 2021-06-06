@@ -3,7 +3,7 @@ const nocache = require('nocache');
 const healthcheck = require('express-healthcheck');
 
 /**
- * Prometheus Metrics router.
+ * Healthcheck router.
  * @type {Router}
  */
 const router = express.Router();

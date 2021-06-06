@@ -62,22 +62,21 @@ class Pushover extends Trigger {
     }
 
     /**
-     * Send a Pushover notification with new image version details.
+     * Send a Pushover notification with new container version details.
      *
-     * @param image the image
+     * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(image) {
+    async notify(container) {
         const message = {
-            title: `[WUD] New version found for image ${image.image}`,
+            title: `[WUD] New version found for container ${container.name}`,
             html: 1,
             message: `
-                <p><b>Registry:</b>&nbsp;${image.registry}</p>
-                <p><b>RegistryUrl:</b>&nbsp;${image.registryUrl}</p>
-                <p><b>Image:</b>&nbsp;${image.image}</p>
-                <p><b>Current tag:</b> ${image.tag}</p>
-                <p><b>Current digest:</b> ${image.digest}</p>
-                <p><b>New digest:</b>&nbsp;${image.result.digest}</p>
+                <p><b>Image:</b>&nbsp;${container.image.name}</p>
+                <p><b>Current tag:</b> ${container.image.tag.value}</p>
+                <p><b>Current digest:</b> ${container.image.digest.value}</p>
+                <p><b>New tag:</b>&nbsp;${container.result.tag}</p>
+                <p><b>New digest:</b>&nbsp;${container.result.digest}</p>
             `,
             sound: this.configuration.sound,
             device: this.configuration.device,

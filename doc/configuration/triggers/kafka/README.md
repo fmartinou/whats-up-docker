@@ -1,0 +1,62 @@
+### Kafka
+![logo](kafka.png)
+
+The ```kafka``` trigger lets you publish container update notifications to a Kafka topic.
+
+#### Variables
+
+| Env var                                                        | Description                                                         | Supported values                    | Default value |
+|:--------------------------------------------------------------:|:-------------------------------------------------------------------:|:-----------------------------------:|:-------------:| 
+| ```WUD_TRIGGER_KAFKA_{trigger_name}_BROKERS```                 | Comma separated list of Kafka brokers                               |                                     |               |
+| ```WUD_TRIGGER_KAFKA_{trigger_name}_SSL```                     | Is SSL enabled on the TLS connection                                | true, false                         | false         |
+| ```WUD_TRIGGER_KAFKA_{trigger_name}_TOPIC```                   | The name of the topic to publish                                    |                                     | wud-container |
+| ```WUD_TRIGGER_KAFKA_{trigger_name}_AUTHENTICATION_TYPE```     | The type for authentication (required if authentication is enabled) | PLAIN, SCRAM-SHA-256, SCRAM-SHA-512 | PLAIN         |
+| ```WUD_TRIGGER_KAFKA_{trigger_name}_AUTHENTICATION_USER```     | The name of the user (required if authentication is enabled)        |                                     |               |
+| ```WUD_TRIGGER_KAFKA_{trigger_name}_AUTHENTICATION_PASSWORD``` | The password of the user (required if authentication is enabled)    |                                     |               |
+
+!> The topic must already exist on the broker (the trigger won't automatically create it)
+
+#### Examples
+
+##### Post a message to a&nbsp;[Cloud Karafka](https://www.cloudkarafka.com/) broker
+
+```bash
+    "WUD_TRIGGER_KAFKA_KARAKFA_BROKERS": "ark-01.srvs.cloudkafka.com:9094,ark-02.srvs.cloudkafka.com:9094,ark-03.srvs.cloudkafka.com:9094",
+    "WUD_TRIGGER_KAFKA_KARAKFA_SSL": "true",
+    "WUD_TRIGGER_KAFKA_KARAKFA_TOPIC": "my-user-id-wud-image",
+    "WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_USER": "my-user-id",
+    "WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_PASSWORD": "my-secret",
+    "WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_TYPE": "SCRAM-SHA-256"
+```
+
+##### Example of published record
+```json
+{
+  "id":"31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816",
+  "name":"homeassistant",
+  "watcher":"local",
+  "includeTags":"^\\d+\\.\\d+.\\d+$",
+  "image":{
+    "id":"sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6",
+    "registry":{
+      "url":"123456789.dkr.ecr.eu-west-1.amazonaws.com"
+    },
+    "name":"test",
+    "tag":{
+      "value":"2021.6.4",
+      "semver":true
+    },
+    "digest":{
+      "watch":false,
+      "repo":"sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72"
+    },
+    "architecture":"amd64",
+    "os":"linux",
+    "created":"2021-06-12T05:33:38.440Z"
+  },
+  "result":{
+    "tag":"2021.6.5"
+  },
+  "updateAvailable": true
+}
+```

@@ -1,6 +1,19 @@
 const nodemailer = require('nodemailer');
-
+const capitalize = require('capitalize');
 const Trigger = require('../Trigger');
+const { flatten } = require('../../../model/container');
+
+/**
+ * Convert container to html.
+ * @param containerFlatten the flatten container
+ * @returns {string}
+ */
+function buildHtml(containerFlatten) {
+    return Object
+        .keys(containerFlatten)
+        .map((property) => `<p><strong>${capitalize(property)}:</strong>&nbsp;${containerFlatten[property]}</p>`)
+        .join('');
+}
 
 /**
  * SMTP Trigger implementation
@@ -47,26 +60,18 @@ class Smtp extends Trigger {
     }
 
     /**
-     * Send a mail with new image version details.
+     * Send a mail with new container version details.
      *
-     * @param image the image
+     * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(image) {
-        await this.transporter.sendMail({
+    async notify(container) {
+        return this.transporter.sendMail({
             from: this.configuration.from,
             to: this.configuration.to,
-            subject: `[WUD] New version found for image ${image.image}`,
-            text: JSON.stringify(image),
-            html: `
-                <p><strong>Registry:</strong>&nbsp;${image.registry}</p>
-                <p><strong>RegistryUrl:</strong>&nbsp;${image.registryUrl}</p>
-                <p><strong>Image:</strong>&nbsp;${image.image}</p>
-                <p><strong>Current tag:</strong> ${image.tag}</p>
-                <p><strong>Current digest:</strong> ${image.digest}</p>
-                <p><strong>Result tag:</strong> ${image.result.tag}</p>
-                <p><strong>Result digest:</strong>&nbsp;${image.result.digest}</p>
-            `,
+            subject: `[WUD] New version found for container ${container.name}`,
+            text: JSON.stringify(container),
+            html: buildHtml(flatten(container)),
         });
     }
 }

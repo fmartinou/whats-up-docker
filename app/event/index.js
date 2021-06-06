@@ -3,59 +3,101 @@ const events = require('events');
 // Build EventEmitter
 const eventEmitter = new events.EventEmitter();
 
+const WUD_CONTAINER_ADDED = 'wud:container-added';
+const WUD_CONTAINER_UPDATED = 'wud:container-updated';
+const WUD_CONTAINER_REMOVED = 'wud:container-removed';
+const WUD_CONTAINER_RESULT = 'wud:container-result';
+const WUD_CONTAINER_NEW_VERSION = 'wud:container-new-version';
+
 /**
- * Emit ImageResult event.
- * @param imageResult
+ * Emit ContainerResult event.
+ * @param containerResult
  */
-function emitImageResult(imageResult) {
-    eventEmitter.emit('runner:image-result', imageResult);
+function emitContainerResult(containerResult) {
+    eventEmitter.emit(WUD_CONTAINER_RESULT, containerResult);
 }
 
 /**
- * Register to ImageResult event.
+ * Register to ContainerResult event.
  * @param handler
  */
-function registerImageResult(handler) {
-    eventEmitter.on('runner:image-result', handler);
+function registerContainerResult(handler) {
+    eventEmitter.on(WUD_CONTAINER_RESULT, handler);
 }
 
 /**
  * Emit NewVersion event.
- * @param imageNewVersion
+ * @param containerNewVersion
  */
-function emitImageNewVersion(imageNewVersion) {
-    eventEmitter.emit('runner:image-new-version', imageNewVersion);
+function emitContainerNewVersion(containerNewVersion) {
+    eventEmitter.emit(WUD_CONTAINER_NEW_VERSION, containerNewVersion);
 }
 
 /**
  * Register to NewVersion event.
  * @param handler
  */
-function registerImageNewVersion(handler) {
-    eventEmitter.on('runner:image-new-version', handler);
+function registerContainerNewVersion(handler) {
+    eventEmitter.on(WUD_CONTAINER_NEW_VERSION, handler);
 }
 
 /**
- * Emit image removed.
- * @param imageRemoved
+ * Emit container added.
+ * @param containerAdded
  */
-function emitImageRemoved(imageRemoved) {
-    eventEmitter.emit('runner:image-removed', imageRemoved);
+function emitContainerAdded(containerAdded) {
+    eventEmitter.emit(WUD_CONTAINER_ADDED, containerAdded);
 }
 
 /**
- * Register to image removed event.
+ * Register to container added event.
  * @param handler
  */
-function registerImageRemoved(handler) {
-    eventEmitter.on('runner:image-removed', handler);
+function registerContainerAdded(handler) {
+    eventEmitter.on(WUD_CONTAINER_ADDED, handler);
+}
+
+/**
+ * Emit container added.
+ * @param containerAdded
+ */
+function emitContainerUpdated(containerUpdated) {
+    eventEmitter.emit(WUD_CONTAINER_UPDATED, containerUpdated);
+}
+
+/**
+ * Register to container updated event.
+ * @param handler
+ */
+function registerContainerUpdated(handler) {
+    eventEmitter.on(WUD_CONTAINER_UPDATED, handler);
+}
+
+/**
+ * Emit container removed.
+ * @param containerRemoved
+ */
+function emitContainerRemoved(containerRemoved) {
+    eventEmitter.emit(WUD_CONTAINER_REMOVED, containerRemoved);
+}
+
+/**
+ * Register to container removed event.
+ * @param handler
+ */
+function registerContainerRemoved(handler) {
+    eventEmitter.on(WUD_CONTAINER_REMOVED, handler);
 }
 
 module.exports = {
-    emitImageResult,
-    registerImageResult,
-    emitImageNewVersion,
-    registerImageNewVersion,
-    emitImageRemoved,
-    registerImageRemoved,
+    emitContainerResult,
+    registerContainerResult,
+    emitContainerNewVersion,
+    registerContainerNewVersion,
+    emitContainerAdded,
+    registerContainerAdded,
+    emitContainerUpdated,
+    registerContainerUpdated,
+    emitContainerRemoved,
+    registerContainerRemoved,
 };

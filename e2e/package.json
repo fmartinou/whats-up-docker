@@ -1,0 +1,23 @@
+{
+  "name": "wud-e2e",
+  "version": "1.0.0",
+  "description": "What'up Docker? the e2e",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint '**/*.js'",
+    "cucumber": "cucumber-js **/*.feature"
+  },
+  "author": "fmartinou",
+  "repository": "fmartinou/whats-up-docker",
+  "license": "MIT",
+  "dependencies": {
+    "apickli": "2.3.3",
+    "cucumber": "6.0.5"
+  },
+  "devDependencies": {
+    "eslint": "7.24.0",
+    "eslint-config-airbnb-base": "14.2.1",
+    "eslint-plugin-cucumber": "1.4.0",
+    "eslint-plugin-import": "2.22.1"
+  }
+}

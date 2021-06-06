@@ -5,7 +5,7 @@ const kafka = new Kafka();
 
 const configurationValid = {
     brokers: 'broker1:9000, broker2:9000',
-    topic: 'wud-image',
+    topic: 'wud-container',
     clientId: 'wud',
     ssl: false,
 };

@@ -1,6 +1,19 @@
 const SlackClient = require('slack');
-
+const capitalize = require('capitalize');
 const Trigger = require('../Trigger');
+const { flatten } = require('../../../model/container');
+
+/**
+ * Convert container to text.
+ * @param containerFlatten the flatten container
+ * @returns {string}
+ */
+function buildHtml(containerFlatten) {
+    return Object
+        .keys(containerFlatten)
+        .map((property) => `*${capitalize(property)}:* ${containerFlatten[property]}`)
+        .join('\n');
+}
 
 /*
  * Slack Trigger implementation
@@ -43,19 +56,10 @@ class Slack extends Trigger {
      * @param image the image
      * @returns {Promise<void>}
      */
-    async notify(image) {
-        const message = `
-*New version found for image ${image.image}* \n
-*Registry:* ${image.registry} \n
-*RegistryUrl:* ${image.registryUrl} \n
-*Image:* ${image.image} \n
-*Current tag:* ${image.tag} \n
-*Current digest:* ${image.digest} \n
-*New tag:* ${image.result.tag} \n
-*New digest:* ${image.result.digest}`;
+    async notify(container) {
         return this.client.chat.postMessage({
             channel: this.configuration.channel,
-            text: message,
+            text: buildHtml(flatten(container)),
         });
     }
 }

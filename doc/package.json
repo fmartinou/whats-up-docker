@@ -1,0 +1,15 @@
+{
+  "name": "wud-doc",
+  "version": "1.0.0",
+  "description": "What'up Docker? the doc",
+  "main": "index.js",
+  "scripts": {
+    "doc": "docsify serve"
+  },
+  "author": "fmartinou",
+  "repository": "fmartinou/whats-up-docker",
+  "license": "MIT",
+  "devDependencies": {
+    "docsify-cli": "4.4.3"
+  }
+}

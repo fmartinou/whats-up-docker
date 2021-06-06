@@ -2,22 +2,24 @@ const mqtt = require('async-mqtt');
 const capitalize = require('capitalize');
 const Trigger = require('../Trigger');
 const log = require('../../../log');
-const event = require('../../../event');
+const { registerContainerAdded, registerContainerRemoved } = require('../../../event');
+const { flatten } = require('../../../model/container');
+const { getVersion } = require('../../../configuration');
 
-const imageDefaultTopic = 'wud/image';
+const containerDefaultTopic = 'wud/container';
 const hassDefaultPrefix = 'homeassistant';
 const hassDeviceId = 'wud';
 const hassDeviceName = 'What\'s up Docker?';
 const hassManufacturer = 'fmartinou';
 const hassEntityIcon = 'mdi:docker';
-const hassEntityValueTemplate = '{{ value_json.toBeUpdated }}';
+const hassEntityValueTemplate = '{{ value_json.update_available }}';
 
-function getImageTopic({ baseTopic, image }) {
-    return `${baseTopic}/${image.registry}/${image.image}`;
+function getContainerTopic({ baseTopic, container }) {
+    return `${baseTopic}/${container.watcher}/${container.name}`;
 }
 
-function getHassEntityId(imageTopic) {
-    return imageTopic.replace(/\//g, '_');
+function getHassEntityId(containerTopic) {
+    return containerTopic.replace(/\//g, '_');
 }
 
 /**
@@ -33,7 +35,7 @@ class Mqtt extends Trigger {
             url: this.joi.string().uri({
                 scheme: ['mqtt', 'mqtts', 'tcp', 'tls', 'ws', 'wss'],
             }).required(),
-            topic: this.joi.string().default(imageDefaultTopic),
+            topic: this.joi.string().default(containerDefaultTopic),
             user: this.joi.string(),
             password: this.joi.string(),
             hass: this.joi.object({
@@ -57,8 +59,8 @@ class Mqtt extends Trigger {
         this.client = await mqtt.connectAsync(this.configuration.url, options);
 
         if (this.configuration.hass.enabled) {
-            event.registerImageResult((image) => this.createOrUpdateHassDevice(image));
-            event.registerImageRemoved((image) => this.removeHassDevice(image));
+            registerContainerAdded((container) => this.addHassDevice(container));
+            registerContainerRemoved((container) => this.removeHassDevice(container));
         }
     }
 
@@ -76,41 +78,39 @@ class Mqtt extends Trigger {
     /**
      * Send an MQTT message with new image version details.
      *
-     * @param image the image
+     * @param container the container
      * @returns {Promise}
      */
-    async notify(image) {
-        const imageTopic = getImageTopic({ baseTopic: this.configuration.topic, image });
-
-        const resultTag = image.result.tag;
-        const resultDigest = image.result.digest;
-
-        log.debug(`Publish image result [${imageTopic}]`);
-        return this.client.publish(imageTopic, JSON.stringify({
-            ...image,
-            resultTag,
-            resultDigest,
-        }), {
+    async notify(container) {
+        const containerTopic = getContainerTopic({
+            baseTopic: this.configuration.topic,
+            container,
+        });
+        log.debug(`Publish container result to ${containerTopic}`);
+        return this.client.publish(containerTopic, JSON.stringify(flatten(container)), {
             retain: true,
         });
     }
 
     /**
-     * Create / Update Home-Assistant device.
-     * @param image
+     * Add Home-Assistant device.
+     * @param container
      * @returns {Promise<void>}
      */
-    async createOrUpdateHassDevice(image) {
-        // Image topic
-        const imageTopic = getImageTopic({ baseTopic: this.configuration.topic, image });
+    async addHassDevice(container) {
+        // Container topic
+        const containerTopic = getContainerTopic({
+            baseTopic: this.configuration.topic,
+            container,
+        });
 
         // Entity id & name
-        const entityId = getHassEntityId(imageTopic);
+        const entityId = getHassEntityId(containerTopic);
 
         // Hass discovery topic
         const discoveryTopic = `${this.configuration.hass.prefix}/binary_sensor/${entityId}/config`;
 
-        log.debug(`Sync hass device [id=${entityId}]`);
+        log.info(`Add hass device [id=${entityId}]`);
         await this.client.publish(discoveryTopic, JSON.stringify({
             unique_id: entityId,
             name: entityId,
@@ -119,37 +119,41 @@ class Mqtt extends Trigger {
                 manufacturer: capitalize(hassManufacturer),
                 model: capitalize(hassDeviceId),
                 name: capitalize(hassDeviceName),
+                sw_version: getVersion(),
             },
             icon: hassEntityIcon,
             force_update: true,
-            state_topic: imageTopic,
+            state_topic: containerTopic,
             value_template: hassEntityValueTemplate,
             payload_off: false,
             payload_on: true,
-            json_attributes_topic: imageTopic,
+            json_attributes_topic: containerTopic,
         }), {
             retain: true,
         });
 
-        await this.notify(image);
+        await this.notify(container);
     }
 
     /**
      * Remove Home-Assistant device.
-     * @param image
+     * @param container
      * @returns {Promise<void>}
      */
-    async removeHassDevice(image) {
-        // Image topic
-        const imageTopic = getImageTopic({ baseTopic: this.configuration.topic, image });
+    async removeHassDevice(container) {
+        // Container topic
+        const containerTopic = getContainerTopic({
+            baseTopic: this.configuration.topic,
+            container,
+        });
 
         // Entity id & name
-        const entityId = getHassEntityId(imageTopic);
+        const entityId = getHassEntityId(containerTopic);
 
         // Hass discovery topic
         const discoveryTopic = `${this.configuration.hass.prefix}/binary_sensor/${entityId}/config`;
 
-        log.debug(`Remove hass device [id=${entityId}]`);
+        log.info(`Remove hass device [id=${entityId}]`);
         await this.client.publish(discoveryTopic, JSON.stringify({}), {
             retain: true,
         });

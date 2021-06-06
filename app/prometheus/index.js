@@ -1,7 +1,7 @@
 const { collectDefaultMetrics, register } = require('prom-client');
 
 const log = require('../log');
-const image = require('./image');
+const container = require('./container');
 const trigger = require('./trigger');
 const watcher = require('./watcher');
 const registry = require('./registry');
@@ -12,7 +12,7 @@ const registry = require('./registry');
 function init() {
     log.info('Init Prometheus module');
     collectDefaultMetrics();
-    image.init();
+    container.init();
     registry.init();
     trigger.init();
     watcher.init();

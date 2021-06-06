@@ -21,11 +21,14 @@ ENTRYPOINT ["/usr/bin/entrypoint.sh"]
 # Default Command
 CMD ["node", "index"]
 
-# Copy package.json
-COPY package* ./
+# Copy app package.json
+COPY app/package* ./
 
-# Install dependendencies
+# Install dependencies
 RUN npm ci --production
 
 # Copy app
 COPY app/ ./
+
+# Copy ui
+COPY ui/dist/ ./ui

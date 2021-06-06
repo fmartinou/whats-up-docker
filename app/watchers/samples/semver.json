@@ -1,12 +1,19 @@
 {
-    "registry":"hub",
-    "image":"organization/image",
-    "tag":"4.5.6",
-    "versionDate":"2019-05-20T12:02:06.307Z",
-    "architecture":"arch",
-    "os":"os",
-    "size":20,
-    "isSemver":true,
-    "watchDigest": true,
-    "repoDigest": "xxx"
+    "image": {
+        "name":"organization/image",
+        "registry": {
+            "name": "hub"
+        },
+        "tag": {
+            "value": "4.5.6",
+            "semver": true
+        },
+        "digest": {
+            "watch": true,
+            "value": "xxx",
+            "repo": "yyy"
+        },
+        "architecture":"arch",
+        "os":"os"
+    }
   }

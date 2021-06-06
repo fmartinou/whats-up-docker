@@ -9,17 +9,16 @@ Feature: Prometheus exposure
     And response body should contain process_cpu_user_seconds_total
     And response body should contain nodejs_eventloop_lag_seconds
 
-    And response body should contain wud_images{registry="hub"
-    And response body should contain wud_images{registry="hub"
+    And response body should contain wud_containers{id=
 
 
-  Scenario Outline: WUD must expose watched images
+  Scenario Outline: WUD must expose watched containers
     When I GET /metrics
     Then response code should be 200
-    And response body should contain registry="<registry>"
-    And response body should contain registry_url="<registryUrl>"
-    And response body should contain image="<image>"
-    And response body should contain tag="<tag>"
+    And response body should contain image_registry_name="<registry>"
+    And response body should contain image_registry_url="<registryUrl>"
+    And response body should contain image_name="<image>"
+    And response body should contain image_tag_value="<tag>"
     And response body should contain result_tag="<resultTag>"
     Examples:
       | registry | registryUrl                                             | image          | tag         | resultTag   |

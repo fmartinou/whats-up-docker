@@ -26,25 +26,32 @@ before_install:
   - nvm install $NODE_VERSION
 
   # Init Code Climate
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./app/cc-test-reporter
+  - (cd app && chmod +x ./cc-test-reporter)
+  - (cd app && ./cc-test-reporter before-build)
 
 install:
 
-  # Install npm dependencies
-  - npm ci
+  # Install dependencies
+  - (cd app && npm ci)
+  - (cd e2e && npm ci)
+  - (cd ui && npm ci)
 
   # Run Linter
-  - npm run lint
+  - (cd app && npm run lint)
+  - (cd e2e && npm run lint)
+  - (cd ui && npm run lint)
+
+  # Run UT
+  - (cd app && npm test)
+
+  # Package ui
+  - (cd ui && npm run build)
 
   # Build wud docker image
   - docker build -t wud --build-arg WUD_VERSION=$IMAGE_VERSION .
 
 script:
-
-  # Run Unit tests
-  - npm test
 
   # Pull nginx as a test image
   - docker pull nginx:1.10-alpine
@@ -65,7 +72,6 @@ script:
 
   # HUB
   - docker run -d --name hub_library_nginx           --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+-alpine$' nginx:1.10-alpine
-  - docker run -d --name hub_library_nginx_duplicate --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+-alpine$' nginx:1.10-alpine
   - docker run -d --name hub_private                 --label 'wud.watch=true'                                           fmartinou/test:1.0.0
 
   # ECR
@@ -106,16 +112,16 @@ script:
   - sleep 10
 
   # Run E2E Tests
-  - npm run cucumber
+  - (cd e2e && npm run cucumber)
 
+after_failure:
   # Display wud logs
   - docker container logs wud
 
+after_success:
+
   # Report to Code Climate
-  - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT;
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  - docker version
-  - make prepare
+  - (cd app && ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT)
 
   # Override image version with latest if master branch
   - if [ "$TRAVIS_BRANCH" == "master" ] ; then export IMAGE_VERSION=latest; fi
@@ -124,4 +130,7 @@ script:
   - if [ ! -z "$TRAVIS_TAG" ] ; then export IMAGE_VERSION=$TRAVIS_TAG; fi
 
   # Build & push image
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker version
+  - make prepare
   - make build IMAGE_NAME=$DOCKER_USERNAME/whats-up-docker IMAGE_VERSION=$IMAGE_VERSION PLATFORMS=linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64

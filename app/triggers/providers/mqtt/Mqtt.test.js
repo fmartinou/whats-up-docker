@@ -1,12 +1,11 @@
 const { ValidationError } = require('joi');
 const Mqtt = require('./Mqtt');
-const Image = require('../../../model/Image');
 
 const mqtt = new Mqtt();
 
 const configurationValid = {
     url: 'mqtt://host:1883',
-    topic: 'wud/image',
+    topic: 'wud/container',
     hass: {
         enabled: false,
         prefix: 'homeassistant',
@@ -34,7 +33,7 @@ test('validateConfiguration should throw error when invalid', () => {
     }).toThrowError(ValidationError);
 });
 
-test('createOrUpdateHassDevice should publish message to expected hass discovery topic', async () => {
+test('addHassDevice should publish message to expected hass discovery topic', async () => {
     mqtt.configuration = mqtt.validateConfiguration({
         url: 'mqtt://host:1883',
         hass: {
@@ -51,27 +50,46 @@ test('createOrUpdateHassDevice should publish message to expected hass discovery
             }
         },
     };
-    await mqtt.createOrUpdateHassDevice(new Image({
-        registry: 'hub',
-        image: 'org/test',
-    }));
-    expect(mqtt.client.topic).toEqual('homeassistant/binary_sensor/wud_image_hub_org_test/config');
+    await mqtt.addHassDevice({
+        id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+        watcher: 'local',
+        registry: {
+            name: 'hub',
+            url: 'https://registry-1.docker.io/v2',
+        },
+        name: 'library/test',
+        tag: {
+            value: '2021.6.4',
+            semver: true,
+        },
+        digest: {
+            watch: false,
+            repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+        },
+        architecture: 'amd64',
+        os: 'linux',
+        created: '2021-06-12T05:33:38.440Z',
+    });
+    expect(mqtt.client.topic).toEqual('homeassistant/binary_sensor/wud_container_local_library_test/config');
     expect(JSON.parse(mqtt.client.message)).toStrictEqual({
-        unique_id: 'wud_image_hub_org_test',
-        name: 'wud_image_hub_org_test',
         device: {
-            identifiers: ['wud'],
+            identifiers: [
+                'wud',
+            ],
             manufacturer: 'Fmartinou',
             model: 'Wud',
-            name: 'What\'s up docker?',
+            name: "What's up docker?",
+            sw_version: 'unknown',
         },
-        icon: 'mdi:docker',
         force_update: true,
-        state_topic: 'wud/image/hub/org/test',
-        json_attributes_topic: 'wud/image/hub/org/test',
-        value_template: '{{ value_json.toBeUpdated }}',
+        icon: 'mdi:docker',
+        json_attributes_topic: 'wud/container/local/library/test',
+        name: 'wud_container_local_library_test',
         payload_off: false,
         payload_on: true,
+        state_topic: 'wud/container/local/library/test',
+        unique_id: 'wud_container_local_library_test',
+        value_template: '{{ value_json.update_available }}',
     });
 });
 
@@ -92,10 +110,67 @@ test('removeHassDevice should publish empty json message to expected hass discov
             }
         },
     };
-    await mqtt.removeHassDevice(new Image({
-        registry: 'hub',
-        image: 'org/test',
-    }));
-    expect(mqtt.client.topic).toEqual('homeassistant/binary_sensor/wud_image_hub_org_test/config');
+    await mqtt.removeHassDevice({
+        id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+        watcher: 'local',
+        registry: {
+            name: 'hub',
+            url: 'https://registry-1.docker.io/v2',
+        },
+        name: 'library/test',
+        tag: {
+            value: '2021.6.4',
+            semver: true,
+        },
+        digest: {
+            watch: false,
+            repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+        },
+        architecture: 'amd64',
+        os: 'linux',
+        created: '2021-06-12T05:33:38.440Z',
+    });
+    expect(mqtt.client.topic).toEqual('homeassistant/binary_sensor/wud_container_local_library_test/config');
     expect(JSON.parse(mqtt.client.message)).toStrictEqual({});
+});
+
+test('notify should format json message payload as expected', async () => {
+    mqtt.configuration = {
+        topic: 'wud/container',
+    };
+    mqtt.client = {
+        publish: (topic, message) => ({
+            topic,
+            message,
+        }),
+    };
+    const response = await mqtt.notify({
+        id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
+        name: 'homeassistant',
+        watcher: 'local',
+        includeTags: '^\\d+\\.\\d+.\\d+$',
+        image: {
+            id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+            registry: {
+                url: '123456789.dkr.ecr.eu-west-1.amazonaws.com',
+            },
+            name: 'test',
+            tag: {
+                value: '2021.6.4',
+                semver: true,
+            },
+            digest: {
+                watch: false,
+                repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+            },
+            architecture: 'amd64',
+            os: 'linux',
+            created: '2021-06-12T05:33:38.440Z',
+        },
+        result: {
+            tag: '2021.6.5',
+        },
+    });
+    expect(response.message)
+        .toEqual('{"id":"31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816","name":"homeassistant","watcher":"local","include_tags":"^\\\\d+\\\\.\\\\d+.\\\\d+$","image_id":"sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6","image_registry_url":"123456789.dkr.ecr.eu-west-1.amazonaws.com","image_name":"test","image_tag_value":"2021.6.4","image_tag_semver":true,"image_digest_watch":false,"image_digest_repo":"sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72","image_architecture":"amd64","image_os":"linux","image_created":"2021-06-12T05:33:38.440Z","result_tag":"2021.6.5"}');
 });

@@ -2,110 +2,58 @@ version: '3'
 
 services:
 
-    # V1 manifest
-#    nginx18:
-#        image: nginx:1.8-alpine
-#        labels:
-#            - 'wud.tag.include=^\d+\.\d+-alpine$$'
-#            - 'wud.watch=true'
-
-    # V2 manifest
-    nginx119:
-        image: nginx:1.19-alpine
-        labels:
-            - wud.tag.include=^\d+\.\d+-alpine$$
-            - wud.watch=true
-
-
-    # V2 manifest
-    nginx121:
-        image: nginx:1.21-alpine
-        labels:
-            - wud.tag.include=^\d+\.\d+-alpine$$
-            - wud.watch=true
-
-    # V2 Manifest
     nginx_latest:
         image: nginx
+        container_name: nginx
         labels:
             - wud.watch=true
             - wud.watch.digest=true
 
-#
-#    nginx_latest_duplicate:
-#        image: nginx
-#        labels:
-#            - 'wud.watch=true'
+    portainer:
+        image: portainer/portainer-ce:2.5.0-alpine
+        container_name: portainer
+        labels:
+            - 'wud.watch=true'
+            - 'wud.tag.include=^\d+\.\d+.\d+-alpine$$'
 
-    # V2 Manifest
-#    portainer:
-#        image: portainer/portainer-ce:2.5.1-alpine
-#        labels:
-#            - 'wud.watch=true'
-#            - 'wud.tag.include=^\d+\.\d+-alpine$$'
-#
-#    pyload:
-#        image: writl/pyload
-#        labels:
-#            - 'wud.watch=true'
+    homeassistant:
+        image: homeassistant/home-assistant:2021.6.4
+        container_name: homeassistant
+        labels:
+            - 'wud.watch=true'
+            - 'wud.tag.include=^\d+\.\d+.\d+$$'
 
-#    cloudflare:
-#        image: joshuaavalon/cloudflare-ddns:1.3.0
-#        environment:
-#            - ZONE=X
-#            - HOST=X
-#            - EMAIL=X
-#            - API=X
-#        labels:
-#            - 'wud.watch=true'
-#            - 'wud.tag.include=^\d+\.\d+$$'
+    traefik:
+        image: traefik:2.4.5
+        container_name: traefik
+        labels:
+            - 'wud.watch=true'
+            - 'wud.tag.include=^\d+\.\d+.\d+$$'
 
-    # hub_private:
-    #     image: fmartinou/test:1.0.0
-    #     labels:
-    #         - 'wud.watch=true'
+    mariadb:
+        image: mariadb:10.5.1
+        container_name: mariadb
+        labels:
+            - 'wud.watch=true'
+            - 'wud.tag.include=^\d+\.\d+.\d+$$'
 
-#     ecr_test:
-#         image: 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
-#         labels:
-#             - 'wud.watch=true'
+    pihole:
+        image: pihole/pihole:v5.7
+        container_name: pihole
+        labels:
+            - 'wud.watch=true'
+            - 'wud.tag.include=^\d+\.\d+.\d+$$'
 
-    # ecr_sub_test:
-    #     image: 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/test:1.0.0
-    #     labels:
-    #         - 'wud.watch=true'
+    vaultwarden:
+        image: vaultwarden/server:1.21.0-alpine
+        container_name: pihole
+        labels:
+            - 'wud.watch=true'
+            - 'wud.tag.include=^\d+\.\d+.\d+-alpine$$'
 
-    # ecr_sub_sub_test:
-    #     image: 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/sub/test:1.0.0
-    #     labels:
-    #         - 'wud.watch=true'
-#
-#    gcr_test:
-#        image: gcr.io/wud-test/test:1.0.0
-#        labels:
-#            - 'wud.watch=true'
-#
-#    gcr_sub_test:
-#        image: gcr.io/wud-test/sub/test:1.0.0
-#        labels:
-#            - 'wud.watch=true'
-#
-#    gcr_sub_sub_test:
-#        image: gcr.io/wud-test/sub/sub/test:1.0.0
-#        labels:
-#            - 'wud.watch=true'
-#
-#    acr_test:
-#        image: wudtest.azurecr.io/test:1.0.0
-#        labels:
-#            - 'wud.watch=true'
-#
-#    acr_sub_test:
-#        image: wudtest.azurecr.io/sub/test:1.0.0
-#        labels:
-#            - 'wud.watch=true'
-#
-#    acr_sub_sub_test:
-#        image: wudtest.azurecr.io/sub/sub/test:1.0.0
-#        labels:
-#            - 'wud.watch=true'
+    pyload:
+        image: writl/pyload
+        container_name: pyload
+        labels:
+            - 'wud.watch=true'
+            - 'wud.tag.include=^latest$$'

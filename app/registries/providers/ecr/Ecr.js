@@ -29,7 +29,7 @@ class Ecr extends Registry {
      */
     // eslint-disable-next-line class-methods-use-this
     match(image) {
-        return /^.*\.dkr\.ecr\..*\.amazonaws\.com$/.test(image.registryUrl);
+        return /^.*\.dkr\.ecr\..*\.amazonaws\.com$/.test(image.registry.url);
     }
 
     /**
@@ -40,9 +40,9 @@ class Ecr extends Registry {
     // eslint-disable-next-line class-methods-use-this
     normalizeImage(image) {
         const imageNormalized = image;
-        imageNormalized.registry = 'ecr';
-        if (!imageNormalized.registryUrl.startsWith('https://')) {
-            imageNormalized.registryUrl = `https://${imageNormalized.registryUrl}/v2`;
+        imageNormalized.registry.name = 'ecr';
+        if (!imageNormalized.registry.url.startsWith('https://')) {
+            imageNormalized.registry.url = `https://${imageNormalized.registry.url}/v2`;
         }
         return imageNormalized;
     }
