@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.1
+- :fire: Fix error when image doesn't have a RepoDigest (e.g. locally built images)
+- :fire: Fix documentation bad links
+
 ## 4.1.0
 - :star: Revamp documentation
 

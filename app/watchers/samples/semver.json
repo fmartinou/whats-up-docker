@@ -7,5 +7,6 @@
     "os":"os",
     "size":20,
     "isSemver":true,
-    "watchDigest": true
+    "watchDigest": true,
+    "repoDigest": "xxx"
   }

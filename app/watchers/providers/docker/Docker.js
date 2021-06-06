@@ -170,6 +170,9 @@ function getContainerName(container) {
  * @returns {*} digest
  */
 function getRepoDigest(containerImage) {
+    if (!containerImage.RepoDigests || containerImage.RepoDigests.length === 0) {
+        return undefined;
+    }
     const fullDigest = containerImage.RepoDigests[0];
     const digestSplit = fullDigest.split('@');
     return digestSplit[1];
@@ -233,12 +236,22 @@ class Docker extends Component {
      * @returns {Promise<*[]>}
      */
     async watch() {
+        let imagesArray = [];
+
         // List images to watch
-        const imagesArray = await this.getImages();
+        try {
+            imagesArray = await this.getImages();
+        } catch (e) {
+            log.error(`Error when trying to get the image list (${e.message})`);
+        }
 
         // Prune old images from the store
-        const imagesFromTheStore = store.getImages({ watcher: this.getId() });
-        pruneOldImages(imagesArray, imagesFromTheStore);
+        try {
+            const imagesFromTheStore = store.getImages({ watcher: this.getId() });
+            pruneOldImages(imagesArray, imagesFromTheStore);
+        } catch (e) {
+            log.error(`Error when trying to prune the old images (${e.message})`);
+        }
 
         const images = {};
 
@@ -251,7 +264,13 @@ class Docker extends Component {
             type: this.type,
             name: this.name,
         }, Object.keys(images).length);
-        return Promise.all(Object.values(images).map((image) => this.watchImage(image)));
+
+        try {
+            return await Promise.all(Object.values(images).map((image) => this.watchImage(image)));
+        } catch (e) {
+            log.error(`Error when processing images (${e.message})`);
+            return [];
+        }
     }
 
     /**
@@ -320,7 +339,7 @@ class Docker extends Component {
             log.error(`Unsupported registry ${image.registry}`);
         } else {
             // Must watch digest? => Find local/remote digests on registry
-            if (image.watchDigest) {
+            if (image.watchDigest && image.repoDigest) {
                 const remoteDigest = await registryProvider.getImageManifestDigest(image);
                 result.digest = remoteDigest.digest;
 
