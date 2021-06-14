@@ -31,14 +31,6 @@ services:
             - wud.watch=true
             - wud.watch.digest=true
 
-    timescaledb:
-        image: timescaledev/timescaledb-ha:pg12.6-ts2.1.0-p1
-        environment:
-            - POSTGRES_PASSWORD=password
-        labels:
-            - wud.watch=true
-            - wud.tag.include=^pg\d+\.\d+-ts\d+\.\d+\.\d+-p\d+$$
-
 #
 #    nginx_latest_duplicate:
 #        image: nginx

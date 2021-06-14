@@ -83,12 +83,12 @@ test('getSemverTagsCandidate should not match when newer version and match the e
     expect(Docker.__get__('getSemverTagsCandidate')({ ...sampleSemver, excludeTags: '\\d+\\.\\d+\\.\\d+$' }, ['7.8.9'])).toEqual([]);
 });
 
-test('getSemverTagsCandidate should return only greater tags than current', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, ['7.8.9', '4.5.6', '1.2.3'])).toEqual(['7.8.9']);
+test('getSemverTagsCandidate should return only greater or equal tags than current', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, ['7.8.9', '4.5.6', '1.2.3'])).toEqual(['7.8.9', '4.5.6']);
 });
 
-test('getSemverTagsCandidate should return all greater tags', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, ['10.11.12', '7.8.9', '4.5.6', '1.2.3'])).toEqual(['10.11.12', '7.8.9']);
+test('getSemverTagsCandidate should return all greater or equal tags', () => {
+    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, ['10.11.12', '7.8.9', '4.5.6', '1.2.3'])).toEqual(['10.11.12', '7.8.9', '4.5.6']);
 });
 
 test('getSemverTagsCandidate should return greater tags when digit over 9', () => {
