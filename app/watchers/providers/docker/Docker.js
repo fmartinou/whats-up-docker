@@ -84,12 +84,12 @@ function getSemverTagsCandidate(image, tags) {
 
     // Apply semver sort desc
     filteredTags.sort((t1, t2) => {
-        const greater = semver.gt(semver.coerce(t2), semver.coerce(t1));
+        const greater = semver.gte(semver.coerce(t2), semver.coerce(t1));
         return greater ? 1 : -1;
     });
 
     // Keep only greater semver
-    filteredTags = filteredTags.filter((tag) => semver.gt(semver.coerce(tag), currentTag));
+    filteredTags = filteredTags.filter((tag) => semver.gte(semver.coerce(tag), currentTag));
     return filteredTags;
 }
 

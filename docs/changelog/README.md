@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.1.2
+- :fire: Add better support for tags partially coerced as semver 
+
 ## 4.1.1
 - :fire: Fix error when image doesn't have a RepoDigest (e.g. locally built images)
 - :fire: Fix documentation bad links
