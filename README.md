@@ -5,7 +5,7 @@
   ![Coverage](https://img.shields.io/codeclimate/coverage/fmartinou/whats-up-docker)
   ![Docker pulls](https://img.shields.io/docker/pulls/fmartinou/whats-up-docker)
 
-![](doc/wud_logo_500.png)
+![](docs/wud_logo_500.png)
 
 **What's up Docker?** (aka **WUD**) gets you notified when a new version of your Docker Container is available.
 
@@ -14,7 +14,7 @@
 - **REGISTRIES** check whether updates are available
 - **TRIGGERS** get you notified upon available updates
 
-![image](doc/introduction/wud_arch.png)
+![image](docs/introduction/wud_arch.png)
 
 **WUD** can be easily configured using regular Environment Variables & Docker labels and
 
@@ -35,7 +35,7 @@
 - [HUB](http://hub.docker.com/)
 
 ## REST API & fresh UI
-![image](doc/ui/ui.png)
+![image](docs/ui/ui.png)
 
 ## Good integration with
 - [Home-Assistant](https://www.home-assistant.io/)
