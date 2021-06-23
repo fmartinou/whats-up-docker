@@ -52,7 +52,7 @@ function addUpdateAvailableProperty(container) {
             get() {
                 let updateAvailable = this.image.tag.value !== this.result.tag;
 
-                if (this.watchDigest) {
+                if (this.image.digest.watch) {
                     updateAvailable = updateAvailable
                         || this.image.digest.value !== this.result.digest;
                 }

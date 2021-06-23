@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.1
+- :star: Highlight containers in UI when new digest
+
+
+- :fire: Fix wrong update status when new digest
+- :fire: Fix container removal when container went away
+
 ## 5.0.0
 - :star: New UI
 - :star: Watch individual containers instead of images
@@ -9,7 +16,6 @@
 WUD is now **container centric** instead of image centric. \
 The data model changed, the API changed, some integrations changed... \
 Please take a look at the documentation before upgrading to analyse all potential impacts on your integrations.
-
 
 ## 4.1.2
 - :fire: Add better support for tags partially coerced as semver 

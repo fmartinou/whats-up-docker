@@ -13,7 +13,7 @@
       <v-toolbar-title>{{ container.name }}</v-toolbar-title>
       <v-badge
         class="ma-4"
-        :content="result.tag"
+        :content="newVersion"
         v-if="updateAvailable"
         overlap
         tile
@@ -349,10 +349,21 @@ export default {
       }
       return icon;
     },
+
+    newVersion() {
+      return this.container.image.tag.value !== this.result.tag ?
+          this.result.tag:
+          this.container.image.digest.value !== this.result.digest ?
+            this.$options.filters.short(this.result.digest, 15):
+            'zob';
+    }
   },
 
   filters: {
     short(fullId, length) {
+      if (!fullId) {
+        return "";
+      }
       return fullId.substring(0, length);
     },
 

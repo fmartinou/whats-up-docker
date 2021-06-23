@@ -125,7 +125,7 @@ function getRegistry(registryName) {
  * @returns {*[]|*}
  */
 function getOldContainers(newContainers, containersFromTheStore) {
-    if (!containersFromTheStore || !containersFromTheStore) {
+    if (!containersFromTheStore || !newContainers) {
         return [];
     }
     return containersFromTheStore.filter((containerFromStore) => {
@@ -241,7 +241,7 @@ class Docker extends Component {
 
         // Prune old containers from the store
         try {
-            const containersFromTheStore = storeContainer.getContainers({ watcher: this.getId() });
+            const containersFromTheStore = storeContainer.getContainers({ watcher: this.name });
             pruneOldContainers(containers, containersFromTheStore);
         } catch (e) {
             log.error(`Error when trying to prune the old containers (${e.message})`);
