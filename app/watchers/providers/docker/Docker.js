@@ -44,7 +44,7 @@ function processContainerResult(containerWithResult) {
         // Found in DB? => update it
     } else {
         containerToTrigger = storeContainer.updateContainer(containerWithResult);
-        trigger = !containerInDb.resultChanged(containerToTrigger)
+        trigger = containerInDb.resultChanged(containerToTrigger)
             && containerWithResult.updateAvailable;
     }
 
@@ -266,6 +266,10 @@ class Docker extends Component {
      */
     async watchContainer(container) {
         const containerWithResult = container;
+
+        // Reset previous results
+        delete containerWithResult.result;
+        delete containerWithResult.error;
         log.debug(`${container.id} - Watch container`);
 
         try {
@@ -298,14 +302,14 @@ class Docker extends Component {
                 if (this.configuration.watchbydefault) {
                     return true;
                 }
-                const labels = container.Labels;
-                return Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.watch') !== undefined;
+                const wudWatchValue = container.Labels['wud.watch'];
+                return wudWatchValue && wudWatchValue.toLowerCase() === 'true';
             });
         const containerPromises = filteredContainers
             .map((container) => {
                 const labels = container.Labels;
-                const includeTags = Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.tag.include') ? labels['wud.tag.include'] : undefined;
-                const excludeTags = Object.keys(labels).find((labelName) => labelName.toLowerCase() === 'wud.tag.exclude') ? labels['wud.tag.exclude'] : undefined;
+                const includeTags = labels['wud.tag.include'] !== undefined ? labels['wud.tag.include'] : undefined;
+                const excludeTags = labels['wud.tag.exclude'] !== undefined ? labels['wud.tag.exclude'] : undefined;
                 return this.addImageDetailsToContainer(container, includeTags, excludeTags);
             });
         const containersWithImage = await Promise.all(containerPromises);
@@ -329,6 +333,7 @@ class Docker extends Component {
             if (container.image.digest.watch && container.image.digest.repo) {
                 const remoteDigest = await registryProvider.getImageManifestDigest(container.image);
                 result.digest = remoteDigest.digest;
+                result.created = remoteDigest.created;
 
                 if (remoteDigest.version === 2) {
                     // Regular v2 manifest => Get manifest digest
@@ -340,8 +345,8 @@ class Docker extends Component {
                     container.image.digest.value = digestV2.digest;
                 } else {
                     // Legacy v1 image => take Image digest as reference for comparison
-                    /*  eslint-disable no-param-reassign */
-                    container.image.digest.value = container.image.id;
+                    const image = await this.dockerApi.getImage(container.image.id).inspect();
+                    container.image.digest.value = image.Config.Image === '' ? undefined : image.Config.Image;
                 }
             }
 
@@ -373,7 +378,7 @@ class Docker extends Component {
 
         // Is container already in store? just return it :)
         const containerInStore = storeContainer.getContainer(containerId);
-        if (containerInStore !== undefined) {
+        if (containerInStore !== undefined && containerInStore.error === undefined) {
             log.debug(`${containerInStore.id} - Container already in store`);
             return containerInStore;
         }
@@ -405,12 +410,8 @@ class Docker extends Component {
         const parsedTag = semver.coerce(tagName);
         const isSemver = parsedTag !== null && parsedTag !== undefined;
 
-        let watchDigest = false;
-        const watchDigestLabel = Object.keys(container.Labels || {}).find((labelName) => labelName.toLowerCase() === 'wud.watch.digest');
-        if (watchDigestLabel) {
-            const watchDigestLabelValue = container.Labels[watchDigestLabel];
-            watchDigest = watchDigestLabelValue && watchDigestLabelValue.toLowerCase() === 'true';
-        }
+        const watchDigestLabelValue = container.Labels['wud.watch.digest'] !== undefined ? container.Labels['wud.watch.digest'] : undefined;
+        const watchDigest = watchDigestLabelValue && watchDigestLabelValue.toLowerCase() === 'true';
         return normalizeContainer({
             id: containerId,
             name: containerName,

@@ -21,15 +21,13 @@ Feature: WUD Registry API Exposure
     And response body path $[3].id should be hub
     And response body path $[3].type should be hub
     And response body path $[3].name should be hub
-    And response body path $[3].configuration.login should be fmartinou
-    And response body path $[3].configuration.token should be .\*.*.
 
   Scenario: WUD must allow to get specific Registry state
-    When I GET /api/registries/hub
+    When I GET /api/registries/acr
     Then response code should be 200
     And response body should be valid json
-    And response body path $.id should be hub
-    And response body path $.type should be hub
-    And response body path $.name should be hub
-    And response body path $.configuration.login should be fmartinou
-    And response body path $.configuration.token should be .\*.*.
+    And response body path $.id should be acr
+    And response body path $.type should be acr
+    And response body path $.name should be acr
+    And response body path $.configuration.clientid should be 89dcf54b-ef99-4dc1-bebb-8e0eacafdac8
+    And response body path $.configuration.clientsecret should be .\*.*.

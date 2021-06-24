@@ -1,5 +1,8 @@
 # Changelog
 
+## develop
+- :fire: Fix digest wrong results for v1 manifests
+
 ## 5.0.1
 - :star: Highlight containers in UI when new digest
 

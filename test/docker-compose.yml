@@ -2,58 +2,98 @@ version: '3'
 
 services:
 
-    nginx_latest:
-        image: nginx
-        container_name: nginx
+    homeassistant_latest:
+        image: homeassistant/home-assistant
+        container_name: homeassistant_latest
         labels:
             - wud.watch=true
+            - wud.tag.include=^latest$$
             - wud.watch.digest=true
 
-    portainer:
-        image: portainer/portainer-ce:2.5.0-alpine
-        container_name: portainer
+    homeassistant_202166:
+        image: homeassistant/home-assistant:2021.6.6
+        container_name: homeassistant_202166
         labels:
-            - 'wud.watch=true'
-            - 'wud.tag.include=^\d+\.\d+.\d+-alpine$$'
+            - wud.watch=true
+            - wud.tag.include=^latest$$
+            - wud.watch.digest=true
 
-    homeassistant:
-        image: homeassistant/home-assistant:2021.6.4
-        container_name: homeassistant
+    nginx_latest:
+        image: nginx
+        container_name: nginx_latest
         labels:
-            - 'wud.watch=true'
-            - 'wud.tag.include=^\d+\.\d+.\d+$$'
+            - wud.watch=true
+            - wud.tag.include=^latest$$
+            - wud.watch.digest=true
 
-    traefik:
-        image: traefik:2.4.5
-        container_name: traefik
+    omnidb_latest:
+        image: omnidbteam/omnidb
+        container_name: omnidb_latest
         labels:
-            - 'wud.watch=true'
-            - 'wud.tag.include=^\d+\.\d+.\d+$$'
+            - wud.watch=true
+            - wud.tag.include=^latest$$
+            - wud.watch.digest=true
 
-    mariadb:
-        image: mariadb:10.5.1
-        container_name: mariadb
-        labels:
-            - 'wud.watch=true'
-            - 'wud.tag.include=^\d+\.\d+.\d+$$'
-
-    pihole:
+    pihole_57:
         image: pihole/pihole:v5.7
-        container_name: pihole
+        container_name: pihole_57
         labels:
-            - 'wud.watch=true'
-            - 'wud.tag.include=^\d+\.\d+.\d+$$'
+            - wud.watch=true
+            - wud.tag.include=^v\d+\.\d+.\d+$$
+            - wud.watch.digest=true
 
-    vaultwarden:
-        image: vaultwarden/server:1.21.0-alpine
-        container_name: pihole
+    pihole_latest:
+        image: pihole/pihole
+        container_name: pihole_latest
         labels:
-            - 'wud.watch=true'
-            - 'wud.tag.include=^\d+\.\d+.\d+-alpine$$'
+            - wud.watch=true
+            - wud.tag.include=^latest$$
+            - wud.watch.digest=true
 
-    pyload:
+    pyload_latest:
         image: writl/pyload
-        container_name: pyload
+        container_name: pyload_latest
         labels:
-            - 'wud.watch=true'
-            - 'wud.tag.include=^latest$$'
+            - wud.watch=true
+            - wud.tag.include=^latest$$
+            - wud.watch.digest=true
+
+    traefik_245:
+        image: traefik:2.4.5
+        container_name: traefik_245
+        labels:
+            - wud.watch=true
+            - wud.tag.include=^\d+\.\d+.\d+$$
+
+    traefik_latest:
+        image: traefik
+        container_name: traefik_latest
+        labels:
+            - wud.watch=true
+            - wud.tag.include=^latest$$
+            - wud.watch.digest=true
+
+    vaultwarden_1210:
+        image: vaultwarden/server:1.21.0-alpine
+        container_name: vaultwarden_1210
+        labels:
+            - wud.watch=true
+            - wud.tag.include=^\d+\.\d+.\d+-alpine$$
+            - wud.watch.digest=true
+
+    vaultwarden_latest:
+        image: vaultwarden/server
+        container_name: vaultwarden_latest
+        labels:
+            - wud.watch=true
+            - wud.tag.include=^latest$$
+            - wud.watch.digest=true
+
+    youtubedl_latest:
+        image:
+            jeeaaasustest/youtube-dl
+        container_name: youtubedl_latest
+        labels:
+            - wud.watch=true
+            - wud.tag.include=^latest$$
+            - wud.watch.digest=true

@@ -174,7 +174,7 @@
                   <template v-slot:activator="{ on, attrs }">
                     <v-icon large v-bind="attrs" v-on="on">mdi-cancel</v-icon>
                   </template>
-                  <span>Digest not tracked</span>
+                  <span>Digest not tracked or not found</span>
                 </v-tooltip>
               </property>
             </v-col>
@@ -202,8 +202,16 @@
 
         <v-card-subtitle class="text-h6 font-weight-bold"
           >Registry result
+          <v-icon color="error" v-if="error">mdi-alert-circle-outline</v-icon>
         </v-card-subtitle>
-        <v-card-text>
+        <v-card-text v-if="error">
+          <v-col xs="12" sm="12" md="12" lg="12" xl="12">
+            <property name="Error" :value="error.message">
+              {{ error.message }}
+            </property>
+          </v-col>
+        </v-card-text>
+        <v-card-text v-else>
           <v-row>
             <v-col xs="12" sm="6" md="4" lg="2" xl="2">
               <property name="Tag" :value="result.tag">
@@ -239,9 +247,12 @@
                   <template v-slot:activator="{ on, attrs }">
                     <v-icon large v-bind="attrs" v-on="on">mdi-cancel</v-icon>
                   </template>
-                  <span>Digest not tracked</span>
+                  <span>Digest not tracked or not found</span>
                 </v-tooltip>
               </property>
+            </v-col>
+            <v-col xs="12" sm="6" md="4" lg="2" xl="2" v-if="result.created">
+              <property name="Created" :value="result.created | date" />
             </v-col>
           </v-row>
         </v-card-text>
@@ -314,6 +325,7 @@ export default {
       isRefreshing: false,
       dialogDelete: false,
       result: this.container.result,
+      error: this.container.error,
       updateAvailable: this.container.updateAvailable || false,
     };
   },
@@ -355,7 +367,8 @@ export default {
           this.result.tag:
           this.container.image.digest.value !== this.result.digest ?
             this.$options.filters.short(this.result.digest, 15):
-            'zob';
+              this.container.image.created !== this.result.created ?
+                  this.$options.filters.date(this.result.created) : "?";
     }
   },
 
@@ -380,6 +393,7 @@ export default {
         const body = await refreshContainer(this.container.id);
         if (body.result) {
           this.result = body.result;
+          this.error = body.error;
           this.updateAvailable = body.updateAvailable;
         }
         this.$root.$emit("notify", `Container refreshed`);

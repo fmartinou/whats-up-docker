@@ -125,8 +125,11 @@ export default {
         vm.containers = containers;
       });
     } catch (e) {
-      // TODO
-      console.log(e);
+      this.$root.$emit(
+          "notify",
+          `Error when trying to get the containerq (${e.message})`,
+          "error"
+      );
     }
     next();
   },

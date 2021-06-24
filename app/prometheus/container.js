@@ -45,6 +45,7 @@ function init() {
             'image_created',
             'result_tag',
             'result_digest',
+            'result_created',
             'update_available',
             'error_message',
         ],
@@ -52,6 +53,7 @@ function init() {
     log.debug('Start container metrics interval');
     setInterval(populateGauge, 5000);
     populateGauge();
+    return gaugeContainer;
 }
 
 module.exports = {

@@ -55,6 +55,10 @@ script:
 
   # Pull nginx as a test image
   - docker pull nginx:1.10-alpine
+  - docker pull nginx:1.20-alpine
+
+  # Tag nginx 1.10 as latest to simulate an update_available
+  - docker tag nginx:1.10-alpine nginx:latest
 
   # Tag nginx as if it was coming from private Hub, ECR, GCR, ACR...
   - docker tag nginx:1.10-alpine fmartinou/test:1.0.0
@@ -68,16 +72,61 @@ script:
 #  - docker tag nginx:1.10-alpine wudtest.azurecr.io/sub/test:1.0.0
 #  - docker tag nginx:1.10-alpine wudtest.azurecr.io/sub/sub/test:1.0.0
 
+  # Pull homeassistant
+  - docker pull homeassistant/home-assistant
+  - docker pull homeassistant/home-assistant:2021.6.1
+
+  # Pull omnidb
+  - docker pull omnidbteam/omnidb
+
+  # Pull pihole
+  - docker pull pihole/pihole
+  - docker pull pihole/pihole:v5.7
+
+  # Pull pyload
+  - docker pull writl/pyload
+
+  # Pull traefik
+  - docker pull traefik
+  - docker pull traefik:2.4.5
+
+  # Pull vaultwarden
+  - docker pull vaultwarden/server
+  - docker pull vaultwarden/server:1.21.0-alpine
+
+  # Pull youtubedl
+  - docker pull jeeaaasustest/youtube-dl
+
   # Run containers for tests
 
-  # HUB
-  - docker run -d --name hub_library_nginx           --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+-alpine$' nginx:1.10-alpine
-  - docker run -d --name hub_private                 --label 'wud.watch=true'                                           fmartinou/test:1.0.0
-
   # ECR
-  - docker run -d --name ecr_test                    --label 'wud.watch=true' 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
-  - docker run -d --name ecr_sub_test                --label 'wud.watch=true' 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/test:1.0.0
-  - docker run -d --name ecr_sub_sub_test            --label 'wud.watch=true' 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/sub/test:1.0.0
+  - docker run -d --name ecr_sub_sub_test --label 'wud.watch=true' 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/sub/test:1.0.0
+  - docker run -d --name ecr_sub_test     --label 'wud.watch=true' 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/test:1.0.0
+  - docker run -d --name ecr_test         --label 'wud.watch=true' 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
+
+  # HUB
+  - docker run -d --name hub_homeassistant_202161 --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+$'                           homeassistant/home-assistant:2021.6.1
+  - docker run -d --name hub_homeassistant_latest --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' homeassistant/home-assistant
+
+  - docker run -d --name hub_nginx_120            --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+-alpine$'                        nginx:1.20-alpine
+  - docker run -d --name hub_nginx_latest         --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' nginx
+
+  - docker run -d --name hub_omnidb_latest        --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' omnidbteam/omnidb
+
+  - docker run -d --name hub_pihole_57            --label 'wud.watch=true' --label 'wud.tag.include=^v\d+\.\d+.\d+$'                          pihole/pihole:v5.7
+  - docker run -d --name hub_pihole_latest        --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' pihole/pihole
+
+  - docker run -d --name hub_pyload_latest        --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' writl/pyload
+
+#  - docker run -d --name hub_test                 --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+$'                           fmartinou/test:1.0.0
+
+  - docker run -d --name hub_traefik_245          --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+$'                           traefik:2.4.5
+  - docker run -d --name hub_traefik_latest       --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' traefik
+
+  - docker run -d --name hub_vaultwarden_1210     --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+-alpine$'                    vaultwarden/server:1.21.0-alpine
+  - docker run -d --name hub_vaultwarden_latest   --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' vaultwarden/server
+
+  - docker run -d --name hub_youtubedb_latest     --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' jeeaaasustest/youtube-dl
 
   # GCR
 #  - docker run -d --name gcr_test          --label "wud.watch=true" gcr.io/wud-test/test:1.0.0
@@ -97,8 +146,6 @@ script:
     --volume /var/run/docker.sock:/var/run/docker.sock
     --env WUD_TRIGGER_MOCK_EXAMPLE_MOCK=mock
     --env WUD_WATCHER_LOCAL_WATCHBYDEFAULT=false
-    --env WUD_REGISTRY_HUB_LOGIN="$DOCKER_USERNAME"
-    --env WUD_REGISTRY_HUB_TOKEN="$DOCKER_PASSWORD"
     --env WUD_REGISTRY_ECR_ACCESSKEYID="$AWS_ACCESSKEY_ID"
     --env WUD_REGISTRY_ECR_SECRETACCESSKEY="$AWS_SECRET_ACCESSKEY"
     --env WUD_REGISTRY_ECR_REGION=eu-west-1
@@ -106,7 +153,11 @@ script:
     --env WUD_REGISTRY_GCR_PRIVATEKEY="$GCR_PRIVATE_KEY"
     --env WUD_REGISTRY_ACR_CLIENTID="$ACR_CLIENT_ID"
     --env WUD_REGISTRY_ACR_CLIENTSECRET="$ACR_CLIENT_SECRET"
+    --env WUD_REGISTRY_HUB_AUTH=""
     wud
+
+  #    --env WUD_REGISTRY_HUB_LOGIN="$DOCKER_USERNAME"
+  #    --env WUD_REGISTRY_HUB_TOKEN="$DOCKER_PASSWORD"
 
   # Give wud a little time to fetch all available updates
   - sleep 10

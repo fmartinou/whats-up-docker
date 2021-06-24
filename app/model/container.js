@@ -31,11 +31,9 @@ const schema = joi.object({
         created: joi.string().isoDate(),
     }).required(),
     result: joi.object({
-        tag: joi.string().min(1).required(),
+        tag: joi.string().min(1),
         digest: joi.string(),
-    }).default({
-        tag: joi.ref('image.tag.value'),
-        digest: joi.ref('image.digest.value'),
+        created: joi.string().isoDate(),
     }),
     error: joi.object({
         message: joi.string().min(1).required(),
@@ -50,11 +48,27 @@ function addUpdateAvailableProperty(container) {
         {
             enumerable: true,
             get() {
+                if (this.image === undefined || this.result === undefined) {
+                    return false;
+                }
+                // Different tags?
                 let updateAvailable = this.image.tag.value !== this.result.tag;
 
+                // Compare digests?
                 if (this.image.digest.watch) {
+                    // Digests can be compared
+                    if (this.image.digest.value !== undefined && this.result.digest !== undefined) {
+                        updateAvailable = updateAvailable
+                            || this.image.digest.value !== this.result.digest;
+                    }
+                }
+                // Fallback to image created date (especially for legacy v1 manifests
+                if (this.image.created !== undefined && this.result.created !== undefined) {
+                    const createdDate = new Date(this.image.created).getTime();
+                    const createdDateResult = new Date(this.result.created).getTime();
+
                     updateAvailable = updateAvailable
-                        || this.image.digest.value !== this.result.digest;
+                        || createdDate !== createdDateResult;
                 }
                 return updateAvailable;
             },
@@ -62,9 +76,10 @@ function addUpdateAvailableProperty(container) {
 }
 
 function resultChangedFunction(otherContainer) {
-    return otherContainer !== undefined
-        && this.result.tag === otherContainer.result.tag
-        && this.result.digest === otherContainer.result.digest;
+    return otherContainer === undefined
+        || this.result.tag !== otherContainer.result.tag
+        || this.result.digest !== otherContainer.result.digest
+        || this.result.created !== otherContainer.result.created;
 }
 
 function addResultChangedFunction(container) {

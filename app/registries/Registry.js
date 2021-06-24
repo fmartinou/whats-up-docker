@@ -62,6 +62,7 @@ class Registry extends Component {
      * @returns {*}
      */
     async getTags(image) {
+        log.debug(`${this.getId()} - Get ${image.name} tags`);
         const tagsResult = await this.callRegistry({
             image,
             url: `${image.registry.url}/${image.name}/tags/list`,
@@ -81,20 +82,16 @@ class Registry extends Component {
      */
     async getImageManifestDigest(image, digest) {
         const tagOrDigest = digest || image.tag.value;
-        let responseManifests;
         let manifestDigestFound;
         let manifestMediaType;
-        try {
-            responseManifests = await this.callRegistry({
-                image,
-                url: `${image.registry.url}/${image.name}/manifests/${tagOrDigest}`,
-                headers: {
-                    Accept: 'application/vnd.docker.distribution.manifest.list.v2+json',
-                },
-            });
-        } catch (e) {
-            log.warn(`Error when looking for local image manifest ${image.registry.url}/${image.name}/${tagOrDigest} (${e.message})`);
-        }
+        log.debug(`${this.getId()} - Get ${image.name}:${tagOrDigest} manifest`);
+        const responseManifests = await this.callRegistry({
+            image,
+            url: `${image.registry.url}/${image.name}/manifests/${tagOrDigest}`,
+            headers: {
+                Accept: 'application/vnd.docker.distribution.manifest.list.v2+json',
+            },
+        });
         if (responseManifests) {
             if (responseManifests.schemaVersion === 2) {
                 if (responseManifests.mediaType === 'application/vnd.docker.distribution.manifest.list.v2+json') {
@@ -111,29 +108,27 @@ class Registry extends Component {
                     manifestMediaType = responseManifests.config.mediaType;
                 }
             } else if (responseManifests.schemaVersion === 1) {
+                const v1Compat = JSON.parse(responseManifests.history[0].v1Compatibility);
                 return {
-                    digest: JSON.parse(responseManifests.history[0].v1Compatibility).config.Image,
+                    digest: v1Compat.config ? v1Compat.config.Image : undefined,
+                    created: v1Compat.created,
                     version: 1,
                 };
             }
             if (manifestDigestFound && manifestMediaType === 'application/vnd.docker.distribution.manifest.v2+json') {
-                try {
-                    const responseManifest = await this.callRegistry({
-                        image,
-                        method: 'head',
-                        url: `${image.registry.url}/${image.name}/manifests/${manifestDigestFound}`,
-                        headers: {
-                            Accept: manifestMediaType,
-                        },
-                        resolveWithFullResponse: true,
-                    });
-                    return {
-                        digest: responseManifest.headers['docker-content-digest'],
-                        version: 2,
-                    };
-                } catch (e) {
-                    log.warn(`Error when looking for remote image manifest ${image.registry.url}/${image.name}/${tagOrDigest} (${e.message})`);
-                }
+                const responseManifest = await this.callRegistry({
+                    image,
+                    method: 'get',
+                    url: `${image.registry.url}/${image.name}/manifests/${manifestDigestFound}`,
+                    headers: {
+                        Accept: manifestMediaType,
+                    },
+                    resolveWithFullResponse: true,
+                });
+                return {
+                    digest: responseManifest.headers['docker-content-digest'],
+                    version: 2,
+                };
             }
             if (manifestDigestFound && manifestMediaType === 'application/vnd.docker.container.image.v1+json') {
                 return {
@@ -143,7 +138,7 @@ class Registry extends Component {
             }
         }
         // Empty result...
-        return {};
+        throw new Error('Unexpected error; no manifest found');
     }
 
     async callRegistry({
