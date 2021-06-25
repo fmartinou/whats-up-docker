@@ -1,7 +1,21 @@
 const Ecr = require('./Ecr');
 
+jest.mock('aws-sdk/clients/ecr', () => jest.fn().mockImplementation(() => ({
+    getAuthorizationToken: () => ({
+        promise: () => Promise.resolve({
+            authorizationData: [
+                { authorizationToken: 'xxxxx' },
+            ],
+        }),
+    }),
+})));
+
 const ecr = new Ecr();
-ecr.configuration = {};
+ecr.configuration = {
+    accesskeyid: 'accesskeyid',
+    secretaccesskey: 'secretaccesskey',
+    region: 'region',
+};
 
 jest.mock('request-promise-native');
 
@@ -58,4 +72,20 @@ test('match should return false when registry url is not from ecr', () => {
             url: '123456789.dkr.ecr.eu-west-1.acme.com',
         },
     })).toBeFalsy();
+});
+
+test('maskConfiguration should mask configuration secrets', () => {
+    expect(ecr.maskConfiguration()).toEqual({
+        accesskeyid: 'a*********d',
+        region: 'region',
+        secretaccesskey: 's*************y',
+    });
+});
+
+test('authenticate should call ecr auth endpoint', () => {
+    expect(ecr.authenticate(undefined, { headers: {} })).resolves.toEqual({
+        headers: {
+            Authorization: 'Basic xxxxx',
+        },
+    });
 });

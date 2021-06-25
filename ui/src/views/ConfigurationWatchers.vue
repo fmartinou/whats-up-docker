@@ -31,9 +31,9 @@ export default {
       next((vm) => (vm.watchers = watchers));
     } catch (e) {
       this.$root.$emit(
-          "notify",
-          `Error when trying to load the watchers (${e.message})`,
-          "error"
+        "notify",
+        `Error when trying to load the watchers (${e.message})`,
+        "error"
       );
     }
     next();

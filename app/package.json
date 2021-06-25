@@ -14,12 +14,12 @@
   "license": "MIT",
   "dependencies": {
     "async-mqtt": "2.6.1",
-    "aws-sdk": "2.931.0",
+    "aws-sdk": "2.938.0",
     "bunyan": "1.8.15",
     "capitalize": "2.0.3",
     "dockerode": "3.3.0",
     "env-dot-prop": "3.0.0",
-    "express": "^4.17.1",
+    "express": "4.17.1",
     "express-healthcheck": "0.1.0",
     "flat": "5.0.2",
     "joi": "17.4.0",
@@ -28,8 +28,8 @@
     "kafkajs": "1.15.0",
     "lokijs": "1.5.12",
     "moment": "2.29.1",
-    "mqtt": "4.2.6",
-    "nocache": "3.0.0",
+    "mqtt": "4.2.8",
+    "nocache": "3.0.1",
     "node-cron": "3.0.0",
     "nodemailer": "6.6.2",
     "parse-docker-image-name": "3.0.0",
@@ -41,17 +41,17 @@
     "semver": "7.3.5",
     "slack": "11.0.2",
     "snake-case": "3.0.4",
-    "sort-es": "1.3.4"
+    "sort-es": "1.3.5"
   },
   "devDependencies": {
-    "babel-jest": "27.0.2",
+    "babel-jest": "27.0.6",
     "babel-plugin-rewire": "1.2.0",
     "docsify-cli": "4.4.3",
     "eslint": "7.29.0",
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-plugin-import": "2.23.4",
     "eslint-plugin-jest": "24.3.6",
-    "jest": "27.0.4",
-    "nodemon": "2.0.7"
+    "jest": "27.0.6",
+    "nodemon": "2.0.9"
   }
 }

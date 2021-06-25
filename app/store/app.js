@@ -1,3 +1,6 @@
+/**
+ * App store.
+ */
 const log = require('../log');
 const { migrate } = require('./migrate');
 const { getVersion } = require('../configuration');

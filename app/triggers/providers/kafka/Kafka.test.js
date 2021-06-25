@@ -1,4 +1,8 @@
 const { ValidationError } = require('joi');
+const { Kafka: KafkaClient } = require('kafkajs');
+
+jest.mock('kafkajs');
+
 const Kafka = require('./Kafka');
 
 const kafka = new Kafka();
@@ -9,6 +13,10 @@ const configurationValid = {
     clientId: 'wud',
     ssl: false,
 };
+
+beforeEach(() => {
+    jest.resetAllMocks();
+});
 
 test('validateConfiguration should return validated configuration when valid', () => {
     const validatedConfiguration = kafka.validateConfiguration(configurationValid);
@@ -86,5 +94,66 @@ test('maskConfiguration should not fail if no auth provided', () => {
         topic: 'wud-image',
         clientId: 'wud',
         ssl: false,
+    });
+});
+
+test('initTrigger should init kafka client', async () => {
+    kafka.configuration = {
+        brokers: 'broker1:9000, broker2:9000',
+        topic: 'wud-image',
+        clientId: 'wud',
+        ssl: false,
+    };
+    await kafka.initTrigger();
+    expect(KafkaClient).toHaveBeenCalledWith({
+        brokers: ['broker1:9000', 'broker2:9000'],
+        clientId: 'wud',
+        ssl: false,
+    });
+});
+
+test('initTrigger should init kafka client with auth when configured', async () => {
+    kafka.configuration = {
+        brokers: 'broker1:9000, broker2:9000',
+        topic: 'wud-image',
+        clientId: 'wud',
+        ssl: false,
+        authentication: {
+            type: 'PLAIN',
+            user: 'user',
+            password: 'password',
+        },
+    };
+    await kafka.initTrigger();
+    expect(KafkaClient).toHaveBeenCalledWith({
+        brokers: ['broker1:9000', 'broker2:9000'],
+        clientId: 'wud',
+        ssl: false,
+        sasl: {
+            mechanism: 'PLAIN',
+            password: 'password',
+            username: 'user',
+        },
+    });
+});
+
+test('notify should post message to kafka', async () => {
+    const producer = () => ({
+        connect: () => ({}),
+        send: (params) => params,
+    });
+    kafka.kafka = {
+        producer,
+    };
+    kafka.configuration = {
+        topic: 'topic',
+    };
+    const container = {
+        name: 'container1',
+    };
+    const result = await kafka.notify(container);
+    expect(result).toStrictEqual({
+        messages: [{ value: '{"name":"container1"}' }],
+        topic: 'topic',
     });
 });

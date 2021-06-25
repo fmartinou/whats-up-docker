@@ -1,3 +1,6 @@
+/**
+ * Registry handling all components (registries, triggers, watchers).
+ */
 const capitalize = require('capitalize');
 const log = require('../log');
 const {
@@ -6,6 +9,9 @@ const {
     getRegistryConfigurations,
 } = require('../configuration');
 
+/**
+ * Registry state.
+ */
 const state = {
     triggers: {},
     watchers: {},
@@ -28,25 +34,21 @@ function getState() {
 async function registerComponent(kind, provider, name, configuration, path) {
     const providerLowercase = provider.toLowerCase();
     const nameLowercase = name.toLowerCase();
-
-    let Component;
+    const componentFile = `${path}/${providerLowercase.toLowerCase()}/${capitalize(provider)}`;
     try {
-        const componentFile = `${path}/${providerLowercase.toLowerCase()}/${capitalize(provider)}`;
-        /* eslint-disable-next-line */
-        Component = require(componentFile);
-    } catch (e) {
-        log.error(`Component ${providerLowercase} does not exist (${e.message})`);
-    }
-    if (Component) {
+        // eslint-disable-next-line
+        const Component = require(componentFile);
         const component = new Component();
-        const componentRegistered = await component
-            .register(providerLowercase, nameLowercase, configuration);
-        if (componentRegistered) {
-            state[kind][component.getId()] = component;
-        }
+        const componentRegistered = await component.register(
+            providerLowercase,
+            nameLowercase,
+            configuration,
+        );
+        state[kind][component.getId()] = component;
         return componentRegistered;
+    } catch (e) {
+        throw new Error(`Error when registering component ${providerLowercase} (${e.message})`);
     }
-    return undefined;
 }
 
 /**
@@ -56,11 +58,11 @@ async function registerComponent(kind, provider, name, configuration, path) {
  * @param path
  * @returns {*[]}
  */
-function registerComponents(kind, configurations, path) {
+async function registerComponents(kind, configurations, path) {
     if (configurations) {
         const providers = Object.keys(configurations);
-        return providers.map((provider) => {
-            log.info(`Register all components for provider ${provider}`);
+        const providerPromises = providers.map((provider) => {
+            log.info(`Register all components of kind ${kind} for provider ${provider}`);
             const providerConfigurations = configurations[provider];
             return Object.keys(providerConfigurations)
                 .map((configurationName) => registerComponent(
@@ -71,47 +73,159 @@ function registerComponents(kind, configurations, path) {
                     path,
                 ));
         }).flat();
+        return Promise.all(providerPromises);
     }
     return [];
 }
 
+/**
+ * Register watchers.
+ * @returns {Promise}
+ */
 async function registerWatchers() {
     const configurations = getWatcherConfigurations();
-
-    Object.keys(configurations).forEach((watcherKey) => {
-        const watcherKeyNormalize = watcherKey.toLowerCase();
-        registerComponent('watchers', 'docker', watcherKeyNormalize, configurations[watcherKeyNormalize], '../watchers/providers');
-    });
-
-    if (Object.keys(configurations).length === 0) {
-        log.info('No Watcher configured => Init a default one (Docker with default options)');
-        await registerComponent('watchers', 'docker', 'local', {}, '../watchers/providers');
+    let watchersToRegister = [];
+    try {
+        if (Object.keys(configurations).length === 0) {
+            log.info('No Watcher configured => Init a default one (Docker with default options)');
+            watchersToRegister.push(registerComponent('watchers', 'docker', 'local', {}, '../watchers/providers'));
+        } else {
+            watchersToRegister = watchersToRegister
+                .concat(Object.keys(configurations).map((watcherKey) => {
+                    const watcherKeyNormalize = watcherKey.toLowerCase();
+                    return registerComponent('watchers', 'docker', watcherKeyNormalize, configurations[watcherKeyNormalize], '../watchers/providers');
+                }));
+        }
+        await Promise.all(watchersToRegister);
+    } catch (e) {
+        log.warn(`Some watchers failed to register (${e.message})`);
+        log.debug(e);
     }
 }
 
 /**
  * Register triggers.
  */
-function registerTriggers() {
+async function registerTriggers() {
     const configurations = getTriggerConfigurations();
-    registerComponents('triggers', configurations, '../triggers/providers');
-}
-
-async function registerRegistries() {
-    const configurations = getRegistryConfigurations();
-    Object.keys(configurations).forEach((registryKey) => {
-        const registryKeyNormalize = registryKey.toLowerCase();
-        registerComponent('registries', registryKeyNormalize, registryKeyNormalize, configurations[registryKeyNormalize], '../registries/providers');
-    });
-    if (Object.keys(configurations).length === 0) {
-        log.info('No Registry configured => Init a default one (Docker Hub with default options)');
-        await registerComponent('registries', 'hub', 'hub', {}, '../registries/providers');
+    try {
+        await registerComponents('triggers', configurations, '../triggers/providers');
+    } catch (e) {
+        log.warn(`Some triggers failed to register (${e.message})`);
+        log.debug(e);
     }
 }
 
+/**
+ * Register registries.
+ * @returns {Promise}
+ */
+async function registerRegistries() {
+    const configurations = getRegistryConfigurations();
+    let registriesToRegister = [];
+    try {
+        if (Object.keys(configurations).length === 0) {
+            log.info('No Registry configured => Init a default one (Docker Hub with default options)');
+            registriesToRegister.push(registerComponent('registries', 'hub', 'hub', {}, '../registries/providers'));
+        } else {
+            registriesToRegister = registriesToRegister
+                .concat(Object.keys(configurations).map((registryKey) => {
+                    const registryKeyNormalize = registryKey.toLowerCase();
+                    return registerComponent('registries', registryKeyNormalize, registryKeyNormalize, configurations[registryKeyNormalize], '../registries/providers');
+                }));
+        }
+        await Promise.all(registriesToRegister);
+    } catch (e) {
+        log.warn(`Some registries failed to register (${e.message})`);
+        log.debug(e);
+    }
+}
+
+/**
+ * Deregister a component.
+ * @param component
+ * @param kind
+ * @returns {Promise}
+ */
+async function deregisterComponent(component, kind) {
+    try {
+        await component.deregister();
+    } catch (e) {
+        throw new Error(`Error when deregistering component ${component.getId()}`);
+    } finally {
+        const components = getState()[kind];
+        if (components) {
+            delete components[component.getId()];
+        }
+    }
+}
+
+/**
+ * Deregister all components of kind.
+ * @param components
+ * @param kind
+ * @returns {Promise}
+ */
+async function deregisterComponents(components, kind) {
+    const deregisterPromises = components
+        .map(async (component) => deregisterComponent(component, kind));
+    return Promise.all(deregisterPromises);
+}
+
+/**
+ * Deregister all watchers.
+ * @returns {Promise}
+ */
+async function deregisterWatchers() {
+    return deregisterComponents(Object.values(getState().watchers), 'watchers');
+}
+
+/**
+ * Deregister all triggers.
+ * @returns {Promise}
+ */
+async function deregisterTriggers() {
+    return deregisterComponents(Object.values(getState().triggers), 'triggers');
+}
+
+/**
+ * Deregister all registries.
+ * @returns {Promise}
+ */
+async function deregisterRegistries() {
+    return deregisterComponents(Object.values(getState().registries), 'registries');
+}
+
+/**
+ * Deregister all components.
+ * @returns {Promise}
+ */
+async function deregisterAll() {
+    try {
+        await deregisterWatchers();
+        await deregisterTriggers();
+        await deregisterRegistries();
+    } catch (e) {
+        throw new Error(`Error when trying to deregister ${e.message}`);
+    }
+}
+
+async function init() {
+    // Register triggers
+    await registerTriggers();
+
+    // Register registries
+    await registerRegistries();
+
+    // Register watchers
+    await registerWatchers();
+
+    // Gracefully exit when possible
+    process.on('SIGINT', deregisterAll);
+    process.on('SIGTERM', deregisterAll);
+}
+
 module.exports = {
-    registerWatchers,
-    registerTriggers,
-    registerRegistries,
+    init,
     getState,
 };

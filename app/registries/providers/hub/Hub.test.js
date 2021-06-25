@@ -2,7 +2,10 @@ const rp = require('request-promise-native');
 const Hub = require('./Hub');
 
 const hub = new Hub();
-hub.configuration = {};
+hub.configuration = {
+    login: 'login',
+    token: 'token',
+};
 
 jest.mock('request-promise-native');
 
@@ -50,6 +53,14 @@ test('validatedConfiguration should throw error when auth is not base64', () => 
             auth: '°°°',
         });
     }).toThrow('"auth" must be a valid base64 string');
+});
+
+test('maskConfiguration should mask configuration secrets', () => {
+    expect(hub.maskConfiguration()).toEqual({
+        auth: undefined,
+        login: 'login',
+        token: 't***n',
+    });
 });
 
 test('match should return true when no registry on the image', () => {

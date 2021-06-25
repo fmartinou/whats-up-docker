@@ -196,7 +196,7 @@ class Docker extends Component {
     init() {
         this.initWatcher();
         log.info(`Schedule runner (${this.configuration.cron})`);
-        cron.schedule(this.configuration.cron, () => this.watch());
+        this.watchCron = cron.schedule(this.configuration.cron, () => this.watch());
 
         // Subscribe to image result events
         event.registerContainerResult(processContainerResult);
@@ -226,6 +226,16 @@ class Docker extends Component {
     }
 
     /**
+     * Deregister the component.
+     * @returns {Promise<void>}
+     */
+    async deregisterComponent() {
+        if (this.watchCron) {
+            this.watchCron.stop();
+        }
+    }
+
+    /**
      * Watch main method.
      * @returns {Promise<*[]>}
      */
@@ -236,7 +246,7 @@ class Docker extends Component {
         try {
             containers = await this.getContainers();
         } catch (e) {
-            log.error(`Error when trying to get the containers list to watch (${e.message})`);
+            log.warn(`Error when trying to get the containers list to watch (${e.message})`);
         }
 
         // Prune old containers from the store
@@ -244,7 +254,7 @@ class Docker extends Component {
             const containersFromTheStore = storeContainer.getContainers({ watcher: this.name });
             pruneOldContainers(containers, containersFromTheStore);
         } catch (e) {
-            log.error(`Error when trying to prune the old containers (${e.message})`);
+            log.warn(`Error when trying to prune the old containers (${e.message})`);
         }
         getWatchContainerGauge().set({
             type: this.type,
@@ -252,9 +262,9 @@ class Docker extends Component {
         }, containers.length);
 
         try {
-            return Promise.all(containers.map((container) => this.watchContainer(container)));
+            return await Promise.all(containers.map((container) => this.watchContainer(container)));
         } catch (e) {
-            log.error(`Error when processing images (${e.message})`);
+            log.warn(`Error when processing images (${e.message})`);
             return [];
         }
     }

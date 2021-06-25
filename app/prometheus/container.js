@@ -1,4 +1,4 @@
-const { Gauge } = require('prom-client');
+const { Gauge, register } = require('prom-client');
 const storeContainer = require('../store/container');
 const log = require('../log');
 const { flatten } = require('../model/container');
@@ -20,7 +20,15 @@ function populateGauge() {
     });
 }
 
+/**
+ * Init Container prometheus gauge.
+ * @returns {Gauge<string>}
+ */
 function init() {
+    // Replace gauge if init is called more than once
+    if (gaugeContainer) {
+        register.removeSingleMetric(gaugeContainer.name);
+    }
     gaugeContainer = new Gauge({
         name: 'wud_containers',
         help: 'The watched containers',

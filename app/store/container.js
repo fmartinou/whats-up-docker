@@ -1,3 +1,6 @@
+/**
+ * Container store.
+ */
 const { byString, byValue } = require('sort-es');
 const log = require('../log');
 const { validate: validateContainer } = require('../model/container');
@@ -9,6 +12,10 @@ const {
 
 let containers;
 
+/**
+ * Create container collections.
+ * @param db
+ */
 function createCollections(db) {
     containers = db.getCollection('containers');
     if (containers === null) {
@@ -18,7 +25,7 @@ function createCollections(db) {
 }
 
 /**
- * Insert new COntainer.
+ * Insert new Container.
  * @param container
  */
 function insertContainer(container) {

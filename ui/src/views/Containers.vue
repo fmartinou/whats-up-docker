@@ -126,9 +126,9 @@ export default {
       });
     } catch (e) {
       this.$root.$emit(
-          "notify",
-          `Error when trying to get the containerq (${e.message})`,
-          "error"
+        "notify",
+        `Error when trying to get the containerq (${e.message})`,
+        "error"
       );
     }
     next();

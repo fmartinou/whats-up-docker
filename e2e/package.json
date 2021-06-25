@@ -11,13 +11,13 @@
   "repository": "fmartinou/whats-up-docker",
   "license": "MIT",
   "dependencies": {
-    "apickli": "2.3.3",
+    "apickli": "2.3.4",
     "cucumber": "6.0.5"
   },
   "devDependencies": {
-    "eslint": "7.24.0",
+    "eslint": "7.29.0",
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-plugin-cucumber": "1.4.0",
-    "eslint-plugin-import": "2.22.1"
+    "eslint-plugin-import": "2.23.4"
   }
 }

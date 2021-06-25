@@ -56,9 +56,9 @@ export default {
       next((vm) => (vm.registries = registriesWithIcons));
     } catch (e) {
       this.$root.$emit(
-          "notify",
-          `Error when trying to load the registries (${e.message})`,
-          "error"
+        "notify",
+        `Error when trying to load the registries (${e.message})`,
+        "error"
       );
     }
     next();

@@ -1,6 +1,9 @@
 jest.mock('../store/container');
+jest.mock('../log');
+
 const store = require('../store/container');
 const container = require('./container');
+const log = require('../log');
 
 test('gauge must be populated when containers are in the store', () => {
     jest.useFakeTimers();
@@ -53,4 +56,13 @@ test('gauge must be populated when containers are in the store', () => {
         result_tag: 'version',
         watcher: 'test',
     }, 1);
+});
+
+test('gauge must warn when data don\'t match expected labels', () => {
+    store.getContainers = () => ([{
+        extra: 'extra',
+    }]);
+    const spyLog = jest.spyOn(log, 'warn');
+    container.init();
+    expect(spyLog).toHaveBeenCalled();
 });

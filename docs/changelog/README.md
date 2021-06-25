@@ -1,5 +1,11 @@
 # Changelog
 
+## develop
+- :star: Upgrade to nodejs 16
+- :star: Embed Material Design icons & Google fonts in UI for offline access
+- :star: Update all dependencies
+- :star: Improve code coverage
+
 ## 5.0.2
 - :fire: Fix digest wrong results for v1 manifests
 

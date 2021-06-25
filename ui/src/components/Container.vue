@@ -363,13 +363,14 @@ export default {
     },
 
     newVersion() {
-      return this.container.image.tag.value !== this.result.tag ?
-          this.result.tag:
-          this.container.image.digest.value !== this.result.digest ?
-            this.$options.filters.short(this.result.digest, 15):
-              this.container.image.created !== this.result.created ?
-                  this.$options.filters.date(this.result.created) : "?";
-    }
+      return this.container.image.tag.value !== this.result.tag
+        ? this.result.tag
+        : this.container.image.digest.value !== this.result.digest
+        ? this.$options.filters.short(this.result.digest, 15)
+        : this.container.image.created !== this.result.created
+        ? this.$options.filters.date(this.result.created)
+        : "?";
+    },
   },
 
   filters: {

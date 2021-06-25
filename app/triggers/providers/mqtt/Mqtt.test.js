@@ -1,4 +1,7 @@
 const { ValidationError } = require('joi');
+const asyncMqtt = require('async-mqtt');
+
+jest.mock('async-mqtt');
 const Mqtt = require('./Mqtt');
 
 const mqtt = new Mqtt();
@@ -11,6 +14,10 @@ const configurationValid = {
         prefix: 'homeassistant',
     },
 };
+
+beforeEach(() => {
+    jest.resetAllMocks();
+});
 
 test('validateConfiguration should return validated configuration when valid', () => {
     const validatedConfiguration = mqtt.validateConfiguration(configurationValid);
@@ -31,6 +38,46 @@ test('validateConfiguration should throw error when invalid', () => {
     expect(() => {
         mqtt.validateConfiguration(configuration);
     }).toThrowError(ValidationError);
+});
+
+test('maskConfiguration should mask sensitive data', () => {
+    mqtt.configuration = {
+        password: 'password',
+        url: 'mqtt://host:1883',
+        topic: 'wud/container',
+        hass: {
+            enabled: false,
+            prefix: 'homeassistant',
+        },
+    };
+    expect(mqtt.maskConfiguration()).toEqual({
+        hass: {
+            enabled: false,
+            prefix: 'homeassistant',
+        },
+        key: 'p******d',
+        password: 'password',
+        topic: 'wud/container',
+        url: 'mqtt://host:1883',
+    });
+});
+
+test('initTrigger should init Mqtt client', async () => {
+    mqtt.configuration = {
+        ...configurationValid,
+        user: 'user',
+        password: 'password',
+        hass: {
+            enabled: true,
+            prefix: 'homeassistant',
+        },
+    };
+    const spy = jest.spyOn(asyncMqtt, 'connectAsync');
+    await mqtt.initTrigger();
+    expect(spy).toHaveBeenCalledWith('mqtt://host:1883', {
+        username: 'user',
+        password: 'password',
+    });
 });
 
 test('addHassDevice should publish message to expected hass discovery topic', async () => {

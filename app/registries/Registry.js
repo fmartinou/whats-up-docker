@@ -118,7 +118,7 @@ class Registry extends Component {
             if (manifestDigestFound && manifestMediaType === 'application/vnd.docker.distribution.manifest.v2+json') {
                 const responseManifest = await this.callRegistry({
                     image,
-                    method: 'get',
+                    method: 'head',
                     url: `${image.registry.url}/${image.name}/manifests/${manifestDigestFound}`,
                     headers: {
                         Accept: manifestMediaType,

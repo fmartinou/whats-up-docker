@@ -37,9 +37,9 @@ export default {
       next((vm) => (vm.state = state));
     } catch (e) {
       this.$root.$emit(
-          "notify",
-          `Error when trying to load the state configuration (${e.message})`,
-          "error"
+        "notify",
+        `Error when trying to load the state configuration (${e.message})`,
+        "error"
       );
     }
     next();

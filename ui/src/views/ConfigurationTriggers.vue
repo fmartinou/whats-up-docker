@@ -31,9 +31,9 @@ export default {
       next((vm) => (vm.triggers = triggers));
     } catch (e) {
       this.$root.$emit(
-          "notify",
-          `Error when trying to load the triggers (${e.message})`,
-          "error"
+        "notify",
+        `Error when trying to load the triggers (${e.message})`,
+        "error"
       );
     }
     next();

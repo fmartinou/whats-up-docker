@@ -40,9 +40,9 @@ export default {
       next((vm) => (vm.log = log));
     } catch (e) {
       this.$root.$emit(
-          "notify",
-          `Error when trying to load the log configuration (${e.message})`,
-          "error"
+        "notify",
+        `Error when trying to load the log configuration (${e.message})`,
+        "error"
       );
     }
     next();

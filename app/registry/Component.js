@@ -19,23 +19,31 @@ class Component {
      * @param configuration the configuration of the component
      */
     async register(type, name, configuration) {
-        try {
-            this.type = type;
-            this.name = name;
-            this.configuration = this.validateConfiguration(configuration);
-            log.info(`Register component ${name} of type ${type} with configuration ${JSON.stringify(this.maskConfiguration(configuration))}`);
-        } catch (e) {
-            log.error(`Disable component ${name} of type ${type} because configuration is invalid (${e.message})`);
-            return undefined;
-        }
-        try {
-            await this.init();
-            return this;
-        } catch (e) {
-            log.error(`Disable component ${name} of type ${type} (init failed)`);
-            log.error(e);
-            return undefined;
-        }
+        this.type = type;
+        this.name = name;
+        this.configuration = this.validateConfiguration(configuration);
+        log.info(`Register component ${name} of type ${type} with configuration ${JSON.stringify(this.maskConfiguration(configuration))}`);
+        await this.init();
+        return this;
+    }
+
+    /**
+     * Deregister the component.
+     * @returns {Promise<void>}
+     */
+    async deregister() {
+        log.info(`Deregister component ${this.name} of type ${this.type}`);
+        await this.deregisterComponent();
+        return this;
+    }
+
+    /**
+     * Deregistger the component (do nothing by default).
+     * @returns {Promise<void>}
+     */
+    /* eslint-disable-next-line */
+    async deregisterComponent() {
+        // Do nothing by default
     }
 
     /**

@@ -1,6 +1,13 @@
 const { ValidationError } = require('joi');
-const Docker = require('./Docker');
+const event = require('../../../event');
+const log = require('../../../log');
+const prometheusWatcher = require('../../../prometheus/watcher');
+
+jest.mock('../../../event');
+jest.mock('../../../log');
 const storeContainer = require('../../../store/container');
+
+const Docker = require('./Docker');
 const Hub = require('../../../registries/providers/hub/Hub');
 const Ecr = require('../../../registries/providers/ecr/Ecr');
 const Gcr = require('../../../registries/providers/gcr/Gcr');
@@ -9,21 +16,30 @@ const Acr = require('../../../registries/providers/acr/Acr');
 const sampleSemver = require('../../samples/semver.json');
 const sampleCoercedSemver = require('../../samples/coercedSemver.json');
 
-jest.mock('request-promise-native');
-
-const docker = new Docker();
-docker.name = 'test';
-
+let docker;
 const hub = new Hub();
 const ecr = new Ecr();
 const gcr = new Gcr();
 const acr = new Acr();
 
+jest.mock('request-promise-native');
+
+beforeEach(() => {
+    jest.resetAllMocks();
+    prometheusWatcher.init();
+    docker = new Docker();
+    docker.name = 'test';
+});
+
+afterEach(() => {
+    docker.deregister();
+});
+
 Docker.__set__('getRegistries', () => ({
+    acr,
     ecr,
     gcr,
     hub,
-    acr,
 }));
 
 Docker.__set__('getWatchContainerGauge', () => ({
@@ -450,6 +466,15 @@ test('watchContainer should return same result as current when no image version 
     });
 });
 
+test('watchContainer should return error result when something bad happens', async () => {
+    docker.findNewVersion = () => { throw new Error('Failure!!!'); };
+    await expect(docker.watchContainer(sampleSemver)).resolves.toMatchObject({
+        error: {
+            message: 'Failure!!!',
+        },
+    });
+});
+
 test('watch should return a list of containers found by the docker socket', async () => {
     storeContainer.getContainer = () => (undefined);
     const container1 = {
@@ -509,6 +534,51 @@ test('watch should return a list of containers found by the docker socket', asyn
     }]);
 });
 
+test('watch should log error when watching a container fails', async () => {
+    storeContainer.getContainer = () => undefined;
+    const container1 = {
+        Id: 'container-123456789',
+        Image: 'organization/image:version',
+        Names: ['/test'],
+        Architecture: 'arch',
+        Os: 'os',
+        Size: '10',
+        Created: '2019-05-20T12:02:06.307Z',
+        Labels: {},
+        RepoDigests: ['test/test@sha256:2256fd5ac3e1079566f65cc9b34dc2b8a1b0e0e1bb393d603f39d0e22debb6ba'],
+        Config: {
+            Image: 'sha256:c724d57be8bfda30b526396da9f53adb6f6ef15f7886df17b0a0bb8349f1ad79',
+        },
+    };
+    docker.dockerApi = {
+        listContainers: () => ([container1]),
+        getImage: () => ({
+            inspect: () => ({
+                Architecture: 'arch',
+                Os: 'os',
+                Created: '2021-06-12T05:33:38.440Z',
+                Id: 'image-123456789',
+            }),
+        }),
+    };
+
+    // Fake conf
+    docker.configuration = {
+        watchbydefault: true,
+    };
+    const spylog = jest.spyOn(log, 'warn');
+    docker.watchContainer = () => { throw new Error('Failure!!!'); };
+    expect(await docker.watch()).toEqual([]);
+    expect(spylog).toHaveBeenCalledWith('Error when processing images (Failure!!!)');
+});
+
+test('watch should log error when an error occurs when listing containers fails', async () => {
+    docker.getContainers = () => { throw new Error('Failure!!!'); };
+    const spylog = jest.spyOn(log, 'warn');
+    expect(await docker.watch()).toEqual([]);
+    expect(spylog).toHaveBeenCalledWith('Error when trying to get the containers list to watch (Failure!!!)');
+});
+
 test('pruneOldContainers should prune old containers', () => {
     const oldContainers = [{ id: 1 }, { id: 2 }];
     const newContainers = [{ id: 1 }];
@@ -518,4 +588,74 @@ test('pruneOldContainers should prune old containers', () => {
 test('pruneOldContainers should operate when lists are empty or undefined', () => {
     expect(Docker.__get__('getOldContainers')([], [])).toEqual([]);
     expect(Docker.__get__('getOldContainers')(undefined, undefined)).toEqual([]);
+});
+
+test('getRegistries should return all registered registries when called', () => {
+    expect(Object.keys(Docker.__get__('getRegistries')())).toEqual(['acr', 'ecr', 'gcr', 'hub']);
+});
+
+test('getRegistry should return all registered registries when called', () => {
+    expect(Docker.__get__('getRegistry')('acr')).toBeDefined();
+});
+
+test('getRegistry should return all registered registries when called', () => {
+    expect(() => Docker.__get__('getRegistry')('registry_fail')).toThrowError('Unsupported Registry registry_fail');
+});
+
+test('processContainerResult should emit event when update available and not already triggered', () => {
+    const processContainerResult = Docker.__get__('processContainerResult');
+    const containerWithResult = {
+        id: 'container-123456789',
+        updateAvailable: true,
+    };
+
+    storeContainer.getContainer = () => (undefined);
+    storeContainer.insertContainer = () => (containerWithResult);
+    const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
+    processContainerResult(containerWithResult);
+    expect(spyEvent).toHaveBeenCalled();
+});
+
+test('processContainerResult should not emit event when no update available', () => {
+    const processContainerResult = Docker.__get__('processContainerResult');
+    const containerWithResult = {
+        id: 'container-123456789',
+        updateAvailable: false,
+    };
+
+    storeContainer.getContainer = () => (undefined);
+    storeContainer.insertContainer = () => (containerWithResult);
+    const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
+    processContainerResult(containerWithResult);
+    expect(spyEvent).not.toHaveBeenCalled();
+});
+
+test('processContainerResult should not emit event when update available but already processed', () => {
+    const processContainerResult = Docker.__get__('processContainerResult');
+    const containerWithResult = {
+        id: 'container-123456789',
+        updateAvailable: true,
+        resultChanged: () => false,
+    };
+
+    storeContainer.getContainer = () => (containerWithResult);
+    storeContainer.updateContainer = () => (containerWithResult);
+    const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
+    processContainerResult(containerWithResult);
+    expect(spyEvent).not.toHaveBeenCalled();
+});
+
+test('processContainerResult should emit event when update available but not already processed', () => {
+    const processContainerResult = Docker.__get__('processContainerResult');
+    const containerWithResult = {
+        id: 'container-123456789',
+        updateAvailable: true,
+        resultChanged: () => true,
+    };
+
+    storeContainer.getContainer = () => (containerWithResult);
+    storeContainer.updateContainer = () => (containerWithResult);
+    const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
+    processContainerResult(containerWithResult);
+    expect(spyEvent).toHaveBeenCalled();
 });

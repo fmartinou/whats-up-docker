@@ -16,7 +16,6 @@ services:
         labels:
             - wud.watch=true
             - wud.tag.include=^latest$$
-            - wud.watch.digest=true
 
     nginx_latest:
         image: nginx
@@ -40,7 +39,6 @@ services:
         labels:
             - wud.watch=true
             - wud.tag.include=^v\d+\.\d+.\d+$$
-            - wud.watch.digest=true
 
     pihole_latest:
         image: pihole/pihole
@@ -87,7 +85,6 @@ services:
         labels:
             - wud.watch=true
             - wud.tag.include=^latest$$
-            - wud.watch.digest=true
 
     youtubedl_latest:
         image:
