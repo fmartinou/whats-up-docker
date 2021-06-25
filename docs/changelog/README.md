@@ -1,6 +1,6 @@
 # Changelog
 
-## develop
+## 5.0.2
 - :fire: Fix digest wrong results for v1 manifests
 
 ## 5.0.1
