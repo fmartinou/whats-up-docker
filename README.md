@@ -16,7 +16,7 @@
 
 ![image](docs/introduction/wud_arch.png)
 
-**WUD** can be easily configured using regular Environment Variables & Docker labels and
+**WUD** can be easily configured using regular Environment Variables & Docker labels.
 
 ## Many supported triggers
 - Http
