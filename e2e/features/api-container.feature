@@ -21,7 +21,7 @@ Feature: WUD Container API Exposure
       | 0     | ecr_sub_sub_test         | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/sub/test                 | 1.0.0         | 2.0.0         | true            |
       | 1     | ecr_sub_test             | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test                     | 1.0.0         | 2.0.0         | true            |
       | 2     | ecr_test                 | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test                         | 1.0.0         | 2.0.0         | true            |
-      | 3     | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant | 2021.6.1      | 2021.6.6      | true            |
+      | 3     | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant | 2021.6.1      | 2021.7.4      | true            |
       | 4     | hub_homeassistant_latest | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant | latest        | latest        | false           |
       | 5     | hub_nginx_120            | hub      | https://registry-1.docker.io/v2                         | library/nginx                | 1.20-alpine   | 1.21-alpine   | true            |
       | 6     | hub_nginx_latest         | hub      | https://registry-1.docker.io/v2                         | library/nginx                | latest        | latest        | true            |
@@ -29,9 +29,9 @@ Feature: WUD Container API Exposure
       | 8     | hub_pihole_57            | hub      | https://registry-1.docker.io/v2                         | pihole/pihole                | v5.7          | v5.8.1        | true            |
       | 9     | hub_pihole_latest        | hub      | https://registry-1.docker.io/v2                         | pihole/pihole                | latest        | latest        | false           |
       | 10    | hub_pyload_latest        | hub      | https://registry-1.docker.io/v2                         | writl/pyload                 | latest        | latest        | false           |
-      | 11    | hub_traefik_245          | hub      | https://registry-1.docker.io/v2                         | library/traefik              | 2.4.5         | 2.4.9         | true            |
+      | 11    | hub_traefik_245          | hub      | https://registry-1.docker.io/v2                         | library/traefik              | 2.4.5         | 2.4.13        | true            |
       | 12    | hub_traefik_latest       | hub      | https://registry-1.docker.io/v2                         | library/traefik              | latest        | latest        | false           |
-      | 13    | hub_vaultwarden_1221     | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server           | 1.22.1-alpine | 1.22.1-alpine | false           |
+      | 13    | hub_vaultwarden_1222     | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server           | 1.22.2-alpine | 1.22.2-alpine | false           |
       | 14    | hub_vaultwarden_latest   | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server           | latest        | latest        | false           |
       | 15    | hub_youtubedb_latest     | hub      | https://registry-1.docker.io/v2                         | jeeaaasustest/youtube-dl     | latest        | latest        | false           |
 
@@ -71,7 +71,7 @@ Feature: WUD Container API Exposure
     And response body path $.image.tag.semver should be false
     And response body path $.image.digest.value should be sha256:f94d6dd9b5761f33a21bb92848a1f70ea11a1c15f3a142c19a44ea3a4c545a4d
     And response body path $.result.tag should be latest
-    And response body path $.result.digest should be sha256:2f1cd90e00fe2c991e18272bb35d6a8258eeb27785d121aa4cc1ae4235167cfd
+    And response body path $.result.digest should be sha256:3f13b4376446cf92b0cb9a5c46ba75d57c41f627c4edb8b635fa47386ea29e20
     And response body path $.updateAvailable should be true
 
   Scenario: WUD must allow to trigger a watch on a container

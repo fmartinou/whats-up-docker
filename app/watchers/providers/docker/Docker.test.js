@@ -659,3 +659,43 @@ test('processContainerResult should emit event when update available but not alr
     processContainerResult(containerWithResult);
     expect(spyEvent).toHaveBeenCalled();
 });
+
+test('isContainerToWatch should return true when watch by default is true and no wud.watch label', () => {
+    const isContainerToWatch = Docker.__get__('isContainerToWatch');
+    expect(isContainerToWatch(undefined, true)).toBeTruthy();
+});
+
+test('isContainerToWatch should return true when watch by default is true and wud.watch label is empty string', () => {
+    const isContainerToWatch = Docker.__get__('isContainerToWatch');
+    expect(isContainerToWatch('', true)).toBeTruthy();
+});
+
+test('isContainerToWatch should return true when watch by default is true and wud.watch label is true', () => {
+    const isContainerToWatch = Docker.__get__('isContainerToWatch');
+    expect(isContainerToWatch('true', true)).toBeTruthy();
+});
+
+test('isContainerToWatch should return false when watch by default is true and wud.watch label is false', () => {
+    const isContainerToWatch = Docker.__get__('isContainerToWatch');
+    expect(isContainerToWatch('false', true)).toBeFalsy();
+});
+
+test('isContainerToWatch should return false when watch by default is false and no wud.watch label', () => {
+    const isContainerToWatch = Docker.__get__('isContainerToWatch');
+    expect(isContainerToWatch(undefined, false)).toBeFalsy();
+});
+
+test('isContainerToWatch should return false when watch by default is false and wud.watch label is empty string', () => {
+    const isContainerToWatch = Docker.__get__('isContainerToWatch');
+    expect(isContainerToWatch('', false)).toBeFalsy();
+});
+
+test('isContainerToWatch should return true when watch by default is false and wud.watch label is true', () => {
+    const isContainerToWatch = Docker.__get__('isContainerToWatch');
+    expect(isContainerToWatch('true', false)).toBeTruthy();
+});
+
+test('isContainerToWatch should return false when watch by default is false and wud.watch label is false', () => {
+    const isContainerToWatch = Docker.__get__('isContainerToWatch');
+    expect(isContainerToWatch('false', false)).toBeFalsy();
+});

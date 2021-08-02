@@ -85,12 +85,12 @@ WUD_WATCHER_MYREMOTEHOST2_HOST="myremotehost2"
 To fine-tune the behaviour of WUD _per container_, you can add labels on them.
 
 #### Supported labels
-| Label                  | Description                         | Supported values       | Default value |
-| ---------------------- |:-----------------------------------:|:----------------------:|:-------------:|
-| ```wud.watch```        | Watch this container                | Valid Boolean          | false         |
-| ```wud.watch.digest``` | Watch this container digest         | Valid Boolean          | false         |
-| ```wud.tag.include```  | Regex to include specific tags only | Valid JavaScript Regex |               |
-| ```wud.tag.exclude```  | Regex to exclude specific tags      | Valid JavaScript Regex |               |
+| Label                  | Description                         | Supported values       | Default value                                                                   |
+| ---------------------- |:-----------------------------------:|:----------------------:|:-------------------------------------------------------------------------------:|
+| ```wud.watch```        | Watch this container                | Valid Boolean          | true when `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` is true (false otherwise) |
+| ```wud.watch.digest``` | Watch this container digest         | Valid Boolean          | false                                                                           |
+| ```wud.tag.include```  | Regex to include specific tags only | Valid JavaScript Regex |                                                                                 |
+| ```wud.tag.exclude```  | Regex to exclude specific tags      | Valid JavaScript Regex |                                                                                 |
 
 !> Watching image digests cause extensive usage of _Docker Registry Pull API_ which is restricted by [**Quotas on the Docker Hub**](https://docs.docker.com/docker-hub/download-rate-limit/). \
 We suggest enabling `wud.watch.digest` only where it's convenient (e.g. on `latest` versions). \
@@ -98,15 +98,23 @@ If you face [quota related errors](https://docs.docker.com/docker-hub/download-r
 
 #### Examples
 
-##### Watch only specific containers
-Configure WUD to watch "labeled" containers only
+##### Include specific containers to watch
+Configure WUD to disable WATCHBYDEFAULT feature.
 ```bash
 WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT=false
 ```
 
-Then add the labels on the containers you want to watch.
+Then add the `wud.watch=true` label on the containers you want to watch.
 ```bash
 docker run -d --name mariadb --label wud.watch=true mariadb:10.4.5
+```
+
+##### Exclude specific containers to watch
+Ensure `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` is true (default value). 
+
+Then add the `wud.watch=false` label on the containers you want to exclude from being watched.
+```bash
+docker run -d --name mariadb --label wud.watch=false mariadb:10.4.5
 ```
 
 ##### Include only 3 digits semver tags

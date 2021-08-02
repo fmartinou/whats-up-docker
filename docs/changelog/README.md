@@ -1,5 +1,8 @@
 # Changelog
 
+## develop
+- :star: Allow excluding specific containers from being watched
+
 ## 5.1.0
 - :star: Upgrade to nodejs 16
 - :star: Embed Material Design icons & Google fonts in UI for offline access

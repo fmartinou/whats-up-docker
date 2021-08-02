@@ -92,7 +92,7 @@ script:
 
   # Pull vaultwarden
   - docker pull vaultwarden/server
-  - docker pull vaultwarden/server:1.22.1-alpine
+  - docker pull vaultwarden/server:1.22.2-alpine
 
   # Pull youtubedl
   - docker pull jeeaaasustest/youtube-dl
@@ -123,7 +123,7 @@ script:
   - docker run -d --name hub_traefik_245          --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+$'                           traefik:2.4.5
   - docker run -d --name hub_traefik_latest       --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' traefik
 
-  - docker run -d --name hub_vaultwarden_1221     --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+-alpine$'                    vaultwarden/server:1.22.1-alpine
+  - docker run -d --name hub_vaultwarden_1222     --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+-alpine$'                    vaultwarden/server:1.22.2-alpine
   - docker run -d --name hub_vaultwarden_latest   --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' vaultwarden/server
 
   - docker run -d --name hub_youtubedb_latest     --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' jeeaaasustest/youtube-dl

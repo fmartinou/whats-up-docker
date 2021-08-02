@@ -173,6 +173,16 @@ function getRepoDigest(containerImage) {
 }
 
 /**
+ * Return true if container must be watched.
+ * @param wudWatchLabelValue the value of the wud.watch label
+ * @param watchByDefault true if containers must be watched by default
+ * @returns {boolean}
+ */
+function isContainerToWatch(wudWatchLabelValue, watchByDefault) {
+    return wudWatchLabelValue !== undefined && wudWatchLabelValue !== '' ? wudWatchLabelValue.toLowerCase() === 'true' : watchByDefault;
+}
+
+/**
  * Docker Watcher Component.
  */
 class Docker extends Component {
@@ -305,16 +315,10 @@ class Docker extends Component {
             listContainersOptions.all = true;
         }
         const containers = await this.dockerApi.listContainers(listContainersOptions);
-        const filteredContainers = containers
 
-            // Filter containers on labels
-            .filter((container) => {
-                if (this.configuration.watchbydefault) {
-                    return true;
-                }
-                const wudWatchValue = container.Labels['wud.watch'];
-                return wudWatchValue && wudWatchValue.toLowerCase() === 'true';
-            });
+        // Filter on containers to watch
+        const filteredContainers = containers
+            .filter((container) => isContainerToWatch(container.Labels['wud.watch'], this.configuration.watchbydefault));
         const containerPromises = filteredContainers
             .map((container) => {
                 const labels = container.Labels;
