@@ -1,13 +1,13 @@
 const Registry = require('../../Registry');
 
 /**
- * Azure Container Registry integration.
+ * Github Container Registry integration.
  */
-class Acr extends Registry {
+class Ghcr extends Registry {
     getConfigurationSchema() {
         return this.joi.object().keys({
-            clientid: this.joi.string().required(),
-            clientsecret: this.joi.string().required(),
+            username: this.joi.string().allow('').required(),
+            token: this.joi.string().allow('').required(),
         });
     }
 
@@ -18,29 +18,29 @@ class Acr extends Registry {
     maskConfiguration() {
         return {
             ...this.configuration,
-            clientsecret: Acr.mask(this.configuration.clientsecret),
+            token: Ghcr.mask(this.configuration.token),
         };
     }
 
     /**
-     * Return true if image has not registryUrl.
+     * Return true if image has not registry url.
      * @param image the image
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
     match(image) {
-        return /^.*\.?azurecr.io$/.test(image.registry.url);
+        return /^.*\.?ghcr.io$/.test(image.registry.url);
     }
 
     /**
-     * Normalize image according to AWS ECR characteristics.
+     * Normalize image according to Github Container Registry characteristics.
      * @param image
      * @returns {*}
      */
     // eslint-disable-next-line class-methods-use-this
     normalizeImage(image) {
         const imageNormalized = image;
-        imageNormalized.registry.name = 'acr';
+        imageNormalized.registry.name = 'ghcr';
         if (!imageNormalized.registry.url.startsWith('https://')) {
             imageNormalized.registry.url = `https://${imageNormalized.registry.url}/v2`;
         }
@@ -49,9 +49,10 @@ class Acr extends Registry {
 
     async authenticate(image, requestOptions) {
         const requestOptionsWithAuth = requestOptions;
-        requestOptionsWithAuth.headers.Authorization = `Basic ${Acr.base64Encode(this.configuration.clientid, this.configuration.clientsecret)}`;
+        const bearer = Ghcr.base64Encode(this.configuration.username, this.configuration.token);
+        requestOptionsWithAuth.headers.Authorization = `Bearer ${bearer}`;
         return requestOptionsWithAuth;
     }
 }
 
-module.exports = Acr;
+module.exports = Ghcr;

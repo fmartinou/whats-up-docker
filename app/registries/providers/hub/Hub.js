@@ -1,6 +1,9 @@
 const rp = require('request-promise-native');
 const Registry = require('../../Registry');
 
+/**
+ * Docker Hub integration.
+ */
 class Hub extends Registry {
     getConfigurationSchema() {
         return this.joi.object().keys({

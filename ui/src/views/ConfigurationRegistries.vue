@@ -15,7 +15,7 @@
 
 <script>
 import ConfigurationItem from "@/components/ConfigurationItem";
-import { getAllRegistries } from "@/services/registry";
+import { getAllRegistries, getRegistryProviderIcon } from "@/services/registry";
 
 export default {
   data() {
@@ -31,27 +31,10 @@ export default {
     try {
       const registries = await getAllRegistries();
       const registriesWithIcons = registries
-        .map((registry) => {
-          let icon = "mdi-help";
-          switch (registry.type) {
-            case "acr":
-              icon = "mdi-microsoft-azure";
-              break;
-            case "ecr":
-              icon = "mdi-aws";
-              break;
-            case "gcr":
-              icon = "mdi-google-cloud";
-              break;
-            case "hub":
-              icon = "mdi-docker";
-              break;
-          }
-          return {
-            ...registry,
-            icon,
-          };
-        })
+        .map((registry) => ({
+          ...registry,
+          icon: getRegistryProviderIcon(registry.type),
+        }))
         .sort((r1, r2) => r1.name.localeCompare(r2.name));
       next((vm) => (vm.registries = registriesWithIcons));
     } catch (e) {

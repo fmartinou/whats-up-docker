@@ -99,10 +99,23 @@ script:
 
   # Run containers for tests
 
+  # ACR
+  #  - docker run -d --name acr_test          --label "wud.watch=true" wudtest.azurecr.io/test:1.0.0
+  #  - docker run -d --name acr_sub_test      --label "wud.watch=true" wudtest.azurecr.io/sub/test:1.0.0
+  #  - docker run -d --name acr_sub_sub_test  --label "wud.watch=true" wudtest.azurecr.io/sub/sub/test:1.0.0
+
   # ECR
   - docker run -d --name ecr_sub_sub_test --label 'wud.watch=true' 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/sub/test:1.0.0
   - docker run -d --name ecr_sub_test     --label 'wud.watch=true' 229211676173.dkr.ecr.eu-west-1.amazonaws.com/sub/test:1.0.0
   - docker run -d --name ecr_test         --label 'wud.watch=true' 229211676173.dkr.ecr.eu-west-1.amazonaws.com/test:1.0.0
+
+  # GCR
+  #  - docker run -d --name gcr_test          --label "wud.watch=true" gcr.io/wud-test/test:1.0.0
+  #  - docker run -d --name gcr_sub_test      --label "wud.watch=true" gcr.io/wud-test/sub/test:1.0.0
+  #  - docker run -d --name gcr_sub_sub_test  --label "wud.watch=true" gcr.io/wud-test/sub/sub/test:1.0.0
+
+  # GHCR
+  - docker run -d --name ghcr_radarr              --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$'               ghcr.io/linuxserver/radarr:3.2.1.5070-ls105
 
   # HUB
   - docker run -d --name hub_homeassistant_202161 --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+$'                           homeassistant/home-assistant:2021.6.1
@@ -128,16 +141,6 @@ script:
 
   - docker run -d --name hub_youtubedb_latest     --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' jeeaaasustest/youtube-dl
 
-  # GCR
-#  - docker run -d --name gcr_test          --label "wud.watch=true" gcr.io/wud-test/test:1.0.0
-#  - docker run -d --name gcr_sub_test      --label "wud.watch=true" gcr.io/wud-test/sub/test:1.0.0
-#  - docker run -d --name gcr_sub_sub_test  --label "wud.watch=true" gcr.io/wud-test/sub/sub/test:1.0.0
-
-  # ACR
-#  - docker run -d --name acr_test          --label "wud.watch=true" wudtest.azurecr.io/test:1.0.0
-#  - docker run -d --name acr_sub_test      --label "wud.watch=true" wudtest.azurecr.io/sub/test:1.0.0
-#  - docker run -d --name acr_sub_sub_test  --label "wud.watch=true" wudtest.azurecr.io/sub/sub/test:1.0.0
-
   # Run wud docker image
   - >
     docker run -d
@@ -146,13 +149,15 @@ script:
     --volume /var/run/docker.sock:/var/run/docker.sock
     --env WUD_TRIGGER_MOCK_EXAMPLE_MOCK=mock
     --env WUD_WATCHER_LOCAL_WATCHBYDEFAULT=false
+    --env WUD_REGISTRY_ACR_CLIENTID="$ACR_CLIENT_ID"
+    --env WUD_REGISTRY_ACR_CLIENTSECRET="$ACR_CLIENT_SECRET"
     --env WUD_REGISTRY_ECR_ACCESSKEYID="$AWS_ACCESSKEY_ID"
     --env WUD_REGISTRY_ECR_SECRETACCESSKEY="$AWS_SECRET_ACCESSKEY"
     --env WUD_REGISTRY_ECR_REGION=eu-west-1
     --env WUD_REGISTRY_GCR_CLIENTEMAIL="$GCR_CLIENT_EMAIL"
     --env WUD_REGISTRY_GCR_PRIVATEKEY="$GCR_PRIVATE_KEY"
-    --env WUD_REGISTRY_ACR_CLIENTID="$ACR_CLIENT_ID"
-    --env WUD_REGISTRY_ACR_CLIENTSECRET="$ACR_CLIENT_SECRET"
+    --env WUD_REGISTRY_GHCR_USERNAME=""
+    --env WUD_REGISTRY_GHCR_TOKEN=""
     --env WUD_REGISTRY_HUB_AUTH=""
     wud
 

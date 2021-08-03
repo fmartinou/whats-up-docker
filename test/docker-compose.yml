@@ -94,3 +94,12 @@ services:
             - wud.watch=true
             - wud.tag.include=^latest$$
             - wud.watch.digest=true
+
+    ghcr_radarr:
+        image:
+            ghcr.io/linuxserver/radarr:3.2.1.5070-ls105
+        container_name: ghcr_radarr
+        labels:
+            - wud.watch=true
+            - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$
+            - wud.watch.digest=true

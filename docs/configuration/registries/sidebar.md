@@ -6,6 +6,7 @@
         - [ACR](configuration/registries/acr/)
         - [ECR](configuration/registries/ecr/)
         - [GCR](configuration/registries/gcr/)
+        - [GHCR](configuration/registries/ghcr/)
         - [HUB](configuration/registries/hub/)
     - [Storage](configuration/storage/)    
     - [Triggers](configuration/triggers/)

@@ -307,6 +307,7 @@
 <script>
 import Property from "@/components/Property";
 import { refreshContainer } from "@/services/container";
+import { getRegistryProviderIcon } from "@/services/registry";
 
 export default {
   components: {
@@ -331,22 +332,7 @@ export default {
   },
   computed: {
     registryIcon() {
-      let icon = "mdi-help";
-      switch (this.container.image.registry.name) {
-        case "acr":
-          icon = "mdi-microsoft-azure";
-          break;
-        case "ecr":
-          icon = "mdi-aws";
-          break;
-        case "gcr":
-          icon = "mdi-google-cloud";
-          break;
-        case "hub":
-          icon = "mdi-docker";
-          break;
-      }
-      return icon;
+      return getRegistryProviderIcon(this.container.image.registry.name);
     },
 
     osIcon() {

@@ -32,6 +32,7 @@
 - [ACR](https://azure.microsoft.com/services/container-registry/)
 - [ECR](https://aws.amazon.com/ecr/)
 - [GCR](https://cloud.google.com/container-registry/)
+- [GHCR](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry)
 - [HUB](http://hub.docker.com/)
 
 ## REST API & fresh UI

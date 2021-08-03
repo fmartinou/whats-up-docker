@@ -1,6 +1,9 @@
 const ECR = require('aws-sdk/clients/ecr');
 const Registry = require('../../Registry');
 
+/**
+ * Elastic Container Registry integration.
+ */
 class Ecr extends Registry {
     getConfigurationSchema() {
         return this.joi.object().keys({

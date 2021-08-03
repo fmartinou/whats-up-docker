@@ -1,6 +1,9 @@
 const rp = require('request-promise-native');
 const Registry = require('../../Registry');
 
+/**
+ * Google Container Registry integration.
+ */
 class Gcr extends Registry {
     getConfigurationSchema() {
         return this.joi.object().keys({
