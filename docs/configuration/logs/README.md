@@ -4,19 +4,50 @@ You can adjust the log level with env var WUD_LOG_LEVEL.
 
 #### Variables
 
-| Env var              | Description | Supported values            | Default value  |
-| -------------------- |:-----------:|:---------------------------:|:--------------:| 
-| ```WUD_LOG_LEVEL```  | Log level   | error info debug trace      | info           |
-| ```WUD_LOG_FORMAT``` | Log format  | text json                   | text           |
+| Env var          | Description | Supported values            | Default value  |
+| ---------------- |:-----------:|:---------------------------:|:--------------:| 
+| `WUD_LOG_LEVEL`  | Log level   | error info debug trace      | info           |
+| `WUD_LOG_FORMAT` | Log format  | text json                   | text           |
 
 #### Examples
 
 ##### Set debug level
+
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_LOG_LEVEL=debug
+```
+#### **Docker**
 ```bash
-WUD_LOG_LEVEL=debug
+docker run -e WUD_LOG_LEVEL=debug ... fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
+
+##### Set json format (for ElasticSearch ingestion for example)
+
+<!-- tabs:start -->
+#### **Docker**
+```bash
+docker run -e WUD_LOG_FORMAT=json ... fmartinou/whats-up-docker
 ```
 
-##### Set json format (to export to ElasticSearch for example)
-```bash
-WUD_LOG_format=json
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_LOG_FORMAT=json
 ```
+<!-- tabs:end -->

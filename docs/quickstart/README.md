@@ -3,9 +3,28 @@
 ## Run the Docker image
 The easiest way to start is to deploy the official _**WUD**_ image.
 
-```bash
-docker run -d --name wud -v "/var/run/docker.sock:/var/run/docker.sock" -p 3000:3000 fmartinou/whats-up-docker
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    container_name: wud
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 3000:3000
 ```
+#### **Docker**
+```bash
+docker run -d --name wud \
+  -v "/var/run/docker.sock:/var/run/docker.sock" \
+  -p 3000:3000 \
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 ## Check the logs
 ```bash

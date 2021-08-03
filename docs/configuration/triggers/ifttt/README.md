@@ -21,9 +21,28 @@ On Webhook call, Ifttt captures the following ingredients:
 #### Examples
 
 ##### Configuration
-```bash
-WUD_TRIGGER_IFTTT_PROD_KEY="*******************************************"
+
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_TRIGGER_IFTTT_PROD_KEY=*******************************************
 ```
+
+#### **Docker**
+```bash
+docker run \
+  -e WUD_TRIGGER_IFTTT_PROD_KEY="*******************************************" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 ##### Ifttt captured ingredients
 - EventName: `wud-container`

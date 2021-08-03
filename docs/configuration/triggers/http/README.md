@@ -13,9 +13,26 @@ The ```http``` trigger lets you send container update notifications via HTTP.
 
 ##### Post an HTTP request to an existing server 
 
-```bash
-WUD_TRIGGER_HTTP_MYREMOTEHOST_URL="https://my-remote-host/new-version"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_TRIGGER_HTTP_MYREMOTEHOST_URL=https://my-remote-host/new-version
 ```
+#### **Docker**
+```bash
+docker run \
+  -e WUD_TRIGGER_HTTP_MYREMOTEHOST_URL="https://my-remote-host/new-version" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 ##### Example of payload (POST request)
 ```json

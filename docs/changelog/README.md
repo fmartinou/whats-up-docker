@@ -2,6 +2,7 @@
 
 ## develop
 - :star: Allow excluding specific containers from being watched
+- :star: Add Docker Compose examples to the documentation
 
 ## 5.1.0
 - :star: Upgrade to nodejs 16

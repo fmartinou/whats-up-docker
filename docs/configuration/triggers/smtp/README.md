@@ -17,12 +17,36 @@ The ```smtp``` trigger lets you send emails with smtp.
 
 #### Send an email with Gmail
 
-```bash
-WUD_TRIGGER_SMTP_GMAIL_HOST="smtp.gmail.com"
-WUD_TRIGGER_SMTP_GMAIL_PORT="465"
-WUD_TRIGGER_SMTP_GMAIL_USER="john.doe@gmail.com"
-WUD_TRIGGER_SMTP_GMAIL_PASS="mysecretpass"
-WUD_TRIGGER_SMTP_GMAIL_FROM="john.doe@gmail.com"
-WUD_TRIGGER_SMTP_GMAIL_TO="jane.doe@gmail.com"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_TRIGGER_SMTP_GMAIL_HOST=smtp.gmail.com
+        - WUD_TRIGGER_SMTP_GMAIL_PORT=465
+        - WUD_TRIGGER_SMTP_GMAIL_USER=john.doe@gmail.com
+        - WUD_TRIGGER_SMTP_GMAIL_PASS=mysecretpass
+        - WUD_TRIGGER_SMTP_GMAIL_FROM=john.doe@gmail.com
+        - WUD_TRIGGER_SMTP_GMAIL_TO=jane.doe@gmail.com
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_TRIGGER_SMTP_GMAIL_HOST="smtp.gmail.com" \
+    -e WUD_TRIGGER_SMTP_GMAIL_PORT="465" \
+    -e WUD_TRIGGER_SMTP_GMAIL_USER="john.doe@gmail.com" \
+    -e WUD_TRIGGER_SMTP_GMAIL_PASS="mysecretpass" \
+    -e WUD_TRIGGER_SMTP_GMAIL_FROM="john.doe@gmail.com" \
+    -e WUD_TRIGGER_SMTP_GMAIL_TO="jane.doe@gmail.com" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
+
 !> For Gmail, you need to enable less secure apps first ([See gmail documentation](https://myaccount.google.com/lesssecureapps)).

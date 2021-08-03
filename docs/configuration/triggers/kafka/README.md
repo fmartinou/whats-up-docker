@@ -20,14 +20,37 @@ The ```kafka``` trigger lets you publish container update notifications to a Kaf
 
 ##### Post a message to a&nbsp;[Cloud Karafka](https://www.cloudkarafka.com/) broker
 
-```bash
-    "WUD_TRIGGER_KAFKA_KARAKFA_BROKERS": "ark-01.srvs.cloudkafka.com:9094,ark-02.srvs.cloudkafka.com:9094,ark-03.srvs.cloudkafka.com:9094",
-    "WUD_TRIGGER_KAFKA_KARAKFA_SSL": "true",
-    "WUD_TRIGGER_KAFKA_KARAKFA_TOPIC": "my-user-id-wud-image",
-    "WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_USER": "my-user-id",
-    "WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_PASSWORD": "my-secret",
-    "WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_TYPE": "SCRAM-SHA-256"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_TRIGGER_KAFKA_KARAKFA_BROKERS=ark-01.srvs.cloudkafka.com:9094,ark-02.srvs.cloudkafka.com:9094,ark-03.srvs.cloudkafka.com:9094
+        - WUD_TRIGGER_KAFKA_KARAKFA_SSL="true
+        - WUD_TRIGGER_KAFKA_KARAKFA_TOPIC=my-user-id-wud-image
+        - WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_USER=my-user-id
+        - WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_PASSWORD=my-secret
+        - WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_TYPE=SCRAM-SHA-256
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_TRIGGER_KAFKA_KARAKFA_BROKERS="ark-01.srvs.cloudkafka.com:9094,ark-02.srvs.cloudkafka.com:9094,ark-03.srvs.cloudkafka.com:9094" \
+    -e WUD_TRIGGER_KAFKA_KARAKFA_SSL="true" \
+    -e WUD_TRIGGER_KAFKA_KARAKFA_TOPIC="my-user-id-wud-image" \
+    -e WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_USER="my-user-id" \
+    -e WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_PASSWORD="my-secret" \
+    -e WUD_TRIGGER_KAFKA_KARAKFA_AUTHENTICATION_TYPE="SCRAM-SHA-256" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 ##### Example of published record
 ```json

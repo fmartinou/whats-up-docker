@@ -17,19 +17,60 @@ The ```pushover``` trigger lets you send realtime notifications to your devices 
 
 ##### Configuration
 ###### Minimal
-```bash
-WUD_TRIGGER_PUSHOVER_1_TOKEN="*****************************"
-WUD_TRIGGER_PUSHOVER_1_USER="******************************"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_TRIGGER_PUSHOVER_1_TOKEN=*****************************
+      - WUD_TRIGGER_PUSHOVER_1_USER=******************************
 ```
 
-###### Full
+#### **Docker**
 ```bash
-WUD_TRIGGER_PUSHOVER_1_TOKEN="*****************************"
-WUD_TRIGGER_PUSHOVER_1_USER="******************************"
-WUD_TRIGGER_PUSHOVER_1_DEVICE="myIphone,mySamsung"
-WUD_TRIGGER_PUSHOVER_1_SOUND="cosmic"
-WUD_TRIGGER_PUSHOVER_1_PRIORITY="2"
+docker run \
+  -e WUD_TRIGGER_PUSHOVER_1_TOKEN="*****************************" \
+  -e WUD_TRIGGER_PUSHOVER_1_USER="******************************" \
+  ...
+  fmartinou/whats-up-docker
 ```
+<!-- tabs:end -->
+
+###### Full
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_TRIGGER_PUSHOVER_1_TOKEN=*****************************
+        - WUD_TRIGGER_PUSHOVER_1_USER=******************************
+        - WUD_TRIGGER_PUSHOVER_1_DEVICE=myIphone,mySamsung
+        - WUD_TRIGGER_PUSHOVER_1_SOUND=cosmic
+        - WUD_TRIGGER_PUSHOVER_1_PRIORITY=2
+```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_TRIGGER_PUSHOVER_1_TOKEN="*****************************" \
+    -e WUD_TRIGGER_PUSHOVER_1_USER="******************************" \
+    -e WUD_TRIGGER_PUSHOVER_1_DEVICE="myIphone,mySamsung" \
+    -e WUD_TRIGGER_PUSHOVER_1_SOUND="cosmic" \
+    -e WUD_TRIGGER_PUSHOVER_1_PRIORITY="2" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 #### How to get the User key
 [Click here](https://pushover.net/settings)

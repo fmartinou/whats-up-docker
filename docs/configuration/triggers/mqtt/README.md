@@ -18,18 +18,57 @@ The ```mqtt``` trigger lets you send container update notifications to an MQTT b
 
 ##### Post a message to a local mosquitto broker
 
-```bash
-WUD_TRIGGER_MQTT_MOSQUITTO_URL="mqtt://localhost:1883"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtt://localhost:1883 \
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_TRIGGER_MQTT_MOSQUITTO_URL="mqtt://localhost:1883" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 ##### Post a message to a maqiatto broker
 
-```bash
-WUD_TRIGGER_MQTT_MAQIATTO_URL="tcp://maqiatto.com:1883"
-WUD_TRIGGER_MQTT_MAQIATTO_USER="john@doe.com"
-WUD_TRIGGER_MQTT_MAQIATTO_PASSWORD="mysecretpassword"
-WUD_TRIGGER_MQTT_MAQIATTO_TOPIC="john@doe.com/wud/image"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_TRIGGER_MQTT_MAQIATTO_URL=tcp://maqiatto.com:1883
+        - WUD_TRIGGER_MQTT_MAQIATTO_USER=john@doe.com
+        - WUD_TRIGGER_MQTT_MAQIATTO_PASSWORD=mysecretpassword
+        - WUD_TRIGGER_MQTT_MAQIATTO_TOPIC=john@doe.com/wud/image
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_TRIGGER_MQTT_MAQIATTO_URL="tcp://maqiatto.com:1883" \
+    -e WUD_TRIGGER_MQTT_MAQIATTO_USER="john@doe.com" \
+    -e WUD_TRIGGER_MQTT_MAQIATTO_PASSWORD="mysecretpassword" \
+    -e WUD_TRIGGER_MQTT_MAQIATTO_TOPIC="john@doe.com/wud/image" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 ##### Example of sent message
 ```json
@@ -57,11 +96,30 @@ WUD_TRIGGER_MQTT_MAQIATTO_TOPIC="john@doe.com/wud/image"
 ![logo](hass.png)
 
 WUD can be easily integrated into [Home-Assistant](https://www.home-assistant.io/) using [MQTT Discovery](https://www.home-assistant.io/docs/mqtt/discovery/).
- 
-```bash
-WUD_TRIGGER_MQTT_MOSQUITTO_URL="mqtt://localhost:1883"
-WUD_TRIGGER_MQTT_MOSQUITTO_HASS_ENABLED="true"
+
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtt://localhost:1883
+        - WUD_TRIGGER_MQTT_MOSQUITTO_HASS_ENABLED=true
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_TRIGGER_MQTT_MOSQUITTO_URL="mqtt://localhost:1883" \
+    -e WUD_TRIGGER_MQTT_MOSQUITTO_HASS_ENABLED="true" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 ###### Check that mqtt integration is properly configured.
 ![image](hass_01.png)

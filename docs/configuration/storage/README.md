@@ -4,17 +4,23 @@ If you want the state to persist after the container removal, you need to mount 
 
 #### Examples 
 
-##### Docker run
-```bash
-docker run -v /path-on-my-host:/store ... fmartinou/whats-up-docker
-```
-
-##### Docker Compose configuration
+<!-- tabs:start -->
+#### **Docker Compose**
 ```yaml
 version: '3'
+
 services:
-  wud:
+  whatsupdocker:
     image: fmartinou/whats-up-docker
+    ...
     volumes:
-        - /path-on-my-host:/store
+      - /path-on-my-host:/store
 ```
+#### **Docker**
+```bash
+docker run \
+  -v /path-on-my-host:/store
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->

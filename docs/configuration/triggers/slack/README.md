@@ -14,7 +14,26 @@ The ```slack``` trigger lets you post image update notifications to a Slack chan
 
 #### Examples
 
-```bash
-WUD_TRIGGER_SLACK_TEST_TOKEN="xoxp-743817063446-xxx",
-WUD_TRIGGER_SLACK_TEST_CHANNEL="wud"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_TRIGGER_SLACK_TEST_TOKEN=xoxp-743817063446-xxx
+        - WUD_TRIGGER_SLACK_TEST_CHANNEL=wud
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_TRIGGER_SLACK_TEST_TOKEN="xoxp-743817063446-xxx" \
+    -e WUD_TRIGGER_SLACK_TEST_CHANNEL="wud" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->

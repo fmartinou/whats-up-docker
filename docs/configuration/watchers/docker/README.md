@@ -36,49 +36,144 @@ You just need to give them different names.
 
 #### Watch the local docker host every day at 1am
 
-```bash
-WUD_WATCHER_LOCAL_CRON="0 1 * * *"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_WATCHER_LOCAL_CRON=0 1 * * *
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_WATCHER_LOCAL_CRON="0 1 * * *" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 #### Watch all containers regardless of their status (created, paused, exited, restarting, running...)
 
-```bash
-WUD_WATCHER_LOCAL_WATCHALL="true"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_WATCHER_LOCAL_WATCHALL=true
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_WATCHER_LOCAL_WATCHALL="true" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 #### Watch a remote docker host via TCP on 2375
 
-```bash
-WUD_WATCHER_MYREMOTEHOST_HOST="myremotehost"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_WATCHER_MYREMOTEHOST_HOST=myremotehost 
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_WATCHER_MYREMOTEHOST_HOST="myremotehost" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 #### Watch a remote docker host via TCP with TLS enabled on 2376
 
-```bash
-WUD_WATCHER_MYREMOTEHOST_HOST="myremotehost"
-WUD_WATCHER_MYREMOTEHOST_PORT="2376"
-WUD_WATCHER_MYREMOTEHOST_CAFILE="/certs/ca.pem"
-WUD_WATCHER_MYREMOTEHOST_CERTFILE="/certs/cert.pem"
-WUD_WATCHER_MYREMOTEHOST_KEYFILE="/certs/key.pem"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_WATCHER_MYREMOTEHOST_HOST=myremotehost
+        - WUD_WATCHER_MYREMOTEHOST_PORT=2376
+        - WUD_WATCHER_MYREMOTEHOST_CAFILE=/certs/ca.pem
+        - WUD_WATCHER_MYREMOTEHOST_CERTFILE=/certs/cert.pem
+        - WUD_WATCHER_MYREMOTEHOST_KEYFILE=/certs/key.pem
+    volumes:
+        - /my-host/my-certs/ca.pem:/certs/ca.pem:ro
+        - /my-host/my-certs/ca.pem:/certs/cert.pem:ro
+        - /my-host/my-certs/ca.pem:/certs/key.pem:ro
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_WATCHER_MYREMOTEHOST_HOST="myremotehost" \
+    -e WUD_WATCHER_MYREMOTEHOST_PORT="2376" \
+    -e WUD_WATCHER_MYREMOTEHOST_CAFILE="/certs/ca.pem" \
+    -e WUD_WATCHER_MYREMOTEHOST_CERTFILE="/certs/cert.pem" \
+    -e WUD_WATCHER_MYREMOTEHOST_KEYFILE="/certs/key.pem" \
+    -v /my-host/my-certs/ca.pem:/certs/ca.pem:ro \
+    -v /my-host/my-certs/ca.pem:/certs/cert.pem:ro \
+    -v /my-host/my-certs/ca.pem:/certs/key.pem:ro \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 !> Don't forget to mount the certificates into the container!
 
-```
-...
--v /my-host/my-certs/ca.pem:/certs/ca.pem \
--v /my-host/my-certs/ca.pem:/certs/cert.pem \
--v /my-host/my-certs/ca.pem:/certs/key.pem \
-...
-```
-
 #### Watch 1 local Docker host and 2 remote docker hosts at the same time
 
-```bash
-WUD_WATCHER_LOCAL_SOCKET="/var/run/docker.sock"
-WUD_WATCHER_MYREMOTEHOST1_HOST="myremotehost1"
-WUD_WATCHER_MYREMOTEHOST2_HOST="myremotehost2"
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        -  WUD_WATCHER_LOCAL_SOCKET=/var/run/docker.sock
+        -  WUD_WATCHER_MYREMOTEHOST1_HOST=myremotehost1
+        -  WUD_WATCHER_MYREMOTEHOST2_HOST=myremotehost2
 ```
+
+#### **Docker**
+```bash
+docker run \
+    -e  WUD_WATCHER_LOCAL_SOCKET="/var/run/docker.sock" \
+    -e  WUD_WATCHER_MYREMOTEHOST1_HOST="myremotehost1" \
+    -e  WUD_WATCHER_MYREMOTEHOST2_HOST="myremotehost2" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 ## Supported labels
 
@@ -100,57 +195,114 @@ If you face [quota related errors](https://docs.docker.com/docker-hub/download-r
 
 ##### Include specific containers to watch
 Configure WUD to disable WATCHBYDEFAULT feature.
-```bash
-WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT=false
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_WATCHER_LOCAL_WATCHBYDEFAULT=false
 ```
 
+#### **Docker**
+```bash
+docker run \
+    -e WUD_WATCHER_LOCAL_WATCHBYDEFAULT="false" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
+
 Then add the `wud.watch=true` label on the containers you want to watch.
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  mariadb:
+    image: mariadb:10.4.5
+    ...
+    labels:
+      wud.watch=true
+```
+
+#### **Docker**
 ```bash
 docker run -d --name mariadb --label wud.watch=true mariadb:10.4.5
 ```
+<!-- tabs:end -->
 
 ##### Exclude specific containers to watch
 Ensure `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` is true (default value). 
 
 Then add the `wud.watch=false` label on the containers you want to exclude from being watched.
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  mariadb:
+    image: mariadb:10.4.5
+    ...
+    labels:
+      wud.watch=false
+```
+
+#### **Docker**
 ```bash
 docker run -d --name mariadb --label wud.watch=false mariadb:10.4.5
 ```
+<!-- tabs:end -->
 
 ##### Include only 3 digits semver tags
 You can filter (by inclusion or inclusion) which versions can be candidates for update.
 
 For example, you can indicate that you want to watch x.y.z versions only
-```bash
-# Docker run example
-docker run -d --name mariadb --label 'wud.tag.include=^\d+\.\d+\.\d+$' mariadb:10.4.5
-
-# Docker Compose example
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
 version: '3'
 
 services:
 
-    mariadb:
-        image: mariadb:10.4.5
-        labels:
-            - wud.tag.include=^\d+\.\d+\.\d+$$
+  mariadb:
+    image: mariadb:10.4.5
+    labels:
+      - wud.tag.include=^\d+\.\d+\.\d+$$
 ```
+
+#### **Docker**
+```bash
+docker run -d --name mariadb --label 'wud.tag.include=^\d+\.\d+\.\d+$' mariadb:10.4.5
+```
+<!-- tabs:end -->
 
 ##### Enable digest watching
 Additionally to semver tag tracking, you can also track if the digest associated to the local tag has been updated.  
 It can be convenient to monitor image tags known to be overridden (`latest`, `10`, `10.6`...)
-```bash
-# Docker run example
-docker run -d --name mariadb --label 'wud.tag.include=^\d+$' --label wud.watch.digest=true mariadb:10
 
-# Docker Compose example
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
 version: '3'
 
 services:
 
-    mariadb:
-        image: mariadb:10
-        labels:
-            - wud.tag.include=^\d+$$
-            - wud.watch.digest=true
+  mariadb:
+    image: mariadb:10
+    labels:
+      - wud.tag.include=^\d+$$
+      - wud.watch.digest=true
 ```
+
+#### **Docker**
+```bash
+docker run -d --name mariadb --label 'wud.tag.include=^\d+$' --label wud.watch.digest=true mariadb:10
+```
+<!-- tabs:end -->

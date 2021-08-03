@@ -22,9 +22,26 @@ Don't forget to configure authentication if you're using [Docker Hub Private Rep
 #### Examples
 
 ##### Configure for anonymous access
-```bash
-WUD_REGISTRY_HUB_AUTH=""
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_REGISTRY_HUB_AUTH=
 ```
+#### **Docker**
+```bash
+docker run \
+  -e WUD_REGISTRY_HUB_AUTH="" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 ##### Configure Authentication using Login/Token
 
@@ -37,10 +54,28 @@ WUD_REGISTRY_HUB_AUTH=""
 
 ![image](hub_token.png)
 
-```bash
-WUD_REGISTRY_HUB_LOGIN=mylogin
-WUD_REGISTRY_HUB_TOKEN=fb4d5db9-e64d-3648-8846-74d0846e55de
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_REGISTRY_HUB_LOGIN=mylogin
+      - WUD_REGISTRY_HUB_TOKEN=fb4d5db9-e64d-3648-8846-74d0846e55de
 ```
+#### **Docker**
+```bash
+docker run \
+  -e WUD_REGISTRY_HUB_LOGIN="mylogin"
+  -e WUD_REGISTRY_HUB_TOKEN="fb4d5db9-e64d-3648-8846-74d0846e55de"
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 ##### Configure Authentication using Base64 encoded credentials
 
@@ -55,6 +90,23 @@ For example,
 - and your password is `2c1bd872-efb6-4f3a-81aa-724518a0a592`
 - the resulting encoded string would be `am9obmRvZToyYzFiZDg3Mi1lZmI2LTRmM2EtODFhYS03MjQ1MThhMGE1OTI=`
 
-```bash
-WUD_REGISTRY_HUB_AUTH=am9obmRvZToyYzFiZDg3Mi1lZmI2LTRmM2EtODFhYS03MjQ1MThhMGE1OTI=
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_REGISTRY_HUB_AUTH=am9obmRvZToyYzFiZDg3Mi1lZmI2LTRmM2EtODFhYS03MjQ1MThhMGE1OTI=
 ```
+#### **Docker**
+```bash
+docker run \
+  -e WUD_REGISTRY_HUB_AUTH="am9obmRvZToyYzFiZDg3Mi1lZmI2LTRmM2EtODFhYS03MjQ1MThhMGE1OTI="
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->

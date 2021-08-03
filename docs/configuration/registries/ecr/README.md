@@ -14,12 +14,30 @@ The ```ecr```registry lets you configure [ECR](https://aws.amazon.com/ecr/) inte
 !> The AmazonEC2ContainerRegistryReadOnly Policy (or higher) must be attached to the AWS IAM User.
 
 #### Examples
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
 
-```bash
-WUD_REGISTRY_ECR_ACCESSKEYID=xxx
-WUD_REGISTRY_ECR_SECRETACCESSKEY=xxx
-WUD_REGISTRY_ECR_REGION=eu-west-1
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_REGISTRY_ECR_ACCESSKEYID=xxx
+      - WUD_REGISTRY_ECR_SECRETACCESSKEY=xxx
+      - WUD_REGISTRY_ECR_REGION=eu-west-1 
 ```
+#### **Docker**
+```bash
+docker run \
+  -e WUD_REGISTRY_ECR_ACCESSKEYID="xxx" \
+  -e WUD_REGISTRY_ECR_SECRETACCESSKEY="xxx" \
+  -e WUD_REGISTRY_ECR_REGION="eu-west-1" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 #### How to create an AWS IAM user and get programmatic access
 

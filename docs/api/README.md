@@ -17,11 +17,47 @@ You can override this behaviour using the following environment variables.
 ### Examples
 
 #### Disable http listener
-```bash
-WUD_API_ENABLED=false
+
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_API_ENABLED=false
 ```
+#### **Docker**
+```bash
+docker run \
+  -e WUD_API_ENABLED=false \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 #### Set http listener port to 8080
-```bash
-WUD_API_PORT=8080
+
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_API_PORT=8080
 ```
+#### **Docker**
+```bash
+docker run \
+  -e WUD_API_PORT=8080 \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->

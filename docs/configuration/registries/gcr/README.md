@@ -11,11 +11,28 @@ The ```gcr```registry lets you configure [GCR](https://cloud.google.com/containe
 | `WUD_REGISTRY_GCR_PRIVATEKEY`  | Service Account Private Key  | See [Service Account credentials](https://cloud.google.com/container-registry/docs/advanced-authentication#json-key) |               |
 
 #### Examples
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
 
-```bash
-WUD_REGISTRY_GCR_CLIENTEMAIL="johndoe@mysuperproject.iam.gserviceaccount.com"
-WUD_REGISTRY_GCR_PRIVATEKEY="-----BEGIN PRIVATE KEY-----xxxxxxxxxxx\n-----END PRIVATE KEY-----\n"
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_REGISTRY_GCR_CLIENTEMAIL=johndoe@mysuperproject.iam.gserviceaccount.com
+      - WUD_REGISTRY_GCR_PRIVATEKEY=-----BEGIN PRIVATE KEY-----xxxxxxxxxxx\n-----END PRIVATE KEY-----\n 
 ```
+#### **Docker**
+```bash
+docker run \
+  -e WUD_REGISTRY_GCR_CLIENTEMAIL="johndoe@mysuperproject.iam.gserviceaccount.com" \
+  -e WUD_REGISTRY_GCR_PRIVATEKEY="-----BEGIN PRIVATE KEY-----xxxxxxxxxxx\n-----END PRIVATE KEY-----\n" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
 
 #### How to create a Service Account on Google Cloud Platform
 
