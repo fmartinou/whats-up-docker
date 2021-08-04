@@ -165,7 +165,7 @@ script:
   #    --env WUD_REGISTRY_HUB_TOKEN="$DOCKER_PASSWORD"
 
   # Give wud a little time to fetch all available updates
-  - sleep 10
+  - sleep 20
 
   # Run E2E Tests
   - (cd e2e && npm run cucumber)
