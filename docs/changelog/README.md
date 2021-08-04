@@ -1,9 +1,9 @@
 # Changelog
 
-## develop
+## 5.2.0
 - :star: Allow excluding specific containers from being watched
-- :star: Add Docker Compose examples to the documentation
 - :star: Add Github Container Registry support
+- :star: Add Docker Compose examples to the documentation
 
 ## 5.1.0
 - :star: Upgrade to nodejs 16
