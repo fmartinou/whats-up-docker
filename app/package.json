@@ -4,7 +4,7 @@
   "description": "What'up Docker? the app",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js | bunyan",
+    "start": "nodemon index.js | bunyan -L",
     "doc": "docsify serve ./docs",
     "lint": "eslint '**/*.js'",
     "test": "jest --coverage"

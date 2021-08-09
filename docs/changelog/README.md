@@ -1,5 +1,8 @@
 # Changelog
 
+## develop
+- :star: Support TZ env var for local time configuration
+
 ## 5.2.0
 - :star: Allow excluding specific containers from being watched
 - :star: Add Github Container Registry support
