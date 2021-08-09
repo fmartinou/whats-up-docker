@@ -2,6 +2,8 @@
 
 ## develop
 - :star: Support TZ env var for local time configuration
+- :star: Update all dependencies
+- :fire: Fix [DEP0152] DeprecationWarning (caused by prom-client)
 
 ## 5.2.0
 - :star: Allow excluding specific containers from being watched
