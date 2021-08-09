@@ -1,5 +1,4 @@
 const Trigger = require('../Trigger');
-const log = require('../../../log');
 
 /**
  * Mock Trigger implementation (for tests)
@@ -13,13 +12,6 @@ class Mock extends Trigger {
         return this.joi.object().keys({
             mock: this.joi.string().default('mock'),
         });
-    }
-
-    /**
-     * Init trigger.
-     */
-    initTrigger() {
-        this.log = log;
     }
 
     /**

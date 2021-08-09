@@ -6,7 +6,7 @@ const component = require('./component');
  * @returns {{id: string}[]}
  */
 function getRegistries() {
-    return registry.getState().registries;
+    return registry.getState().registry;
 }
 /**
  * Init Router.

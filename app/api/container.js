@@ -10,7 +10,7 @@ const router = express.Router();
  * @returns {{id: string}[]}
  */
 function getWatchers() {
-    return registry.getState().watchers;
+    return registry.getState().watcher;
 }
 
 /**
@@ -90,7 +90,7 @@ async function watchContainer(req, res) {
     const { id } = req.params;
     const container = storeContainer.getContainer(id);
     if (container) {
-        const watcher = getWatchers()[`docker.${container.watcher}`];
+        const watcher = getWatchers()[`watcher.docker.${container.watcher}`];
         if (!watcher) {
             res.status(500).json({
                 error: `No provider found for container ${id} and provider ${container.watcher}`,

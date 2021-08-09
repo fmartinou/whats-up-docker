@@ -18,11 +18,15 @@ class Component {
      * @param name the name of the component
      * @param configuration the configuration of the component
      */
-    async register(type, name, configuration) {
+    async register(kind, type, name, configuration) {
+        // Child log for the component
+        this.log = log.child({ component: `${kind}.${type}.${name}` });
+        this.kind = kind;
         this.type = type;
         this.name = name;
+
         this.configuration = this.validateConfiguration(configuration);
-        log.info(`Register component ${name} of type ${type} with configuration ${JSON.stringify(this.maskConfiguration(configuration))}`);
+        this.log.info(`Register ${kind} with configuration ${JSON.stringify(this.maskConfiguration(configuration))}`);
         await this.init();
         return this;
     }
@@ -32,7 +36,7 @@ class Component {
      * @returns {Promise<void>}
      */
     async deregister() {
-        log.info(`Deregister component ${this.name} of type ${this.type}`);
+        this.log.info('Deregister component');
         await this.deregisterComponent();
         return this;
     }
@@ -90,7 +94,7 @@ class Component {
      * @returns {string}
      */
     getId() {
-        return `${this.type}.${this.name}`;
+        return `${this.kind}.${this.type}.${this.name}`;
     }
 
     /**

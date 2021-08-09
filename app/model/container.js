@@ -110,7 +110,12 @@ function flatten(container) {
     return containerFlatten;
 }
 
+function fullName(container) {
+    return `${container.watcher}_${container.name}`;
+}
+
 module.exports = {
     validate,
     flatten,
+    fullName,
 };

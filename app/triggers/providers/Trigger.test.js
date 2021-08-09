@@ -24,6 +24,8 @@ test('init should register to container new version event', async () => {
 
 test('trigger should call notify method of the trigger', async () => {
     const trigger = new Trigger();
+    trigger.log = log;
+    trigger.log.child = () => log;
     await trigger.init();
 
     const spy = jest.spyOn(trigger, 'notify');
@@ -37,9 +39,11 @@ test('trigger should call notify method of the trigger', async () => {
 
 test('trigger should warn when notify method of the trigger fails', async () => {
     const trigger = new Trigger();
+    trigger.log = log;
+    trigger.log.child = () => log;
     trigger.notify = () => { throw new Error('Fail!!!'); };
     await trigger.init();
     const spyLog = jest.spyOn(log, 'warn');
     await trigger.trigger({});
-    expect(spyLog).toHaveBeenCalledWith('Notify error from undefined.undefined (Fail!!!)');
+    expect(spyLog).toHaveBeenCalledWith('Notify error from undefined.undefined.undefined (Fail!!!)');
 });

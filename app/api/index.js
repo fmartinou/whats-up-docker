@@ -1,6 +1,6 @@
 const joi = require('joi');
 const express = require('express');
-const log = require('../log');
+const log = require('../log').child({ component: 'api' });
 const apiRouter = require('./api');
 const uiRouter = require('./ui');
 const prometheusRouter = require('./prometheus');
@@ -29,7 +29,7 @@ const configuration = configurationToValidate.value;
 async function init() {
     // Start API if enabled
     if (configuration.enabled) {
-        log.debug(`HTTP API enabled => Start Http listener on port ${configuration.port}`);
+        log.debug(`API/UI enabled => Start Http listener on port ${configuration.port}`);
 
         // Init Express app
         const app = express();
@@ -48,10 +48,10 @@ async function init() {
 
         // Listen
         app.listen(configuration.port, () => {
-            log.info(`HTTP API exposed on port ${configuration.port}`);
+            log.info(`API/UI exposed on port ${configuration.port}`);
         });
     } else {
-        log.debug('WUD API disabled');
+        log.debug('API/UI disabled');
     }
 }
 

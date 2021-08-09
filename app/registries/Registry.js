@@ -26,6 +26,21 @@ class Registry extends Component {
     }
 
     /**
+     * Override to apply custom format to the logger.
+     */
+    async register(kind, type, name, configuration) {
+        this.log = log.child({ component: `${kind}.${type}` });
+        this.kind = kind;
+        this.type = type;
+        this.name = name;
+
+        this.configuration = this.validateConfiguration(configuration);
+        this.log.info(`Register ${kind} with configuration ${JSON.stringify(this.maskConfiguration(configuration))}`);
+        await this.init();
+        return this;
+    }
+
+    /**
      * If this registry is responsible for the image (to be overridden).
      * @param image the image
      * @returns {boolean}
@@ -62,7 +77,7 @@ class Registry extends Component {
      * @returns {*}
      */
     async getTags(image) {
-        log.debug(`${this.getId()} - Get ${image.name} tags`);
+        this.log.debug(`${this.getId()} - Get ${image.name} tags`);
         const tagsResult = await this.callRegistry({
             image,
             url: `${image.registry.url}/${image.name}/tags/list`,
@@ -84,7 +99,7 @@ class Registry extends Component {
         const tagOrDigest = digest || image.tag.value;
         let manifestDigestFound;
         let manifestMediaType;
-        log.debug(`${this.getId()} - Get ${image.name}:${tagOrDigest} manifest`);
+        this.log.debug(`${this.getId()} - Get ${image.name}:${tagOrDigest} manifest`);
         const responseManifests = await this.callRegistry({
             image,
             url: `${image.registry.url}/${image.name}/manifests/${tagOrDigest}`,

@@ -1,7 +1,6 @@
 const mqtt = require('async-mqtt');
 const capitalize = require('capitalize');
 const Trigger = require('../Trigger');
-const log = require('../../../log');
 const { registerContainerAdded, registerContainerRemoved } = require('../../../event');
 const { flatten } = require('../../../model/container');
 const { getVersion } = require('../../../configuration');
@@ -86,7 +85,7 @@ class Mqtt extends Trigger {
             baseTopic: this.configuration.topic,
             container,
         });
-        log.debug(`Publish container result to ${containerTopic}`);
+        this.log.debug(`Publish container result to ${containerTopic}`);
         return this.client.publish(containerTopic, JSON.stringify(flatten(container)), {
             retain: true,
         });
@@ -110,7 +109,7 @@ class Mqtt extends Trigger {
         // Hass discovery topic
         const discoveryTopic = `${this.configuration.hass.prefix}/binary_sensor/${entityId}/config`;
 
-        log.info(`Add hass device [id=${entityId}]`);
+        this.log.info(`Add hass device [id=${entityId}]`);
         await this.client.publish(discoveryTopic, JSON.stringify({
             unique_id: entityId,
             name: entityId,
@@ -153,7 +152,7 @@ class Mqtt extends Trigger {
         // Hass discovery topic
         const discoveryTopic = `${this.configuration.hass.prefix}/binary_sensor/${entityId}/config`;
 
-        log.info(`Remove hass device [id=${entityId}]`);
+        this.log.info(`Remove hass device [id=${entityId}]`);
         await this.client.publish(discoveryTopic, JSON.stringify({}), {
             retain: true,
         });

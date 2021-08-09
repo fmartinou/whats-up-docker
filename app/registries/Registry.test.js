@@ -1,3 +1,5 @@
+const log = require('../log');
+
 jest.mock('request-promise-native');
 jest.mock('../prometheus/registry', () => ({
     getSummaryTags: () => ({
@@ -8,7 +10,7 @@ jest.mock('../prometheus/registry', () => ({
 const Registry = require('./Registry');
 
 const registry = new Registry();
-registry.register('hub', 'test', {});
+registry.register('registry', 'hub', 'test', {});
 
 test('base64Encode should decode credentials', () => {
     expect(Registry.base64Encode('username', 'password')).toEqual('dXNlcm5hbWU6cGFzc3dvcmQ=');
@@ -32,6 +34,7 @@ test('authenticate should return same request options when not overridden', () =
 
 test('getTags should sort tags z -> a', () => {
     const registryMocked = new Registry();
+    registryMocked.log = log;
     registryMocked.callRegistry = () => ({ tags: ['v1', 'v2', 'v3'] });
     expect(registryMocked.getTags({ name: 'test', registry: { url: 'test' } }))
         .resolves
@@ -40,6 +43,7 @@ test('getTags should sort tags z -> a', () => {
 
 test('getImageManifestDigest should return digest for application/vnd.docker.distribution.manifest.list.v2+json then application/vnd.docker.distribution.manifest.v2+json', () => {
     const registryMocked = new Registry();
+    registryMocked.log = log;
     registryMocked.callRegistry = (options) => {
         if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json') {
             return {
@@ -94,6 +98,7 @@ test('getImageManifestDigest should return digest for application/vnd.docker.dis
 
 test('getImageManifestDigest should return digest for application/vnd.docker.distribution.manifest.list.v2+json then application/vnd.docker.container.image.v1+json', () => {
     const registryMocked = new Registry();
+    registryMocked.log = log;
     registryMocked.callRegistry = (options) => {
         if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json') {
             return {
@@ -141,6 +146,7 @@ test('getImageManifestDigest should return digest for application/vnd.docker.dis
 
 test('getImageManifestDigest should return digest for application/vnd.docker.distribution.manifest.v2+json', () => {
     const registryMocked = new Registry();
+    registryMocked.log = log;
     registryMocked.callRegistry = (options) => {
         if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json') {
             return {
@@ -181,6 +187,7 @@ test('getImageManifestDigest should return digest for application/vnd.docker.dis
 
 test('getImageManifestDigest should return digest for application/vnd.docker.container.image.v1+json', () => {
     const registryMocked = new Registry();
+    registryMocked.log = log;
     registryMocked.callRegistry = (options) => {
         if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json') {
             return {
@@ -217,6 +224,7 @@ test('getImageManifestDigest should return digest for application/vnd.docker.con
 
 test('getImageManifestDigest should throw when no digest found', () => {
     const registryMocked = new Registry();
+    registryMocked.log = log;
     registryMocked.callRegistry = () => ({});
     expect(registryMocked.getImageManifestDigest({
         name: 'image',
@@ -233,6 +241,7 @@ test('getImageManifestDigest should throw when no digest found', () => {
 
 test('callRegistry should call authenticate', () => {
     const registryMocked = new Registry();
+    registryMocked.log = log;
     const spyAuthenticate = jest.spyOn(registryMocked, 'authenticate');
     registryMocked.callRegistry({
         image: {},

@@ -1,10 +1,12 @@
 const { ValidationError } = require('joi');
 const asyncMqtt = require('async-mqtt');
+const log = require('../../../log');
 
 jest.mock('async-mqtt');
 const Mqtt = require('./Mqtt');
 
 const mqtt = new Mqtt();
+mqtt.log = log;
 
 const configurationValid = {
     url: 'mqtt://host:1883',

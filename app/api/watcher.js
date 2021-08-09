@@ -6,7 +6,7 @@ const component = require('./component');
  * @returns {{id: string}[]}
  */
 function getWatchers() {
-    return registry.getState().watchers;
+    return registry.getState().watcher;
 }
 
 /**

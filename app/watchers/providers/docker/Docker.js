@@ -8,7 +8,7 @@ const event = require('../../../event');
 const storeContainer = require('../../../store/container');
 const log = require('../../../log');
 const Component = require('../../../registry/Component');
-const { validate: validateContainer } = require('../../../model/container');
+const { validate: validateContainer, fullName } = require('../../../model/container');
 const registry = require('../../../registry');
 const { getWatchContainerGauge } = require('../../../prometheus/watcher');
 
@@ -17,14 +17,17 @@ const { getWatchContainerGauge } = require('../../../prometheus/watcher');
  * @returns {*}
  */
 function getRegistries() {
-    return registry.getState().registries;
+    return registry.getState().registry;
 }
 
 /**
  * Process a Container Result.
  * @param containerWithResult
+ * @param logWatcher
  */
-function processContainerResult(containerWithResult) {
+function processContainerResult(containerWithResult, logWatcher) {
+    const logContainer = logWatcher
+        .child({ container: fullName(containerWithResult) }) || logWatcher;
     let containerToTrigger;
     let trigger = false;
 
@@ -33,12 +36,12 @@ function processContainerResult(containerWithResult) {
 
     // Not found in DB? => Save it
     if (!containerInDb) {
-        log.debug(`${containerWithResult.id} - Container watched for the first time`);
+        logContainer.debug('Container watched for the first time');
         containerToTrigger = storeContainer.insertContainer(containerWithResult);
         if (containerWithResult.updateAvailable) {
             trigger = true;
         } else {
-            log.debug(`${containerWithResult.id} - No update available`);
+            logContainer.debug('No update available');
         }
 
         // Found in DB? => update it
@@ -48,12 +51,15 @@ function processContainerResult(containerWithResult) {
             && containerWithResult.updateAvailable;
     }
 
+    if (containerToTrigger.updateAvailable) {
+        logContainer.info('Update available');
+    }
+
     // Emit event only if new version not already emitted
     if (trigger) {
-        log.info(`${containerWithResult.id} - Update available`);
         event.emitContainerNewVersion(containerToTrigger);
     } else {
-        log.debug(`${containerWithResult.id} - Result already processed => No need to trigger`);
+        logContainer.debug('Result already processed => No need to trigger');
     }
 }
 
@@ -98,7 +104,7 @@ function normalizeContainer(container) {
     const registryProvider = Object.values(getRegistries())
         .find((provider) => provider.match(container.image));
     if (!registryProvider) {
-        log.warn(`${container.id} - No Registry Provider found`);
+        log.warn(`${fullName(container)} - No Registry Provider found`);
         containerWithNormalizedImage.image.registry.name = 'unknown';
     } else {
         containerWithNormalizedImage.image = registryProvider.normalizeImage(container.image);
@@ -205,14 +211,16 @@ class Docker extends Component {
      */
     init() {
         this.initWatcher();
-        log.info(`Schedule runner (${this.configuration.cron})`);
-        this.watchCron = cron.schedule(this.configuration.cron, () => this.watch());
+        this.log.info(`Cron scheduled (${this.configuration.cron})`);
+        this.watchCron = cron.schedule(this.configuration.cron, () => this.watchFromCron());
 
         // Subscribe to image result events
-        event.registerContainerResult(processContainerResult);
+        event.registerContainerResult(
+            (containerWithResult) => processContainerResult(containerWithResult, this.log),
+        );
 
         // watch at startup (after all components have been registered)
-        setTimeout(() => this.watch(), 1000);
+        setTimeout(() => this.watchFromCron(), 1000);
     }
 
     initWatcher() {
@@ -246,6 +254,19 @@ class Docker extends Component {
     }
 
     /**
+     * Watch containers (called by cron scheduled tasks).
+     * @returns {Promise<*[]>}
+     */
+    async watchFromCron() {
+        this.log.info(`Cron started (${this.configuration.cron})`);
+        const containers = await this.watch();
+        const updateAvailableCount = containers.filter((item) => item.updateAvailable).length;
+        const stats = `${containers.length} containers, ${updateAvailableCount} updates available`;
+        this.log.info(`Cron finished (${stats})`);
+        return containers;
+    }
+
+    /**
      * Watch main method.
      * @returns {Promise<*[]>}
      */
@@ -256,7 +277,7 @@ class Docker extends Component {
         try {
             containers = await this.getContainers();
         } catch (e) {
-            log.warn(`Error when trying to get the containers list to watch (${e.message})`);
+            this.log.warn(`Error when trying to get the list of the containers to watch (${e.message})`);
         }
 
         // Prune old containers from the store
@@ -264,7 +285,7 @@ class Docker extends Component {
             const containersFromTheStore = storeContainer.getContainers({ watcher: this.name });
             pruneOldContainers(containers, containersFromTheStore);
         } catch (e) {
-            log.warn(`Error when trying to prune the old containers (${e.message})`);
+            this.log.warn(`Error when trying to prune the old containers (${e.message})`);
         }
         getWatchContainerGauge().set({
             type: this.type,
@@ -274,7 +295,7 @@ class Docker extends Component {
         try {
             return await Promise.all(containers.map((container) => this.watchContainer(container)));
         } catch (e) {
-            log.warn(`Error when processing images (${e.message})`);
+            this.log.warn(`Error when processing some containers (${e.message})`);
             return [];
         }
     }
@@ -285,18 +306,20 @@ class Docker extends Component {
      * @returns {Promise<*>}
      */
     async watchContainer(container) {
+        // Child logger for the container to process
+        const logContainer = this.log.child({ container: fullName(container) });
         const containerWithResult = container;
 
         // Reset previous results
         delete containerWithResult.result;
         delete containerWithResult.error;
-        log.debug(`${container.id} - Watch container`);
+        logContainer.debug('Start watching');
 
         try {
-            containerWithResult.result = await this.findNewVersion(container);
+            containerWithResult.result = await this.findNewVersion(container, logContainer);
         } catch (e) {
-            log.warn(`${container.id} - Error when trying to find new version (${e.message})`);
-            log.debug(e);
+            logContainer.warn(`Error when trying to find a new version (${e.message})`);
+            logContainer.debug(e);
             containerWithResult.error = {
                 message: e.message,
             };
@@ -337,11 +360,11 @@ class Docker extends Component {
      */
 
     /* eslint-disable-next-line */
-    async findNewVersion(container) {
+    async findNewVersion(container, logContainer) {
         const registryProvider = getRegistry(container.image.registry.name);
         const result = { tag: container.image.tag.value };
         if (!registryProvider) {
-            log.error(`${container.id} - Unsupported registry (${container.image.registry.name})`);
+            logContainer.error(`Unsupported registry (${container.image.registry.name})`);
         } else {
             // Must watch digest? => Find local/remote digests on registry
             if (container.image.digest.watch && container.image.digest.repo) {
@@ -393,7 +416,7 @@ class Docker extends Component {
         // Is container already in store? just return it :)
         const containerInStore = storeContainer.getContainer(containerId);
         if (containerInStore !== undefined && containerInStore.error === undefined) {
-            log.debug(`${containerInStore.id} - Container already in store`);
+            this.log.debug(`Container ${containerInStore.id} already in store`);
             return containerInStore;
         }
 
@@ -413,7 +436,7 @@ class Docker extends Component {
         let imageNameToParse = container.Image;
         if (imageNameToParse.includes('sha256:')) {
             if (!image.RepoTags || image.RepoTags.length === 0) {
-                log.warn(`${containerId} - Cannot get a reliable tag for this image [${imageNameToParse}]`);
+                this.log.warn(`Cannot get a reliable tag for this image [${imageNameToParse}]`);
                 return Promise.resolve();
             }
             // Get the first repo tag (better than nothing ;)

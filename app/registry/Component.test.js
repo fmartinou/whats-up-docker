@@ -26,15 +26,15 @@ test('mask should not fail when mask is longer than original string', () => {
 
 test('getId should return the concatenation $type.$name', () => {
     const component = new Component();
-    component.register('type', 'name', { x: 'x' });
-    expect(component.getId()).toEqual('type.name');
+    component.register('kind', 'type', 'name', { x: 'x' });
+    expect(component.getId()).toEqual('kind.type.name');
 });
 
 test('register should call validateConfiguration and init methods of the component', () => {
     const component = new Component();
     const spyValidateConsiguration = jest.spyOn(component, 'validateConfiguration');
     const spyInit = jest.spyOn(component, 'init');
-    component.register('type', 'name', { x: 'x' });
+    component.register('kind', 'type', 'name', { x: 'x' });
     expect(spyValidateConsiguration).toHaveBeenCalledWith({ x: 'x' });
     expect(spyInit).toHaveBeenCalledTimes(1);
 });

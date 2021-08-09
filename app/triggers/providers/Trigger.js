@@ -1,6 +1,5 @@
 const Component = require('../../registry/Component');
 const event = require('../../event');
-const log = require('../../log');
 const { getTriggerCounter } = require('../../prometheus/trigger');
 
 class Trigger extends Component {
@@ -12,12 +11,12 @@ class Trigger extends Component {
     async trigger(containerResult) {
         let status = 'error';
         try {
-            log.debug(`Run trigger ${this.getId()}`);
+            this.log.debug(`Run trigger ${this.getId()}`);
             await this.notify(containerResult);
             status = 'success';
         } catch (e) {
-            log.warn(`Notify error from ${this.getId()} (${e.message})`);
-            log.debug(e);
+            this.log.warn(`Notify error from ${this.getId()} (${e.message})`);
+            this.log.debug(e);
         } finally {
             getTriggerCounter().inc({ type: this.type, name: this.name, status });
         }

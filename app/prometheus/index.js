@@ -1,6 +1,6 @@
 const { collectDefaultMetrics, register } = require('prom-client');
 
-const log = require('../log');
+const log = require('../log').child({ component: 'prometheus' });
 const container = require('./container');
 const trigger = require('./trigger');
 const watcher = require('./watcher');

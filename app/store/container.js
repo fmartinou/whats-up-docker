@@ -2,7 +2,7 @@
  * Container store.
  */
 const { byString, byValue } = require('sort-es');
-const log = require('../log');
+const log = require('../log').child({ component: 'store' });
 const { validate: validateContainer } = require('../model/container');
 const {
     emitContainerAdded,

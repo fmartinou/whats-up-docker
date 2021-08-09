@@ -1,7 +1,7 @@
 const joi = require('joi');
 const Loki = require('lokijs');
 const fs = require('fs');
-const log = require('../log');
+const log = require('../log').child({ component: 'store' });
 const { getStoreConfiguration } = require('../configuration');
 
 const app = require('./app');
@@ -50,7 +50,7 @@ async function loadDb(err, resolve, reject) {
  * @returns {Promise<unknown>}
  */
 async function init() {
-    log.info(`Load DB (${configuration.path}/${configuration.file})`);
+    log.info(`Load store from (${configuration.path}/${configuration.file})`);
     if (!fs.existsSync(configuration.path)) {
         log.info(`Create folder ${configuration.path}`);
         fs.mkdirSync(configuration.path);

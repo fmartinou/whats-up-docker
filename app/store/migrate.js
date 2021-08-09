@@ -1,4 +1,4 @@
-const log = require('../log');
+const log = require('../log').child({ component: 'store' });
 const { getContainers, deleteContainer } = require('./container');
 
 /**

@@ -29,6 +29,8 @@ beforeEach(() => {
     prometheusWatcher.init();
     docker = new Docker();
     docker.name = 'test';
+    log.child = () => log;
+    docker.log = log;
 });
 
 afterEach(() => {
@@ -566,17 +568,17 @@ test('watch should log error when watching a container fails', async () => {
     docker.configuration = {
         watchbydefault: true,
     };
-    const spylog = jest.spyOn(log, 'warn');
+    const spylog = jest.spyOn(docker.log, 'warn');
     docker.watchContainer = () => { throw new Error('Failure!!!'); };
     expect(await docker.watch()).toEqual([]);
-    expect(spylog).toHaveBeenCalledWith('Error when processing images (Failure!!!)');
+    expect(spylog).toHaveBeenCalledWith('Error when processing some containers (Failure!!!)');
 });
 
 test('watch should log error when an error occurs when listing containers fails', async () => {
     docker.getContainers = () => { throw new Error('Failure!!!'); };
-    const spylog = jest.spyOn(log, 'warn');
+    const spylog = jest.spyOn(docker.log, 'warn');
     expect(await docker.watch()).toEqual([]);
-    expect(spylog).toHaveBeenCalledWith('Error when trying to get the containers list to watch (Failure!!!)');
+    expect(spylog).toHaveBeenCalledWith('Error when trying to get the list of the containers to watch (Failure!!!)');
 });
 
 test('pruneOldContainers should prune old containers', () => {
@@ -612,7 +614,7 @@ test('processContainerResult should emit event when update available and not alr
     storeContainer.getContainer = () => (undefined);
     storeContainer.insertContainer = () => (containerWithResult);
     const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
-    processContainerResult(containerWithResult);
+    processContainerResult(containerWithResult, docker.log);
     expect(spyEvent).toHaveBeenCalled();
 });
 
@@ -626,7 +628,7 @@ test('processContainerResult should not emit event when no update available', ()
     storeContainer.getContainer = () => (undefined);
     storeContainer.insertContainer = () => (containerWithResult);
     const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
-    processContainerResult(containerWithResult);
+    processContainerResult(containerWithResult, docker.log);
     expect(spyEvent).not.toHaveBeenCalled();
 });
 
@@ -641,7 +643,7 @@ test('processContainerResult should not emit event when update available but alr
     storeContainer.getContainer = () => (containerWithResult);
     storeContainer.updateContainer = () => (containerWithResult);
     const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
-    processContainerResult(containerWithResult);
+    processContainerResult(containerWithResult, docker.log);
     expect(spyEvent).not.toHaveBeenCalled();
 });
 
@@ -656,7 +658,7 @@ test('processContainerResult should emit event when update available but not alr
     storeContainer.getContainer = () => (containerWithResult);
     storeContainer.updateContainer = () => (containerWithResult);
     const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
-    processContainerResult(containerWithResult);
+    processContainerResult(containerWithResult, docker.log);
     expect(spyEvent).toHaveBeenCalled();
 });
 

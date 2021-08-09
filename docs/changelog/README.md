@@ -2,6 +2,7 @@
 
 ## develop
 - :star: Support TZ env var for local time configuration
+- :star: Improve logs
 - :star: Update all dependencies
 - :fire: Fix [DEP0152] DeprecationWarning (caused by prom-client)
 

@@ -1,7 +1,7 @@
 /**
  * App store.
  */
-const log = require('../log');
+const log = require('../log').child({ component: 'store' });
 const { migrate } = require('./migrate');
 const { getVersion } = require('../configuration');
 
