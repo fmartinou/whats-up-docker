@@ -42,6 +42,11 @@ const schema = joi.object({
     resultChanged: joi.function(),
 });
 
+/**
+ * Computed function to check whether there is an update.
+ * @param container
+ * @returns {boolean}
+ */
 function addUpdateAvailableProperty(container) {
     Object.defineProperty(container,
         'updateAvailable',
@@ -62,7 +67,7 @@ function addUpdateAvailableProperty(container) {
                             || this.image.digest.value !== this.result.digest;
                     }
                 }
-                // Fallback to image created date (especially for legacy v1 manifests
+                // Fallback to image created date (especially for legacy v1 manifests)
                 if (this.image.created !== undefined && this.result.created !== undefined) {
                     const createdDate = new Date(this.image.created).getTime();
                     const createdDateResult = new Date(this.result.created).getTime();
@@ -75,6 +80,11 @@ function addUpdateAvailableProperty(container) {
         });
 }
 
+/**
+ * Computed function to check whether the result is different.
+ * @param otherContainer
+ * @returns {boolean}
+ */
 function resultChangedFunction(otherContainer) {
     return otherContainer === undefined
         || this.result.tag !== otherContainer.result.tag
@@ -82,12 +92,22 @@ function resultChangedFunction(otherContainer) {
         || this.result.created !== otherContainer.result.created;
 }
 
+/**
+ * Add computed function to check whether the result is different.
+ * @param container
+ * @returns {*}
+ */
 function addResultChangedFunction(container) {
     const containerWithResultChanged = container;
     containerWithResultChanged.resultChanged = resultChangedFunction;
     return containerWithResultChanged;
 }
 
+/**
+ * Apply validation to the container object.
+ * @param container
+ * @returns {*}
+ */
 function validate(container) {
     const validation = schema.validate(container);
     if (validation.error) {
@@ -101,6 +121,11 @@ function validate(container) {
     return containerWithResultChangedFunction;
 }
 
+/**
+ * Flatten the container object (useful for k/v based integrations).
+ * @param container
+ * @returns {*}
+ */
 function flatten(container) {
     const containerFlatten = flat(container, {
         delimiter: '_',
@@ -110,12 +135,47 @@ function flatten(container) {
     return containerFlatten;
 }
 
+/**
+ * Build athe business id of the container.
+ * @param container
+ * @returns {string}
+ */
 function fullName(container) {
     return `${container.watcher}_${container.name}`;
+}
+
+/**
+ * Build a diff object highlighting the diff between local/remote image details.
+ * @param container
+ * @returns {{kind: string, remoteValue, localValue}|undefined}
+ */
+function diff(container) {
+    if (container.image === undefined || container.result === undefined) {
+        return undefined;
+    }
+    if (!container.updateAvailable) {
+        return undefined;
+    }
+    if (container.image.tag.value !== container.result.tag) {
+        return {
+            kind: 'tag',
+            localValue: container.image.tag.value,
+            remoteValue: container.result.tag,
+        };
+    }
+    if (container.image.digest.value !== container.result.digest) {
+        return {
+            kind: 'digest',
+            localValue: container.image.digest.value,
+            remoteValue: container.result.digest,
+        };
+    }
+    return undefined;
 }
 
 module.exports = {
     validate,
     flatten,
     fullName,
+    diff,
 };

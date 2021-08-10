@@ -159,6 +159,7 @@ script:
     --env WUD_REGISTRY_GHCR_USERNAME=""
     --env WUD_REGISTRY_GHCR_TOKEN=""
     --env WUD_REGISTRY_HUB_AUTH=""
+    --env WUD_LOG_LEVEL="debug"
     wud
 
   #    --env WUD_REGISTRY_HUB_LOGIN="$DOCKER_USERNAME"
@@ -166,6 +167,8 @@ script:
 
   # Give wud a little time to fetch all available updates
   - sleep 20
+
+  - docker container logs wud
 
   # Run E2E Tests
   - (cd e2e && npm run cucumber)

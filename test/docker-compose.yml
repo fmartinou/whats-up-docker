@@ -2,6 +2,14 @@ version: '3'
 
 services:
 
+    apprise_latest:
+        image: caronc/apprise:latest
+        container_name: apprise
+        ports:
+            - 8000:8000
+        labels:
+            - wud.watch=false
+
     homeassistant_latest:
         image: homeassistant/home-assistant
         container_name: homeassistant_latest

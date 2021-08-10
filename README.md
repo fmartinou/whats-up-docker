@@ -19,7 +19,7 @@
 **WUD** can be easily configured using regular Environment Variables & Docker labels.
 
 ## Many supported triggers
-- Http
+- [Apprise](https://github.com/caronc/apprise-api)
 - [Ifttt](https://ifttt.com/)
 - [Kafka](https://kafka.apache.org/)
 - [Mqtt](https://mqtt.org/)

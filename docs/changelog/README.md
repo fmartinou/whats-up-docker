@@ -1,6 +1,7 @@
 # Changelog
 
 ## develop
+- :star: Add [Apprise](https://github.com/caronc/apprise) trigger
 - :star: Support TZ env var for local time configuration
 - :star: Improve logs
 - :star: Update all dependencies

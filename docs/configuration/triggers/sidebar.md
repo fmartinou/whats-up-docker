@@ -5,6 +5,7 @@
     - [Registries](configuration/registries/)
     - [Storage](configuration/storage/)
     - [Triggers](configuration/triggers/)
+        - [Apprise](configuration/triggers/apprise/)
         - [Http](configuration/triggers/http/)
         - [Ifttt](configuration/triggers/ifttt/)
         - [Kafka](configuration/triggers/kafka/)
