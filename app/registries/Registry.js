@@ -78,15 +78,38 @@ class Registry extends Component {
      */
     async getTags(image) {
         this.log.debug(`${this.getId()} - Get ${image.name} tags`);
-        const tagsResult = await this.callRegistry({
-            image,
-            url: `${image.registry.url}/${image.name}/tags/list`,
-        });
+        const tags = [];
+        let page;
+        let hasNext = true;
+        while (hasNext) {
+            const lastItem = page ? page.body.tags[page.body.tags.length - 1] : undefined;
+            // eslint-disable-next-line no-await-in-loop
+            page = await this.getTagsPage(image, lastItem);
+            hasNext = page.headers.link !== undefined;
+            tags.push(...page.body.tags);
+        }
 
         // Sort alpha then reverse to get higher values first
-        tagsResult.tags.sort();
-        tagsResult.tags.reverse();
-        return tagsResult.tags;
+        tags.sort();
+        tags.reverse();
+        return tags;
+    }
+
+    /**
+     * Get tags page
+     * @param image
+     * @param lastItem
+     * @returns {Promise<*>}
+     */
+    getTagsPage(image, lastItem = undefined) {
+        // Default items per page (not honoured by all registries)
+        const itemsPerPage = 1000;
+        const last = lastItem ? `&last=${lastItem}` : '';
+        return this.callRegistry({
+            image,
+            url: `${image.registry.url}/${image.name}/tags/list?n=${itemsPerPage}${last}`,
+            resolveWithFullResponse: true,
+        });
     }
 
     /**

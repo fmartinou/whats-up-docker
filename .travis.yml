@@ -159,7 +159,6 @@ script:
     --env WUD_REGISTRY_GHCR_USERNAME=""
     --env WUD_REGISTRY_GHCR_TOKEN=""
     --env WUD_REGISTRY_HUB_AUTH=""
-    --env WUD_LOG_LEVEL="debug"
     wud
 
   #    --env WUD_REGISTRY_HUB_LOGIN="$DOCKER_USERNAME"

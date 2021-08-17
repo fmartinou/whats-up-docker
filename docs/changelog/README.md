@@ -6,6 +6,7 @@
 - :star: Improve logs
 - :star: Update all dependencies
 - :fire: Fix [DEP0152] DeprecationWarning (caused by prom-client)
+- :fire: Fix paging issue when getting tag list (proven error on Github Container Registry)
 
 ## 5.2.0
 - :star: Allow excluding specific containers from being watched

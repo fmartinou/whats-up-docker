@@ -35,7 +35,10 @@ test('authenticate should return same request options when not overridden', () =
 test('getTags should sort tags z -> a', () => {
     const registryMocked = new Registry();
     registryMocked.log = log;
-    registryMocked.callRegistry = () => ({ tags: ['v1', 'v2', 'v3'] });
+    registryMocked.callRegistry = () => ({
+        headers: {},
+        body: { tags: ['v1', 'v2', 'v3'] },
+    });
     expect(registryMocked.getTags({ name: 'test', registry: { url: 'test' } }))
         .resolves
         .toStrictEqual(['v3', 'v2', 'v1']);
