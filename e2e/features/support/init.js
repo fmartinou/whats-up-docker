@@ -1,5 +1,5 @@
 const apickli = require('apickli');
-const { Before } = require('cucumber');
+const { Before } = require('@cucumber/cucumber');
 const configuration = require('../../config');
 
 Before(function initApickli() {

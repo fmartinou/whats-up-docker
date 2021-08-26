@@ -1,6 +1,7 @@
 const joi = require('joi');
 const flat = require('flat');
 const { snakeCase } = require('snake-case');
+const semver = require('semver');
 
 // Container data schema
 const schema = joi.object({
@@ -9,6 +10,8 @@ const schema = joi.object({
     watcher: joi.string().min(1).required(),
     includeTags: joi.string(),
     excludeTags: joi.string(),
+    linkTemplate: joi.string(),
+    link: joi.string(),
     image: joi.object({
         id: joi.string().min(1).required(),
         registry: joi.object({
@@ -34,6 +37,7 @@ const schema = joi.object({
         tag: joi.string().min(1),
         digest: joi.string(),
         created: joi.string().isoDate(),
+        link: joi.string(),
     }),
     error: joi.object({
         message: joi.string().min(1).required(),
@@ -41,6 +45,23 @@ const schema = joi.object({
     updateAvailable: joi.boolean().default(false),
     resultChanged: joi.function(),
 });
+
+function getLink(linkTemplate, tagValue, isSemver) {
+    if (!linkTemplate) {
+        return undefined;
+    }
+    const raw = tagValue;
+    let link = linkTemplate;
+    link = link.replace(/\$\{\s*raw\s*\}/g, raw);
+    if (isSemver) {
+        const versionSemver = semver.coerce(tagValue);
+        const { major, minor, patch } = versionSemver;
+        link = link.replace(/\$\{\s*major\s*\}/g, major);
+        link = link.replace(/\$\{\s*minor\s*\}/g, minor);
+        link = link.replace(/\$\{\s*patch\s*\}/g, patch);
+    }
+    return link;
+}
 
 /**
  * Computed function to check whether there is an update.
@@ -78,6 +99,32 @@ function addUpdateAvailableProperty(container) {
                 return updateAvailable;
             },
         });
+
+    if (container.linkTemplate) {
+        Object.defineProperty(container, 'link', {
+            enumerable: true,
+            get() {
+                return getLink(
+                    container.linkTemplate,
+                    container.image.tag.value,
+                    container.image.tag.semver,
+                );
+            },
+        });
+
+        if (container.result) {
+            Object.defineProperty(container.result, 'link', {
+                enumerable: true,
+                get() {
+                    return getLink(
+                        container.linkTemplate,
+                        container.result.tag,
+                        container.image.tag.semver,
+                    );
+                },
+            });
+        }
+    }
 }
 
 /**

@@ -5,6 +5,13 @@ const cron = require('node-cron');
 const parse = require('parse-docker-image-name');
 const semver = require('semver');
 const event = require('../../../event');
+const {
+    wudWatch,
+    wudTagInclude,
+    wudTagExclude,
+    wudWatchDigest,
+    wudLinkTemplate,
+} = require('./label');
 const storeContainer = require('../../../store/container');
 const log = require('../../../log');
 const Component = require('../../../registry/Component');
@@ -341,13 +348,26 @@ class Docker extends Component {
 
         // Filter on containers to watch
         const filteredContainers = containers
-            .filter((container) => isContainerToWatch(container.Labels['wud.watch'], this.configuration.watchbydefault));
+            .filter(
+                (container) => isContainerToWatch(
+                    container.Labels[wudWatch], this.configuration.watchbydefault,
+                ),
+            );
         const containerPromises = filteredContainers
             .map((container) => {
                 const labels = container.Labels;
-                const includeTags = labels['wud.tag.include'] !== undefined ? labels['wud.tag.include'] : undefined;
-                const excludeTags = labels['wud.tag.exclude'] !== undefined ? labels['wud.tag.exclude'] : undefined;
-                return this.addImageDetailsToContainer(container, includeTags, excludeTags);
+                const includeTags = labels[wudTagInclude] !== undefined
+                    ? labels[wudTagInclude] : undefined;
+                const excludeTags = labels[wudTagExclude] !== undefined
+                    ? labels[wudTagExclude] : undefined;
+                const linkTemplate = labels[wudLinkTemplate] !== undefined
+                    ? labels[wudLinkTemplate] : undefined;
+                return this.addImageDetailsToContainer(
+                    container,
+                    includeTags,
+                    excludeTags,
+                    linkTemplate,
+                );
             });
         const containersWithImage = await Promise.all(containerPromises);
 
@@ -408,9 +428,10 @@ class Docker extends Component {
      * @param container
      * @param includeTags
      * @param excludeTags
+     * @param linkTemplate
      * @returns {Promise<Image>}
      */
-    async addImageDetailsToContainer(container, includeTags, excludeTags) {
+    async addImageDetailsToContainer(container, includeTags, excludeTags, linkTemplate) {
         const containerId = container.Id;
 
         // Is container already in store? just return it :)
@@ -447,7 +468,8 @@ class Docker extends Component {
         const parsedTag = semver.coerce(tagName);
         const isSemver = parsedTag !== null && parsedTag !== undefined;
 
-        const watchDigestLabelValue = container.Labels['wud.watch.digest'] !== undefined ? container.Labels['wud.watch.digest'] : undefined;
+        const watchDigestLabelValue = container.Labels[wudWatchDigest] !== undefined
+            ? container.Labels[wudWatchDigest] : undefined;
         const watchDigest = watchDigestLabelValue && watchDigestLabelValue.toLowerCase() === 'true';
         return normalizeContainer({
             id: containerId,
@@ -455,6 +477,7 @@ class Docker extends Component {
             watcher: this.name,
             includeTags,
             excludeTags,
+            linkTemplate,
             image: {
                 id: imageId,
                 registry: {

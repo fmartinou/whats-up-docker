@@ -1,5 +1,9 @@
 # Changelog
 
+## Develop
+- :star: Add ability to specify a link pointing to the container version (changelog...) [see here](configuration/watchers/?id=associate-a-link-to-the-container-version)
+- :star: Update all dependencies
+
 ## 5.3.0
 - :star: Add [Apprise](https://github.com/caronc/apprise) trigger
 - :star: Support TZ env var for local time configuration

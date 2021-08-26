@@ -23,7 +23,8 @@ services:
         container_name: homeassistant_202166
         labels:
             - wud.watch=true
-            - wud.tag.include=^latest$$
+            - wud.tag.include=^\d+\.\d+.\d+$$
+            - wud.link.template=https://github.com/home-assistant/core/releases/tag/$${major}.$${minor}.$${patch}
 
     nginx_latest:
         image: nginx
