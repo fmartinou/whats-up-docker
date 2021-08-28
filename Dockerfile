@@ -24,6 +24,7 @@ CMD ["node", "index"]
 # Add TZDATA to allow easy local time configuration
 RUN apk update \
     && apk add tzdata \
+    && apk add openssl \
     && rm -rf /var/cache/apk/*
 
 # Copy app package.json

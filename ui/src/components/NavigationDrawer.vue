@@ -93,6 +93,7 @@ import { getRegistryIcon } from "@/services/registry";
 import { getTriggerIcon } from "@/services/trigger";
 import { getStoreIcon } from "@/services/store";
 import { getWatcherIcon } from "@/services/watcher";
+import { getAuthenticationIcon } from "@/services/authentication";
 import logo from "@/assets/wud_logo_white.png";
 
 export default {
@@ -101,6 +102,11 @@ export default {
     mini: true,
     containerIcon: getContainerIcon(),
     configurationItems: [
+      {
+        to: "/configuration/authentications",
+        name: "auth",
+        icon: getAuthenticationIcon(),
+      },
       {
         to: "/configuration/registries",
         name: "registries",

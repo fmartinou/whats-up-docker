@@ -9,10 +9,12 @@ configuration.getLogLevel = () => 'info';
 let registries = {};
 let triggers = {};
 let watchers = {};
+let authentications = {};
 
 configuration.getRegistryConfigurations = () => (registries);
 configuration.getTriggerConfigurations = () => (triggers);
 configuration.getWatcherConfigurations = () => (watchers);
+configuration.getAuthenticationConfigurations = () => (authentications);
 
 const registry = require('./index');
 
@@ -22,6 +24,7 @@ beforeEach(() => {
     registries = {};
     triggers = {};
     watchers = {};
+    authentications = {};
 });
 
 afterEach(async () => {
@@ -29,6 +32,7 @@ afterEach(async () => {
         await registry.__get__('deregisterRegistries')();
         await registry.__get__('deregisterTriggers')();
         await registry.__get__('deregisterWatchers')();
+        await registry.__get__('deregisterAuthentications')();
     } catch (e) {
         // ignore error
     }
@@ -134,6 +138,41 @@ test('registerWatchers should warn when registration errors occur', async () => 
     expect(spyLog).toHaveBeenCalledWith('Some watchers failed to register (Error when registering component docker ("fail" is not allowed))');
 });
 
+test('registerAuthentications should register all auth strategies', async () => {
+    authentications = {
+        basic: {
+            john: {
+                user: 'john',
+                hash: 'hash',
+            },
+            jane: {
+                user: 'jane',
+                hash: 'hash',
+            },
+        },
+    };
+    await registry.__get__('registerAuthentications')();
+    expect(Object.keys(registry.getState().authentication)).toEqual(['authentication.basic.john', 'authentication.basic.jane']);
+});
+
+test('registerAuthentications should warn when registration errors occur', async () => {
+    const spyLog = jest.spyOn(registry.__get__('log'), 'warn');
+    authentications = {
+        basic: {
+            john: {
+                fail: true,
+            },
+        },
+    };
+    await registry.__get__('registerAuthentications')();
+    expect(spyLog).toHaveBeenCalledWith('Some authentications failed to register (Error when registering component basic ("user" is required))');
+});
+
+test('registerAuthentications should register anonymous auth by default', async () => {
+    await registry.__get__('registerAuthentications')();
+    expect(Object.keys(registry.getState().authentication)).toEqual(['authentication.anonymous.anonymous']);
+});
+
 test('init should register all components', async () => {
     registries = {
         hub: {
@@ -160,10 +199,23 @@ test('init should register all components', async () => {
             host: 'host2',
         },
     };
+    authentications = {
+        basic: {
+            john: {
+                user: 'john',
+                hash: 'hash',
+            },
+            jane: {
+                user: 'jane',
+                hash: 'hash',
+            },
+        },
+    };
     await registry.init();
     expect(Object.keys(registry.getState().registry)).toEqual(['hub', 'ecr']);
     expect(Object.keys(registry.getState().trigger)).toEqual(['trigger.mock.mock1', 'trigger.mock.mock2']);
     expect(Object.keys(registry.getState().watcher)).toEqual(['watcher.docker.watcher1', 'watcher.docker.watcher2']);
+    expect(Object.keys(registry.getState().authentication)).toEqual(['authentication.basic.john', 'authentication.basic.jane']);
 });
 
 test('deregisterAll should deregister all components', async () => {
@@ -192,11 +244,24 @@ test('deregisterAll should deregister all components', async () => {
             host: 'host2',
         },
     };
+    authentications = {
+        basic: {
+            john: {
+                user: 'john',
+                hash: 'hash',
+            },
+            jane: {
+                user: 'jane',
+                hash: 'hash',
+            },
+        },
+    };
     await registry.init();
     await registry.__get__('deregisterAll')();
     expect(Object.keys(registry.getState().registry).length).toEqual(0);
     expect(Object.keys(registry.getState().trigger).length).toEqual(0);
     expect(Object.keys(registry.getState().watcher).length).toEqual(0);
+    expect(Object.keys(registry.getState().authentication).length).toEqual(0);
 });
 
 test('deregisterAll should throw an error when any component fails to deregister', () => {

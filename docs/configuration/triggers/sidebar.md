@@ -1,6 +1,7 @@
 - [Introduction](introduction/)
 - [Quick start](quickstart/)
 - [Configuration](configuration/)
+    - [Authentication](configuration/authentications/)
     - [Logs](configuration/logs/)
     - [Registries](configuration/registries/)
     - [Storage](configuration/storage/)

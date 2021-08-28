@@ -20,7 +20,7 @@ services:
     image: vaultwarden/server:1.22.1-alpine
     container_name: bitwarden
     labels:
-      - 'wud.tag.include=^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)-alpine$$'
+      - 'wud.tag.include=^\d+\.\d+\.\d+-alpine$$'
       - 'wud.link.template=https://github.com/dani-garcia/vaultwarden/releases/tag/$${major}.$${minor}.$${patch}'
 
   # Valid semver following by an build number (linux server style)
@@ -28,14 +28,14 @@ services:
     image: linuxserver/duplicati:v2.0.6.3-2.0.6.3_beta_2021-06-17-ls104
     container_name: duplicati
     labels:
-      - 'wud.tag.include=^v[0-9]\d*\.[0-9]\d*\.[0-9]\d*\.[0-9]\d*-[0-9]\d*\.[0-9]\d*\.[0-9]\d*\.[0-9]\d*.*$$'
+      - 'wud.tag.include=^v\d+\.\d+\.\d+\.\d+-\d+\.\d+\.\d+\.\d+.*$$'
 
   # Valid calver
   homeassistant:
     image: homeassistant/home-assistant:2021.7.1
     container_name: homeassistant
     labels:
-      - 'wud.tag.include=^([0-9]\d*)\.([0-9]\d*)\.([0-9]\d*)$$'
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
       - 'wud.link.template=https://github.com/home-assistant/core/releases/tag/$${major}.$${minor}.$${patch}'
 
   # Valid semver with a leading v
@@ -43,7 +43,7 @@ services:
     image: pihole/pihole:v5.8.1
     container_name: pihole
     labels:
-      - 'wud.tag.include=^v(0|[1-9]\d*)\.(0|[1-9]\d*)$$'
+      - 'wud.tag.include=^v\d+\.\d+\.\d+$$'
       - 'wud.link.template=https://github.com/pi-hole/FTL/releases/tag/v$${major}.$${minor}.$${patch}'
 
   # Mutable tag (latest) with digest tracking
@@ -62,6 +62,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /opt/wud/store:/store
     labels:
-      - 'wud.tag.include=^([0-9]\d*)\.([0-9]\d*)\.([0-9]\d*)$$'
+      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
       - 'wud.link.template=https://github.com/fmartinou/whats-up-docker/releases/tag/$${major}.$${minor}.$${patch}'
 ```

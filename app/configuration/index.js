@@ -30,6 +30,14 @@ function getRegistryConfigurations() {
 }
 
 /**
+ * Get authentication configurations.
+ * @returns {*}
+ */
+function getAuthenticationConfigurations() {
+    return envProp.get('wud.auth') || {};
+}
+
+/**
  * Get Input configurations.
  */
 function getStoreConfiguration() {
@@ -50,5 +58,6 @@ module.exports = {
     getWatcherConfigurations,
     getTriggerConfigurations,
     getRegistryConfigurations,
+    getAuthenticationConfigurations,
     getApiConfiguration,
 };

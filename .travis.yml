@@ -159,6 +159,8 @@ script:
     --env WUD_REGISTRY_GHCR_USERNAME=""
     --env WUD_REGISTRY_GHCR_TOKEN=""
     --env WUD_REGISTRY_HUB_AUTH=""
+    --env WUD_AUTH_BASIC_JOHN_USER="john"
+    --env WUD_AUTH_BASIC_JOHN_HASH='$apr1$8zDVtSAY$62WBh9DspNbUKMZXYRsjS/'
     wud
 
   #    --env WUD_REGISTRY_HUB_LOGIN="$DOCKER_USERNAME"

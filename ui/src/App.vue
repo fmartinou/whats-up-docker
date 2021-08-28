@@ -1,16 +1,17 @@
 <template>
-  <v-app>
+  <v-app class="main-background">
     <snackbar
       :message="snackbarMessage"
       :show="snackbarShow"
       :level="snackbarLevel"
     />
-    <navigation-drawer />
 
-    <app-bar />
+    <navigation-drawer v-if="authenticated" />
+
+    <app-bar v-if="authenticated" :user="user" />
 
     <!-- Sizes your content based upon application components -->
-    <v-main class="main-background">
+    <v-main>
       <v-row>
         <v-col>
           <router-view></router-view>
@@ -18,7 +19,7 @@
       </v-row>
     </v-main>
 
-    <app-footer />
+    <app-footer v-if="authenticated" />
   </v-app>
 </template>
 
@@ -40,6 +41,7 @@ export default {
       snackbarMessage: "",
       snackbarShow: false,
       snackbarLevel: "info",
+      user: undefined,
     };
   },
   computed: {
@@ -53,20 +55,50 @@ export default {
           href: "",
         }));
     },
+
+    /**
+     * Is user authenticated?
+     * @returns {boolean}
+     */
+    authenticated() {
+      return this.user !== undefined;
+    },
   },
   methods: {
+    /**
+     * Save current user when authenticated.
+     * @param user
+     */
+    onAuthenticated(user) {
+      this.user = user;
+    },
+
+    /**
+     * Display a notification.
+     * @param message
+     * @param level
+     */
     notify(message, level = "info") {
       this.snackbarMessage = message;
       this.snackbarShow = true;
       this.snackbarLevel = level;
     },
+
+    /**
+     * Close a notification.
+     */
     notifyClose() {
       this.snackbarMessage = "";
       this.snackbarShow = false;
     },
   },
 
-  beforeMount() {
+  /**
+   * Listen to root events.
+   * @returns {Promise<void>}
+   */
+  async beforeMount() {
+    this.$root.$on("authenticated", this.onAuthenticated);
     this.$root.$on("notify", this.notify);
     this.$root.$on("notify:close", this.notifyClose);
   },

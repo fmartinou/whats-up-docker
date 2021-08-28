@@ -94,6 +94,26 @@
                 <v-icon v-else large>mdi-cancel</v-icon>
               </property>
             </v-col>
+            <v-col cols="12">
+              <property name="Link template" :value="container.linkTemplate">
+                <v-chip label v-if="container.linkTemplate"
+                  >{{ container.linkTemplate }}
+                </v-chip>
+                <v-icon v-else large>mdi-cancel</v-icon>
+              </property>
+            </v-col>
+            <v-col cols="12">
+              <property name="Link" :value="container.link">
+                <v-chip
+                  label
+                  v-if="container.link"
+                  :href="container.link"
+                  target="_blank"
+                  >{{ container.link }}
+                </v-chip>
+                <v-icon v-else large>mdi-cancel</v-icon>
+              </property>
+            </v-col>
           </v-row>
         </v-card-text>
         <v-card-subtitle class="text-h6 font-weight-bold"
@@ -253,6 +273,18 @@
             </v-col>
             <v-col xs="12" sm="6" md="4" lg="2" xl="2" v-if="result.created">
               <property name="Created" :value="result.created | date" />
+            </v-col>
+            <v-col cols="12">
+              <property name="Link" :value="container.result.link">
+                <v-chip
+                  label
+                  v-if="container.result.link"
+                  :href="container.result.link"
+                  target="_blank"
+                  >{{ container.result.link }}
+                </v-chip>
+                <v-icon v-else large>mdi-cancel</v-icon>
+              </property>
             </v-col>
           </v-row>
         </v-card-text>

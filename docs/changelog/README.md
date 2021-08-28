@@ -1,7 +1,8 @@
 # Changelog
 
 ## Develop
-- :star: Add ability to specify a link pointing to the container version (changelog...) [see here](configuration/watchers/?id=associate-a-link-to-the-container-version)
+- :star: Add Authentication system ([see here](configuration/authentications/))
+- :star: Add ability to specify a link pointing to the container version (changelog...) ([see here](configuration/watchers/?id=associate-a-link-to-the-container-version))
 - :star: Update all dependencies
 
 ## 5.3.0

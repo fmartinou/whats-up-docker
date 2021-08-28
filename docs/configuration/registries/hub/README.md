@@ -4,9 +4,9 @@
 The ```hub```registry lets you configure [Docker Hub](https://hub.docker.com/) integration.
 
 Currently, the supported credentials are:
-- Docker Hub login + Docker Hub Access Token
-- Docker Base64 credentials (like in [.docker/config.json](https://docs.docker.com/engine/reference/commandline/login/))
-- Docker Hub login + Docker Hub password (not recommended)
+- Docker Hub auth + Docker Hub Access Token
+- Docker Base64 credentials (like in [.docker/config.json](https://docs.docker.com/engine/reference/commandline/auth/))
+- Docker Hub auth + Docker Hub password (not recommended)
 
 !> By default, if you don't configure any registries, WUD will configure a default one with anonymous access. \
 Don't forget to configure authentication if you're using [Docker Hub Private Repositories](https://docs.docker.com/docker-hub/repos/#private-repositories).
@@ -83,10 +83,10 @@ docker run \
 [See above](registries/hub/?id=configure-authentication-using-logintoken)
 
 ###### 2. Encode with Base64
-Concatenate `$login:$password` and [encode with Base64](https://www.base64encode.org/).
+Concatenate `$auth:$password` and [encode with Base64](https://www.base64encode.org/).
 
 For example,
-- if your login is `johndoe`
+- if your auth is `johndoe`
 - and your password is `2c1bd872-efb6-4f3a-81aa-724518a0a592`
 - the resulting encoded string would be `am9obmRvZToyYzFiZDg3Mi1lZmI2LTRmM2EtODFhYS03MjQ1MThhMGE1OTI=`
 

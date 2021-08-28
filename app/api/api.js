@@ -1,11 +1,14 @@
 const express = require('express');
+const passport = require('passport');
 const appRouter = require('./app');
 const containerRouter = require('./container');
 const watcherRouter = require('./watcher');
 const triggerRouter = require('./trigger');
 const registryRouter = require('./registry');
+const authenticationRouter = require('./authentication');
 const logRouter = require('./log');
 const storeRouter = require('./store');
+const auth = require('./auth');
 
 /**
  * Init the API router.
@@ -13,6 +16,9 @@ const storeRouter = require('./store');
  */
 function init() {
     const router = express.Router();
+
+    // Routes to protect after this line
+    router.use(passport.authenticate(auth.getAllIds()));
 
     // Mount app router
     router.use('/app', appRouter.init());
@@ -34,6 +40,9 @@ function init() {
 
     // Mount registry router
     router.use('/registries', registryRouter.init());
+
+    // Mount auth
+    router.use('/authentications', authenticationRouter.init());
 
     // All other API routes => 404
     router.get('/*', (req, res) => res.sendStatus(404));

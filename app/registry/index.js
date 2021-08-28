@@ -7,6 +7,7 @@ const {
     getWatcherConfigurations,
     getTriggerConfigurations,
     getRegistryConfigurations,
+    getAuthenticationConfigurations,
 } = require('../configuration');
 
 /**
@@ -16,6 +17,7 @@ const state = {
     trigger: {},
     watcher: {},
     registry: {},
+    authentication: {},
 };
 
 function getState() {
@@ -143,6 +145,23 @@ async function registerRegistries() {
 }
 
 /**
+ * Register authentications.
+ */
+async function registerAuthentications() {
+    const configurations = getAuthenticationConfigurations();
+    try {
+        if (Object.keys(configurations).length === 0) {
+            log.info('No authentication configured => Allow anonymous access');
+            await registerComponent('authentication', 'anonymous', 'anonymous', {}, '../authentications/providers');
+        }
+        await registerComponents('authentication', configurations, '../authentications/providers');
+    } catch (e) {
+        log.warn(`Some authentications failed to register (${e.message})`);
+        log.debug(e);
+    }
+}
+
+/**
  * Deregister a component.
  * @param component
  * @param kind
@@ -198,6 +217,14 @@ async function deregisterRegistries() {
 }
 
 /**
+ * Deregister all authentications.
+ * @returns {Promise<unknown>}
+ */
+async function deregisterAuthentications() {
+    return deregisterComponents(Object.values(getState().authentication), 'authentication');
+}
+
+/**
  * Deregister all components.
  * @returns {Promise}
  */
@@ -206,6 +233,7 @@ async function deregisterAll() {
         await deregisterWatchers();
         await deregisterTriggers();
         await deregisterRegistries();
+        await deregisterAuthentications();
     } catch (e) {
         throw new Error(`Error when trying to deregister ${e.message}`);
     }
@@ -220,6 +248,9 @@ async function init() {
 
     // Register watchers
     await registerWatchers();
+
+    // Register authentications
+    await registerAuthentications();
 
     // Gracefully exit when possible
     process.on('SIGINT', deregisterAll);

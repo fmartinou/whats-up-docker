@@ -1,6 +1,8 @@
 const joi = require('joi');
 const express = require('express');
+const bodyParser = require('body-parser');
 const log = require('../log').child({ component: 'api' });
+const auth = require('./auth');
 const apiRouter = require('./api');
 const uiRouter = require('./ui');
 const prometheusRouter = require('./prometheus');
@@ -34,11 +36,17 @@ async function init() {
         // Init Express app
         const app = express();
 
-        // Mount API
-        app.use('/api', apiRouter.init());
+        // Parse json payloads
+        app.use(bodyParser.json());
+
+        // Init auth
+        auth.init(app);
 
         // Mount Healthcheck
         app.use('/health', healthRouter.init());
+
+        // Mount API
+        app.use('/api', apiRouter.init());
 
         // Mount Prometheus metrics
         app.use('/metrics', prometheusRouter.init());
