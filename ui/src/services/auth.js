@@ -23,7 +23,9 @@ async function getUser() {
     return user;
   }
   try {
-    const response = await fetch("/auth/user");
+    const response = await fetch("/auth/user", {
+      redirect: "manual",
+    });
     user = await response.json();
     return user;
   } catch (e) {
@@ -56,14 +58,25 @@ async function loginBasic(username, password) {
 }
 
 /**
+ * Get Oidc redirection url.
+ * @returns {Promise<*>}
+ */
+async function getOidcRedirection(name) {
+  const response = await fetch(`/auth/oidc/${name}/redirect`);
+  user = await response.json();
+  return user;
+}
+
+/**
  * Logout current user.
  * @returns {Promise<any>}
  */
 async function logout() {
   await fetch(`/auth/logout`, {
     method: "POST",
+    redirect: "manual",
   });
   user = undefined;
 }
 
-export { getStrategies, getUser, loginBasic, logout };
+export { getStrategies, getUser, loginBasic, getOidcRedirection, logout };

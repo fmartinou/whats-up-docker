@@ -23,6 +23,11 @@ class Authentication extends Component {
     getStrategy() {
         throw new Error('getStrategy must be implemented');
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getStrategyDescription() {
+        throw new Error('getStrategyDescription must be implemented');
+    }
 }
 
 module.exports = Authentication;

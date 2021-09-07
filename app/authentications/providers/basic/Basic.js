@@ -1,5 +1,5 @@
 const passJs = require('pass');
-const BasicStrategyWithSession = require('./BasicStrategyWithSession');
+const BasicStrategy = require('./BasicStrategy');
 const Authentication = require('../Authentication');
 
 /**
@@ -32,9 +32,17 @@ class Basic extends Authentication {
      * Return passport strategy.
      */
     getStrategy() {
-        return new BasicStrategyWithSession(
+        return new BasicStrategy(
             (user, pass, done) => this.authenticate(user, pass, done),
         );
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    getStrategyDescription() {
+        return {
+            type: 'basic',
+            name: 'Login',
+        };
     }
 
     authenticate(user, pass, done) {

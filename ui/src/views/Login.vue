@@ -8,7 +8,7 @@
       overlay-color="primary"
       overlay-opacity="1"
     >
-      <v-card class="justify-center">
+      <v-card>
         <v-container>
           <v-row justify="center" class="ma-1">
             <v-avatar color="primary" size="80">
@@ -21,15 +21,23 @@
                 <v-tab
                   v-for="strategy in strategies"
                   :key="strategy.name"
-                  class="subtitle-2"
+                  class="text-body-2"
                 >
-                  {{ strategy.title }}
+                  {{ strategy.name }}
                 </v-tab>
               </v-tabs>
               <v-tabs-items v-model="strategySelected">
-                <v-tab-item v-for="strategy in strategies" :key="strategy.name">
+                <v-tab-item
+                  v-for="strategy in strategies"
+                  :key="strategy.type + strategy.name"
+                >
                   <login-basic
-                    v-if="strategy.name === 'basic'"
+                    v-if="strategy.type === 'basic'"
+                    @authentication-success="onAuthenticationSuccess"
+                  />
+                  <login-oidc
+                    v-if="strategy.type === 'oidc'"
+                    :name="strategy.name"
                     @authentication-success="onAuthenticationSuccess"
                   />
                 </v-tab-item>
@@ -43,13 +51,15 @@
 </template>
 
 <script>
-import { getStrategies, logout } from "@/services/auth";
+import { getStrategies } from "@/services/auth";
 import LoginBasic from "@/components/LoginBasic";
+import LoginOidc from "@/components/LoginOidc";
 import logo from "@/assets/wud_logo_white.png";
 
 export default {
   components: {
     LoginBasic,
+    LoginOidc,
   },
   data() {
     return {
@@ -66,32 +76,14 @@ export default {
      * @returns {boolean}
      */
     isSupportedStrategy(strategy) {
-      switch (strategy) {
+      switch (strategy.type) {
         case "basic":
+          return true;
+        case "oidc":
           return true;
         default:
           false;
       }
-    },
-
-    /**
-     * Map a strategy name to a UI readable object.
-     * @param strategy
-     * @returns {{name, title: string}}
-     */
-    computeStrategy(strategy) {
-      switch (strategy) {
-        case "basic":
-          return {
-            name: strategy,
-            title: "User / Password",
-          };
-      }
-      this.$root.$emit(
-        "notify",
-        `\`Unsupported strategy ${strategy}\``,
-        "error"
-      );
     },
 
     /**
@@ -111,19 +103,17 @@ export default {
    */
   async beforeRouteEnter(to, from, next) {
     try {
-      await logout();
+      // await logout();
       const strategies = await getStrategies();
 
-      // If anonymous auth is enabled than no need to login => go home
-      if (strategies.find((strategy) => strategy === "anonymous")) {
+      // If anonymous auth is enabled then no need to login => go home
+      if (strategies.find((strategy) => strategy.type === "anonymous")) {
         next("/");
       }
 
       // Filter on supported auth for UI
       next(async (vm) => {
-        vm.strategies = strategies
-          .filter(vm.isSupportedStrategy)
-          .map(vm.computeStrategy);
+        vm.strategies = strategies.filter(vm.isSupportedStrategy);
       });
     } catch (e) {
       this.$root.$emit(

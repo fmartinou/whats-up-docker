@@ -3,6 +3,7 @@
 - [Configuration](configuration/)
     - [Authentication](configuration/authentications/)
         - [Basic](configuration/authentications/basic/)
+        - [Openid Connect](configuration/authentications/oidc/)
     - [Logs](configuration/logs/)
     - [Registries](configuration/registries/)
     - [Storage](configuration/storage/)    

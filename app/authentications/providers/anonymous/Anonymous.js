@@ -14,6 +14,14 @@ class Anonymous extends Authentication {
         log.warn('Anonymous authentication is enabled; please make sure that the app is not exposed to unsecure networks');
         return new AnonymousStrategy();
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getStrategyDescription() {
+        return {
+            type: 'anonymous',
+            name: 'Anonymous',
+        };
+    }
 }
 
 module.exports = Anonymous;

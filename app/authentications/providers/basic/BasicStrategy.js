@@ -1,10 +1,10 @@
-const { BasicStrategy } = require('passport-http');
+const { BasicStrategy: HttpBasicStrategy } = require('passport-http');
 
 /**
  * Inherit from Basic Strategy including Session support.
  * @type {module.MyStrategy}
  */
-module.exports = class MyStrategy extends BasicStrategy {
+module.exports = class BasicStrategy extends HttpBasicStrategy {
     authenticate(req) {
         // Already authenticated (thanks to session) => ok
         if (req.isAuthenticated()) {

@@ -46,10 +46,11 @@ function getSessionSecretKey() {
 /**
  * Register a strategy to passport.
  * @param authentication
+ * @param app
  */
-function useStrategy(authentication) {
+function useStrategy(authentication, app) {
     try {
-        const strategy = authentication.getStrategy();
+        const strategy = authentication.getStrategy(app);
         passport.use(authentication.getId(), strategy);
         STRATEGY_IDS.push(authentication.getId());
     } catch (e) {
@@ -64,8 +65,19 @@ function useStrategy(authentication) {
  */
 function getStrategies(req, res) {
     const strategies = Object.values(registry.getState().authentication)
-        .map((authentication) => authentication.getStrategy().name);
-    res.json([...new Set(strategies)]);
+        .map((authentication) => authentication.getStrategyDescription());
+    const uniqueStrategies = [];
+    strategies.forEach((strategy) => {
+        if (!(uniqueStrategies
+            .find(
+                (item) => item.type === strategy.type
+                    && item.name === strategy.name,
+            ))) {
+            uniqueStrategies.push(strategy);
+        }
+    });
+    uniqueStrategies.sort((s1, s2) => s1.name.localeCompare(s2.name));
+    res.json(uniqueStrategies);
 }
 /**
  * Get current user.
@@ -105,6 +117,7 @@ function init(app) {
     app.use(session({
         store: new LokiStore({
             path: `${store.getConfiguration().path}/${store.getConfiguration().file}`,
+            ttl: 604800, // 7 days
         }),
         secret: getSessionSecretKey(),
         resave: false,
@@ -120,7 +133,8 @@ function init(app) {
     app.use(passport.session());
 
     // Register all authentications
-    Object.values(registry.getState().authentication).forEach(useStrategy);
+    Object.values(registry.getState().authentication)
+        .forEach((authentication) => useStrategy(authentication, app));
 
     passport.serializeUser((user, done) => {
         done(null, JSON.stringify(user));
@@ -134,7 +148,7 @@ function init(app) {
     router.get('/strategies', getStrategies);
 
     // Routes to protect after this line
-    router.use(passport.authenticate(STRATEGY_IDS));
+    router.use(passport.authenticate(STRATEGY_IDS, { session: true }));
 
     // Add login/logout routes
     router.post('/login', login);

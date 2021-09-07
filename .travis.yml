@@ -169,13 +169,10 @@ script:
   # Give wud a little time to fetch all available updates
   - sleep 20
 
-  - docker container logs wud
-
   # Run E2E Tests
   - (cd e2e && npm run cucumber)
 
-after_failure:
-  # Display wud logs
+after_script:
   - docker container logs wud
 
 after_success:

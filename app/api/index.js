@@ -36,11 +36,14 @@ async function init() {
         // Init Express app
         const app = express();
 
-        // Parse json payloads
-        app.use(bodyParser.json());
+        // Trust proxy (helpful to resolve public facing hostname & protocol)
+        app.set('trust proxy', true);
 
         // Init auth
         auth.init(app);
+
+        // Parse json payloads
+        app.use(bodyParser.json());
 
         // Mount Healthcheck
         app.use('/health', healthRouter.init());

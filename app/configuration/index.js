@@ -51,6 +51,15 @@ function getApiConfiguration() {
     return envProp.get('wud.api');
 }
 
+function getPublicUrl(req) {
+    const publicUrl = process.env.WUD_PUBLIC_URL;
+    if (publicUrl) {
+        return publicUrl;
+    }
+    // Try to guess from request
+    return `${req.protocol}://${req.hostname}`;
+}
+
 module.exports = {
     getVersion,
     getLogLevel,
@@ -60,4 +69,5 @@ module.exports = {
     getRegistryConfigurations,
     getAuthenticationConfigurations,
     getApiConfiguration,
+    getPublicUrl,
 };
