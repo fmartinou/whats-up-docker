@@ -223,7 +223,11 @@ class Docker extends Component {
 
         // Subscribe to image result events
         event.registerContainerResult(
-            (containerWithResult) => processContainerResult(containerWithResult, this.log),
+            (containerWithResult) => {
+                if (this.name === containerWithResult.watcher) {
+                    processContainerResult(containerWithResult, this.log);
+                }
+            },
         );
 
         // watch at startup (after all components have been registered)
