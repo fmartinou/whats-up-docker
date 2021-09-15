@@ -1,17 +1,19 @@
-### Http
+# Http
 
-The ```http``` trigger lets you send container update notifications via HTTP.
+The `http` trigger lets you send container update notifications via HTTP.
 
 #### Variables
 
-| Env var                                      | Description            | Supported values              | Default value |
-| -------------------------------------------- |:----------------------:|:-----------------------------:|:-------------:| 
-| ```WUD_TRIGGER_HTTP_{trigger_name}_URL```    | The URL of the webhook | Valid http or https endpoint  |               |
-| ```WUD_TRIGGER_HTTP_{trigger_name}_METHOD``` | The HTTP method to use | GET, POST                     | POST          |
+| Env var                                  | Required       | Description            | Supported values              | Default value when missing |
+| ---------------------------------------- |:--------------:| ---------------------- | ----------------------------- | -------------------------- | 
+| `WUD_TRIGGER_HTTP_{trigger_name}_URL`    | :red_circle:   | The URL of the webhook | Valid http or https endpoint  |                            |
+| `WUD_TRIGGER_HTTP_{trigger_name}_METHOD` | :white_circle: | The HTTP method to use | `GET`, `POST`                 | `POST`                     |
 
-#### Examples
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
 
-##### Post an HTTP request to an existing server 
+### Examples
+
+#### Post an HTTP request to an existing server 
 
 <!-- tabs:start -->
 #### **Docker Compose**
@@ -34,7 +36,7 @@ docker run \
 ```
 <!-- tabs:end -->
 
-##### Example of payload (POST request)
+#### Example of payload (POST request)
 ```json
 {
   "id":"31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816",

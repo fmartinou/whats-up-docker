@@ -43,9 +43,22 @@ const schema = joi.object({
         message: joi.string().min(1).required(),
     }),
     updateAvailable: joi.boolean().default(false),
+    updateKind: joi.object({
+        kind: joi.string().allow('tag', 'digest', 'unknown').required(),
+        localValue: joi.string(),
+        remoteValue: joi.string(),
+        semverDiff: joi.string().allow('major', 'minor', 'patch', 'unknown'),
+    }).default({ kind: 'unknown' }),
     resultChanged: joi.function(),
 });
 
+/**
+ * Render Link template.
+ * @param linkTemplate
+ * @param tagValue
+ * @param isSemver
+ * @returns {undefined|*}
+ */
 function getLink(linkTemplate, tagValue, isSemver) {
     if (!linkTemplate) {
         return undefined;
@@ -99,7 +112,14 @@ function addUpdateAvailableProperty(container) {
                 return updateAvailable;
             },
         });
+}
 
+/**
+ * Computed link property.
+ * @param container
+ * @returns {undefined|*}
+ */
+function addLinkProperty(container) {
     if (container.linkTemplate) {
         Object.defineProperty(container, 'link', {
             enumerable: true,
@@ -125,6 +145,75 @@ function addUpdateAvailableProperty(container) {
             });
         }
     }
+}
+
+/**
+ * Computed updateKind property.
+ * @param container
+ * @returns {{semverDiff: undefined, kind: string, remoteValue: undefined, localValue: undefined}}
+ */
+function addUpdateKindProperty(container) {
+    Object.defineProperty(container,
+        'updateKind',
+        {
+            enumerable: true,
+            get() {
+                const updateKind = {
+                    kind: 'unknown',
+                    localValue: undefined,
+                    remoteValue: undefined,
+                    semverDiff: undefined,
+                };
+                if (container.image === undefined || container.result === undefined) {
+                    return updateKind;
+                }
+                if (!container.updateAvailable) {
+                    return updateKind;
+                }
+
+                if (container.image !== undefined
+                    && container.result !== undefined
+                    && container.updateAvailable
+                ) {
+                    if (container.image.tag.value !== container.result.tag) {
+                        updateKind.kind = 'tag';
+                        let semverDiffWud = 'unknown';
+                        const isSemver = container.image.tag.semver;
+                        if (isSemver) {
+                            const localSemver = semver.coerce(container.image.tag.value);
+                            const remoteSemver = semver.coerce(container.result.tag);
+                            const semverDiff = semver.diff(localSemver, remoteSemver);
+                            switch (semverDiff) {
+                            case 'major':
+                            case 'premajor':
+                                semverDiffWud = 'major';
+                                break;
+                            case 'minor':
+                            case 'preminor':
+                                semverDiffWud = 'minor';
+                                break;
+                            case 'patch':
+                            case 'prepatch':
+                                semverDiffWud = 'patch';
+                                break;
+                            default:
+                                semverDiffWud = 'unknown';
+                            }
+                        }
+                        updateKind.localValue = container.image.tag.value;
+                        updateKind.remoteValue = container.result.tag;
+                        updateKind.semverDiff = semverDiffWud;
+                    } else if (container.image.digest
+                        && container.image.digest.value !== container.result.digest
+                    ) {
+                        updateKind.kind = 'digest';
+                        updateKind.localValue = container.image.digest.value;
+                        updateKind.remoteValue = container.result.digest;
+                    }
+                }
+                return updateKind;
+            },
+        });
 }
 
 /**
@@ -162,10 +251,14 @@ function validate(container) {
     }
     const containerValidated = validation.value;
 
-    // Add computed properties/functions
+    // Add computed properties
     addUpdateAvailableProperty(containerValidated);
-    const containerWithResultChangedFunction = addResultChangedFunction(containerValidated);
-    return containerWithResultChangedFunction;
+    addUpdateKindProperty(containerValidated);
+    addLinkProperty(containerValidated);
+
+    // Add computed functions
+    addResultChangedFunction(containerValidated);
+    return containerValidated;
 }
 
 /**
@@ -183,7 +276,7 @@ function flatten(container) {
 }
 
 /**
- * Build athe business id of the container.
+ * Build the business id of the container.
  * @param container
  * @returns {string}
  */
@@ -191,38 +284,8 @@ function fullName(container) {
     return `${container.watcher}_${container.name}`;
 }
 
-/**
- * Build a diff object highlighting the diff between local/remote image details.
- * @param container
- * @returns {{kind: string, remoteValue, localValue}|undefined}
- */
-function diff(container) {
-    if (container.image === undefined || container.result === undefined) {
-        return undefined;
-    }
-    if (!container.updateAvailable) {
-        return undefined;
-    }
-    if (container.image.tag.value !== container.result.tag) {
-        return {
-            kind: 'tag',
-            localValue: container.image.tag.value,
-            remoteValue: container.result.tag,
-        };
-    }
-    if (container.image.digest.value !== container.result.digest) {
-        return {
-            kind: 'digest',
-            localValue: container.image.digest.value,
-            remoteValue: container.result.digest,
-        };
-    }
-    return undefined;
-}
-
 module.exports = {
     validate,
     flatten,
     fullName,
-    diff,
 };

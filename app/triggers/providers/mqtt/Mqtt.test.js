@@ -15,6 +15,7 @@ const configurationValid = {
         enabled: false,
         prefix: 'homeassistant',
     },
+    threshold: 'all',
 };
 
 beforeEach(() => {

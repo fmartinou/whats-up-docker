@@ -1,10 +1,10 @@
 <template>
   <v-card outlined class="property-container">
-    <v-card-subtitle class="text-center">
+    <v-card-subtitle class="text-center pa-1">
       <span class="subtitle-2 text-capitalize">{{ name }}</span>
       <br />
       <slot>
-        <v-chip label>{{ value }}</v-chip>
+        <v-chip label>{{ value ? value : "None" }}</v-chip>
       </slot>
     </v-card-subtitle>
   </v-card>
@@ -26,6 +26,6 @@ export default {
 
 <style scoped>
 .property-container {
-  height: 100px;
+  height: 70px;
 }
 </style>

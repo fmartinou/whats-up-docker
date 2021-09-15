@@ -1,4 +1,4 @@
-### REST API
+# REST API
 
 You can access _**WUD**_ state using the HTTP REST API. \
 (see API details below)
@@ -8,11 +8,10 @@ By default, the API is enabled and exposed on port `3000`.
 You can override this behaviour using the following environment variables.
 ### Variables
 
-| Env var               | Description                   | Supported values | Default value  |
-| --------------------- |:-----------------------------:|:----------------:|:--------------:| 
-| ```WUD_API_ENABLED``` | If REST API must be exposed   | true false       | true           |
-| ```WUD_API_PORT```    | Http listener port            | 0 - 65535        | 3000           |
-
+| Env var               | Required       | Description                   | Supported values    | Default value when misssing |
+| --------------------- |:--------------:|------------------------------ | ------------------- | --------------------------- | 
+| ```WUD_API_ENABLED``` | :white_circle: | If REST API must be exposed   | `true`, `false`     | `true`                      |
+| ```WUD_API_PORT```    | :white_circle: | Http listener port            | from `0` to `65535` | `3000`                      |
 
 ### Examples
 

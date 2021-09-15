@@ -18,7 +18,7 @@
         <v-list-item v-if="!mini" key="logo">
           <v-img :src="logo" alt="logo" max-width="200px" />
         </v-list-item>
-        <v-list-item to="/" key="home">
+        <v-list-item to="/" key="home" class="mb-0">
           <v-list-item-icon>
             <v-icon>mdi-home</v-icon>
           </v-list-item-icon>
@@ -26,7 +26,7 @@
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item to="/containers" key="containers">
+        <v-list-item to="/containers" key="containers" class="mb-0">
           <v-list-item-icon>
             <v-icon>{{ containerIcon }}</v-icon>
           </v-list-item-icon>
@@ -35,7 +35,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item key="divider">
+        <v-list-item key="divider" class="mb-0">
           <v-divider />
         </v-list-item>
 
@@ -55,6 +55,7 @@
             v-for="configurationItem in configurationItemsSorted"
             :key="configurationItem.to"
             :to="configurationItem.to"
+            class="mb-0"
           >
             <v-list-item-icon>
               <v-icon v-text="configurationItem.icon" />
@@ -71,6 +72,7 @@
           v-for="configurationItem in configurationItemsSorted"
           :key="configurationItem.to"
           :to="configurationItem.to"
+          class="mb-0"
         >
           <v-list-item-icon>
             <v-icon v-text="configurationItem.icon" />

@@ -1,18 +1,20 @@
-#### Slack
+# Slack
 ![logo](slack.png)
 
-The ```slack``` trigger lets you post image update notifications to a Slack channel.
+The `slack` trigger lets you post image update notifications to a Slack channel.
 
-#### Variables
+### Variables
 
-| Env var                                        | Description                      | Supported values | Default value |
-| ---------------------------------------------- |:--------------------------------:|:----------------:|:-------------:| 
-| ```WUD_TRIGGER_SLACK_{trigger_name}_TOKEN```   | The Oauth Token of the Slack app |                  |               |
-| ```WUD_TRIGGER_SLACK_{trigger_name}_CHANNEL``` | The name of the channel to post  |                  |               |
+| Env var                                    | Required     | Description                      | Supported values | Default value when missing |
+| ------------------------------------------ |:------------:| -------------------------------- | ---------------- | -------------------------- | 
+| `WUD_TRIGGER_SLACK_{trigger_name}_TOKEN`   | :red_circle: | The Oauth Token of the Slack app |                  |                            |
+| `WUD_TRIGGER_SLACK_{trigger_name}_CHANNEL` | :red_circle: | The name of the channel to post  |                  |                            |
 
 !> The Slack channel must already exist on the workspace (the trigger won't automatically create it)
 
-#### Examples
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
+
+### Examples
 
 <!-- tabs:start -->
 #### **Docker Compose**

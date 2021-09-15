@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row v-for="trigger in triggers" :key="trigger.name">
-      <v-col :cols="12">
+      <v-col :cols="12" class="pt-2 pb-2">
         <configuration-item :item="trigger" />
       </v-col>
     </v-row>

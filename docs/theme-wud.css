@@ -1,4 +1,5 @@
 :root {
     --base-font-size: 14px;
     --theme-color   : #00355E;
+    --content-max-width: 150em;
 }

@@ -12,6 +12,7 @@ const configurationValid = {
     topic: 'wud-container',
     clientId: 'wud',
     ssl: false,
+    threshold: 'all',
 };
 
 beforeEach(() => {

@@ -1,8 +1,8 @@
-### Storage
+# Storage
   
 If you want the state to persist after the container removal, you need to mount  ```/store``` as a volume.
 
-#### Examples 
+### Examples 
 
 <!-- tabs:start -->
 #### **Docker Compose**

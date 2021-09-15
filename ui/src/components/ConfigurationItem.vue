@@ -1,7 +1,9 @@
 <template>
   <v-card>
-    <v-app-bar color="secondary" flat dark>
-      <v-toolbar-title class="text-capitalize">{{ item.name }}</v-toolbar-title>
+    <v-app-bar color="primary" flat dark dense>
+      <v-toolbar-title class="text-capitalize text-body-1">{{
+        item.name
+      }}</v-toolbar-title>
       <v-spacer />
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">

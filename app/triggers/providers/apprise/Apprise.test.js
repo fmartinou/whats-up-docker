@@ -9,6 +9,7 @@ const apprise = new Apprise();
 const configurationValid = {
     url: 'http://xxx.com',
     urls: 'maito://user:pass@gmail.com',
+    threshold: 'all',
 };
 
 beforeEach(() => {
@@ -33,7 +34,6 @@ test('notify should send POST http request to notify endpoint', async () => {
     apprise.configuration = configurationValid;
     const container = {
         name: 'container1',
-        updateAvailable: true,
         image: {
             tag: {
                 value: '1.0.0',
@@ -41,6 +41,13 @@ test('notify should send POST http request to notify endpoint', async () => {
         },
         result: {
             tag: '2.0.0',
+        },
+        updateAvailable: true,
+        updateKind: {
+            kind: 'tag',
+            localValue: '1.0.0',
+            remoteValue: '2.0.0',
+            semverDiff: 'major',
         },
     };
     await apprise.notify(container);

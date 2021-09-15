@@ -1,13 +1,13 @@
-### Basic Authentication
+# Basic Authentication
 
 The `basic` authentication lets you protect WUD access using the [Http Oidc auth standard](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication).
 
-#### Variables
+### Variables
 
-| Env var                           | Description             | Supported values                                                                           | Default value |
-| --------------------------------- |:-----------------------:|:------------------------------------------------------------------------------------------:|:-------------:| 
-| `WUD_AUTH_BASIC_{auth_name}_USER` | Username                |                                                                                            |               |
-| `WUD_AUTH_BASIC_{auth_name}_HASH` | Htpasswd compliant hash | [See htpasswd documentation](https://httpd.apache.org/docs/current/programs/htpasswd.html) |               |
+| Env var                           | Required       | Description              | Supported values                                                                           | Default value when missing |
+| --------------------------------- |:--------------:| ------------------------ | ------------------------------------------------------------------------------------------ | -------------------------- | 
+| `WUD_AUTH_BASIC_{auth_name}_USER` | :red_circle:   | Username                 |                                                                                            |                            |
+| `WUD_AUTH_BASIC_{auth_name}_HASH` | :red_circle:   | Htpasswd compliant hash  | [See htpasswd documentation](https://httpd.apache.org/docs/current/programs/htpasswd.html) |                            |
 
 !> Hash will likely contain `$` signs; don't forget to protect them! \
 \
@@ -20,7 +20,7 @@ or use single quotes in Bash commands \
 or escape them in Bash commands \
 `WUD_AUTH_BASIC_JOHN_HASH="\$apr1\$aefKbZEa$ZSA5Y3zv9vDQOxr283NGx/"`
 
-#### Examples
+### Examples
 
 <!-- tabs:start -->
 #### **Docker Compose**
@@ -53,13 +53,13 @@ docker run \
 ```
 <!-- tabs:end -->
 
-#### How to create a password hash
-##### You can use htpasswd
+### How to create a password hash
+#### You can use htpasswd
 ```bash
 htpasswd -nib john doe
 
 # Output: john:$apr1$8zDVtSAY$62WBh9DspNbUKMZXYRsjS/
 ```
 
-##### Or you can use an online service
+#### Or you can use an online service
 [Like this one](https://wtools.io/generate-htpasswd-online).

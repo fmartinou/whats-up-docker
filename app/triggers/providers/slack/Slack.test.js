@@ -9,6 +9,7 @@ const slack = new Slack();
 const configurationValid = {
     token: 'token',
     channel: 'channel',
+    threshold: 'all',
 };
 
 test('validateConfiguration should return validated configuration when valid', () => {

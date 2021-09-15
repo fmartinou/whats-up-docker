@@ -9,17 +9,16 @@
           absolute
           top
           right
-          small
-          color="primary"
+          color="accent"
           @click.stop="refreshAllContainers"
           :loading="isRefreshing"
+          style="z-index: 1000"
         >
           <v-icon> mdi-refresh</v-icon>
         </v-btn>
       </template>
       <span>Refresh all</span>
     </v-tooltip>
-    <v-card-subtitle class="text-h6 font-weight-bold">Filters</v-card-subtitle>
     <v-card-text>
       <v-row>
         <v-col xs="12" sm="12" md="4" lg="3" xl="3">
@@ -31,6 +30,7 @@
             :clearable="true"
             label="Registry"
             outlined
+            dense
           ></v-select>
         </v-col>
         <v-col xs="12" sm="12" md="4" lg="3" xl="3">
@@ -42,13 +42,15 @@
             :clearable="true"
             label="Watcher"
             outlined
+            dense
           ></v-select>
         </v-col>
-        <v-col xs="12" sm="12" md="4" lg="3" xl="3">
+        <v-col xs="12" sm="12" md="4" lg="3" xl="3" class="pa-0">
           <v-switch
             label="Update available"
             @change="emitUpdateAvailableChanged"
             :value="updateAvailable"
+            dense
           />
         </v-col>
       </v-row>

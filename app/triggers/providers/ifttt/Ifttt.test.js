@@ -10,6 +10,7 @@ const ifttt = new Ifttt();
 const configurationValid = {
     key: 'secret',
     event: 'wud-image',
+    threshold: 'all',
 };
 
 beforeEach(() => {

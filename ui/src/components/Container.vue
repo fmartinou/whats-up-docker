@@ -3,25 +3,27 @@
     <v-overlay :absolute="true" :value="isRefreshing" />
 
     <v-app-bar
-      color="secondary"
+      color="primary"
       dark
       flat
       rounded
+      dense
       @click="showDetail = !showDetail"
       style="cursor: pointer"
     >
-      <v-toolbar-title>{{ container.name }}</v-toolbar-title>
+      <v-toolbar-title class="text-body-1">{{
+        container.name
+      }}</v-toolbar-title>
       <v-badge
         class="ma-4"
         :content="newVersion"
         v-if="updateAvailable"
-        overlap
         tile
-        color="success"
+        :color="newVersionClass"
       >
-        <v-chip label color="warning">{{ container.image.tag.value }}</v-chip>
+        <v-chip label color="secondary">{{ container.image.tag.value }}</v-chip>
       </v-badge>
-      <v-chip class="ma-4" label color="success" v-else>{{
+      <v-chip class="ma-4" label color="secondary" v-else>{{
         container.image.tag.value
       }}</v-chip>
       <div>
@@ -35,7 +37,7 @@
               top
               right
               small
-              color="primary"
+              color="accent"
               @click.stop="refreshContainer"
               :loading="isRefreshing"
             >
@@ -116,178 +118,18 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-subtitle class="text-h6 font-weight-bold"
-          >Image
-        </v-card-subtitle>
-        <v-card-text>
-          <v-row>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Id" :value="container.image.id">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-chip
-                      label
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="copyToClipboard('image id', container.image.id)"
-                    >
-                      {{ container.image.id | short(15) }}
-                    </v-chip>
-                  </template>
-                  <span>Click to copy the full id</span>
-                </v-tooltip>
-              </property>
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Registry" :value="container.image.registry.name">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-icon
-                      v-text="registryIcon"
-                      large
-                      v-bind="attrs"
-                      v-on="on"
-                    />
-                  </template>
-                  <span
-                    >{{ container.image.registry.name }} ({{
-                      container.image.registry.url
-                    }})</span
-                  >
-                </v-tooltip>
-              </property>
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Name" :value="container.image.name" />
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Tag" :value="container.image.tag">
-                <v-badge
-                  v-if="container.image.tag.semver"
-                  content="semver"
-                  overlap
-                  tile
-                  color="success"
-                >
-                  <v-chip label>{{ container.image.tag.value }}</v-chip>
-                </v-badge>
-                <v-chip v-else label>{{ container.image.tag.value }}</v-chip>
-              </property>
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Digest" :value="container.image.digest.value">
-                <v-tooltip bottom v-if="container.image.digest.value">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-chip
-                      label
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="
-                        copyToClipboard('digest', container.image.digest.value)
-                      "
-                      >{{ container.image.digest.value | short(15) }}
-                    </v-chip>
-                  </template>
-                  <span>Click to copy the full digest</span>
-                </v-tooltip>
-                <v-tooltip v-else bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-icon large v-bind="attrs" v-on="on">mdi-cancel</v-icon>
-                  </template>
-                  <span>Digest not tracked or not found</span>
-                </v-tooltip>
-              </property>
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="OS / Arch" :value="container.image.os">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-icon v-text="osIcon" large v-bind="attrs" v-on="on" />
-                  </template>
-                  <span class="text-capitalize"
-                    >{{ container.image.os }} /
-                    {{ container.image.architecture }}</span
-                  >
-                </v-tooltip>
-              </property>
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property
-                name="Created"
-                :value="container.image.created | date"
-              />
-            </v-col>
-          </v-row>
-        </v-card-text>
 
-        <v-card-subtitle class="text-h6 font-weight-bold"
-          >Registry result
-          <v-icon color="error" v-if="error">mdi-alert-circle-outline</v-icon>
-        </v-card-subtitle>
-        <v-card-text v-if="error">
-          <v-col xs="12" sm="12" md="12" lg="12" xl="12">
-            <property name="Error" :value="error.message">
-              {{ error.message }}
-            </property>
-          </v-col>
-        </v-card-text>
-        <v-card-text v-else>
-          <v-row>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Tag" :value="result.tag">
-                <v-badge
-                  v-if="container.image.tag.semver"
-                  content="semver"
-                  overlap
-                  tile
-                  color="success"
-                >
-                  <v-chip label>{{ result.tag }}</v-chip>
-                </v-badge>
-                <v-chip v-else label>{{ result.tag }}</v-chip>
-              </property>
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Digest" :value="result.digest">
-                <v-tooltip bottom v-if="result.digest">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-chip
-                      label
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="
-                        copyToClipboard('digest', container.result.digest)
-                      "
-                      >{{ container.result.digest | short(15) }}
-                    </v-chip>
-                  </template>
-                  <span>Click to copy the full digest</span>
-                </v-tooltip>
-                <v-tooltip v-else bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-icon large v-bind="attrs" v-on="on">mdi-cancel</v-icon>
-                  </template>
-                  <span>Digest not tracked or not found</span>
-                </v-tooltip>
-              </property>
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2" v-if="result.created">
-              <property name="Created" :value="result.created | date" />
-            </v-col>
-            <v-col cols="12">
-              <property name="Link" :value="container.result.link">
-                <v-chip
-                  label
-                  v-if="container.result.link"
-                  :href="container.result.link"
-                  target="_blank"
-                  >{{ container.result.link }}
-                </v-chip>
-                <v-icon v-else large>mdi-cancel</v-icon>
-              </property>
-            </v-col>
-          </v-row>
-        </v-card-text>
+        <!-- Container image -->
+        <container-image :image="container.image" />
+
+        <!-- Container result -->
+        <container-result
+          :result="container.result"
+          :error="container.error"
+          :semver="container.image.tag.semver"
+          :updateKind="container.updateKind"
+        />
+
         <v-card-text>
           <v-row>
             <v-col class="text-center">
@@ -338,12 +180,16 @@
 
 <script>
 import Property from "@/components/Property";
+import ContainerImage from "@/components/ContainerImage";
+import ContainerResult from "@/components/ContainerResult";
 import { refreshContainer } from "@/services/container";
 import { getRegistryProviderIcon } from "@/services/registry";
 
 export default {
   components: {
     Property,
+    ContainerImage,
+    ContainerResult,
   },
 
   props: {
@@ -381,27 +227,41 @@ export default {
     },
 
     newVersion() {
-      return this.container.image.tag.value !== this.result.tag
-        ? this.result.tag
-        : this.container.image.digest.value !== this.result.digest
-        ? this.$options.filters.short(this.result.digest, 15)
-        : this.container.image.created !== this.result.created
-        ? this.$options.filters.date(this.result.created)
-        : "?";
-    },
-  },
-
-  filters: {
-    short(fullId, length) {
-      if (!fullId) {
-        return "";
+      let newVersion = "unknown";
+      if (
+        this.container.result.created &&
+        this.container.image.created !== this.container.result.created
+      ) {
+        newVersion = this.$options.filters.date(this.result.created);
       }
-      return fullId.substring(0, length);
+      if (this.container.updateKind) {
+        newVersion = this.container.updateKind.remoteValue;
+      }
+      if (this.container.updateKind.kind === "digest") {
+        newVersion = this.$options.filters.short(newVersion, 15);
+      }
+      return newVersion;
     },
 
-    date(dateStr) {
-      const date = new Date(dateStr);
-      return new Intl.DateTimeFormat().format(date);
+    newVersionClass() {
+      let color = "warning";
+      if (
+        this.container.updateKind &&
+        this.container.updateKind.kind === "tag"
+      ) {
+        switch (this.container.updateKind.semverDiff) {
+          case "major":
+            color = "error";
+            break;
+          case "minor":
+            color = "warning";
+            break;
+          case "patch":
+            color = "success";
+            break;
+        }
+      }
+      return color;
     },
   },
 

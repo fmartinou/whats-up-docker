@@ -3,8 +3,10 @@ import App from "./App.vue";
 import vuetify from "./plugins/vuetify";
 import clipboard from "./plugins/clipboard";
 import router from "./router";
+import { registerFilters } from "./filters";
 
 Vue.config.productionTip = false;
+registerFilters();
 
 new Vue({
   vuetify,

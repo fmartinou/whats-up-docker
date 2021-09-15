@@ -58,6 +58,10 @@ function init() {
             'result_created',
             'result_link',
             'update_available',
+            'update_kind_kind',
+            'update_kind_local_value',
+            'update_kind_remote_value',
+            'update_kind_semver_diff',
             'error_message',
         ],
     });

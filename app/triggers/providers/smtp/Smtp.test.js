@@ -10,6 +10,7 @@ const configurationValid = {
     pass: 'pass',
     from: 'from@xx.com',
     to: 'to@xx.com',
+    threshold: 'all',
 };
 
 test('validateConfiguration should return validated configuration when valid', () => {

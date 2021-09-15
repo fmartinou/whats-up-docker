@@ -1,7 +1,6 @@
 const rp = require('request-promise-native');
 
 const Trigger = require('../Trigger');
-const { diff } = require('../../../model/container');
 
 /**
  * Apprise Trigger implementation
@@ -38,15 +37,14 @@ class Apprise extends Trigger {
      * @returns {Promise<void>}
      */
     async notify(container) {
-        const containerDiff = diff(container);
         const options = {
             method: 'POST',
             uri: `${this.configuration.url}/notify`,
             json: true,
             body: {
                 urls: this.configuration.urls,
-                title: `[WUD] New ${containerDiff.kind} found for container ${container.name}`,
-                body: `Container ${container.name} running with ${containerDiff.kind} ${containerDiff.localValue} can be updated to ${containerDiff.kind} ${containerDiff.remoteValue}`,
+                title: `[WUD] New ${container.updateKind.kind} found for container ${container.name}`,
+                body: `Container ${container.name} running with ${container.updateKind.kind} ${container.updateKind.localValue} can be updated to ${container.updateKind.kind} ${container.updateKind.remoteValue}`,
                 format: 'text',
                 type: 'info',
             },

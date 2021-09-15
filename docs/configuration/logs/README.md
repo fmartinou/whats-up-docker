@@ -1,17 +1,17 @@
-### Logs
+# Logs
 
 You can adjust the log level with env var WUD_LOG_LEVEL.
 
-#### Variables
+### Variables
 
-| Env var          | Description | Supported values            | Default value  |
-| ---------------- |:-----------:|:---------------------------:|:--------------:| 
-| `WUD_LOG_LEVEL`  | Log level   | error info debug trace      | info           |
-| `WUD_LOG_FORMAT` | Log format  | text json                   | text           |
+| Env var          | Required       | Description | Supported values            | Default value when missing  |
+| ---------------- |:--------------:| ----------- | --------------------------- | --------------------------- | 
+| `WUD_LOG_LEVEL`  | :white_circle: | Log level   | error info debug trace      | `info`                      |
+| `WUD_LOG_FORMAT` | :white_circle: | Log format  | text json                   | `text`                      |
 
-#### Examples
+### Examples
 
-##### Set debug level
+#### Set debug level
 
 <!-- tabs:start -->
 #### **Docker Compose**
@@ -31,7 +31,7 @@ docker run -e WUD_LOG_LEVEL=debug ... fmartinou/whats-up-docker
 ```
 <!-- tabs:end -->
 
-##### Set json format (for ElasticSearch ingestion for example)
+#### Set json format (for ElasticSearch ingestion for example)
 
 <!-- tabs:start -->
 #### **Docker**

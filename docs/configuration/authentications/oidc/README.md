@@ -1,25 +1,25 @@
-### Openid Connect Authentication
+# Openid Connect Authentication
 ![logo](oidc.png)
 
 The `oidc` authentication lets you protect WUD access using the [Openid Connect standard](https://openid.net/).
 
-#### Variables
+### Variables
 
-| Env var                                  | Description             | Supported values | Default value |
-| ---------------------------------------- |:-----------------------:|:----------------:|:-------------:|
-| `WUD_AUTH_OIDC_{auth_name}_CLIENTID`     | Client ID               |                  |               |
-| `WUD_AUTH_OIDC_{auth_name}_CLIENTSECRET` | Client Secret           |                  |               |
-| `WUD_AUTH_OIDC_{auth_name}_DISCOVERY`    | Oidc discovery URL      |                  |               |
+| Env var                                  | Required     | Description             | Supported values | Default value when missing |
+| ---------------------------------------- |:------------:| ----------------------- | ---------------- | -------------------------- |
+| `WUD_AUTH_OIDC_{auth_name}_CLIENTID`     | :red_circle: | Client ID               |                  |                            |
+| `WUD_AUTH_OIDC_{auth_name}_CLIENTSECRET` | :red_circle: | Client Secret           |                  |                            |
+| `WUD_AUTH_OIDC_{auth_name}_DISCOVERY`    | :red_circle: | Oidc discovery URL      |                  |                            |
 
 ?> The callback URL (to configure in the IDP is built as `${wud_public_address}/auth/oidc/${auth_name}/cb`
 
 !> WUD tries its best to determine the public address to forge redirections on its own. \
 If it fails (irregular reverse proxy configuration...), you can enforce the value using the env var `WUD_PUBLIC_ADDRESS` 
 
-#### How to integrate with&nbsp;[Authelia](https://www.authelia.com)
+### How to integrate with&nbsp;[Authelia](https://www.authelia.com)
 ![logo](authelia.png)
 
-##### Configure an Openid Client for WUD in Authelia configuration.yml ([see official authelia documentation](https://www.authelia.com/docs/configuration/identity-providers/oidc.html))
+#### Configure an Openid Client for WUD in Authelia configuration.yml ([see official authelia documentation](https://www.authelia.com/docs/configuration/identity-providers/oidc.html))
 ```yaml
 identity_providers:
   oidc:
@@ -57,7 +57,7 @@ identity_providers:
         userinfo_signing_algorithm: none
 ```
 
-##### Configure WUD
+#### Configure WUD
 <!-- tabs:start -->
 #### **Docker Compose**
 ```yaml
@@ -87,13 +87,13 @@ docker run \
 
 ![image](authelia_01.png)
 
-#### How to integrate with&nbsp;[Auth0](http://auth0.com)
+### How to integrate with&nbsp;[Auth0](http://auth0.com)
 ![logo](auth0.png)
 
-##### Create an application (Regular Web Application)
+#### Create an application (Regular Web Application)
 - `Allowed Callback URLs`: `https://<your_wud_public_domain>/auth/oidc/auth0/cb`
 
-##### Configure WUD
+#### Configure WUD
 <!-- tabs:start -->
 #### **Docker Compose**
 ```yaml

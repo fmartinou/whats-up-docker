@@ -16,6 +16,7 @@ const configurationValid = {
     token: 'token',
     priority: 0,
     sound: 'pushover',
+    threshold: 'all',
 };
 
 test('validateConfiguration should return validated configuration when valid', () => {
@@ -45,6 +46,7 @@ test('maskConfiguration should mask sensitive data', () => {
         token: 't***n',
         priority: 0,
         sound: 'pushover',
+        threshold: 'all',
     });
 });
 

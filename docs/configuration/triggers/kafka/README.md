@@ -1,24 +1,26 @@
-### Kafka
+# Kafka
 ![logo](kafka.png)
 
-The ```kafka``` trigger lets you publish container update notifications to a Kafka topic.
+The `kafka` trigger lets you publish container update notifications to a Kafka topic.
 
-#### Variables
+### Variables
 
-| Env var                                                        | Description                                                         | Supported values                    | Default value |
-|:--------------------------------------------------------------:|:-------------------------------------------------------------------:|:-----------------------------------:|:-------------:| 
-| ```WUD_TRIGGER_KAFKA_{trigger_name}_BROKERS```                 | Comma separated list of Kafka brokers                               |                                     |               |
-| ```WUD_TRIGGER_KAFKA_{trigger_name}_SSL```                     | Is SSL enabled on the TLS connection                                | true, false                         | false         |
-| ```WUD_TRIGGER_KAFKA_{trigger_name}_TOPIC```                   | The name of the topic to publish                                    |                                     | wud-container |
-| ```WUD_TRIGGER_KAFKA_{trigger_name}_AUTHENTICATION_TYPE```     | The type for authentication (required if authentication is enabled) | PLAIN, SCRAM-SHA-256, SCRAM-SHA-512 | PLAIN         |
-| ```WUD_TRIGGER_KAFKA_{trigger_name}_AUTHENTICATION_USER```     | The name of the user (required if authentication is enabled)        |                                     |               |
-| ```WUD_TRIGGER_KAFKA_{trigger_name}_AUTHENTICATION_PASSWORD``` | The password of the user (required if authentication is enabled)    |                                     |               |
+| Env var                                                    | Required       | Description                                                      | Supported values                         | Default value when missing |
+| ---------------------------------------------------------- |:--------------:| ---------------------------------------------------------------- | ---------------------------------------- | -------------------------- | 
+| `WUD_TRIGGER_KAFKA_{trigger_name}_BROKERS`                 | :red_circle:   | Comma separated list of Kafka brokers                            |                                          |                            |
+| `WUD_TRIGGER_KAFKA_{trigger_name}_SSL`                     | :white_circle: | Is SSL enabled on the TLS connection                             | `true`, `false`                          | `false`                    |
+| `WUD_TRIGGER_KAFKA_{trigger_name}_TOPIC`                   | :white_circle: | The name of the topic to publish                                 |                                          | `wud-container`            |
+| `WUD_TRIGGER_KAFKA_{trigger_name}_AUTHENTICATION_TYPE`     | :white_circle: | The type for authentication                                      | `PLAIN`, `SCRAM-SHA-256`, `SCRAM-SHA-12` | `PLAIN`                    |
+| `WUD_TRIGGER_KAFKA_{trigger_name}_AUTHENTICATION_USER`     | :white_circle: | The name of the user (required if authentication is enabled)     |                                          |                            |
+| `WUD_TRIGGER_KAFKA_{trigger_name}_AUTHENTICATION_PASSWORD` | :white_circle: | The password of the user (required if authentication is enabled) |                                          |                            |
 
 !> The topic must already exist on the broker (the trigger won't automatically create it)
 
-#### Examples
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
 
-##### Post a message to a&nbsp;[Cloud Karafka](https://www.cloudkarafka.com/) broker
+### Examples
+
+#### Post a message to a&nbsp;[Cloud Karafka](https://www.cloudkarafka.com/) broker
 
 <!-- tabs:start -->
 #### **Docker Compose**
@@ -52,7 +54,7 @@ docker run \
 ```
 <!-- tabs:end -->
 
-##### Example of published record
+#### Example of published record
 ```json
 {
   "id":"31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816",

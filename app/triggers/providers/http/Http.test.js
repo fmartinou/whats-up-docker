@@ -9,6 +9,7 @@ const http = new Http();
 const configurationValid = {
     url: 'http://xxx.com',
     method: 'POST',
+    threshold: 'all',
 };
 
 beforeEach(() => {

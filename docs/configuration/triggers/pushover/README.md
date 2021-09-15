@@ -1,22 +1,24 @@
-### Pushover
+# Pushover
 ![logo](pushover.png)
 
-The ```pushover``` trigger lets you send realtime notifications to your devices (Android, iPhone...) using the [Pushover Service](https://pushover.net/).
+The `pushover` trigger lets you send realtime notifications to your devices (Android, iPhone...) using the [Pushover Service](https://pushover.net/).
 
-#### Variables
+### Variables
 
-| Env var                                            | Description                          | Supported values                                | Default value |
-| -------------------------------------------------- |:------------------------------------:|:-----------------------------------------------:|:-------------:| 
-| ```WUD_TRIGGER_PUSHOVER_{trigger_name}_TOKEN```    | The API token (required)             |                                                 |               |
-| ```WUD_TRIGGER_PUSHOVER_{trigger_name}_USER```     | The User key (required)              | Coma separated list of devices (e.g. dev1,dev2) |               |
-| ```WUD_TRIGGER_PUSHOVER_{trigger_name}_DEVICE```   | The Device(s) to notify (optional)   | [see here](https://pushover.net/api#priority)   |               |
-| ```WUD_TRIGGER_PUSHOVER_{trigger_name}_SOUND```    | The notification sound (optional)    | [see here](https://pushover.net/api#sounds)     | pushover      |
-| ```WUD_TRIGGER_PUSHOVER_{trigger_name}_PRIORITY``` | The notification priority (optional) | [see here](https://pushover.net/api#priority)   | 0             |
+| Env var                                        | Required       | Description               | Supported values                                                                                   | Default value when missing |
+| ---------------------------------------------- |:--------------:|-------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------- | 
+| `WUD_TRIGGER_PUSHOVER_{trigger_name}_TOKEN`    | :red_circle:   | The API token             |                                                                                                    |                            |
+| `WUD_TRIGGER_PUSHOVER_{trigger_name}_USER`     | :red_circle:   | The User key              |                                                                                                    |                            |
+| `WUD_TRIGGER_PUSHOVER_{trigger_name}_DEVICE`   | :white_circle: | The Device(s) to notify   | Coma separated list of devices (e.g. dev1,dev2) ([see here](https://pushover.net/api#identifiers)) |                            |
+| `WUD_TRIGGER_PUSHOVER_{trigger_name}_SOUND`    | :white_circle: | The notification sound    | [see here](https://pushover.net/api#sounds)                                                        | `pushover`                 |
+| `WUD_TRIGGER_PUSHOVER_{trigger_name}_PRIORITY` | :white_circle: | The notification priority | [see here](https://pushover.net/api#priority)                                                      | `0`                        |
 
-#### Examples
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
 
-##### Configuration
-###### Minimal
+### Examples
+
+#### Configuration
+##### Minimal
 <!-- tabs:start -->
 #### **Docker Compose**
 ```yaml
@@ -41,7 +43,7 @@ docker run \
 ```
 <!-- tabs:end -->
 
-###### Full
+##### Full
 <!-- tabs:start -->
 #### **Docker Compose**
 ```yaml
@@ -72,16 +74,16 @@ docker run \
 ```
 <!-- tabs:end -->
 
-#### How to get the User key
+### How to get the User key
 [Click here](https://pushover.net/settings)
 
 The key is printed under the section `Reset User Key`.
 
-#### How to get an API token
-##### Register a new application
+### How to get an API token
+#### Register a new application
 [Click here](https://pushover.net/apps/build)
 
 ![image](pushover_register.png)
 
-##### Copy the API token
+#### Copy the API token
 ![image](pushover_api_token.png)

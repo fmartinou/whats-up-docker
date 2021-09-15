@@ -17,7 +17,7 @@
     <v-fade-transition group hide-on-leave mode="in-out">
       <template v-for="container in containersFiltered">
         <v-row :key="container.id">
-          <v-col>
+          <v-col class="pt-2 pb-2">
             <container
               :container="container"
               @delete-container="deleteContainer(container)"

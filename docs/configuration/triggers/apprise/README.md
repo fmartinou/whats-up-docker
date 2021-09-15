@@ -1,18 +1,20 @@
-### Apprise
+# Apprise
 ![logo](apprise.png)
 
 The `apprise` trigger lets you send container update notifications via the [Apprise API](https://github.com/caronc/apprise-api).
 
-#### Variables
+### Variables
 
-| Env var                                              | Description                                                                                            | Supported values             | Default value |
-| ---------------------------------------------------- |:------------------------------------------------------------------------------------------------------:|:----------------------------:|:-------------:| 
-| `WUD_TRIGGER_APPRISE_{trigger_name}_URL` (required)  | The Base URL of the Apprise API                                                                        |                              |               |
-| `WUD_TRIGGER_APPRISE_{trigger_name}_URLS` (required) | [Supported Apprise notification URLs](https://github.com/caronc/apprise#popular-notification-services) | Comma separated list of urls |               |
+| Env var                                   | Required     | Description                                                                                            | Supported values             | Default value when missing |
+| ----------------------------------------- |:------------:| ------------------------------------------------------------------------------------------------------ | ---------------------------- | -------------------------- | 
+| `WUD_TRIGGER_APPRISE_{trigger_name}_URL`  | :red_circle: | The Base URL of the Apprise API                                                                        |                              |                            |
+| `WUD_TRIGGER_APPRISE_{trigger_name}_URLS` | :red_circle: | [Supported Apprise notification URLs](https://github.com/caronc/apprise#popular-notification-services) | Comma separated list of urls |                            |
 
-#### Examples
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
 
-##### Send a Mail & an SMS
+### Examples
+
+#### Send a Mail & an SMS
 
 <!-- tabs:start -->
 #### **Docker Compose**
@@ -37,7 +39,7 @@ docker run \
 ```
 <!-- tabs:end -->
 
-#### How to run the Apprise API?
+### How to run the Apprise API?
 Just run the official [Apprise Docker image](https://hub.docker.com/r/caronc/apprise).
 
 For more information, check out the [official Apprise API documentation](https://github.com/caronc/apprise-api). 

@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row v-for="registry in registries" :key="registry.name">
-      <v-col :cols="12">
+      <v-col :cols="12" class="pt-2 pb-2">
         <configuration-item :item="registry" />
       </v-col>
     </v-row>

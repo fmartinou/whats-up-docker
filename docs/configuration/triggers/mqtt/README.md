@@ -1,22 +1,24 @@
-### Mqtt
+# Mqtt
 ![logo](mqtt.png)
 
-The ```mqtt``` trigger lets you send container update notifications to an MQTT broker.
+The `mqtt` trigger lets you send container update notifications to an MQTT broker.
 
-#### Variables
+### Variables
 
-| Env var                                            | Description                                                         | Supported values                    | Default value |
-|:--------------------------------------------------:|:-------------------------------------------------------------------:|:-----------------------------------:|:-------------:| 
-| ```WUD_TRIGGER_MQTT_{trigger_name}_URL```          | The URL of the MQTT broker                                          | Valid mqtt, mqtts, tcp, ws, wss url |               |
-| ```WUD_TRIGGER_MQTT_{trigger_name}_USER```         | The username if broker authentication is enabled                    |                                     |               |
-| ```WUD_TRIGGER_MQTT_{trigger_name}_PASSWORD```     | The password if broker authentication is enabled                    |                                     |               |
-| ```WUD_TRIGGER_MQTT_{trigger_name}_TOPIC```        | The base topic where the updates are published to                   |                                     | wud/container |
-| ```WUD_TRIGGER_MQTT_{trigger_name}_HASS_ENABLED``` | Enable [Home-assistant](https://www.home-assistant.io/) integration | true / false                        | false         |
-| ```WUD_TRIGGER_MQTT_{trigger_name}_HASS_PREFIX```  | Base topic for hass entity discovery                                |                                     | homeassistant |
+| Env var                                        | Required       | Description                                                         | Supported values                    | Default value when missing |
+| ---------------------------------------------- |:--------------:| ------------------------------------------------------------------- | ----------------------------------- | -------------------------- | 
+| `WUD_TRIGGER_MQTT_{trigger_name}_URL`          | :red_circle:   | The URL of the MQTT broker                                          | Valid mqtt, mqtts, tcp, ws, wss url |                            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_USER`         | :white_circle: | The username if broker authentication is enabled                    |                                     |                            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_PASSWORD`     | :white_circle: | The password if broker authentication is enabled                    |                                     |                            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_TOPIC`        | :white_circle: | The base topic where the updates are published to                   |                                     | `wud/container`            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_HASS_ENABLED` | :white_circle: | Enable [Home-assistant](https://www.home-assistant.io/) integration | `true`, `false`                     | `false`                    |
+| `WUD_TRIGGER_MQTT_{trigger_name}_HASS_PREFIX`  | :white_circle: | Base topic for hass entity discovery                                |                                     | `homeassistant`            |
 
-#### Examples
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
 
-##### Post a message to a local mosquitto broker
+### Examples
+
+#### Post a message to a local mosquitto broker
 
 <!-- tabs:start -->
 #### **Docker Compose**
@@ -40,7 +42,7 @@ docker run \
 ```
 <!-- tabs:end -->
 
-##### Post a message to a maqiatto broker
+#### Post a message to a maqiatto broker
 
 <!-- tabs:start -->
 #### **Docker Compose**
@@ -70,7 +72,7 @@ docker run \
 ```
 <!-- tabs:end -->
 
-##### Example of sent message
+#### Example of sent message
 ```json
 {
   "id":"31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816",
@@ -92,7 +94,7 @@ docker run \
 }
 ```
 
-#### Home-Assistant integration
+### Home-Assistant integration
 ![logo](hass.png)
 
 WUD can be easily integrated into [Home-Assistant](https://www.home-assistant.io/) using [MQTT Discovery](https://www.home-assistant.io/docs/mqtt/discovery/).
@@ -121,18 +123,18 @@ docker run \
 ```
 <!-- tabs:end -->
 
-###### Check that mqtt integration is properly configured.
+#### Check that mqtt integration is properly configured.
 ![image](hass_01.png)
 
-###### A WUD device is automatically added to the hass registry
+#### A WUD device is automatically added to the hass registry
 ![image](hass_02.png)
 
-###### Entities are automatically created (per Docker image)
+#### Entities are automatically created (per Docker image)
 ![image](hass_03.png)
 
 Entities are [binary_sensors](https://www.home-assistant.io/integrations/binary_sensor/) whose state is true when an update is available.
 
-###### Entities
+#### Entities
 ![image](hass_04.png)
 
 Entities expose all the details of the container as attributes:
