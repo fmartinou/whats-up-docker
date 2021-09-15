@@ -1,6 +1,6 @@
 # Changelog
 
-## develop
+## 5.5.0
 - :star: Add Openid Connect authentication ([see here](configuration/authentications/oidc/))
 - :fire: Fix duplicate notifications when multiple Docker watchers configured
 
