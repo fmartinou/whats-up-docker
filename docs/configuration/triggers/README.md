@@ -1,4 +1,4 @@
-## Triggers
+# Triggers
 
 Triggers are responsible for performing actions when a new image version is found.
   
