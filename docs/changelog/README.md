@@ -1,6 +1,6 @@
 # Changelog
 
-## develop
+## 5.6.0
 - :star: Add Trigger configurable threshold ([see here](configuration/authentications/triggers/))
 
 ## 5.5.0
