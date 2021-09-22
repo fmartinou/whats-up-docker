@@ -81,6 +81,9 @@
               <property name="Name" :value="container.name" />
             </v-col>
             <v-col xs="12" sm="6" md="4" lg="2" xl="2">
+              <property name="Status" :value="container.status" />
+            </v-col>
+            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
               <property name="Include tags" :value="container.includeTags">
                 <v-chip label v-if="container.includeTags"
                   >{{ container.includeTags }}
