@@ -450,6 +450,7 @@ class Docker extends Component {
 
         // Get useful properties
         const containerName = getContainerName(container);
+        const state = container.State;
         const architecture = image.Architecture;
         const os = image.Os;
         const variant = image.Variant;
@@ -478,6 +479,7 @@ class Docker extends Component {
         return normalizeContainer({
             id: containerId,
             name: containerName,
+            state,
             watcher: this.name,
             includeTags,
             excludeTags,

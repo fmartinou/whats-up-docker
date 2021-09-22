@@ -7,6 +7,7 @@ const semver = require('semver');
 const schema = joi.object({
     id: joi.string().min(1).required(),
     name: joi.string().min(1).required(),
+    state: joi.string().default('unknown'),
     watcher: joi.string().min(1).required(),
     includeTags: joi.string(),
     excludeTags: joi.string(),

@@ -1,5 +1,8 @@
 # Changelog
 
+## develop
+- :star: Add Container state (running, stopped...)
+
 ## 5.6.0
 - :star: Add Trigger configurable threshold ([see here](configuration/authentications/triggers/))
 
@@ -60,21 +63,15 @@ Please take a look at the documentation before upgrading to analyse all potentia
 
 ## 4.1.0
 - :star: Revamp documentation
-
-
 - :fire: Fix wrong digests for arch different from amd64
 - :fire: Remove the hass sensor when the container goes away
 
 ## 4.0.2
 - :star: Add WUD current version in the logs
-
-
 - :fire: Fix false-positive notifications
 
 ## 4.0.1
 - :star: Add Container name
-
-
 - :fire: Fix missing digest for images with v2 manifests
 
 ## 4.0.0
@@ -91,8 +88,6 @@ Please take a look at the documentation before upgrading to analyse all potentia
 - :star: Load local assets instead of relying on external CDN
 - :star: Add Pushover trigger
 - :star: Update all dependencies
-
-
 - :fire: Fix toggle menu in UI
 - :fire: Fix missing Http Trigger
 - :fire: Fix duplicated images
@@ -105,8 +100,6 @@ Please take a look at the documentation before upgrading to analyse all potentia
 - :star: Add support for Docker Hub private repositories
 - :star: Upgrade to Node.js 14
 - :star: Update dependencies
-
-
 - :fire: Fix error when current tag is a "coerced" semver
 - :fire: Fix missing Http Trigger
 

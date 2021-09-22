@@ -36,6 +36,7 @@ test('model should be validated when compliant', () => {
 
     expect(containerValidated).toStrictEqual({
         id: 'container-123456789',
+        state: 'unknown',
         image: {
             architecture: 'arch',
             created: '2021-06-12T05:33:38.440Z',
@@ -248,6 +249,7 @@ test('flatten should be flatten the nested properties with underscores when call
 
     expect(container.flatten(containerValidated)).toEqual({
         id: 'container-123456789',
+        state: 'unknown',
         image_architecture: 'arch',
         image_created: '2021-06-12T05:33:38.440Z',
         image_digest_watch: false,

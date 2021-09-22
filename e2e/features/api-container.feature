@@ -20,7 +20,7 @@ Feature: WUD Container API Exposure
       | 0     | ecr_sub_sub_test         | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/sub/test                 | 1.0.0            | 2.0.0            | true            |
       | 1     | ecr_sub_test             | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test                     | 1.0.0            | 2.0.0            | true            |
       | 2     | ecr_test                 | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test                         | 1.0.0            | 2.0.0            | true            |
-      | 3     | ghcr_radarr              | ghcr     | https://ghcr.io/v2                                      | linuxserver/radarr           | 3.2.1.5070-ls105 | 3.2.2.5080-ls115 | true            |
+      | 3     | ghcr_radarr              | ghcr     | https://ghcr.io/v2                                      | linuxserver/radarr           | 3.2.1.5070-ls105 | 3.2.2.5080-ls116 | true            |
       | 4     | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant | 2021.6.1         | 2021.9.7         | true            |
       | 5     | hub_homeassistant_latest | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant | latest           | latest           | false           |
       | 6     | hub_nginx_120            | hub      | https://registry-1.docker.io/v2                         | library/nginx                | 1.20-alpine      | 1.21-alpine      | true            |
@@ -29,7 +29,7 @@ Feature: WUD Container API Exposure
       | 9     | hub_pihole_57            | hub      | https://registry-1.docker.io/v2                         | pihole/pihole                | v5.7             | v5.8.1           | true            |
       | 10    | hub_pihole_latest        | hub      | https://registry-1.docker.io/v2                         | pihole/pihole                | latest           | latest           | false           |
       | 11    | hub_pyload_latest        | hub      | https://registry-1.docker.io/v2                         | writl/pyload                 | latest           | latest           | false           |
-      | 12    | hub_traefik_245          | hub      | https://registry-1.docker.io/v2                         | library/traefik              | 2.4.5            | 2.5.2            | true            |
+      | 12    | hub_traefik_245          | hub      | https://registry-1.docker.io/v2                         | library/traefik              | 2.4.5            | 2.5.3            | true            |
       | 13    | hub_traefik_latest       | hub      | https://registry-1.docker.io/v2                         | library/traefik              | latest           | latest           | false           |
       | 14    | hub_vaultwarden_1222     | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server           | 1.22.2-alpine    | 1.22.2-alpine    | false           |
       | 15    | hub_vaultwarden_latest   | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server           | latest           | latest           | false           |
