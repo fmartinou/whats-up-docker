@@ -22,6 +22,15 @@ const ecr = new Ecr();
 const gcr = new Gcr();
 const acr = new Acr();
 
+const configurationValid = {
+    socket: '/var/run/docker.sock',
+    port: 2375,
+    watchbydefault: true,
+    watchall: false,
+    watchdigest: false,
+    cron: '0 * * * *',
+};
+
 jest.mock('request-promise-native');
 
 beforeEach(() => {
@@ -29,6 +38,7 @@ beforeEach(() => {
     prometheusWatcher.init();
     docker = new Docker();
     docker.name = 'test';
+    docker.configuration = configurationValid;
     log.child = () => log;
     docker.log = log;
 });
@@ -48,14 +58,6 @@ Docker.__set__('getWatchContainerGauge', () => ({
     set: () => {
     },
 }));
-
-const configurationValid = {
-    socket: '/var/run/docker.sock',
-    port: 2375,
-    watchbydefault: true,
-    watchall: false,
-    cron: '0 * * * *',
-};
 
 test('validatedConfiguration should initialize when configuration is valid', () => {
     const validatedConfiguration = docker.validateConfiguration(configurationValid);
@@ -700,4 +702,44 @@ test('isContainerToWatch should return true when watch by default is false and w
 test('isContainerToWatch should return false when watch by default is false and wud.watch label is false', () => {
     const isContainerToWatch = Docker.__get__('isContainerToWatch');
     expect(isContainerToWatch('false', false)).toBeFalsy();
+});
+
+test('isDigestToWatch should return true when watch by default is true and no wud.watch.digest label', () => {
+    const isDigestToWatch = Docker.__get__('isDigestToWatch');
+    expect(isDigestToWatch(undefined, true)).toBeTruthy();
+});
+
+test('isDigestToWatch should return true when watch by default is true and wud.watch.digest label is empty string', () => {
+    const isDigestToWatch = Docker.__get__('isDigestToWatch');
+    expect(isDigestToWatch('', true)).toBeTruthy();
+});
+
+test('isDigestToWatch should return true when watch by default is true and wud.watch.digest label is true', () => {
+    const isDigestToWatch = Docker.__get__('isDigestToWatch');
+    expect(isDigestToWatch('true', true)).toBeTruthy();
+});
+
+test('isDigestToWatch should return false when watch by default is true and wud.watch.digest label is false', () => {
+    const isDigestToWatch = Docker.__get__('isDigestToWatch');
+    expect(isDigestToWatch('false', true)).toBeFalsy();
+});
+
+test('isDigestToWatch should return false when watch by default is false and no wud.watch.digest label', () => {
+    const isDigestToWatch = Docker.__get__('isContainerToWatch');
+    expect(isDigestToWatch(undefined, false)).toBeFalsy();
+});
+
+test('isDigestToWatch should return false when watch by default is false and wud.watch.digest label is empty string', () => {
+    const isDigestToWatch = Docker.__get__('isDigestToWatch');
+    expect(isDigestToWatch('', false)).toBeFalsy();
+});
+
+test('isDigestToWatch should return true when watch by default is false and wud.watch.digest label is true', () => {
+    const isDigestToWatch = Docker.__get__('isDigestToWatch');
+    expect(isDigestToWatch('true', false)).toBeTruthy();
+});
+
+test('isDigestToWatch should return false when watch by default is false and wud.watch.digest label is false', () => {
+    const isDigestToWatch = Docker.__get__('isDigestToWatch');
+    expect(isDigestToWatch('false', false)).toBeFalsy();
 });

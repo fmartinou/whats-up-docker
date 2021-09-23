@@ -7,17 +7,18 @@ The ```docker``` watcher lets you configure the Docker hosts you want to watch.
 
 ## Variables
 
-| Env var                                     | Required       | Description                                                     | Supported values                               | Default value whenb missing |
-| ------------------------------------------- |:--------------:| --------------------------------------------------------------- | ---------------------------------------------- | --------------------------- | 
-| `WUD_WATCHER_{watcher_name}_SOCKET`         | :white_circle: | Docker socket to watch                                          | Valid unix socket                              | `/var/run/docker.sock`      |
-| `WUD_WATCHER_{watcher_name}_HOST`           | :white_circle: | Docker hostname or ip of the host to watch                      |                                                |                             |
-| `WUD_WATCHER_{watcher_name}_PORT`           | :white_circle: | Docker port of the host to watch                                |                                                | `2375`                      |
-| `WUD_WATCHER_{watcher_name}_CAFILE`         | :white_circle: | CA pem file path (only for TLS connection)                      |                                                |                             |
-| `WUD_WATCHER_{watcher_name}_CERTFILE`       | :white_circle: | Certificate pem file path (only for TLS connection)             |                                                |                             |
-| `WUD_WATCHER_{watcher_name}_KEYFILE`        | :white_circle: | Key pem file path (only for TLS connection)                     |                                                |                             |
-| `WUD_WATCHER_{watcher_name}_CRON`           | :white_circle: | Scheduling options                                              | [Valid CRON expression](https://crontab.guru/) | `0 * * * *` (every hour)    |
-| `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` | :white_circle: | If WUD must monitor all containers by default                   | `true`, `false`                                | `true`                      |
-| `WUD_WATCHER_{watcher_name}_WATCHALL`       | :white_circle: | If WUD must monitor all containers instead of just running ones | `true`, `false`                                | `false`                     |
+| Env var                                     | Required       | Description                                                     | Supported values                               | Default value when missing |
+| ------------------------------------------- |:--------------:| --------------------------------------------------------------- | ---------------------------------------------- | -------------------------- | 
+| `WUD_WATCHER_{watcher_name}_SOCKET`         | :white_circle: | Docker socket to watch                                          | Valid unix socket                              | `/var/run/docker.sock`     |
+| `WUD_WATCHER_{watcher_name}_HOST`           | :white_circle: | Docker hostname or ip of the host to watch                      |                                                |                            |
+| `WUD_WATCHER_{watcher_name}_PORT`           | :white_circle: | Docker port of the host to watch                                |                                                | `2375`                     |
+| `WUD_WATCHER_{watcher_name}_CAFILE`         | :white_circle: | CA pem file path (only for TLS connection)                      |                                                |                            |
+| `WUD_WATCHER_{watcher_name}_CERTFILE`       | :white_circle: | Certificate pem file path (only for TLS connection)             |                                                |                            |
+| `WUD_WATCHER_{watcher_name}_KEYFILE`        | :white_circle: | Key pem file path (only for TLS connection)                     |                                                |                            |
+| `WUD_WATCHER_{watcher_name}_CRON`           | :white_circle: | Scheduling options                                              | [Valid CRON expression](https://crontab.guru/) | `0 * * * *` (every hour)   |
+| `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` | :white_circle: | If WUD must monitor all containers by default                   | `true`, `false`                                | `true`                     |
+| `WUD_WATCHER_{watcher_name}_WATCHALL`       | :white_circle: | If WUD must monitor all containers instead of just running ones | `true`, `false`                                | `false`                    |
+| `WUD_WATCHER_{watcher_name}_WATCHDIGEST`    | :white_circle: | If WUD must monitor container digests                           | `true`, `false`                                | `false`                    |
 
 ?> If no watcher is configured, a default one named `local` will be automatically created (reading the Docker socket).
 
@@ -31,8 +32,12 @@ You just need to give them different names.
 !> If host/port configuration is used, don't forget to enable the Docker remote API. \
 [See dockerd documentation](https://docs.docker.com/engine/reference/commandline/dockerd/#description)
 
-!> If the Docker remote API is secured with TLS, don't forget to mount and configure the TLS certificates. \  
+!> If the Docker remote API is secured with TLS, don't forget to mount and configure the TLS certificates. \
 [See dockerd documentation](https://docs.docker.com/engine/security/protect-access/#use-tls-https-to-protect-the-docker-daemon-socket)
+
+!> Watching image digests cause extensive usage of _Docker Registry Pull API_ which is restricted by [**Quotas on the Docker Hub**](https://docs.docker.com/docker-hub/download-rate-limit/). \
+We suggest enabling `wud.watch.digest` only where it's convenient (e.g. on `latest` versions). \
+If you face [quota related errors](https://docs.docker.com/docker-hub/download-rate-limit/#how-do-i-know-my-pull-requests-are-being-limited), consider slowing down the watcher rate by adjusting the `WUD_WATCHER_{watcher_name}_CRON` variable.
 
 ## Variable examples
 
@@ -188,10 +193,6 @@ To fine-tune the behaviour of WUD _per container_, you can add labels on them.
 | `wud.tag.include`   | :white_circle: | Regex to include specific tags only                | Valid JavaScript Regex                                                      |                                                                                       |
 | `wud.tag.exclude`   | :white_circle: | Regex to exclude specific tags                     | Valid JavaScript Regex                                                      |                                                                                       |
 | `wud.link.template` | :white_circle: | Browsable link associated to the container version | String template with placeholders `${raw}` `${major}` `${minor}` `${patch}` |                                                                                       |
-
-!> Watching image digests cause extensive usage of _Docker Registry Pull API_ which is restricted by [**Quotas on the Docker Hub**](https://docs.docker.com/docker-hub/download-rate-limit/). \
-We suggest enabling `wud.watch.digest` only where it's convenient (e.g. on `latest` versions). \
-If you face [quota related errors](https://docs.docker.com/docker-hub/download-rate-limit/#how-do-i-know-my-pull-requests-are-being-limited), consider slowing down the watcher rate by adjusting the `WUD_WATCHER_{watcher_name}_CRON` variable.
 
 ## Label examples
 

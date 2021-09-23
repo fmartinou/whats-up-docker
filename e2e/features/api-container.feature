@@ -9,6 +9,7 @@ Feature: WUD Container API Exposure
     Then response code should be 200
     And response body should be valid json
     And response body path $[<index>].name should be <containerName>
+    And response body path $[<index>].status should be running
     And response body path $[<index>].image.registry.name should be <registry>
     And response body path $[<index>].image.registry.url should be <registryUrl>
     And response body path $[<index>].image.name should be <imageName>

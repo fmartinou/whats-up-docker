@@ -196,6 +196,16 @@ function isContainerToWatch(wudWatchLabelValue, watchByDefault) {
 }
 
 /**
+ * Return true if container digest must be watched.
+ * @param wudWatchDigestLabelValue the value of wud.watch.digest label
+ * @param watchDigest true if container digest must be watched by default
+ * @returns {boolean|*}
+ */
+function isDigestToWatch(wudWatchDigestLabelValue, watchDigest) {
+    return wudWatchDigestLabelValue !== undefined && wudWatchDigestLabelValue !== '' ? wudWatchDigestLabelValue.toLowerCase() === 'true' : watchDigest;
+}
+
+/**
  * Docker Watcher Component.
  */
 class Docker extends Component {
@@ -210,6 +220,7 @@ class Docker extends Component {
             cron: joi.string().cron().default('0 * * * *'),
             watchbydefault: this.joi.boolean().default(true),
             watchall: this.joi.boolean().default(false),
+            watchdigest: this.joi.boolean().default(false),
         });
     }
 
@@ -472,10 +483,10 @@ class Docker extends Component {
         const tagName = parsedImage.tag || 'latest';
         const parsedTag = semver.coerce(tagName);
         const isSemver = parsedTag !== null && parsedTag !== undefined;
-
-        const watchDigestLabelValue = container.Labels[wudWatchDigest] !== undefined
-            ? container.Labels[wudWatchDigest] : undefined;
-        const watchDigest = watchDigestLabelValue && watchDigestLabelValue.toLowerCase() === 'true';
+        const watchDigest = isDigestToWatch(
+            container.Labels[wudWatchDigest],
+            this.configuration.watchdigest,
+        );
         return normalizeContainer({
             id: containerId,
             name: containerName,

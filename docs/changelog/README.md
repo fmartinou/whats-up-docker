@@ -2,6 +2,7 @@
 
 ## develop
 - :star: Add Container state (running, stopped...)
+- :star: Add ability to watch all container digests (at `watcher` level)
 
 ## 5.6.0
 - :star: Add Trigger configurable threshold ([see here](configuration/authentications/triggers/))
