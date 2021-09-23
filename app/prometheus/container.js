@@ -35,7 +35,7 @@ function init() {
         labelNames: [
             'id',
             'name',
-            'state',
+            'status',
             'watcher',
             'include_tags',
             'exclude_tags',
