@@ -1,7 +1,7 @@
 const joi = require('joi');
 const flat = require('flat');
 const { snakeCase } = require('snake-case');
-const semver = require('semver');
+const { parse: parseSemver, diff: diffSemver } = require('../semver');
 
 // Container data schema
 const schema = joi.object({
@@ -68,7 +68,7 @@ function getLink(linkTemplate, tagValue, isSemver) {
     let link = linkTemplate;
     link = link.replace(/\$\{\s*raw\s*\}/g, raw);
     if (isSemver) {
-        const versionSemver = semver.coerce(tagValue);
+        const versionSemver = parseSemver(tagValue);
         const { major, minor, patch } = versionSemver;
         link = link.replace(/\$\{\s*major\s*\}/g, major);
         link = link.replace(/\$\{\s*minor\s*\}/g, minor);
@@ -181,9 +181,10 @@ function addUpdateKindProperty(container) {
                         let semverDiffWud = 'unknown';
                         const isSemver = container.image.tag.semver;
                         if (isSemver) {
-                            const localSemver = semver.coerce(container.image.tag.value);
-                            const remoteSemver = semver.coerce(container.result.tag);
-                            const semverDiff = semver.diff(localSemver, remoteSemver);
+                            const semverDiff = diffSemver(
+                                container.image.tag.value,
+                                container.result.tag,
+                            );
                             switch (semverDiff) {
                             case 'major':
                             case 'premajor':

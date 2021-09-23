@@ -2,6 +2,8 @@
 
 ## develop
 - :star: Add Container state (running, stopped...)
+- :fire: Add support for prerelease tags (e.g. 1.2.3-alpha1)
+- :star: Update all dependencies
 
 ## 5.6.0
 - :star: Add Trigger configurable threshold ([see here](configuration/authentications/triggers/))
