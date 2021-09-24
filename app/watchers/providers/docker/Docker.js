@@ -3,7 +3,7 @@ const Dockerode = require('dockerode');
 const joi = require('joi-cron-expression')(require('joi'));
 const cron = require('node-cron');
 const parse = require('parse-docker-image-name');
-const semver = require('semver');
+const { parse: parseSemver, isGreater: isGreaterSemver } = require('../../../semver');
 const event = require('../../../event');
 const {
     wudWatch,
@@ -90,19 +90,18 @@ function getSemverTagsCandidate(container, tags) {
         const excludeTagsRegex = new RegExp(container.excludeTags);
         filteredTags = filteredTags.filter((tag) => !excludeTagsRegex.test(tag));
     }
-    const currentTag = semver.coerce(container.image.tag.value);
 
     // Keep semver only
-    filteredTags = filteredTags.filter((tag) => semver.valid(semver.coerce(tag)));
+    filteredTags = filteredTags.filter((tag) => parseSemver(tag) !== null);
 
     // Apply semver sort desc
     filteredTags.sort((t1, t2) => {
-        const greater = semver.gte(semver.coerce(t2), semver.coerce(t1));
+        const greater = isGreaterSemver(t2, t1);
         return greater ? 1 : -1;
     });
 
     // Keep only greater semver
-    filteredTags = filteredTags.filter((tag) => semver.gte(semver.coerce(tag), currentTag));
+    filteredTags = filteredTags.filter((tag) => isGreaterSemver(tag, container.image.tag.value));
     return filteredTags;
 }
 
@@ -481,7 +480,7 @@ class Docker extends Component {
         }
         const parsedImage = parse(imageNameToParse);
         const tagName = parsedImage.tag || 'latest';
-        const parsedTag = semver.coerce(tagName);
+        const parsedTag = parseSemver(tagName);
         const isSemver = parsedTag !== null && parsedTag !== undefined;
         const watchDigest = isDigestToWatch(
             container.Labels[wudWatchDigest],
