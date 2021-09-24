@@ -1,6 +1,6 @@
 # Changelog
 
-## develop
+## 5.7.0
 - :star: Add Container status (running, stopped...)
 - :star: Add ability to watch all container digests (at `watcher` level)
 - :star: Update all dependencies
