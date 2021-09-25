@@ -9,12 +9,14 @@ const semver = require('semver');
  * @returns {*|SemVer}
  */
 function parse(rawVersion) {
-    const rawVersionCleaned = semver.clean(rawVersion);
-    const rawVersionSemver = semver.parse(rawVersionCleaned);
+    const rawVersionCleaned = semver.clean(rawVersion, { loose: true });
+    const rawVersionSemver = semver
+        .parse(rawVersionCleaned !== null ? rawVersionCleaned : rawVersion);
     // Hurrah!
     if (rawVersionSemver !== null) {
         return rawVersionSemver;
     }
+
     // Last chance; try to coerce (all data behind patch digit will be lost).
     return semver.coerce(rawVersion);
 }

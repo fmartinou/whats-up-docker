@@ -81,56 +81,56 @@ test('initWatcher should create a configured DockerApi instance', () => {
     expect(docker.dockerApi.modem.socketPath).toBe(configurationValid.socket);
 });
 
-test('getSemverTagsCandidate should match when current version is semver and new tag is found', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, ['7.8.9'])).toEqual(['7.8.9']);
+test('getTagCandidates should match when current version is semver and new tag is found', () => {
+    expect(Docker.__get__('getTagCandidates')(sampleSemver, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
-test('getSemverTagsCandidate should match when current version is coerced semver and new tag is found', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')(sampleCoercedSemver, ['7.8.9'])).toEqual(['7.8.9']);
+test('getTagCandidates should match when current version is coerced semver and new tag is found', () => {
+    expect(Docker.__get__('getTagCandidates')(sampleCoercedSemver, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
-test('getSemverTagsCandidate should not match when current version is semver and no new tag is found', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, [])).toEqual([]);
+test('getTagCandidates should not match when current version is semver and no new tag is found', () => {
+    expect(Docker.__get__('getTagCandidates')(sampleSemver, [])).toEqual([]);
 });
 
-test('getSemverTagsCandidate should match when newer version match the include regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({
+test('getTagCandidates should match when newer version match the include regex', () => {
+    expect(Docker.__get__('getTagCandidates')({
         ...sampleSemver,
         includeTags: '^\\d+\\.\\d+\\.\\d+$',
     }, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
-test('getSemverTagsCandidate should not match when newer version but doesnt match the include regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({
+test('getTagCandidates should not match when newer version but doesnt match the include regex', () => {
+    expect(Docker.__get__('getTagCandidates')({
         ...sampleSemver,
         includeTags: '^v\\d+\\.\\d+\\.\\d+$',
     }, ['7.8.9'])).toEqual([]);
 });
 
-test('getSemverTagsCandidate should match when newer version doesnt match the exclude regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({
+test('getTagCandidates should match when newer version doesnt match the exclude regex', () => {
+    expect(Docker.__get__('getTagCandidates')({
         ...sampleSemver,
         excludeTags: '^v\\d+\\.\\d+\\.\\d+$',
     }, ['7.8.9'])).toEqual(['7.8.9']);
 });
 
-test('getSemverTagsCandidate should not match when newer version and match the exclude regex', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({
+test('getTagCandidates should not match when newer version and match the exclude regex', () => {
+    expect(Docker.__get__('getTagCandidates')({
         ...sampleSemver,
         excludeTags: '\\d+\\.\\d+\\.\\d+$',
     }, ['7.8.9'])).toEqual([]);
 });
 
-test('getSemverTagsCandidate should return only greater or equal tags than current', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, ['7.8.9', '4.5.6', '1.2.3'])).toEqual(['7.8.9', '4.5.6']);
+test('getTagCandidates should return only greater or equal tags than current', () => {
+    expect(Docker.__get__('getTagCandidates')(sampleSemver, ['7.8.9', '4.5.6', '1.2.3'])).toEqual(['7.8.9', '4.5.6']);
 });
 
-test('getSemverTagsCandidate should return all greater or equal tags', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')(sampleSemver, ['10.11.12', '7.8.9', '4.5.6', '1.2.3'])).toEqual(['10.11.12', '7.8.9', '4.5.6']);
+test('getTagCandidates should return all greater or equal tags', () => {
+    expect(Docker.__get__('getTagCandidates')(sampleSemver, ['10.11.12', '7.8.9', '4.5.6', '1.2.3'])).toEqual(['10.11.12', '7.8.9', '4.5.6']);
 });
 
-test('getSemverTagsCandidate should return greater tags when digit over 9', () => {
-    expect(Docker.__get__('getSemverTagsCandidate')({
+test('getTagCandidates should return greater tags when digit over 9', () => {
+    expect(Docker.__get__('getTagCandidates')({
         image: {
             tag: {
                 value: '1.9.0',

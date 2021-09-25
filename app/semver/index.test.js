@@ -23,12 +23,31 @@ const parseTestCases = [{
 }, {
     raw: 'latest',
     parsed: null,
+}, {
+    raw: 'fix__50',
+    parsed: {
+        major: 50, minor: 0, patch: 0, prerelease: [],
+    },
+}, {
+    raw: 'v2.0.6.3-2.0.6.3_beta_2021-06-17-ls112',
+    parsed: {
+        major: 2, minor: 0, patch: 6, prerelease: [],
+    },
+}, {
+    raw: '0.6.12-ls132',
+    parsed: {
+        major: 0, minor: 6, patch: 12, prerelease: ['ls132'],
+    },
 }];
 
 test.each(parseTestCases)(
     'parse $raw should return $parsed',
     (item) => {
-        expect(semver.parse(item.raw)).toEqual(expect.objectContaining(item.parsed));
+        if (item.parsed === null) {
+            expect(semver.parse(item.raw)).toBeNull();
+        } else {
+            expect(semver.parse(item.raw)).toEqual(expect.objectContaining(item.parsed));
+        }
     },
 );
 

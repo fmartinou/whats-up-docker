@@ -76,7 +76,7 @@ function processContainerResult(containerWithResult, logWatcher) {
  * @param tags
  * @returns {*}
  */
-function getSemverTagsCandidate(container, tags) {
+function getTagCandidates(container, tags) {
     let filteredTags = tags;
 
     // Match include tag regex
@@ -91,17 +91,30 @@ function getSemverTagsCandidate(container, tags) {
         filteredTags = filteredTags.filter((tag) => !excludeTagsRegex.test(tag));
     }
 
-    // Keep semver only
-    filteredTags = filteredTags.filter((tag) => parseSemver(tag) !== null);
+    // Semver image -> find higher semver tag
+    if (container.image.tag.semver) {
+        // Keep semver only
+        filteredTags = filteredTags.filter((tag) => parseSemver(tag) !== null);
 
-    // Apply semver sort desc
-    filteredTags.sort((t1, t2) => {
-        const greater = isGreaterSemver(t2, t1);
-        return greater ? 1 : -1;
-    });
+        // Keep only greater semver
+        filteredTags = filteredTags
+            .filter((tag) => isGreaterSemver(tag, container.image.tag.value));
 
-    // Keep only greater semver
-    filteredTags = filteredTags.filter((tag) => isGreaterSemver(tag, container.image.tag.value));
+        // Apply semver sort desc
+        filteredTags.sort((t1, t2) => {
+            const greater = isGreaterSemver(t2, t1);
+            return greater ? 1 : -1;
+        });
+    } else {
+        // Just sort desc z -> a and keep alphabetically higher tags
+        filteredTags.sort((t1, t2) => t2.localeCompare(t1));
+        const currentTagPosition = filteredTags.indexOf(container.image.tag.value);
+        if (currentTagPosition >= 0) {
+            filteredTags = filteredTags.slice(0, currentTagPosition);
+        } else {
+            filteredTags = [];
+        }
+    }
     return filteredTags;
 }
 
@@ -421,17 +434,14 @@ class Docker extends Component {
                 }
             }
 
-            // Semver image -> find higher semver tag
-            if (container.image.tag.semver) {
-                const tags = await registryProvider.getTags(container.image);
+            const tags = await registryProvider.getTags(container.image);
 
-                // Get candidates (based on tag name)
-                const semverTagsCandidate = getSemverTagsCandidate(container, tags);
+            // Get candidates (based on tag name)
+            const tagsCandidates = getTagCandidates(container, tags);
 
-                // The first one in the array is the highest
-                if (semverTagsCandidate && semverTagsCandidate.length > 0) {
-                    [result.tag] = semverTagsCandidate;
-                }
+            // The first one in the array is the highest
+            if (tagsCandidates && tagsCandidates.length > 0) {
+                [result.tag] = tagsCandidates;
             }
             return result;
         }
