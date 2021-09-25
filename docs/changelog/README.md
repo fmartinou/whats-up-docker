@@ -1,6 +1,6 @@
 # Changelog
 
-## develop
+## 5.7.1
 - :fire: Improve update detection for non semver tags
 
 ## 5.7.0
