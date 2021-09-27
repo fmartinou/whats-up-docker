@@ -1,5 +1,8 @@
 # Changelog
 
+## develop
+- :fire: [UI] Fix container bad state after manual refresh (or refresh all)
+
 ## 5.7.1
 - :fire: Improve update detection for non semver tags
 

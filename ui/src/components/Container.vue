@@ -127,8 +127,8 @@
 
         <!-- Container result -->
         <container-result
-          :result="container.result"
-          :error="container.error"
+          :result="result"
+          :error="error"
           :semver="container.image.tag.semver"
           :updateKind="container.updateKind"
         />
@@ -232,8 +232,8 @@ export default {
     newVersion() {
       let newVersion = "unknown";
       if (
-        this.container.result.created &&
-        this.container.image.created !== this.container.result.created
+        this.result.created &&
+        this.container.image.created !== this.result.created
       ) {
         newVersion = this.$options.filters.date(this.result.created);
       }
@@ -273,11 +273,9 @@ export default {
       this.isRefreshing = true;
       try {
         const body = await refreshContainer(this.container.id);
-        if (body.result) {
-          this.result = body.result;
-          this.error = body.error;
-          this.updateAvailable = body.updateAvailable;
-        }
+        this.error = body.error;
+        this.result = body.result;
+        this.updateAvailable = body.updateAvailable;
         this.$root.$emit("notify", `Container refreshed`);
       } catch (e) {
         this.$root.$emit(
