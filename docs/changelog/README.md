@@ -1,6 +1,6 @@
 # Changelog
 
-## develop
+## 5.7.2
 - :fire: [UI] Fix container bad state after manual refresh (or refresh all)
 
 ## 5.7.1
