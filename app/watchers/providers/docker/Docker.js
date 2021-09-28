@@ -106,14 +106,8 @@ function getTagCandidates(container, tags) {
             return greater ? 1 : -1;
         });
     } else {
-        // Just sort desc z -> a and keep alphabetically higher tags
-        filteredTags.sort((t1, t2) => t2.localeCompare(t1));
-        const currentTagPosition = filteredTags.indexOf(container.image.tag.value);
-        if (currentTagPosition >= 0) {
-            filteredTags = filteredTags.slice(0, currentTagPosition);
-        } else {
-            filteredTags = [];
-        }
+        // Non semver tag -> do not propose any other registry tag
+        filteredTags = [];
     }
     return filteredTags;
 }
@@ -210,11 +204,22 @@ function isContainerToWatch(wudWatchLabelValue, watchByDefault) {
 /**
  * Return true if container digest must be watched.
  * @param wudWatchDigestLabelValue the value of wud.watch.digest label
- * @param watchDigest true if container digest must be watched by default
+ * @param isSemver if image is semver
  * @returns {boolean|*}
  */
-function isDigestToWatch(wudWatchDigestLabelValue, watchDigest) {
-    return wudWatchDigestLabelValue !== undefined && wudWatchDigestLabelValue !== '' ? wudWatchDigestLabelValue.toLowerCase() === 'true' : watchDigest;
+function isDigestToWatch(wudWatchDigestLabelValue, isSemver) {
+    let result = false;
+    if (isSemver) {
+        if (wudWatchDigestLabelValue !== undefined && wudWatchDigestLabelValue !== '') {
+            result = wudWatchDigestLabelValue.toLowerCase() === 'true';
+        }
+    } else {
+        result = true;
+        if (wudWatchDigestLabelValue !== undefined && wudWatchDigestLabelValue !== '') {
+            result = wudWatchDigestLabelValue.toLowerCase() === 'true';
+        }
+    }
+    return result;
 }
 
 /**
@@ -232,7 +237,7 @@ class Docker extends Component {
             cron: joi.string().cron().default('0 * * * *'),
             watchbydefault: this.joi.boolean().default(true),
             watchall: this.joi.boolean().default(false),
-            watchdigest: this.joi.boolean().default(false),
+            watchdigest: this.joi.any(),
         });
     }
 
@@ -241,6 +246,9 @@ class Docker extends Component {
      */
     init() {
         this.initWatcher();
+        if (this.configuration.watchdigest !== undefined) {
+            this.log.warn('WUD_WATCHER_{watcher_name}_WATCHDIGEST environment variable is deprecated and won\'t be supported in upcoming versions');
+        }
         this.log.info(`Cron scheduled (${this.configuration.cron})`);
         this.watchCron = cron.schedule(this.configuration.cron, () => this.watchFromCron());
 
@@ -494,8 +502,11 @@ class Docker extends Component {
         const isSemver = parsedTag !== null && parsedTag !== undefined;
         const watchDigest = isDigestToWatch(
             container.Labels[wudWatchDigest],
-            this.configuration.watchdigest,
+            isSemver,
         );
+        if (!isSemver && !watchDigest) {
+            this.log.warn('Image is not a semver and digest watching is disabled so wud won\'t report any update. Please review the configuration to enable digest watching for this container or exclude this container from being watched');
+        }
         return normalizeContainer({
             id: containerId,
             name: containerName,

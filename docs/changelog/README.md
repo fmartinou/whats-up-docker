@@ -1,5 +1,12 @@
 # Changelog
 
+## Develop
+- :star: Automatically enable digest watching for non semver tags
+- :fire: Rollback update detection for non semver tags (added in `5.7.1`)
+
+!> **Deprecation warnings** \
+[`WUD_WATCHER_{watcher_name}_WATCHDIGEST` environment variable](/configuration/watchers/?id=variables) is deprecated and won't be supported in upcoming versions.
+
 ## 5.7.2
 - :fire: [UI] Fix container bad state after manual refresh (or refresh all)
 
@@ -48,8 +55,6 @@
 
 ## 5.0.1
 - :star: Highlight containers in UI when new digest
-
-
 - :fire: Fix wrong update status when new digest
 - :fire: Fix container removal when container went away
 

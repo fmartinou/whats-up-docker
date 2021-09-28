@@ -72,7 +72,7 @@ Feature: WUD Container API Exposure
     And response body path $.image.tag.semver should be false
     And response body path $.image.digest.value should be sha256:f94d6dd9b5761f33a21bb92848a1f70ea11a1c15f3a142c19a44ea3a4c545a4d
     And response body path $.result.tag should be latest
-    And response body path $.result.digest should be sha256:6fe11397c34b973f3c957f0da22b09b7f11a4802e1db47aef54c29e2813cc125
+    And response body path $.result.digest should be sha256:39065444eb1acb2cfdea6373ca620c921e702b0f447641af5d0e0ea1e48e5e04
     And response body path $.updateAvailable should be true
 
   Scenario: WUD must allow to get a container with its link
