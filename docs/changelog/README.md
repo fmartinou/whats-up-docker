@@ -1,6 +1,6 @@
 # Changelog
 
-## Develop
+## 5.8.0
 - :star: Automatically enable digest watching for non semver tags
 - :fire: Rollback update detection for non semver tags (added in `5.7.1`)
 
