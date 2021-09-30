@@ -53,6 +53,13 @@ class Ghcr extends Registry {
         requestOptionsWithAuth.headers.Authorization = `Bearer ${bearer}`;
         return requestOptionsWithAuth;
     }
+
+    getAuthPull() {
+        return {
+            username: this.configuration.username,
+            password: this.configuration.token,
+        };
+    }
 }
 
 module.exports = Ghcr;

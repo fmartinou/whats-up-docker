@@ -64,6 +64,13 @@ class Ecr extends Registry {
         requestOptionsWithAuth.headers.Authorization = `Basic ${tokenValue}`;
         return requestOptionsWithAuth;
     }
+
+    getAuthPull() {
+        return {
+            username: this.configuration.accesskeyid,
+            password: this.configuration.secretaccesskey,
+        };
+    }
 }
 
 module.exports = Ecr;

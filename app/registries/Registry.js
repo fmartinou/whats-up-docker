@@ -205,6 +205,23 @@ class Registry extends Component {
         getSummaryTags().observe({ type: this.type, name: this.name }, (end - start) / 1000);
         return response;
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getImageFullName(image, tagOrDigest) {
+        let fullName = `${image.registry.url}/${image.name}:${tagOrDigest}`;
+        fullName = fullName.replace(/https?:\/\//, '');
+        fullName = fullName.replace(/\/v2/, '');
+        return fullName;
+    }
+
+    /**
+     * Return {username, pass } or undefined.
+     * @returns {}
+     */
+    // eslint-disable-next-line class-methods-use-this
+    getAuthPull() {
+        return undefined;
+    }
 }
 
 module.exports = Registry;

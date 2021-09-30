@@ -67,6 +67,13 @@ class Gcr extends Registry {
         requestOptionsWithAuth.headers.Authorization = `Bearer ${response.token}`;
         return requestOptionsWithAuth;
     }
+
+    getAuthPull() {
+        return {
+            username: this.configuration.clientemail,
+            password: this.configuration.privatekey,
+        };
+    }
 }
 
 module.exports = Gcr;

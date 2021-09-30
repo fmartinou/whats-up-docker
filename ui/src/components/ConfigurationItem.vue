@@ -1,9 +1,7 @@
 <template>
   <v-card>
-    <v-app-bar color="primary" flat dark dense>
-      <v-toolbar-title class="text-capitalize text-body-1">{{
-        item.name
-      }}</v-toolbar-title>
+    <v-app-bar color="secondary" flat dark dense>
+      <v-toolbar-title class="text-capitalize text-body-1">{{ displayName }}</v-toolbar-title>
       <v-spacer />
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
@@ -59,6 +57,16 @@ export default {
           value: this.item.configuration[key],
         }))
         .sort((item1, item2) => item1.key.localeCompare(item2.key));
+    },
+
+    displayName() {
+      if (this.item.name && this.item.type && this.item.name !== this.item.type) {
+        return `${this.item.name} (${this.item.type})`;
+      }
+      if (this.item.name) {
+        return this.item.name;
+      }
+      return 'Unknown';
     },
   },
 };

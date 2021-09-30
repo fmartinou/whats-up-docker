@@ -3,7 +3,7 @@
     <v-overlay :absolute="true" :value="isRefreshing" />
 
     <v-app-bar
-      color="primary"
+      color="secondary"
       dark
       flat
       rounded
@@ -21,9 +21,9 @@
         tile
         :color="newVersionClass"
       >
-        <v-chip label color="secondary">{{ container.image.tag.value }}</v-chip>
+        <v-chip label outlined disabled="true">{{ container.image.tag.value }}</v-chip>
       </v-badge>
-      <v-chip class="ma-4" label color="secondary" v-else>{{
+      <v-chip class="ma-4" label outlined v-else>{{
         container.image.tag.value
       }}</v-chip>
       <div>

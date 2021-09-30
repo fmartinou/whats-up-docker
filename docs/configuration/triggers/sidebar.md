@@ -7,6 +7,7 @@
     - [Storage](configuration/storage/)
     - [Triggers](configuration/triggers/)
         - [Apprise](configuration/triggers/apprise/)
+        - [Docker](configuration/triggers/docker/)
         - [Http](configuration/triggers/http/)
         - [Ifttt](configuration/triggers/ifttt/)
         - [Kafka](configuration/triggers/kafka/)

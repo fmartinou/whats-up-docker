@@ -93,6 +93,24 @@ class Hub extends Registry {
         }
         return undefined;
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getImageFullName(image, tagOrDigest) {
+        let fullName = super.getImageFullName(image, tagOrDigest);
+        fullName = fullName.replace(/registry-1.docker.io\//, '');
+        fullName = fullName.replace(/library\//, '');
+        return fullName;
+    }
+
+    getAuthPull() {
+        if (this.configuration.login && this.configuration.token) {
+            return {
+                username: this.configuration.login,
+                password: this.configuration.token,
+            };
+        }
+        return undefined;
+    }
 }
 
 module.exports = Hub;

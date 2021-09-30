@@ -52,6 +52,13 @@ class Acr extends Registry {
         requestOptionsWithAuth.headers.Authorization = `Basic ${Acr.base64Encode(this.configuration.clientid, this.configuration.clientsecret)}`;
         return requestOptionsWithAuth;
     }
+
+    getAuthPull() {
+        return {
+            username: this.configuration.clientid,
+            password: this.configuration.clientsecret,
+        };
+    }
 }
 
 module.exports = Acr;
