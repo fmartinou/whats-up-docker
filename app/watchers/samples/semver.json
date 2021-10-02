@@ -1,8 +1,13 @@
 {
+    "id": "container-id",
+    "name": "container-name",
+    "watcher": "local",
     "image": {
+        "id": "image-id",
         "name":"organization/image",
         "registry": {
-            "name": "hub"
+            "name": "hub",
+            "url": "http://registry"
         },
         "tag": {
             "value": "4.5.6",

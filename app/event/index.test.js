@@ -24,18 +24,10 @@ test('an event should be emitted when a container is removed', () => {
     event.emitContainerRemoved({ x: 'x' });
 });
 
-test('an event should be emitted when there is a result', () => {
-    expect.assertions(1);
-    event.registerContainerResult((container) => {
-        expect(container).toStrictEqual({ x: 'x' });
-    });
-    event.emitContainerResult({ x: 'x' });
-});
-
 test('an event should be emitted when there is a new version', () => {
     expect.assertions(1);
-    event.registerContainerNewVersion((container) => {
+    event.registerContainerReport((container) => {
         expect(container).toStrictEqual({ x: 'x' });
     });
-    event.emitContainerNewVersion({ x: 'x' });
+    event.emitContainerReport({ x: 'x' });
 });

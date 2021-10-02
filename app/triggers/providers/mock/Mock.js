@@ -19,8 +19,19 @@ class Mock extends Trigger {
      * @param container
      * @returns {Promise<void>}
      */
-    async notify(container) {
-        this.log.info(`MOCK triggered (${JSON.stringify(container)})`);
+    async trigger(container) {
+        this.log.info(`MOCK triggered title = \n${this.renderSimpleTitle(container)}`);
+        this.log.info(`MOCK triggered body  = \n${this.renderSimpleBody(container)}`);
+    }
+
+    /**
+     * Mock trigger only logs a dummy line...
+     * @param containers
+     * @returns {Promise<void>}
+     */
+    async triggerBatch(containers) {
+        this.log.info(`MOCK triggered title = \n${this.renderBatchTitle(containers)}`);
+        this.log.info(`MOCK triggered body  = \n${this.renderBatchBody(containers)}`);
     }
 }
 

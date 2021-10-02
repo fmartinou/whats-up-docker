@@ -13,6 +13,14 @@ const configurationValid = {
     clientId: 'wud',
     ssl: false,
     threshold: 'all',
+    mode: 'single',
+    once: true,
+    // eslint-disable-next-line no-template-curly-in-string
+    simpletitle: 'New ${kind} found for container ${name}',
+    // eslint-disable-next-line no-template-curly-in-string
+    simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+    // eslint-disable-next-line no-template-curly-in-string
+    batchtitle: '${count} updates available',
 };
 
 beforeEach(() => {
@@ -138,7 +146,7 @@ test('initTrigger should init kafka client with auth when configured', async () 
     });
 });
 
-test('notify should post message to kafka', async () => {
+test('trigger should post message to kafka', async () => {
     const producer = () => ({
         connect: () => ({}),
         send: (params) => params,
@@ -152,7 +160,7 @@ test('notify should post message to kafka', async () => {
     const container = {
         name: 'container1',
     };
-    const result = await kafka.notify(container);
+    const result = await kafka.trigger(container);
     expect(result).toStrictEqual({
         messages: [{ value: '{"name":"container1"}' }],
         topic: 'topic',

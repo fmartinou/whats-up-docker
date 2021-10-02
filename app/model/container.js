@@ -66,13 +66,13 @@ function getLink(linkTemplate, tagValue, isSemver) {
     }
     const raw = tagValue;
     let link = linkTemplate;
-    link = link.replace(/\$\{\s*raw\s*\}/g, raw);
+    link = link.replace(/\${\s*raw\s*}/g, raw);
     if (isSemver) {
         const versionSemver = parseSemver(tagValue);
         const { major, minor, patch } = versionSemver;
-        link = link.replace(/\$\{\s*major\s*\}/g, major);
-        link = link.replace(/\$\{\s*minor\s*\}/g, minor);
-        link = link.replace(/\$\{\s*patch\s*\}/g, patch);
+        link = link.replace(/\${\s*major\s*}/g, major);
+        link = link.replace(/\${\s*minor\s*}/g, minor);
+        link = link.replace(/\${\s*patch\s*}/g, patch);
     }
     return link;
 }

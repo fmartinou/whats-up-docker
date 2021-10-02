@@ -11,6 +11,14 @@ const configurationValid = {
     key: 'secret',
     event: 'wud-image',
     threshold: 'all',
+    mode: 'single',
+    once: true,
+    // eslint-disable-next-line no-template-curly-in-string
+    simpletitle: 'New ${kind} found for container ${name}',
+    // eslint-disable-next-line no-template-curly-in-string
+    simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+    // eslint-disable-next-line no-template-curly-in-string
+    batchtitle: '${count} updates available',
 };
 
 beforeEach(() => {
@@ -47,7 +55,7 @@ test('maskConfiguration should mask sensitive data', () => {
     });
 });
 
-test('notify should send http request to IFTTT', async () => {
+test('trigger should send http request to IFTTT', async () => {
     ifttt.configuration = {
         key: 'key',
         event: 'event',
@@ -58,7 +66,7 @@ test('notify should send http request to IFTTT', async () => {
             tag: '2.0.0',
         },
     };
-    await ifttt.notify(container);
+    await ifttt.trigger(container);
     expect(rp).toHaveBeenCalledWith({
         body: {
             value1: 'container1',

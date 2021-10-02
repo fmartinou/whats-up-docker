@@ -21,7 +21,7 @@
         tile
         :color="newVersionClass"
       >
-        <v-chip label outlined disabled="true">{{ container.image.tag.value }}</v-chip>
+        <v-chip label outlined>{{ container.image.tag.value }}</v-chip>
       </v-badge>
       <v-chip class="ma-4" label outlined v-else>{{
         container.image.tag.value

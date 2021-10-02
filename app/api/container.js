@@ -98,8 +98,8 @@ async function watchContainer(req, res) {
         } else {
             try {
                 // Run watchContainer from the Provider
-                const containerWithResult = await watcher.watchContainer(container);
-                res.status(200).json(containerWithResult);
+                const containerReport = await watcher.watchContainer(container);
+                res.status(200).json(containerReport.container);
             } catch (e) {
                 res.status(500).json({
                     error: `Error when watching container ${id} (${e.message})`,

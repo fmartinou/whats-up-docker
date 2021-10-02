@@ -32,19 +32,39 @@ class Apprise extends Trigger {
 
     /**
      * Send an HTTP Request to Apprise.
-     *
      * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(container) {
+    async trigger(container) {
         const options = {
             method: 'POST',
             uri: `${this.configuration.url}/notify`,
             json: true,
             body: {
                 urls: this.configuration.urls,
-                title: `[WUD] New ${container.updateKind.kind} found for container ${container.name}`,
-                body: `Container ${container.name} running with ${container.updateKind.kind} ${container.updateKind.localValue} can be updated to ${container.updateKind.kind} ${container.updateKind.remoteValue}`,
+                title: this.renderSimpleTitle(container),
+                body: this.renderSimpleBody(container),
+                format: 'text',
+                type: 'info',
+            },
+        };
+        return rp(options);
+    }
+
+    /**
+     * Send an HTTP Request to Apprise.
+     * @param containers
+     * @returns {Promise<*>}
+     */
+    async triggerBatch(containers) {
+        const options = {
+            method: 'POST',
+            uri: `${this.configuration.url}/notify`,
+            json: true,
+            body: {
+                urls: this.configuration.urls,
+                title: this.renderBatchTitle(containers),
+                body: this.renderBatchBody(containers),
                 format: 'text',
                 type: 'info',
             },

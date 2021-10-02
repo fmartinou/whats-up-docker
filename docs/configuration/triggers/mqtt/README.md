@@ -14,7 +14,7 @@ The `mqtt` trigger lets you send container update notifications to an MQTT broke
 | `WUD_TRIGGER_MQTT_{trigger_name}_HASS_ENABLED` | :white_circle: | Enable [Home-assistant](https://www.home-assistant.io/) integration | `true`, `false`                     | `false`                    |
 | `WUD_TRIGGER_MQTT_{trigger_name}_HASS_PREFIX`  | :white_circle: | Base topic for hass entity discovery                                |                                     | `homeassistant`            |
 
-?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration) but only supports the `single` mode.
 
 ### Examples
 

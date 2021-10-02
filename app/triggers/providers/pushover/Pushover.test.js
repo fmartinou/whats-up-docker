@@ -17,6 +17,14 @@ const configurationValid = {
     priority: 0,
     sound: 'pushover',
     threshold: 'all',
+    mode: 'single',
+    once: true,
+    // eslint-disable-next-line no-template-curly-in-string
+    simpletitle: 'New ${kind} found for container ${name}',
+    // eslint-disable-next-line no-template-curly-in-string
+    simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+    // eslint-disable-next-line no-template-curly-in-string
+    batchtitle: '${count} updates available',
 };
 
 test('validateConfiguration should return validated configuration when valid', () => {
@@ -42,15 +50,23 @@ test('validateConfiguration should throw error when invalid', () => {
 test('maskConfiguration should mask sensitive data', () => {
     pushover.configuration = configurationValid;
     expect(pushover.maskConfiguration()).toEqual({
-        user: 'u**r',
-        token: 't***n',
+        mode: 'single',
         priority: 0,
+        // eslint-disable-next-line no-template-curly-in-string
+        simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+        // eslint-disable-next-line no-template-curly-in-string
+        simpletitle: 'New ${kind} found for container ${name}',
+        // eslint-disable-next-line no-template-curly-in-string
+        batchtitle: '${count} updates available',
         sound: 'pushover',
         threshold: 'all',
+        once: true,
+        token: 't***n',
+        user: 'u**r',
     });
 });
 
-test('notify should send message to pushover', async () => {
+test('trigger should send message to pushover', async () => {
     pushover.configuration = {
         ...configurationValid,
     };
@@ -67,16 +83,20 @@ test('notify should send message to pushover', async () => {
         },
         result: {
             tag: '2.0.0',
-            digest: '123456789',
+        },
+        updateKind: {
+            kind: 'tag',
+            localValue: '1.0.0',
+            remoteValue: '2.0.0',
+            semverDiff: 'major',
         },
     };
-    const result = await pushover.notify(container);
+    const result = await pushover.trigger(container);
     expect(result).toStrictEqual({
         device: undefined,
-        html: 1,
-        message: '\n                <p><b>Image:</b>&nbsp;imageName</p>\n                <p><b>Current tag:</b> 1.0.0</p>\n                <p><b>Current digest:</b> 123456789</p>\n                <p><b>New tag:</b>&nbsp;2.0.0</p>\n                <p><b>New digest:</b>&nbsp;123456789</p>\n            ',
+        message: 'Container container1 running with tag 1.0.0 can be updated to tag 2.0.0\n',
         priority: 0,
         sound: 'pushover',
-        title: '[WUD] New version found for container container1',
+        title: 'New tag found for container container1',
     });
 });

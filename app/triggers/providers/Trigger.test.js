@@ -1,5 +1,7 @@
+const { ValidationError } = require('joi');
 const event = require('../../event');
 const log = require('../../log');
+const Trigger = require('./Trigger');
 
 jest.mock('../../log');
 jest.mock('../../event');
@@ -9,140 +11,360 @@ jest.mock('../../prometheus/trigger', () => ({
     }),
 }));
 
-const Trigger = require('./Trigger');
+let trigger;
+
+const configurationValid = {
+    threshold: 'all',
+    once: true,
+    mode: 'single',
+    // eslint-disable-next-line no-template-curly-in-string
+    simpletitle: 'New ${kind} found for container ${name}',
+    // eslint-disable-next-line no-template-curly-in-string
+    simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+    // eslint-disable-next-line no-template-curly-in-string
+    batchtitle: '${count} updates available',
+};
 
 beforeEach(() => {
     jest.resetAllMocks();
+    trigger = new Trigger();
+    trigger.log = log;
+    trigger.configuration = configurationValid;
 });
 
-test('init should register to container new version event', async () => {
-    const trigger = new Trigger();
-    const spy = jest.spyOn(event, 'registerContainerNewVersion');
+test('validateConfiguration should return validated configuration when valid', () => {
+    const validatedConfiguration = trigger.validateConfiguration(configurationValid);
+    expect(validatedConfiguration).toStrictEqual(configurationValid);
+});
+
+test('validateConfiguration should throw error when invalid', () => {
+    const configuration = {
+        url: 'git://xxx.com',
+    };
+    expect(() => {
+        trigger.validateConfiguration(configuration);
+    }).toThrowError(ValidationError);
+});
+
+test('init should register to container report when single mode enabled', async () => {
+    const spy = jest.spyOn(event, 'registerContainerReport');
     await trigger.init();
     expect(spy).toHaveBeenCalled();
 });
 
-test('trigger should call notify method of the trigger', async () => {
-    const trigger = new Trigger();
-    trigger.log = log;
-    trigger.log.child = () => log;
-    trigger.configuration = {
-        threshold: 'all',
-    };
+test('init should register to container reports when batch mode enabled', async () => {
+    const spy = jest.spyOn(event, 'registerContainerReports');
+    trigger.configuration.mode = 'batch';
     await trigger.init();
-
-    const spy = jest.spyOn(trigger, 'notify');
-    await trigger.trigger({
-        name: 'container1',
-    });
-    expect(spy).toHaveBeenCalledWith({
-        name: 'container1',
-    });
+    expect(spy).toHaveBeenCalled();
 });
 
-test('trigger should warn when notify method of the trigger fails', async () => {
-    const trigger = new Trigger();
-    trigger.log = log;
-    trigger.log.child = () => log;
+const handleContainerReportTestCases = [{
+    shouldTrigger: true,
+    threshold: 'all',
+    once: true,
+    changed: true,
+    updateAvailable: true,
+    semverDiff: 'major',
+}, {
+    shouldTrigger: true,
+    threshold: 'all',
+    once: false,
+    changed: false,
+    updateAvailable: true,
+    semverDiff: 'major',
+}, {
+    shouldTrigger: false,
+    threshold: 'minor',
+    once: true,
+    changed: true,
+    updateAvailable: true,
+    semverDiff: 'major',
+}, {
+    shouldTrigger: false,
+    threshold: 'minor',
+    once: false,
+    changed: false,
+    updateAvailable: true,
+    semverDiff: 'major',
+}, {
+    shouldTrigger: false,
+    threshold: 'minor',
+    once: false,
+    changed: true,
+    updateAvailable: false,
+    semverDiff: 'major',
+}];
+
+test.each(handleContainerReportTestCases)(
+    'handleContainerReport should call trigger? ($shouldTrigger) when changed=$changed and updateAvailable=$updateAvailable and threshold=$threshold',
+    async (item) => {
+        trigger.configuration = {
+            threshold: item.threshold,
+            once: item.once,
+            mode: 'single',
+        };
+        await trigger.init();
+
+        const spy = jest.spyOn(trigger, 'trigger');
+        await trigger.handleContainerReport({
+            changed: item.changed,
+            container: {
+                name: 'container1',
+                updateAvailable: item.updateAvailable,
+                updateKind: {
+                    kind: 'tag',
+                    semverDiff: item.semverDiff,
+                },
+            },
+        });
+        if (item.shouldTrigger) {
+            expect(spy).toHaveBeenCalledWith({
+                name: 'container1',
+                updateAvailable: item.updateAvailable,
+                updateKind: {
+                    kind: 'tag',
+                    semverDiff: item.semverDiff,
+                },
+            });
+        } else {
+            expect(spy).not.toHaveBeenCalled();
+        }
+    },
+);
+
+test('handleContainerReport should warn when trigger method of the trigger fails', async () => {
     trigger.configuration = {
         threshold: 'all',
+        mode: 'single',
     };
-    trigger.notify = () => { throw new Error('Fail!!!'); };
+    trigger.trigger = () => { throw new Error('Fail!!!'); };
     await trigger.init();
     const spyLog = jest.spyOn(log, 'warn');
-    await trigger.trigger({});
+    await trigger.handleContainerReport({
+        changed: true,
+        container: {
+            name: 'container1',
+            updateAvailable: true,
+        },
+    });
     expect(spyLog).toHaveBeenCalledWith('Error (Fail!!!)');
 });
 
-test('isThresholdReached should return true when threshold is all', async () => {
-    const trigger = new Trigger();
-    trigger.configuration = {
-        threshold: 'all',
-    };
-    expect(trigger.isThresholdReached({})).toBeTruthy();
-});
+const handleContainerReportsTestCases = [{
+    shouldTrigger: true,
+    threshold: 'all',
+    once: true,
+    changed: true,
+    updateAvailable: true,
+    semverDiff: 'major',
+}, {
+    shouldTrigger: true,
+    threshold: 'all',
+    once: false,
+    changed: false,
+    updateAvailable: true,
+    semverDiff: 'major',
+}, {
+    shouldTrigger: false,
+    threshold: 'minor',
+    once: true,
+    changed: true,
+    updateAvailable: true,
+    semverDiff: 'major',
+}, {
+    shouldTrigger: false,
+    threshold: 'minor',
+    once: false,
+    changed: false,
+    updateAvailable: true,
+    semverDiff: 'major',
+}, {
+    shouldTrigger: false,
+    threshold: 'minor',
+    once: false,
+    changed: true,
+    updateAvailable: false,
+    semverDiff: 'major',
+}];
 
-test('isThresholdReached should return true when threshold is major and change is a major or a minor or a patch', async () => {
-    const trigger = new Trigger();
-    trigger.configuration = {
-        threshold: 'major',
-    };
-    expect(trigger.isThresholdReached({
-        updateKind: {
-            kind: 'tag',
-            semverDiff: 'major',
-        },
-    })).toBeTruthy();
-    expect(trigger.isThresholdReached({
-        updateKind: {
-            kind: 'tag',
-            semverDiff: 'minor',
-        },
-    })).toBeTruthy();
-    expect(trigger.isThresholdReached({
-        updateKind: {
-            kind: 'tag',
-            semverDiff: 'patch',
-        },
-    })).toBeTruthy();
-});
+test.each(handleContainerReportsTestCases)(
+    'handleContainerReports should call triggerBatch? ($shouldTrigger) when changed=$changed and updateAvailable=$updateAvailable and threshold=$threshold',
+    async (item) => {
+        trigger.configuration = {
+            threshold: item.threshold,
+            once: item.once,
+            mode: 'single',
+        };
+        await trigger.init();
 
-test('isThresholdReached should return true when threshold is minor and change is a minor or a patch', async () => {
-    const trigger = new Trigger();
-    trigger.configuration = {
-        threshold: 'minor',
-    };
-    expect(trigger.isThresholdReached({
-        updateKind: {
-            kind: 'tag',
-            semverDiff: 'major',
-        },
-    })).toBeFalsy();
-    expect(trigger.isThresholdReached({
-        updateKind: {
-            kind: 'tag',
-            semverDiff: 'minor',
-        },
-    })).toBeTruthy();
-    expect(trigger.isThresholdReached({
-        updateKind: {
-            kind: 'tag',
-            semverDiff: 'patch',
-        },
-    })).toBeTruthy();
-});
+        const spy = jest.spyOn(trigger, 'triggerBatch');
+        await trigger.handleContainerReports([
+            {
+                changed: item.changed,
+                container: {
+                    name: 'container1',
+                    updateAvailable: item.updateAvailable,
+                    updateKind: {
+                        kind: 'tag',
+                        semverDiff: item.semverDiff,
+                    },
+                },
+            },
+        ]);
+        if (item.shouldTrigger) {
+            expect(spy).toHaveBeenCalledWith([{
+                name: 'container1',
+                updateAvailable: item.updateAvailable,
+                updateKind: {
+                    kind: 'tag',
+                    semverDiff: item.semverDiff,
+                },
+            }]);
+        } else {
+            expect(spy).not.toHaveBeenCalled();
+        }
+    },
+);
 
-test('isThresholdReached should return true when threshold is patch and change is a patch', async () => {
-    const trigger = new Trigger();
-    trigger.configuration = {
-        threshold: 'patch',
-    };
-    expect(trigger.isThresholdReached({
-        updateKind: {
-            kind: 'tag',
-            semverDiff: 'major',
-        },
-    })).toBeFalsy();
-    expect(trigger.isThresholdReached({
-        updateKind: {
-            kind: 'tag',
-            semverDiff: 'minor',
-        },
-    })).toBeFalsy();
-    expect(trigger.isThresholdReached({
-        updateKind: {
-            kind: 'tag',
-            semverDiff: 'patch',
-        },
-    })).toBeTruthy();
-});
+const isThresholdReachedTestCases = [{
+    result: true,
+    threshold: 'all',
+    change: undefined,
+    kind: 'tag',
+}, {
+    result: true,
+    threshold: 'major',
+    change: 'major',
+    kind: 'tag',
+}, {
+    result: true,
+    threshold: 'major',
+    change: 'minor',
+    kind: 'tag',
+}, {
+    result: true,
+    threshold: 'major',
+    change: 'patch',
+    kind: 'tag',
+}, {
+    result: false,
+    threshold: 'minor',
+    change: 'major',
+    kind: 'tag',
+}, {
+    result: true,
+    threshold: 'minor',
+    change: 'minor',
+    kind: 'tag',
+}, {
+    result: true,
+    threshold: 'minor',
+    change: 'patch',
+    kind: 'tag',
+}, {
+    result: false,
+    threshold: 'patch',
+    change: 'major',
+    kind: 'tag',
+}, {
+    result: false,
+    threshold: 'patch',
+    change: 'minor',
+    kind: 'tag',
+}, {
+    result: true,
+    threshold: 'patch',
+    change: 'patch',
+    kind: 'tag',
+}, {
+    result: true,
+    threshold: 'all',
+    change: 'unknown',
+    kind: 'digest',
+}, {
+    result: true,
+    threshold: 'major',
+    change: 'unknown',
+    kind: 'digest',
+}, {
+    result: true,
+    threshold: 'minor',
+    change: 'unknown',
+    kind: 'digest',
+}, {
+    result: true,
+    threshold: 'patch',
+    change: 'unknown',
+    kind: 'digest',
+}];
+
+test.each(isThresholdReachedTestCases)(
+    'isThresholdReached should return $result when threshold is $threshold and change is $change',
+    (item) => {
+        trigger.configuration = {
+            threshold: item.threshold,
+        };
+        expect(trigger.isThresholdReached({
+            updateKind: {
+                kind: item.kind,
+                semverDiff: item.change,
+            },
+        })).toEqual(item.result);
+    },
+);
 
 test('isThresholdReached should return true when there is no semverDiff regardless of the threshold', async () => {
-    const trigger = new Trigger();
     trigger.configuration = {
         threshold: 'all',
     };
     expect(trigger.isThresholdReached({
         updateKind: { kind: 'digest' },
     })).toBeTruthy();
+});
+
+test('renderSimpleTitle should replace placeholders when called', async () => {
+    expect(trigger.renderSimpleTitle({
+        name: 'container-name',
+        updateKind: {
+            kind: 'tag',
+        },
+    })).toEqual('New tag found for container container-name');
+});
+
+test('renderSimpleBody should replace placeholders when called', async () => {
+    expect(trigger.renderSimpleBody({
+        name: 'container-name',
+        updateKind: {
+            kind: 'tag',
+            localValue: '1.0.0',
+            remoteValue: '2.0.0',
+        },
+        result: {
+            link: 'http://test',
+        },
+    })).toEqual('Container container-name running with tag 1.0.0 can be updated to tag 2.0.0\nhttp://test');
+});
+
+test('renderBatchTitle should replace placeholders when called', async () => {
+    expect(trigger.renderBatchTitle([{
+        name: 'container-name',
+        updateKind: {
+            kind: 'tag',
+        },
+    }])).toEqual('1 updates available');
+});
+
+test('renderBatchBody should replace placeholders when called', async () => {
+    expect(trigger.renderBatchBody([{
+        name: 'container-name',
+        updateKind: {
+            kind: 'tag',
+            localValue: '1.0.0',
+            remoteValue: '2.0.0',
+        },
+        result: {
+            link: 'http://test',
+        },
+    }])).toEqual('- Container container-name running with tag 1.0.0 can be updated to tag 2.0.0\nhttp://test\n');
 });

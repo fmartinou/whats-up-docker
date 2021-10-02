@@ -8,6 +8,7 @@
     - [Triggers](configuration/triggers/)
         - [Apprise](configuration/triggers/apprise/)
         - [Docker](configuration/triggers/docker/)
+        - [Docker Compose](configuration/triggers/docker-compose/)  
         - [Http](configuration/triggers/http/)
         - [Ifttt](configuration/triggers/ifttt/)
         - [Kafka](configuration/triggers/kafka/)

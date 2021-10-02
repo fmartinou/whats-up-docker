@@ -25,16 +25,29 @@ class Http extends Trigger {
      * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(container) {
+    async trigger(container) {
+        return this.sendHttpRequest(container);
+    }
+
+    /**
+     * Send an HTTP Request with new image versions details.
+     * @param containers
+     * @returns {Promise<*>}
+     */
+    async triggerBatch(containers) {
+        return this.sendHttpRequest(containers);
+    }
+
+    async sendHttpRequest(body) {
         const options = {
             method: this.configuration.method,
             uri: this.configuration.url,
         };
         if (this.configuration.method === 'POST') {
-            options.body = container;
+            options.body = body;
             options.json = true;
         } else if (this.configuration.method === 'GET') {
-            options.qs = container;
+            options.qs = body;
         }
         return rp(options);
     }

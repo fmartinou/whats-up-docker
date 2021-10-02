@@ -5,6 +5,14 @@ const log = require('../../../log');
 const configurationValid = {
     prune: false,
     threshold: 'all',
+    mode: 'single',
+    once: true,
+    // eslint-disable-next-line no-template-curly-in-string
+    simpletitle: 'New ${kind} found for container ${name}',
+    // eslint-disable-next-line no-template-curly-in-string
+    simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+    // eslint-disable-next-line no-template-curly-in-string
+    batchtitle: '${count} updates available',
 };
 
 const docker = new Docker();
@@ -206,8 +214,8 @@ test('clone should clone an existing container spec', () => {
     });
 });
 
-test('notify should not throw when all is ok', async () => {
-    await expect(docker.notify({
+test('trigger should not throw when all is ok', async () => {
+    await expect(docker.trigger({
         watcher: 'test',
         id: '123456789',
         Name: '/container-name',

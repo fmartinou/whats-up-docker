@@ -48,6 +48,9 @@ class Mqtt extends Trigger {
     }
 
     async initTrigger() {
+        // Enforce single mode
+        this.configuration.mode = 'single';
+
         const options = {};
         if (this.configuration.user) {
             options.username = this.configuration.user;
@@ -80,7 +83,7 @@ class Mqtt extends Trigger {
      * @param container the container
      * @returns {Promise}
      */
-    async notify(container) {
+    async trigger(container) {
         const containerTopic = getContainerTopic({
             baseTopic: this.configuration.topic,
             container,
@@ -89,6 +92,15 @@ class Mqtt extends Trigger {
         return this.client.publish(containerTopic, JSON.stringify(flatten(container)), {
             retain: true,
         });
+    }
+
+    /**
+     * Mqtt trigger does not support batch mode.
+     * @returns {Promise<void>}
+     */
+    // eslint-disable-next-line class-methods-use-this
+    async triggerBatch() {
+        throw new Error('This trigger does not support "batch" mode');
     }
 
     /**
@@ -131,7 +143,7 @@ class Mqtt extends Trigger {
             retain: true,
         });
 
-        await this.notify(container);
+        await this.trigger(container);
     }
 
     /**

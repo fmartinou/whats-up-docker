@@ -6,39 +6,39 @@ const eventEmitter = new events.EventEmitter();
 const WUD_CONTAINER_ADDED = 'wud:container-added';
 const WUD_CONTAINER_UPDATED = 'wud:container-updated';
 const WUD_CONTAINER_REMOVED = 'wud:container-removed';
-const WUD_CONTAINER_RESULT = 'wud:container-result';
-const WUD_CONTAINER_NEW_VERSION = 'wud:container-new-version';
+const WUD_CONTAINER_REPORT = 'wud:container-report';
+const WUD_CONTAINER_REPORTS = 'wud:container-reports';
 
 /**
- * Emit ContainerResult event.
- * @param containerResult
+ * Emit ContainerReports event.
+ * @param containerReports
  */
-function emitContainerResult(containerResult) {
-    eventEmitter.emit(WUD_CONTAINER_RESULT, containerResult);
+function emitContainerReports(containerReports) {
+    eventEmitter.emit(WUD_CONTAINER_REPORTS, containerReports);
 }
 
 /**
- * Register to ContainerResult event.
+ * Register to ContainersResult event.
  * @param handler
  */
-function registerContainerResult(handler) {
-    eventEmitter.on(WUD_CONTAINER_RESULT, handler);
+function registerContainerReports(handler) {
+    eventEmitter.on(WUD_CONTAINER_REPORTS, handler);
 }
 
 /**
- * Emit NewVersion event.
- * @param containerNewVersion
+ * Emit ContainerReport event.
+ * @param containerReport
  */
-function emitContainerNewVersion(containerNewVersion) {
-    eventEmitter.emit(WUD_CONTAINER_NEW_VERSION, containerNewVersion);
+function emitContainerReport(containerReport) {
+    eventEmitter.emit(WUD_CONTAINER_REPORT, containerReport);
 }
 
 /**
- * Register to NewVersion event.
+ * Register to ContainerReport event.
  * @param handler
  */
-function registerContainerNewVersion(handler) {
-    eventEmitter.on(WUD_CONTAINER_NEW_VERSION, handler);
+function registerContainerReport(handler) {
+    eventEmitter.on(WUD_CONTAINER_REPORT, handler);
 }
 
 /**
@@ -59,7 +59,7 @@ function registerContainerAdded(handler) {
 
 /**
  * Emit container added.
- * @param containerAdded
+ * @param containerUpdated
  */
 function emitContainerUpdated(containerUpdated) {
     eventEmitter.emit(WUD_CONTAINER_UPDATED, containerUpdated);
@@ -90,10 +90,10 @@ function registerContainerRemoved(handler) {
 }
 
 module.exports = {
-    emitContainerResult,
-    registerContainerResult,
-    emitContainerNewVersion,
-    registerContainerNewVersion,
+    emitContainerReports,
+    registerContainerReports,
+    emitContainerReport,
+    registerContainerReport,
     emitContainerAdded,
     registerContainerAdded,
     emitContainerUpdated,

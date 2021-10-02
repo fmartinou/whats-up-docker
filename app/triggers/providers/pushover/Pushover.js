@@ -1,5 +1,4 @@
 const Push = require('pushover-notifications');
-
 const Trigger = require('../Trigger');
 
 /**
@@ -67,21 +66,32 @@ class Pushover extends Trigger {
      * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(container) {
-        const message = {
-            title: `[WUD] New version found for container ${container.name}`,
-            html: 1,
-            message: `
-                <p><b>Image:</b>&nbsp;${container.image.name}</p>
-                <p><b>Current tag:</b> ${container.image.tag.value}</p>
-                <p><b>Current digest:</b> ${container.image.digest.value}</p>
-                <p><b>New tag:</b>&nbsp;${container.result.tag}</p>
-                <p><b>New digest:</b>&nbsp;${container.result.digest}</p>
-            `,
+    async trigger(container) {
+        return this.sendMessage({
+            title: this.renderSimpleTitle(container),
+            message: this.renderSimpleBody(container),
             sound: this.configuration.sound,
             device: this.configuration.device,
             priority: this.configuration.priority,
-        };
+        });
+    }
+
+    /**
+     * Send a Pushover notification with new container versions details.
+     * @param containers
+     * @returns {Promise<unknown>}
+     */
+    async triggerBatch(containers) {
+        return this.sendMessage({
+            title: this.renderBatchTitle(containers),
+            message: this.renderBatchBody(containers),
+            sound: this.configuration.sound,
+            device: this.configuration.device,
+            priority: this.configuration.priority,
+        });
+    }
+
+    async sendMessage(message) {
         return new Promise((resolve, reject) => {
             const push = new Push({
                 user: this.configuration.user,

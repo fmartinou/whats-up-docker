@@ -10,6 +10,14 @@ const configurationValid = {
     token: 'token',
     channel: 'channel',
     threshold: 'all',
+    mode: 'single',
+    once: true,
+    // eslint-disable-next-line no-template-curly-in-string
+    simpletitle: 'New ${kind} found for container ${name}',
+    // eslint-disable-next-line no-template-curly-in-string
+    simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+    // eslint-disable-next-line no-template-curly-in-string
+    batchtitle: '${count} updates available',
 };
 
 test('validateConfiguration should return validated configuration when valid', () => {
@@ -42,16 +50,14 @@ test('initTrigger should init Slack client', async () => {
     });
 });
 
-test('notify should format text as expected', async () => {
-    slack.configuration = {
-        channel: 'channel',
-    };
+test('trigger should format text as expected', async () => {
+    slack.configuration = configurationValid;
     slack.client = {
         chat: {
             postMessage: (conf) => (conf),
         },
     };
-    const response = await slack.notify({
+    const response = await slack.trigger({
         id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
         name: 'homeassistant',
         watcher: 'local',
@@ -75,23 +81,14 @@ test('notify should format text as expected', async () => {
             created: '2021-06-12T05:33:38.440Z',
         },
         result: {
-            tag: '2021.6.5',
+            link: 'https://test-2.0.0/changelog',
+        },
+        updateKind: {
+            kind: 'tag',
+            localValue: '1.0.0',
+            remoteValue: '2.0.0',
         },
     });
     expect(response.text)
-        .toEqual('*Id:* 31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816\n'
-            + '*Name:* homeassistant\n'
-            + '*Watcher:* local\n'
-            + '*Include_tags:* ^\\d+\\.\\d+.\\d+$\n'
-            + '*Image_id:* sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6\n'
-            + '*Image_registry_url:* 123456789.dkr.ecr.eu-west-1.amazonaws.com\n'
-            + '*Image_name:* test\n'
-            + '*Image_tag_value:* 2021.6.4\n'
-            + '*Image_tag_semver:* true\n'
-            + '*Image_digest_watch:* false\n'
-            + '*Image_digest_repo:* sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72\n'
-            + '*Image_architecture:* amd64\n'
-            + '*Image_os:* linux\n'
-            + '*Image_created:* 2021-06-12T05:33:38.440Z\n'
-            + '*Result_tag:* 2021.6.5');
+        .toEqual('Container homeassistant running with tag 1.0.0 can be updated to tag 2.0.0\nhttps://test-2.0.0/changelog');
 });

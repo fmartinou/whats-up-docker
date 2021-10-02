@@ -1,5 +1,6 @@
 const { ValidationError } = require('joi');
 const Smtp = require('./Smtp');
+const log = require('../../../log');
 
 const smtp = new Smtp();
 
@@ -11,6 +12,14 @@ const configurationValid = {
     from: 'from@xx.com',
     to: 'to@xx.com',
     threshold: 'all',
+    mode: 'single',
+    once: true,
+    // eslint-disable-next-line no-template-curly-in-string
+    simpletitle: 'New ${kind} found for container ${name}',
+    // eslint-disable-next-line no-template-curly-in-string
+    simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+    // eslint-disable-next-line no-template-curly-in-string
+    batchtitle: '${count} updates available',
 };
 
 test('validateConfiguration should return validated configuration when valid', () => {
@@ -35,6 +44,7 @@ test('validateConfiguration should throw error when invalid', () => {
 
 test('init should create a mailer transporter with expected configuration when called', () => {
     smtp.configuration = configurationValid;
+    smtp.log = log;
     smtp.init();
     expect(smtp.transporter.options).toEqual(expect.objectContaining({
         host: configurationValid.host,
@@ -61,15 +71,12 @@ test('maskConfiguration should mask sensitive data', () => {
     });
 });
 
-test('notify should format html mail as expected', async () => {
-    smtp.configuration = {
-        from: 'from',
-        to: 'to',
-    };
+test('trigger should format mail as expected', async () => {
+    smtp.configuration = configurationValid;
     smtp.transporter = {
         sendMail: (conf) => (conf),
     };
-    const response = await smtp.notify({
+    const response = await smtp.trigger({
         id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
         name: 'homeassistant',
         watcher: 'local',
@@ -93,9 +100,86 @@ test('notify should format html mail as expected', async () => {
             created: '2021-06-12T05:33:38.440Z',
         },
         result: {
-            tag: '2021.6.5',
+            link: 'https://test-2.0.0/changelog',
+        },
+        updateKind: {
+            kind: 'tag',
+            localValue: '1.0.0',
+            remoteValue: '2.0.0',
         },
     });
-    expect(response.html)
-        .toEqual('<p><strong>Id:</strong>&nbsp;31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816</p><p><strong>Name:</strong>&nbsp;homeassistant</p><p><strong>Watcher:</strong>&nbsp;local</p><p><strong>Include_tags:</strong>&nbsp;^\\d+\\.\\d+.\\d+$</p><p><strong>Image_id:</strong>&nbsp;sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6</p><p><strong>Image_registry_url:</strong>&nbsp;123456789.dkr.ecr.eu-west-1.amazonaws.com</p><p><strong>Image_name:</strong>&nbsp;test</p><p><strong>Image_tag_value:</strong>&nbsp;2021.6.4</p><p><strong>Image_tag_semver:</strong>&nbsp;true</p><p><strong>Image_digest_watch:</strong>&nbsp;false</p><p><strong>Image_digest_repo:</strong>&nbsp;sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72</p><p><strong>Image_architecture:</strong>&nbsp;amd64</p><p><strong>Image_os:</strong>&nbsp;linux</p><p><strong>Image_created:</strong>&nbsp;2021-06-12T05:33:38.440Z</p><p><strong>Result_tag:</strong>&nbsp;2021.6.5</p>');
+    expect(response.text)
+        .toEqual('Container homeassistant running with tag 1.0.0 can be updated to tag 2.0.0\nhttps://test-2.0.0/changelog');
+});
+
+test('triggerBatch should format mail as expected', async () => {
+    smtp.configuration = configurationValid;
+    smtp.transporter = {
+        sendMail: (conf) => (conf),
+    };
+    const response = await smtp.triggerBatch([{
+        id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
+        name: 'homeassistant',
+        watcher: 'local',
+        includeTags: '^\\d+\\.\\d+.\\d+$',
+        image: {
+            id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+            registry: {
+                url: '123456789.dkr.ecr.eu-west-1.amazonaws.com',
+            },
+            name: 'test',
+            tag: {
+                value: '2021.6.4',
+                semver: true,
+            },
+            digest: {
+                watch: false,
+                repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+            },
+            architecture: 'amd64',
+            os: 'linux',
+            created: '2021-06-12T05:33:38.440Z',
+        },
+        result: {
+            link: 'https://test-2.0.0/changelog',
+        },
+        updateKind: {
+            kind: 'tag',
+            localValue: '1.0.0',
+            remoteValue: '2.0.0',
+        },
+    }, {
+        id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
+        name: 'homeassistant',
+        watcher: 'local',
+        includeTags: '^\\d+\\.\\d+.\\d+$',
+        image: {
+            id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
+            registry: {
+                url: '123456789.dkr.ecr.eu-west-1.amazonaws.com',
+            },
+            name: 'test',
+            tag: {
+                value: '2021.6.4',
+                semver: true,
+            },
+            digest: {
+                watch: false,
+                repo: 'sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72',
+            },
+            architecture: 'amd64',
+            os: 'linux',
+            created: '2021-06-12T05:33:38.440Z',
+        },
+        result: {
+            link: 'https://test-2.0.0/changelog',
+        },
+        updateKind: {
+            kind: 'tag',
+            localValue: '1.0.0',
+            remoteValue: '2.0.0',
+        },
+    }]);
+    expect(response.text)
+        .toEqual('- Container homeassistant running with tag 1.0.0 can be updated to tag 2.0.0\nhttps://test-2.0.0/changelog\n\n- Container homeassistant running with tag 1.0.0 can be updated to tag 2.0.0\nhttps://test-2.0.0/changelog\n');
 });

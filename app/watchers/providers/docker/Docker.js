@@ -28,49 +28,6 @@ function getRegistries() {
 }
 
 /**
- * Process a Container Result.
- * @param containerWithResult
- * @param logWatcher
- */
-function processContainerResult(containerWithResult, logWatcher) {
-    const logContainer = logWatcher
-        .child({ container: fullName(containerWithResult) }) || logWatcher;
-    let containerToTrigger;
-    let trigger = false;
-
-    // Find container in db & compare
-    const containerInDb = storeContainer.getContainer(containerWithResult.id);
-
-    // Not found in DB? => Save it
-    if (!containerInDb) {
-        logContainer.debug('Container watched for the first time');
-        containerToTrigger = storeContainer.insertContainer(containerWithResult);
-        if (containerWithResult.updateAvailable) {
-            trigger = true;
-        } else {
-            logContainer.debug('No update available');
-        }
-
-        // Found in DB? => update it
-    } else {
-        containerToTrigger = storeContainer.updateContainer(containerWithResult);
-        trigger = containerInDb.resultChanged(containerToTrigger)
-            && containerWithResult.updateAvailable;
-    }
-
-    if (containerToTrigger.updateAvailable) {
-        logContainer.info('Update available');
-    }
-
-    // Emit event only if new version not already emitted
-    if (trigger) {
-        event.emitContainerNewVersion(containerToTrigger);
-    } else {
-        logContainer.debug('Result already processed => No need to trigger');
-    }
-}
-
-/**
  * Filter candidate tags (based on tag name).
  * @param container
  * @param tags
@@ -252,15 +209,6 @@ class Docker extends Component {
         this.log.info(`Cron scheduled (${this.configuration.cron})`);
         this.watchCron = cron.schedule(this.configuration.cron, () => this.watchFromCron());
 
-        // Subscribe to image result events
-        event.registerContainerResult(
-            (containerWithResult) => {
-                if (this.name === containerWithResult.watcher) {
-                    processContainerResult(containerWithResult, this.log);
-                }
-            },
-        );
-
         // watch at startup (after all components have been registered)
         setTimeout(() => this.watchFromCron(), 1000);
     }
@@ -301,11 +249,24 @@ class Docker extends Component {
      */
     async watchFromCron() {
         this.log.info(`Cron started (${this.configuration.cron})`);
-        const containers = await this.watch();
-        const updateAvailableCount = containers.filter((item) => item.updateAvailable).length;
-        const stats = `${containers.length} containers, ${updateAvailableCount} updates available`;
+
+        // Get container reports
+        const containerReports = await this.watch();
+
+        // Count container reports
+        const containerReportsCount = containerReports.length;
+
+        // Count container available updates
+        const containerUpdatesCount = containerReports
+            .filter((containerReport) => containerReport.container.updateAvailable).length;
+
+        // Count container errors
+        const containerErrorsCount = containerReports
+            .filter((containerReport) => containerReport.container.error !== undefined).length;
+
+        const stats = `${containerReportsCount} containers watched, ${containerErrorsCount} errors, ${containerUpdatesCount} available updates`;
         this.log.info(`Cron finished (${stats})`);
-        return containers;
+        return containerReports;
     }
 
     /**
@@ -335,7 +296,11 @@ class Docker extends Component {
         }, containers.length);
 
         try {
-            return await Promise.all(containers.map((container) => this.watchContainer(container)));
+            const containerReports = await Promise.all(
+                containers.map((container) => this.watchContainer(container)),
+            );
+            event.emitContainerReports(containerReports);
+            return containerReports;
         } catch (e) {
             this.log.warn(`Error when processing some containers (${e.message})`);
             return [];
@@ -352,7 +317,7 @@ class Docker extends Component {
         const logContainer = this.log.child({ container: fullName(container) });
         const containerWithResult = container;
 
-        // Reset previous results
+        // Reset previous results if so
         delete containerWithResult.result;
         delete containerWithResult.error;
         logContainer.debug('Start watching');
@@ -360,14 +325,16 @@ class Docker extends Component {
         try {
             containerWithResult.result = await this.findNewVersion(container, logContainer);
         } catch (e) {
-            logContainer.warn(`Error when trying to find a new version (${e.message})`);
+            logContainer.warn(`Error when processing (${e.message})`);
             logContainer.debug(e);
             containerWithResult.error = {
                 message: e.message,
             };
         }
-        event.emitContainerResult(containerWithResult);
-        return containerWithResult;
+
+        const containerReport = this.mapContainerToContainerReport(containerWithResult);
+        event.emitContainerReport(containerReport);
+        return containerReport;
     }
 
     /**
@@ -538,6 +505,36 @@ class Docker extends Component {
                 tag: tagName,
             },
         });
+    }
+
+    /**
+     * Process a Container with result and map to a containerReport.
+     * @param containerWithResult
+     * @return {*}
+     */
+    mapContainerToContainerReport(containerWithResult) {
+        const logContainer = this.log.child({ container: fullName(containerWithResult) });
+        const containerReport = {
+            container: containerWithResult,
+            changed: false,
+        };
+
+        // Find container in db & compare
+        const containerInDb = storeContainer.getContainer(containerWithResult.id);
+
+        // Not found in DB? => Save it
+        if (!containerInDb) {
+            logContainer.debug('Container watched for the first time');
+            containerReport.container = storeContainer.insertContainer(containerWithResult);
+            containerReport.changed = true;
+
+        // Found in DB? => update it
+        } else {
+            containerReport.container = storeContainer.updateContainer(containerWithResult);
+            containerReport.changed = containerInDb.resultChanged(containerReport.container)
+                && containerWithResult.updateAvailable;
+        }
+        return containerReport;
     }
 }
 

@@ -186,7 +186,7 @@ class Docker extends Trigger {
      * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(container) {
+    async trigger(container) {
         // Get watcher
         const watcher = this.getWatcher(container);
 
@@ -248,11 +248,18 @@ class Docker extends Trigger {
                 );
                 await this.removeImage(dockerApi, oldImage);
             }
-            // Perform a new watch to rebuild the container list
-            watcher.watch();
         } else {
             this.log.warn(`Unable to update container ${container.name} with id ${container.id} because does not exist`);
         }
+    }
+
+    /**
+     * Update the containers.
+     * @param containers
+     * @returns {Promise<unknown[]>}
+     */
+    async triggerBatch(containers) {
+        return Promise.all(containers.map((container) => this.trigger(container)));
     }
 }
 

@@ -10,6 +10,14 @@ const configurationValid = {
     url: 'http://xxx.com',
     method: 'POST',
     threshold: 'all',
+    mode: 'single',
+    once: true,
+    // eslint-disable-next-line no-template-curly-in-string
+    simpletitle: 'New ${kind} found for container ${name}',
+    // eslint-disable-next-line no-template-curly-in-string
+    simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+    // eslint-disable-next-line no-template-curly-in-string
+    batchtitle: '${count} updates available',
 };
 
 beforeEach(() => {
@@ -37,7 +45,7 @@ test('validateConfiguration should throw error when invalid', () => {
     }).toThrowError(ValidationError);
 });
 
-test('notify should send POST http request when configured like that', async () => {
+test('trigger should send POST http request when configured like that', async () => {
     http.configuration = {
         method: 'POST',
         url: 'https:///test',
@@ -45,7 +53,7 @@ test('notify should send POST http request when configured like that', async () 
     const container = {
         name: 'container1',
     };
-    await http.notify(container);
+    await http.trigger(container);
     expect(rp).toHaveBeenCalledWith({
         body: {
             name: 'container1',
@@ -56,7 +64,7 @@ test('notify should send POST http request when configured like that', async () 
     });
 });
 
-test('notify should send GET http request when configured like that', async () => {
+test('trigger should send GET http request when configured like that', async () => {
     http.configuration = {
         method: 'GET',
         url: 'https:///test',
@@ -64,7 +72,7 @@ test('notify should send GET http request when configured like that', async () =
     const container = {
         name: 'container1',
     };
-    await http.notify(container);
+    await http.trigger(container);
     expect(rp).toHaveBeenCalledWith({
         qs: {
             name: 'container1',

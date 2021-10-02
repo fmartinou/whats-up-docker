@@ -1,19 +1,5 @@
 const nodemailer = require('nodemailer');
-const capitalize = require('capitalize');
 const Trigger = require('../Trigger');
-const { flatten } = require('../../../model/container');
-
-/**
- * Convert container to html.
- * @param containerFlatten the flatten container
- * @returns {string}
- */
-function buildHtml(containerFlatten) {
-    return Object
-        .keys(containerFlatten)
-        .map((property) => `<p><strong>${capitalize(property)}:</strong>&nbsp;${containerFlatten[property]}</p>`)
-        .join('');
-}
 
 /**
  * SMTP Trigger implementation
@@ -65,13 +51,26 @@ class Smtp extends Trigger {
      * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(container) {
+    async trigger(container) {
         return this.transporter.sendMail({
             from: this.configuration.from,
             to: this.configuration.to,
-            subject: `[WUD] New version found for container ${container.name}`,
-            text: JSON.stringify(container),
-            html: buildHtml(flatten(container)),
+            subject: this.renderSimpleTitle(container),
+            text: this.renderSimpleBody(container),
+        });
+    }
+
+    /**
+     * Send a mail with new container versions details.
+     * @param containers
+     * @returns {Promise<void>}
+     */
+    async triggerBatch(containers) {
+        return this.transporter.sendMail({
+            from: this.configuration.from,
+            to: this.configuration.to,
+            subject: this.renderBatchTitle(containers),
+            text: this.renderBatchBody(containers),
         });
     }
 }

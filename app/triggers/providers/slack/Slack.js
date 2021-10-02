@@ -1,19 +1,5 @@
 const SlackClient = require('slack');
-const capitalize = require('capitalize');
 const Trigger = require('../Trigger');
-const { flatten } = require('../../../model/container');
-
-/**
- * Convert container to text.
- * @param containerFlatten the flatten container
- * @returns {string}
- */
-function buildHtml(containerFlatten) {
-    return Object
-        .keys(containerFlatten)
-        .map((property) => `*${capitalize(property)}:* ${containerFlatten[property]}`)
-        .join('\n');
-}
 
 /*
  * Slack Trigger implementation
@@ -56,10 +42,17 @@ class Slack extends Trigger {
      * @param image the image
      * @returns {Promise<void>}
      */
-    async notify(container) {
+    async trigger(container) {
         return this.client.chat.postMessage({
             channel: this.configuration.channel,
-            text: buildHtml(flatten(container)),
+            text: this.renderSimpleBody(container),
+        });
+    }
+
+    async triggerBatch(containers) {
+        return this.client.chat.postMessage({
+            channel: this.configuration.channel,
+            text: this.renderBatchBody(containers),
         });
     }
 }

@@ -1,5 +1,4 @@
 const { ValidationError } = require('joi');
-const event = require('../../../event');
 const log = require('../../../log');
 const prometheusWatcher = require('../../../prometheus/watcher');
 
@@ -38,8 +37,8 @@ beforeEach(() => {
     docker = new Docker();
     docker.name = 'test';
     docker.configuration = configurationValid;
-    log.child = () => log;
     docker.log = log;
+    docker.log.child = () => log;
     hub.getTags = () => (Promise.resolve([]));
 });
 
@@ -81,64 +80,73 @@ test('initWatcher should create a configured DockerApi instance', () => {
     expect(docker.dockerApi.modem.socketPath).toBe(configurationValid.socket);
 });
 
-test('getTagCandidates should match when current version is semver and new tag is found', () => {
-    expect(Docker.__get__('getTagCandidates')(sampleSemver, ['7.8.9'])).toEqual(['7.8.9']);
-});
-
-test('getTagCandidates should match when current version is coerced semver and new tag is found', () => {
-    expect(Docker.__get__('getTagCandidates')(sampleCoercedSemver, ['7.8.9'])).toEqual(['7.8.9']);
-});
-
-test('getTagCandidates should not match when current version is semver and no new tag is found', () => {
-    expect(Docker.__get__('getTagCandidates')(sampleSemver, [])).toEqual([]);
-});
-
-test('getTagCandidates should match when newer version match the include regex', () => {
-    expect(Docker.__get__('getTagCandidates')({
+const getTagCandidatesTestCases = [{
+    source: sampleSemver,
+    items: ['7.8.9'],
+    candidates: ['7.8.9'],
+}, {
+    source: sampleCoercedSemver,
+    items: ['7.8.9'],
+    candidates: ['7.8.9'],
+}, {
+    source: sampleSemver,
+    items: [],
+    candidates: [],
+}, {
+    source: {
         ...sampleSemver,
         includeTags: '^\\d+\\.\\d+\\.\\d+$',
-    }, ['7.8.9'])).toEqual(['7.8.9']);
-});
-
-test('getTagCandidates should not match when newer version but doesnt match the include regex', () => {
-    expect(Docker.__get__('getTagCandidates')({
+    },
+    items: ['7.8.9'],
+    candidates: ['7.8.9'],
+}, {
+    source: {
         ...sampleSemver,
         includeTags: '^v\\d+\\.\\d+\\.\\d+$',
-    }, ['7.8.9'])).toEqual([]);
-});
-
-test('getTagCandidates should match when newer version doesnt match the exclude regex', () => {
-    expect(Docker.__get__('getTagCandidates')({
+    },
+    items: ['7.8.9'],
+    candidates: [],
+}, {
+    source: {
         ...sampleSemver,
         excludeTags: '^v\\d+\\.\\d+\\.\\d+$',
-    }, ['7.8.9'])).toEqual(['7.8.9']);
-});
-
-test('getTagCandidates should not match when newer version and match the exclude regex', () => {
-    expect(Docker.__get__('getTagCandidates')({
+    },
+    items: ['7.8.9'],
+    candidates: ['7.8.9'],
+}, {
+    source: {
         ...sampleSemver,
         excludeTags: '\\d+\\.\\d+\\.\\d+$',
-    }, ['7.8.9'])).toEqual([]);
-});
-
-test('getTagCandidates should return only greater or equal tags than current', () => {
-    expect(Docker.__get__('getTagCandidates')(sampleSemver, ['7.8.9', '4.5.6', '1.2.3'])).toEqual(['7.8.9', '4.5.6']);
-});
-
-test('getTagCandidates should return all greater or equal tags', () => {
-    expect(Docker.__get__('getTagCandidates')(sampleSemver, ['10.11.12', '7.8.9', '4.5.6', '1.2.3'])).toEqual(['10.11.12', '7.8.9', '4.5.6']);
-});
-
-test('getTagCandidates should return greater tags when digit over 9', () => {
-    expect(Docker.__get__('getTagCandidates')({
+    },
+    items: ['7.8.9'],
+    candidates: [],
+}, {
+    source: sampleSemver,
+    items: ['7.8.9', '4.5.6', '1.2.3'],
+    candidates: ['7.8.9', '4.5.6'],
+}, {
+    source: sampleSemver,
+    items: ['10.11.12', '7.8.9', '4.5.6', '1.2.3'],
+    candidates: ['10.11.12', '7.8.9', '4.5.6'],
+}, {
+    source: {
         image: {
             tag: {
                 value: '1.9.0',
                 semver: true,
             },
         },
-    }, ['1.10.0', '1.2.3'])).toEqual(['1.10.0']);
-});
+    },
+    items: ['1.10.0', '1.2.3'],
+    candidates: ['1.10.0'],
+}];
+
+test.each(getTagCandidatesTestCases)(
+    'getTagCandidates should behave as expected',
+    (item) => {
+        expect(Docker.__get__('getTagCandidates')(item.source, item.items)).toEqual(item.candidates);
+    },
+);
 
 test('normalizeContainer should return hub when applicable', () => {
     expect(Docker.__get__('normalizeContainer')({
@@ -448,39 +456,49 @@ test('addImageDetailsToContainer should add an image definition to the container
     });
 });
 
-test('watchContainer should return new image version when found', () => {
-    docker.configuration = {};
+test('watchContainer should return container report when found', async () => {
+    storeContainer.getContainer = () => (undefined);
+    storeContainer.insertContainer = (container) => (container);
+    docker.findNewVersion = () => ({
+        tag: '7.8.9',
+    });
     hub.getTags = () => (['7.8.9']);
-    expect(docker.watchContainer(sampleSemver)).resolves.toMatchObject({
-        result: {
-            tag: '7.8.9',
-        },
-    });
-});
-
-test('watchContainer should return same result as current when no image version found', async () => {
-    docker.configuration = {};
-    hub.getTags = () => ([]);
-    hub.getImageManifestDigest = () => ({ digest: 'sha256:abcdef', version: 2 });
     await expect(docker.watchContainer(sampleSemver)).resolves.toMatchObject({
-        result: {
-            tag: '4.5.6',
-            digest: 'sha256:abcdef',
+        changed: true,
+        container: {
+            result: {
+                tag: '7.8.9',
+            },
         },
     });
 });
 
-test('watchContainer should return error result when something bad happens', async () => {
+test('watchContainer should return container report when no image version found', async () => {
+    storeContainer.getContainer = () => (undefined);
+    storeContainer.insertContainer = (container) => (container);
+    docker.findNewVersion = () => (undefined);
+    hub.getTags = () => ([]);
+    await expect(docker.watchContainer(sampleSemver)).resolves.toMatchObject({
+        changed: true,
+        container: {
+            result: undefined,
+        },
+    });
+});
+
+test('watchContainer should return container report with error when something bad happens', async () => {
+    storeContainer.getContainer = () => (undefined);
+    storeContainer.insertContainer = (container) => (container);
     docker.findNewVersion = () => { throw new Error('Failure!!!'); };
     await expect(docker.watchContainer(sampleSemver)).resolves.toMatchObject({
-        error: {
-            message: 'Failure!!!',
-        },
+        container: { error: { message: 'Failure!!!' } },
     });
 });
 
-test('watch should return a list of containers found by the docker socket', async () => {
+test('watch should return a list of containers with changed', async () => {
     storeContainer.getContainer = () => (undefined);
+    storeContainer.insertContainer = (containerWithResult) => (containerWithResult);
+
     const container1 = {
         Id: 'container-123456789',
         Image: 'organization/image:version',
@@ -506,40 +524,20 @@ test('watch should return a list of containers found by the docker socket', asyn
             }),
         }),
     };
-
-    // Fake conf
-    docker.configuration = {
-        watchbydefault: true,
-    };
-
     await expect(docker.watch()).resolves.toMatchObject([{
-        id: 'container-123456789',
-        name: 'test',
-        watcher: 'test',
-        image: {
-            id: 'image-123456789',
-            registry: {},
-            name: 'organization/image',
-            tag: {
-                value: 'version',
-                semver: false,
+        changed: true,
+        container: {
+            id: 'container-123456789',
+            result: {
+                tag: 'version',
             },
-            digest: {
-                watch: true,
-                repo: undefined,
-            },
-            architecture: 'arch',
-            os: 'os',
-            created: '2021-06-12T05:33:38.440Z',
-        },
-        result: {
-            tag: 'version',
         },
     }]);
 });
 
 test('watch should log error when watching a container fails', async () => {
-    storeContainer.getContainer = () => undefined;
+    storeContainer.getContainer = () => (undefined);
+    storeContainer.insertContainer = (containerWithResult) => (containerWithResult);
     const container1 = {
         Id: 'container-123456789',
         Image: 'organization/image:version',
@@ -606,62 +604,20 @@ test('getRegistry should return all registered registries when called', () => {
     expect(() => Docker.__get__('getRegistry')('registry_fail')).toThrowError('Unsupported Registry registry_fail');
 });
 
-test('processContainerResult should emit event when update available and not already triggered', () => {
-    const processContainerResult = Docker.__get__('processContainerResult');
-    const containerWithResult = {
-        id: 'container-123456789',
-        updateAvailable: true,
-    };
-
-    storeContainer.getContainer = () => (undefined);
-    storeContainer.insertContainer = () => (containerWithResult);
-    const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
-    processContainerResult(containerWithResult, docker.log);
-    expect(spyEvent).toHaveBeenCalled();
-});
-
-test('processContainerResult should not emit event when no update available', () => {
-    const processContainerResult = Docker.__get__('processContainerResult');
+test('mapContainerToContainerReport should not emit event when no update available', () => {
     const containerWithResult = {
         id: 'container-123456789',
         updateAvailable: false,
     };
-
     storeContainer.getContainer = () => (undefined);
     storeContainer.insertContainer = () => (containerWithResult);
-    const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
-    processContainerResult(containerWithResult, docker.log);
-    expect(spyEvent).not.toHaveBeenCalled();
-});
-
-test('processContainerResult should not emit event when update available but already processed', () => {
-    const processContainerResult = Docker.__get__('processContainerResult');
-    const containerWithResult = {
-        id: 'container-123456789',
-        updateAvailable: true,
-        resultChanged: () => false,
-    };
-
-    storeContainer.getContainer = () => (containerWithResult);
-    storeContainer.updateContainer = () => (containerWithResult);
-    const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
-    processContainerResult(containerWithResult, docker.log);
-    expect(spyEvent).not.toHaveBeenCalled();
-});
-
-test('processContainerResult should emit event when update available but not already processed', () => {
-    const processContainerResult = Docker.__get__('processContainerResult');
-    const containerWithResult = {
-        id: 'container-123456789',
-        updateAvailable: true,
-        resultChanged: () => true,
-    };
-
-    storeContainer.getContainer = () => (containerWithResult);
-    storeContainer.updateContainer = () => (containerWithResult);
-    const spyEvent = jest.spyOn(event, 'emitContainerNewVersion');
-    processContainerResult(containerWithResult, docker.log);
-    expect(spyEvent).toHaveBeenCalled();
+    expect(docker.mapContainerToContainerReport(containerWithResult)).toEqual({
+        changed: true,
+        container: {
+            id: 'container-123456789',
+            updateAvailable: false,
+        },
+    });
 });
 
 const containerToWatchTestCases = [{

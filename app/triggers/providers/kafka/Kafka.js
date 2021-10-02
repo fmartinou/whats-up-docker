@@ -70,12 +70,26 @@ class Kafka extends Trigger {
      * @param container the container
      * @returns {Promise<void>}
      */
-    async notify(container) {
+    async trigger(container) {
         const producer = this.kafka.producer();
         await producer.connect();
         return producer.send({
             topic: this.configuration.topic,
             messages: [{ value: JSON.stringify(container) }],
+        });
+    }
+
+    /**
+     * Send a record to a Kafka topic with new container versions details.
+     * @param containers
+     * @returns {Promise<RecordMetadata[]>}
+     */
+    async triggerBatch(containers) {
+        const producer = this.kafka.producer();
+        await producer.connect();
+        return producer.send({
+            topic: this.configuration.topic,
+            messages: containers.map((container) => ({ value: JSON.stringify(container) })),
         });
     }
 }

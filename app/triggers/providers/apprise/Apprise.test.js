@@ -10,6 +10,14 @@ const configurationValid = {
     url: 'http://xxx.com',
     urls: 'maito://user:pass@gmail.com',
     threshold: 'all',
+    once: true,
+    mode: 'single',
+    // eslint-disable-next-line no-template-curly-in-string
+    simpletitle: 'New ${kind} found for container ${name}',
+    // eslint-disable-next-line no-template-curly-in-string
+    simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+    // eslint-disable-next-line no-template-curly-in-string
+    batchtitle: '${count} updates available',
 };
 
 beforeEach(() => {
@@ -30,7 +38,7 @@ test('validateConfiguration should throw error when invalid', () => {
     }).toThrowError(ValidationError);
 });
 
-test('notify should send POST http request to notify endpoint', async () => {
+test('trigger should send POST http request to notify endpoint', async () => {
     apprise.configuration = configurationValid;
     const container = {
         name: 'container1',
@@ -50,12 +58,12 @@ test('notify should send POST http request to notify endpoint', async () => {
             semverDiff: 'major',
         },
     };
-    await apprise.notify(container);
+    await apprise.trigger(container);
     expect(rp).toHaveBeenCalledWith({
         body: {
             urls: 'maito://user:pass@gmail.com',
-            title: '[WUD] New tag found for container container1',
-            body: 'Container container1 running with tag 1.0.0 can be updated to tag 2.0.0',
+            title: 'New tag found for container container1',
+            body: 'Container container1 running with tag 1.0.0 can be updated to tag 2.0.0\n',
             format: 'text',
             type: 'info',
         },

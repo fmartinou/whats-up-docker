@@ -3,11 +3,11 @@
     "WUD_VERSION": "dev",
     "WUD_STORE_PATH": ".store",
     "WUD_TRIGGER_MOCK_EXAMPLE_MOCK": "mock",
+    "WUD_TRIGGER_MOCK_EXAMPLE_MODE": "single",
     "WUD_WATCHER_LOCAL_WATCHBYDEFAULT": false,
-    "WUD_LOG_LEVEL":  "debug",
+    "WUD_LOG_LEVEL":  "info",
     "WUD_REGISTRY_HUB_AUTH": "",
     "WUD_REGISTRY_GHCR_USERNAME": "",
-    "WUD_REGISTRY_GHCR_TOKEN": "",
-    "WUD_TRIGGER_DOCKER_TEST_PRUNE": "false"
+    "WUD_REGISTRY_GHCR_TOKEN": ""
   }
 }

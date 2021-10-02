@@ -16,6 +16,14 @@ const configurationValid = {
         prefix: 'homeassistant',
     },
     threshold: 'all',
+    mode: 'single',
+    once: true,
+    // eslint-disable-next-line no-template-curly-in-string
+    simpletitle: 'New ${kind} found for container ${name}',
+    // eslint-disable-next-line no-template-curly-in-string
+    simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
+    // eslint-disable-next-line no-template-curly-in-string
+    batchtitle: '${count} updates available',
 };
 
 beforeEach(() => {
@@ -184,7 +192,7 @@ test('removeHassDevice should publish empty json message to expected hass discov
     expect(JSON.parse(mqtt.client.message)).toStrictEqual({});
 });
 
-test('notify should format json message payload as expected', async () => {
+test('trigger should format json message payload as expected', async () => {
     mqtt.configuration = {
         topic: 'wud/container',
     };
@@ -194,7 +202,7 @@ test('notify should format json message payload as expected', async () => {
             message,
         }),
     };
-    const response = await mqtt.notify({
+    const response = await mqtt.trigger({
         id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
         name: 'homeassistant',
         watcher: 'local',
