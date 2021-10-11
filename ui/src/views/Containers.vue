@@ -21,6 +21,7 @@
             <container
               :container="container"
               @delete-container="deleteContainer(container)"
+              @container-deleted="removeContainerFromList(container)"
             />
           </v-col>
         </v-row>
@@ -100,10 +101,13 @@ export default {
     onRefreshAllContainers(containersRefreshed) {
       this.containers = containersRefreshed;
     },
+    removeContainerFromList(container) {
+      this.containers = this.containers.filter((c) => c.id !== container.id);
+    },
     async deleteContainer(container) {
       try {
         await deleteContainer(container.id);
-        this.containers = this.containers.filter((c) => c.id !== container.id);
+        this.removeContainerFromList(container);
       } catch (e) {
         this.$root.$emit(
           "notify",

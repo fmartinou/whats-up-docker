@@ -26,22 +26,20 @@ docker run -d --name wud \
 ```
 <!-- tabs:end -->
 
-## Check the logs
-```bash
-docker container logs wud
-```
-
 ## Open the UI
 [Open the UI](http://localhost:3000) in a browser and check that everything is working as expected.
 
-## Add your first trigger   
+## Add your first trigger
 ?> Everything ok? \
-It's time to [add some triggers](configuration/triggers/)!
+It's time to [**add some triggers**](configuration/triggers/)!
 
 ## Going deeper...
-  
+
 ?> Need to fine configure how WUD must watch your containers? \
-Take a look at the [watcher documentation](configuration/watchers/)!
+Take a look at the [**watcher documentation**](configuration/watchers/)!
   
 ?> Need to integrate other registries (ECR, GCR...)? \
-Take a look at the [registry documentation](configuration/registries/).
+Take a look at the [**registry documentation**](configuration/registries/).
+
+## Ready-to-go examples
+?> You can find here a **[complete configuration example](configuration/?id=complete-example)** illustrating some common WUD options.

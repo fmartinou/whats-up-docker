@@ -2,11 +2,19 @@
 WUD is relying on Environment Variables and [Docker labels](https://docs.docker.com/config/labels-custom-metadata/) to configure all the components.
 
 Please find below the documentation for each of them:
-- [Logs](/configuration/logs/)
-- [Registries](/configuration/registries/)
-- [Storage](/configuration/storage/)
-- [Triggers](/configuration/triggers/)
-- [watchers](/configuration/watchers/)
+> [**Authentication**](/configuration/authentications/)
+
+> [**Logs**](/configuration/logs/)
+
+> [**Registries**](/configuration/registries/)
+
+> [**Storage**](/configuration/storage/)
+
+> [**Timezone**](/configuration/timezone/)
+
+> [**Triggers**](/configuration/triggers/)
+
+> [**watchers**](/configuration/watchers/)
 
 ## Complete example
 

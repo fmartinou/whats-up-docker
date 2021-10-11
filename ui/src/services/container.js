@@ -18,6 +18,9 @@ async function refreshContainer(containerId) {
   const response = await fetch(`/api/containers/${containerId}/watch`, {
     method: "POST",
   });
+  if (response.status === 404) {
+    return undefined;
+  }
   return response.json();
 }
 

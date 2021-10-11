@@ -39,7 +39,7 @@ services:
 #### **Docker**
 ```bash
 docker run \
-  -e WUD_TRIGGER_DOCKER_EXAMPLE_PRUNE="true" \
+  -e "WUD_TRIGGER_DOCKER_EXAMPLE_PRUNE=true" \
   ...
   fmartinou/whats-up-docker
 ```

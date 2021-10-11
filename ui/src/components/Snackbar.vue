@@ -2,7 +2,7 @@
   <v-snackbar
     :value="show"
     :timeout="timeout"
-    :color="level === 'error' ? 'error' : 'success'"
+    :color="level"
     @input="closeSnackbar"
   >
     {{ message }}

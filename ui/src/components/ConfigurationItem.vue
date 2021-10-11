@@ -1,7 +1,9 @@
 <template>
   <v-card>
     <v-app-bar color="secondary" flat dark dense>
-      <v-toolbar-title class="text-capitalize text-body-1">{{ displayName }}</v-toolbar-title>
+      <v-toolbar-title class="text-capitalize text-body-1">{{
+        displayName
+      }}</v-toolbar-title>
       <v-spacer />
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
@@ -60,13 +62,17 @@ export default {
     },
 
     displayName() {
-      if (this.item.name && this.item.type && this.item.name !== this.item.type) {
+      if (
+        this.item.name &&
+        this.item.type &&
+        this.item.name !== this.item.type
+      ) {
         return `${this.item.name} (${this.item.type})`;
       }
       if (this.item.name) {
         return this.item.name;
       }
-      return 'Unknown';
+      return "Unknown";
     },
   },
 };

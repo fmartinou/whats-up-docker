@@ -22,7 +22,7 @@ Feature: WUD Container API Exposure
       | 1     | ecr_sub_test             | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test                     | 1.0.0            | 2.0.0            | true            |
       | 2     | ecr_test                 | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test                         | 1.0.0            | 2.0.0            | true            |
       | 3     | ghcr_radarr              | ghcr     | https://ghcr.io/v2                                      | linuxserver/radarr           | 3.2.1.5070-ls105 | 3.2.2.5080-ls118 | true            |
-      | 4     | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant | 2021.6.1         | 2021.10.3         | true            |
+      | 4     | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant | 2021.6.1         | 2021.10.5         | true            |
       | 5     | hub_homeassistant_latest | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant | latest           | latest           | false           |
       | 6     | hub_nginx_120            | hub      | https://registry-1.docker.io/v2                         | library/nginx                | 1.20-alpine      | 1.21-alpine      | true            |
       | 7     | hub_nginx_latest         | hub      | https://registry-1.docker.io/v2                         | library/nginx                | latest           | latest           | true            |
@@ -72,7 +72,7 @@ Feature: WUD Container API Exposure
     And response body path $.image.tag.semver should be false
     And response body path $.image.digest.value should be sha256:f94d6dd9b5761f33a21bb92848a1f70ea11a1c15f3a142c19a44ea3a4c545a4d
     And response body path $.result.tag should be latest
-    And response body path $.result.digest should be sha256:39065444eb1acb2cfdea6373ca620c921e702b0f447641af5d0e0ea1e48e5e04
+    And response body path $.result.digest should be sha256:7250923ba3543110040462388756ef099331822c6172a050b12c7a38361ea46f
     And response body path $.updateAvailable should be true
 
   Scenario: WUD must allow to get a container with its link
@@ -82,7 +82,7 @@ Feature: WUD Container API Exposure
     Then response code should be 200
     And response body should be valid json
     And response body path $.link should be https://github.com/home-assistant/core/releases/tag/2021.6.1
-    And response body path $.result.link should be https://github.com/home-assistant/core/releases/tag/2021.10.3
+    And response body path $.result.link should be https://github.com/home-assistant/core/releases/tag/2021.10.5
 
   Scenario: WUD must allow to trigger a watch on a container
     Given I GET /api/containers

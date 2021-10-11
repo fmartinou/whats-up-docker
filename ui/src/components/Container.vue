@@ -1,7 +1,5 @@
 <template>
   <v-card>
-    <v-overlay :absolute="true" :value="isRefreshing" />
-
     <v-app-bar
       color="secondary"
       dark
@@ -26,27 +24,6 @@
       <v-chip class="ma-4" label outlined v-else>{{
         container.image.tag.value
       }}</v-chip>
-      <div>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              v-bind="attrs"
-              v-on="on"
-              fab
-              absolute
-              top
-              right
-              small
-              color="accent"
-              @click.stop="refreshContainer"
-              :loading="isRefreshing"
-            >
-              <v-icon> mdi-refresh</v-icon>
-            </v-btn>
-          </template>
-          <span>Refresh</span>
-        </v-tooltip>
-      </div>
       <v-spacer />
       <v-icon>{{ showDetail ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
     </v-app-bar>
@@ -130,7 +107,7 @@
           :result="result"
           :error="error"
           :semver="container.image.tag.semver"
-          :updateKind="container.updateKind"
+          :updateKind="updateKind"
         />
 
         <v-card-text>
@@ -147,13 +124,13 @@
                 <v-card class="text-center">
                   <v-app-bar color="warning" dark flat>
                     <v-toolbar-title class="text-body-1"
-                      >Are you sure you want to delete the container
-                      <span class="font-weight-bold">{{ container.name }}</span
-                      >?</v-toolbar-title
+                      >Are you sure you want to delete
+                      <span class="font-weight-bold">{{ container.name }}</span>
+                      from the list?</v-toolbar-title
                     >
                   </v-app-bar>
-                  <v-card-title class="text-body-1">
-                    This action is irreversible.
+                  <v-card-title class="text-body-1 font-italic">
+                    The real container won't be deleted.
                   </v-card-title>
                   <v-card-actions>
                     <v-spacer></v-spacer>
@@ -185,7 +162,6 @@
 import Property from "@/components/Property";
 import ContainerImage from "@/components/ContainerImage";
 import ContainerResult from "@/components/ContainerResult";
-import { refreshContainer } from "@/services/container";
 import { getRegistryProviderIcon } from "@/services/registry";
 
 export default {
@@ -204,10 +180,10 @@ export default {
   data() {
     return {
       showDetail: false,
-      isRefreshing: false,
       dialogDelete: false,
       result: this.container.result,
       error: this.container.error,
+      updateKind: this.container.updateKind,
       updateAvailable: this.container.updateAvailable || false,
     };
   },
@@ -237,10 +213,10 @@ export default {
       ) {
         newVersion = this.$options.filters.date(this.result.created);
       }
-      if (this.container.updateKind) {
-        newVersion = this.container.updateKind.remoteValue;
+      if (this.updateKind) {
+        newVersion = this.updateKind.remoteValue;
       }
-      if (this.container.updateKind.kind === "digest") {
+      if (this.updateKind.kind === "digest") {
         newVersion = this.$options.filters.short(newVersion, 15);
       }
       return newVersion;
@@ -248,11 +224,8 @@ export default {
 
     newVersionClass() {
       let color = "warning";
-      if (
-        this.container.updateKind &&
-        this.container.updateKind.kind === "tag"
-      ) {
-        switch (this.container.updateKind.semverDiff) {
+      if (this.updateKind && this.updateKind.kind === "tag") {
+        switch (this.updateKind.semverDiff) {
           case "major":
             color = "error";
             break;
@@ -269,25 +242,6 @@ export default {
   },
 
   methods: {
-    async refreshContainer() {
-      this.isRefreshing = true;
-      try {
-        const body = await refreshContainer(this.container.id);
-        this.error = body.error;
-        this.result = body.result;
-        this.updateAvailable = body.updateAvailable;
-        this.$root.$emit("notify", `Container refreshed`);
-      } catch (e) {
-        this.$root.$emit(
-          "notify",
-          `Error when trying to refresh the container (${e.message})`,
-          "error"
-        );
-      } finally {
-        this.isRefreshing = false;
-      }
-    },
-
     async deleteContainer() {
       this.$emit("delete-container");
     },

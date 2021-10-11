@@ -282,19 +282,6 @@ class Docker extends Component {
         } catch (e) {
             this.log.warn(`Error when trying to get the list of the containers to watch (${e.message})`);
         }
-
-        // Prune old containers from the store
-        try {
-            const containersFromTheStore = storeContainer.getContainers({ watcher: this.name });
-            pruneOldContainers(containers, containersFromTheStore);
-        } catch (e) {
-            this.log.warn(`Error when trying to prune the old containers (${e.message})`);
-        }
-        getWatchContainerGauge().set({
-            type: this.type,
-            name: this.name,
-        }, containers.length);
-
         try {
             const containerReports = await Promise.all(
                 containers.map((container) => this.watchContainer(container)),
@@ -374,7 +361,22 @@ class Docker extends Component {
         const containersWithImage = await Promise.all(containerPromises);
 
         // Return containers to process
-        return containersWithImage.filter((imagePromise) => imagePromise !== undefined);
+        const containersToReturn = containersWithImage
+            .filter((imagePromise) => imagePromise !== undefined);
+
+        // Prune old containers from the store
+        try {
+            const containersFromTheStore = storeContainer.getContainers({ watcher: this.name });
+            pruneOldContainers(containersToReturn, containersFromTheStore);
+        } catch (e) {
+            this.log.warn(`Error when trying to prune the old containers (${e.message})`);
+        }
+        getWatchContainerGauge().set({
+            type: this.type,
+            name: this.name,
+        }, containersToReturn.length);
+
+        return containersToReturn;
     }
 
     /**

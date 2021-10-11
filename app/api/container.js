@@ -88,6 +88,7 @@ async function watchContainers(req, res) {
  */
 async function watchContainer(req, res) {
     const { id } = req.params;
+
     const container = storeContainer.getContainer(id);
     if (container) {
         const watcher = getWatchers()[`watcher.docker.${container.watcher}`];
@@ -97,9 +98,19 @@ async function watchContainer(req, res) {
             });
         } else {
             try {
-                // Run watchContainer from the Provider
-                const containerReport = await watcher.watchContainer(container);
-                res.status(200).json(containerReport.container);
+                // Ensure container is still in store
+                // (for cases where it has been removed before running an new watchAll)
+                const containers = await watcher.getContainers();
+                const containerFound = containers
+                    .find((containerInList) => containerInList.id === container.id);
+
+                if (!containerFound) {
+                    res.status(404).send();
+                } else {
+                    // Run watchContainer from the Provider
+                    const containerReport = await watcher.watchContainer(container);
+                    res.status(200).json(containerReport.container);
+                }
             } catch (e) {
                 res.status(500).json({
                     error: `Error when watching container ${id} (${e.message})`,

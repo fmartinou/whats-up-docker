@@ -1,5 +1,5 @@
 # Docker-Compose
-![logo](docker.png)
+![logo](docker-compose.png)
 
 The `dockercompose` trigger lets you update docker-compose.yml files & replace existing containers with their updated versions.
 
@@ -46,7 +46,8 @@ services:
 #### **Docker**
 ```bash
 docker run \
-  -e WUD_TRIGGER_DOCKER_EXAMPLE_PRUNE="true" \
+  -v /etc/my-services/docker-compose.yml:/wud/docker-compose.yml
+  -e "WUD_TRIGGER_DOCKERCOMPOSE_EXAMPLE_FILE=/wud/docker-compose.yml" \
   ...
   fmartinou/whats-up-docker
 ```

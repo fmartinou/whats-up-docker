@@ -4,6 +4,7 @@
 - :star: Add Docker Trigger ([see here](configuration/triggers/docker/))
 - :star: Add Docker Compose Trigger ([see here](configuration/triggers/docker-compose/))
 - :star: Add trigger title / body templates
+- :fire: Remove the container `Refresh` button from the UI because confusing
 
 ## 5.8.0
 - :star: Automatically enable digest watching for non semver tags

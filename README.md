@@ -7,49 +7,53 @@
 
 ![](docs/wud_logo_500.png)
 
-**What's up Docker?** (aka **WUD**) gets you notified when a new version of your Docker Container is available.
+### What's up Docker? <small>(aka **WUD**)</small>
+Gets you notified when new versions of your Docker containers are available and lets you react the way you want.
 
-**WUD** is built on top of 3 concepts:
-- **WATCHERS** query your Docker hosts to get the running images
-- **REGISTRIES** check whether updates are available
-- **TRIGGERS** get you notified upon available updates
+### WUD is built on 3 concepts:
+
+> `WATCHERS` query your Docker hosts to get the containers to watch
+
+> `REGISTRIES` query the Docker registries to find available updates
+
+> `TRIGGERS` perform actions when updates are available
 
 ![image](docs/introduction/wud_arch.png)
 
-**WUD** can be easily configured using regular Environment Variables & Docker labels.
-
 ## Many supported triggers
-- [Apprise](https://github.com/caronc/apprise-api)
-- [Ifttt](https://ifttt.com/)
-- [Kafka](https://kafka.apache.org/)
-- [Mqtt](https://mqtt.org/)
-- [Pushover](https://pushover.net/)
-- [Slack](https://slack.com/)
-- Smtp
-- ...
+> Send notifications using **Smtp**, [**Apprise**](https://github.com/caronc/apprise-api), [**Ifttt**](https://ifttt.com), [**Slack**](https://slack.com), [**Pushover**](https://pushover.net)...
+
+> Automatically update your [**docker**](https://www.docker.com) containers or your [**docker-compose**](https://docs.docker.com/compose) stack.
+
+> Integrate with third-party systems using [**Kafka**](https://kafka.apache.org), [**Mqtt**](https://mqtt.org), **Http Webhooks**...
 
 ## Many supported registries
-- [ACR](https://azure.microsoft.com/services/container-registry/)
-- [ECR](https://aws.amazon.com/ecr/)
-- [GCR](https://cloud.google.com/container-registry/)
-- [GHCR](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry)
-- [HUB](http://hub.docker.com/)
+> [**Azure Container Registry**](https://azure.microsoft.com/services/container-registry)
 
-## REST API & fresh UI
+> [**AWS Elastic Container Registry**](https://aws.amazon.com/ecr)
+
+> [**Google Container Registry**](https://cloud.google.com/container-registry)
+
+> [**Github Container Registry**](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry)
+
+> [**Docker Hub (public & private repositories)**](http://hub.docker.com)
+
+## REST API & Web UI
 ![image](docs/ui/ui.png)
 
 ## Good integration with
-- [Home-Assistant](https://www.home-assistant.io/)
-- [Prometheus](https://prometheus.io/)
-- [Grafana](https://grafana.com/)
-- ...
+> [**Home-Assistant**](https://www.home-assistant.io/)
+
+> [**Prometheus**](https://prometheus.io/)
+
+> [**Grafana**](https://grafana.com/)
 
 ## Ready to go?
-### Check out the [documentation](https://fmartinou.github.io/whats-up-docker/) to get started!
+> **Check out the [documentation](https://fmartinou.github.io/whats-up-docker/) to get started!**
 
 ## Contact & Support
 - Create a [GitHub issue](https://github.com/fmartinou/whats-up-docker/issues) for bug reports, feature requests, or questions
-- Add a ⭐️ [star on GitHub](https://github.com/fmartinou/whats-up-docker) or[Buy me coffee](https://www.buymeacoffee.com/61rUNMm) to support the project!
+- Add a ⭐️ [star on GitHub](https://github.com/fmartinou/whats-up-docker) or [Buy me coffee](https://www.buymeacoffee.com/61rUNMm)&nbsp;to support the project!
 
 <a href="https://www.buymeacoffee.com/61rUNMm" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 
