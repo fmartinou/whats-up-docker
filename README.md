@@ -1,11 +1,13 @@
 # What's up Docker?
- 
-  ![Travis](https://img.shields.io/travis/fmartinou/whats-up-docker/master)
-  ![Maintainability](https://img.shields.io/codeclimate/maintainability/fmartinou/whats-up-docker)
-  ![Coverage](https://img.shields.io/codeclimate/coverage/fmartinou/whats-up-docker)
-  ![Docker pulls](https://img.shields.io/docker/pulls/fmartinou/whats-up-docker)
 
-![](docs/wud_logo_500.png)
+![Travis](https://img.shields.io/travis/fmartinou/whats-up-docker/master)
+![Maintainability](https://img.shields.io/codeclimate/maintainability/fmartinou/whats-up-docker)
+![Coverage](https://img.shields.io/codeclimate/coverage/fmartinou/whats-up-docker)
+![Docker pulls](https://img.shields.io/docker/pulls/fmartinou/whats-up-docker)
+
+#### [:blue_book: User documentation](https://fmartinou.github.io/whats-up-docker/)
+
+![](docs/wud_logo_250.png)
 
 ### What's up Docker? <small>(aka **WUD**)</small>
 Gets you notified when new versions of your Docker containers are available and lets you react the way you want.
@@ -27,6 +29,9 @@ Gets you notified when new versions of your Docker containers are available and 
 
 > Integrate with third-party systems using [**Kafka**](https://kafka.apache.org), [**Mqtt**](https://mqtt.org), **Http Webhooks**...
 
+> Setup your own update strategies \
+> (e.g. automatically update containers when minor or patch versions are available & notify by email when major versions are available)
+
 ## Many supported registries
 > [**Azure Container Registry**](https://azure.microsoft.com/services/container-registry)
 
@@ -41,12 +46,24 @@ Gets you notified when new versions of your Docker containers are available and 
 ## REST API & Web UI
 ![image](docs/ui/ui.png)
 
+## Flexible authentication strategies
+- [Openid Connect](https://openid.net/connect/)
+- [Basic authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)
+
 ## Good integration with
 > [**Home-Assistant**](https://www.home-assistant.io/)
 
 > [**Prometheus**](https://prometheus.io/)
 
 > [**Grafana**](https://grafana.com/)
+
+> [**Authelia**](https://www.authelia.com/)
+
+> [**Authentik**](https://goauthentik.io/)
+
+> [**Keycloak**](https://www.keycloak.org/)
+
+> ...
 
 ## Ready to go?
 > **Check out the [documentation](https://fmartinou.github.io/whats-up-docker/) to get started!**

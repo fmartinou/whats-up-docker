@@ -39,6 +39,7 @@ function init() {
             'watcher',
             'include_tags',
             'exclude_tags',
+            'transform_tags',
             'link_template',
             'link',
             'image_id',

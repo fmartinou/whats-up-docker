@@ -2,6 +2,7 @@
  * Semver utils.
  */
 const semver = require('semver');
+const log = require('../log');
 
 /**
  * Parse a string to a semver (return null is it cannot be parsed as a valid semver).
@@ -54,8 +55,40 @@ function diff(version1, version2) {
     return semver.diff(version1Semver, version2Semver);
 }
 
+/**
+ * Transform a tag using a formula.
+ * @param transformFormula
+ * @param originalTag
+ * @return {*}
+ */
+function transform(transformFormula, originalTag) {
+    // No formula ? return original tag value
+    if (!transformFormula || transformFormula === '') {
+        return originalTag;
+    }
+    try {
+        const transformFormulaSplit = transformFormula.split(/\s*=>\s*/);
+        const transformRegex = new RegExp(transformFormulaSplit[0]);
+        const placeholders = transformFormulaSplit[1].match(/\$\d+/g);
+        const originalTagMatches = originalTag.match(transformRegex);
+
+        let transformedTag = transformFormulaSplit[1];
+        placeholders.forEach((placeholder) => {
+            const placeholderIndex = Number.parseInt(placeholder.substring(1), 10);
+            transformedTag = transformedTag.replace(new RegExp(placeholder.replace('$', '\\$'), 'g'), originalTagMatches[placeholderIndex]);
+        });
+        return transformedTag;
+    } catch (e) {
+        // Upon error; log & fallback to original tag value
+        log.warn(`Error when applying transform function [${transformFormula}]to tag [${originalTag}]`);
+        log.debug(e);
+        return originalTag;
+    }
+}
+
 module.exports = {
     parse,
     isGreater,
     diff,
+    transform,
 };

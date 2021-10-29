@@ -3,12 +3,13 @@ const Dockerode = require('dockerode');
 const joi = require('joi-cron-expression')(require('joi'));
 const cron = require('node-cron');
 const parse = require('parse-docker-image-name');
-const { parse: parseSemver, isGreater: isGreaterSemver } = require('../../../semver');
+const { parse: parseSemver, isGreater: isGreaterSemver, transform: transformTag } = require('../../../tag');
 const event = require('../../../event');
 const {
     wudWatch,
     wudTagInclude,
     wudTagExclude,
+    wudTagTransform,
     wudWatchDigest,
     wudLinkTemplate,
 } = require('./label');
@@ -51,15 +52,22 @@ function getTagCandidates(container, tags) {
     // Semver image -> find higher semver tag
     if (container.image.tag.semver) {
         // Keep semver only
-        filteredTags = filteredTags.filter((tag) => parseSemver(tag) !== null);
+        filteredTags = filteredTags
+            .filter((tag) => parseSemver(transformTag(container.transformTags, tag)) !== null);
 
         // Keep only greater semver
         filteredTags = filteredTags
-            .filter((tag) => isGreaterSemver(tag, container.image.tag.value));
+            .filter((tag) => isGreaterSemver(
+                transformTag(container.transformTags, tag),
+                transformTag(container.transformTags, container.image.tag.value),
+            ));
 
         // Apply semver sort desc
         filteredTags.sort((t1, t2) => {
-            const greater = isGreaterSemver(t2, t1);
+            const greater = isGreaterSemver(
+                transformTag(container.transformTags, t2),
+                transformTag(container.transformTags, t1),
+            );
             return greater ? 1 : -1;
         });
     } else {
@@ -349,12 +357,15 @@ class Docker extends Component {
                     ? labels[wudTagInclude] : undefined;
                 const excludeTags = labels[wudTagExclude] !== undefined
                     ? labels[wudTagExclude] : undefined;
+                const transformTags = labels[wudTagTransform] !== undefined
+                    ? labels[wudTagTransform] : undefined;
                 const linkTemplate = labels[wudLinkTemplate] !== undefined
                     ? labels[wudLinkTemplate] : undefined;
                 return this.addImageDetailsToContainer(
                     container,
                     includeTags,
                     excludeTags,
+                    transformTags,
                     linkTemplate,
                 );
             });
@@ -429,10 +440,17 @@ class Docker extends Component {
      * @param container
      * @param includeTags
      * @param excludeTags
+     * @param transformTags
      * @param linkTemplate
      * @returns {Promise<Image>}
      */
-    async addImageDetailsToContainer(container, includeTags, excludeTags, linkTemplate) {
+    async addImageDetailsToContainer(
+        container,
+        includeTags,
+        excludeTags,
+        transformTags,
+        linkTemplate,
+    ) {
         const containerId = container.Id;
 
         // Is container already in store? just return it :)
@@ -483,6 +501,7 @@ class Docker extends Component {
             watcher: this.name,
             includeTags,
             excludeTags,
+            transformTags,
             linkTemplate,
             image: {
                 id: imageId,

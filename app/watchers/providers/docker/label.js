@@ -19,6 +19,11 @@ module.exports = {
     wudTagExclude: 'wud.tag.exclude',
 
     /**
+     * Optional transform function to apply to the tag.
+     */
+    wudTagTransform: 'wud.tag.transform',
+
+    /**
      * Should container digest be tracked? (true | false).
      */
     wudWatchDigest: 'wud.watch.digest',

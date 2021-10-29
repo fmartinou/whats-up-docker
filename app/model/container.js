@@ -1,7 +1,7 @@
 const joi = require('joi');
 const flat = require('flat');
 const { snakeCase } = require('snake-case');
-const { parse: parseSemver, diff: diffSemver } = require('../semver');
+const { parse: parseSemver, diff: diffSemver } = require('../tag');
 
 // Container data schema
 const schema = joi.object({
@@ -11,6 +11,7 @@ const schema = joi.object({
     watcher: joi.string().min(1).required(),
     includeTags: joi.string(),
     excludeTags: joi.string(),
+    transformTags: joi.string(),
     linkTemplate: joi.string(),
     link: joi.string(),
     image: joi.object({

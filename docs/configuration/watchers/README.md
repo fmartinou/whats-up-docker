@@ -193,6 +193,7 @@ To fine-tune the behaviour of WUD _per container_, you can add labels on them.
 | `wud.watch.digest`  | :white_circle: | Watch this container digest                        | Valid Boolean                                                               | `false`                                                                               |
 | `wud.tag.include`   | :white_circle: | Regex to include specific tags only                | Valid JavaScript Regex                                                      |                                                                                       |
 | `wud.tag.exclude`   | :white_circle: | Regex to exclude specific tags                     | Valid JavaScript Regex                                                      |                                                                                       |
+| `wud.tag.transform` | :white_circle: | Transform function to apply to the tag             | `$valid_regex => $valid_string_with_placeholders` (see below)               |                                                                                       |
 | `wud.link.template` | :white_circle: | Browsable link associated to the container version | String template with placeholders `${raw}` `${major}` `${minor}` `${patch}` |                                                                                       |
 
 ## Label examples
@@ -284,6 +285,54 @@ services:
 #### **Docker**
 ```bash
 docker run -d --name mariadb --label 'wud.tag.include=^\d+\.\d+\.\d+$' mariadb:10.4.5
+```
+<!-- tabs:end -->
+
+### Transform the tags before performing the analysis
+In certain cases, tag values are so badly formatted that the resolution algorithm cannot find any valid update candidates or, worst, find bad positive matches.
+
+For example, you can encounter such an issue if you need to deal with tags looking like `1.0.0-99-7b368146`, `1.0.0-273-21d7efa6`...  
+By default, WUD will report bad positive matches because of the `sha-1` part at the end of the tag value (`-7b368146`...).  
+That's a shame because `1.0.0-99` and `1.0.0-273` would have been valid semver values (`$major.$minor.$patch-$prerelease`).
+
+You can get around this issue by providing a function that keeps only the part you are interested in.  
+
+How does it work?  
+The transform function must follow the following syntax:
+```
+$valid_regex_with_capturing_groups => $valid_string_with_placeholders
+```
+
+For example:
+```bash
+^(\d+\.\d+\.\d+-\d+)-.*$ => $1
+```
+
+The capturing groups are accessible with the syntax `$1`, `$2`, `$3`.... 
+
+!> The first capturing group is accessible as `$1`! 
+
+For example, you can indicate that you want to watch x.y.z versions only
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+
+  searx:
+    image: searx/searx:1.0.0-269-7b368146
+    labels:
+      - wud.tag.include=^\d+\.\d+\.\d+-\d+-.*$$
+      - wud.tag.transform=^(\d+\.\d+\.\d+-\d+)-.*$$ => $$1
+```
+
+#### **Docker**
+```bash
+docker run -d --name searx \
+--label 'wud.tag.include=^\d+\.\d+\.\d+-\d+-.*$' \
+--label 'wud.tag.transform=^(\d+\.\d+\.\d+-\d+)-.*$ => $1' \
+searx/searx:1.0.0-269-7b368146
 ```
 <!-- tabs:end -->
 

@@ -128,3 +128,32 @@ test.each(diffTestCases)(
         expect(semver.diff(item.version1, item.version2)).toEqual(item.diff);
     },
 );
+
+const transformTestCases = [{
+    formula: '^(\\d+\\.\\d+\\.\\d+-\\d+)-.*$ => $1',
+    originalTag: '1.2.3-99-xyz',
+    resultTag: '1.2.3-99',
+}, {
+    formula: '^(\\d+\\.\\d+\\.\\d+-\\d+)-.*$=>$1',
+    originalTag: '1.2.3-99-xyz',
+    resultTag: '1.2.3-99',
+}, {
+    formula: '^(\\d+\\.\\d+)-.*-(\\d+) => $1.$2',
+    originalTag: '1.2-xyz-3',
+    resultTag: '1.2.3',
+}, {
+    formula: undefined,
+    originalTag: '1.2.3',
+    resultTag: '1.2.3',
+}, {
+    formula: 'azerty',
+    originalTag: '1.2.3',
+    resultTag: '1.2.3',
+}];
+
+test.each(transformTestCases)(
+    'transform with formula $formula should transform $originalTag to $resultTag',
+    (item) => {
+        expect(semver.transform(item.formula, item.originalTag)).toEqual(item.resultTag);
+    },
+);

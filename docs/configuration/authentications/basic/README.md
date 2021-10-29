@@ -1,6 +1,6 @@
 # Basic Authentication
 
-The `basic` authentication lets you protect WUD access using the [Http Oidc auth standard](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication).
+The `basic` authentication lets you protect WUD access using the [Http Basic auth standard](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication).
 
 ### Variables
 

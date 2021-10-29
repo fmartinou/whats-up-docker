@@ -3,7 +3,10 @@
 ## develop
 - :star: Add Docker Trigger ([see here](configuration/triggers/docker/))
 - :star: Add Docker Compose Trigger ([see here](configuration/triggers/docker-compose/))
-- :star: Add trigger title / body templates
+- :star: Add Trigger configuration to customize title / body templates
+- :star: Add Trigger configuration to fire container updates individually or to fire all container updates as 1 batch
+- :star: Add Trigger configuration to ignore/repeat previous updates
+- :star: Add Trigger configuration to be able to transform tags before performing the analysis ([see here](configuration/watchers/?id=transform-the-tags-before-performing-the-analysis))
 - :fire: Remove the container `Refresh` button from the UI because confusing
 
 ## 5.8.0
