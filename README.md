@@ -43,6 +43,8 @@ Gets you notified when new versions of your Docker containers are available and 
 
 > [**Docker Hub (public & private repositories)**](http://hub.docker.com)
 
+> [**LinuxServer Container Registry (lscr.io)**](https://www.linuxserver.io/blog/wrap-up-warm-for-the-winter)
+
 ## REST API & Web UI
 ![image](docs/ui/ui.png)
 

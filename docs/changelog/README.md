@@ -1,5 +1,9 @@
 # Changelog
 
+## develop
+- :star: Add LinuxServer Container Registry support (lscr.io)
+- :star: Update all dependencies
+
 ## 5.9.0
 - :star: Add Docker Trigger ([see here](configuration/triggers/docker/))
 - :star: Add Docker Compose Trigger ([see here](configuration/triggers/docker-compose/))

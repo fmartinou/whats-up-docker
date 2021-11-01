@@ -4,7 +4,7 @@ Feature: WUD Registry API Exposure
     When I GET /api/registries
     Then response code should be 200
     And response body should be valid json
-    And response body path $ should be of type array with length 5
+    And response body path $ should be of type array with length 6
 
     And response body path $[0].id should be acr
     And response body path $[0].type should be acr
@@ -32,6 +32,10 @@ Feature: WUD Registry API Exposure
     And response body path $[4].id should be hub
     And response body path $[4].type should be hub
     And response body path $[4].name should be hub
+
+    And response body path $[5].id should be lscr
+    And response body path $[5].type should be lscr
+    And response body path $[5].name should be lscr
 
   Scenario: WUD must allow to get specific Registry state
     When I GET /api/registries/acr

@@ -7,6 +7,7 @@
     "WUD_LOG_LEVEL":  "info",
     "WUD_REGISTRY_HUB_AUTH": "",
     "WUD_REGISTRY_GHCR_USERNAME": "",
-    "WUD_REGISTRY_GHCR_TOKEN": ""
+    "WUD_REGISTRY_GHCR_TOKEN": "",
+    "WUD_REGISTRY_LSCR": ""
   }
 }

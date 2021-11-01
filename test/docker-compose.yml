@@ -65,12 +65,12 @@ services:
         - wud.tag.include=^latest$$
         - wud.watch.digest=true
 
-  traefik_245:
-    image: traefik:2.4.5
-    container_name: traefik_245
-    labels:
-      - wud.watch=true
-      - wud.tag.include=^\d+\.\d+.\d+$$
+    traefik_245:
+      image: traefik:2.4.5
+      container_name: traefik_245
+      labels:
+        - wud.watch=true
+        - wud.tag.include=^\d+\.\d+.\d+$$
 
   traefik_latest:
     image: traefik
@@ -111,4 +111,11 @@ services:
     labels:
       - wud.watch=true
       - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$
-      - wud.watch.digest=true
+
+  lscr_radarr:
+    image:
+      lscr.io/linuxserver/radarr:3.2.1.5070-ls105
+    container_name: lscr_radarr
+    labels:
+      - wud.watch=true
+      - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$

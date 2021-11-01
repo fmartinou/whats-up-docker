@@ -141,6 +141,9 @@ script:
 
   - docker run -d --name hub_youtubedb_latest     --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' jeeaaasustest/youtube-dl
 
+  # LSCR
+  - docker run -d --name lscr_radarr              --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$'               lscr.io/linuxserver/radarr:3.2.1.5070-ls105
+
   # Run wud docker image
   - >
     docker run -d
@@ -158,6 +161,7 @@ script:
     --env WUD_REGISTRY_GCR_PRIVATEKEY="$GCR_PRIVATE_KEY"
     --env WUD_REGISTRY_GHCR_USERNAME=""
     --env WUD_REGISTRY_GHCR_TOKEN=""
+    --env WUD_REGISTRY_LSCR=""
     --env WUD_REGISTRY_HUB_AUTH=""
     --env WUD_AUTH_BASIC_JOHN_USER="john"
     --env WUD_AUTH_BASIC_JOHN_HASH='$apr1$8zDVtSAY$62WBh9DspNbUKMZXYRsjS/'

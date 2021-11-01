@@ -2,7 +2,7 @@ Feature: WUD Container API Exposure
     When I GET /api/containers
     Then response code should be 200
     And response body should be valid json
-    And response body path $ should be of type array with length 17
+    And response body path $ should be of type array with length 18
 
   Scenario Outline: WUD must allow to get all containers
     When I GET /api/containers
@@ -35,6 +35,7 @@ Feature: WUD Container API Exposure
       | 14    | hub_vaultwarden_1222     | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server           | 1.23.0-alpine    | 1.23.0-alpine    | false           |
       | 15    | hub_vaultwarden_latest   | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server           | latest           | latest           | false           |
       | 16    | hub_youtubedb_latest     | hub      | https://registry-1.docker.io/v2                         | jeeaaasustest/youtube-dl     | latest           | latest           | false           |
+      | 17    | lscr_radarr              | lscr     | https://lscr.io/v2                                      | linuxserver/radarr           | 3.2.1.5070-ls105 | 3.2.2.5080-ls119 | true            |
 
   Scenario: WUD must allow to get a container with semver
     Given I GET /api/containers

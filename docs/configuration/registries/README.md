@@ -12,4 +12,6 @@ WUD supports most registries:
 
 ?> [**HUB** (Docker Hub incl private repositories)](configuration/registries/hub/)
 
+?> [**LSCR** (LinuxServer Container Registry)](configuration/registries/lscr/)
+
 !> By default, WUD is working _out-of-the-box_ with public images from [Docker Hub](https://hub.docker.com/).
