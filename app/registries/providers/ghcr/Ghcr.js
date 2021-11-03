@@ -5,10 +5,13 @@ const Registry = require('../../Registry');
  */
 class Ghcr extends Registry {
     getConfigurationSchema() {
-        return this.joi.object().keys({
-            username: this.joi.string().allow('').required(),
-            token: this.joi.string().allow('').required(),
-        });
+        return this.joi.alternatives([
+            this.joi.string().allow(''),
+            this.joi.object().keys({
+                username: this.joi.string().allow('').required(),
+                token: this.joi.string().allow('').required(),
+            }),
+        ]);
     }
 
     /**
@@ -16,10 +19,11 @@ class Ghcr extends Registry {
      * @returns {*}
      */
     maskConfiguration() {
-        return {
-            ...this.configuration,
-            token: Ghcr.mask(this.configuration.token),
-        };
+        const confMasked = { ...this.configuration };
+        if (confMasked.token) {
+            confMasked.token = Ghcr.mask(confMasked.token);
+        }
+        return confMasked;
     }
 
     /**
@@ -55,10 +59,13 @@ class Ghcr extends Registry {
     }
 
     getAuthPull() {
-        return {
-            username: this.configuration.username,
-            password: this.configuration.token,
-        };
+        if (this.configuration.username && this.configuration.token) {
+            return {
+                username: this.configuration.username,
+                password: this.configuration.token,
+            };
+        }
+        return undefined;
     }
 }
 

@@ -17,17 +17,17 @@ The `lscr` registry lets you configure [LSCR](https://www.linuxserver.io/blog/wr
 version: '3'
 
 services:
-  radarr:
-    image: lscr.io/linuxserver/radarr:3.2.1.5070-ls105
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
     ...
     environment:
-      - WUD_REGISTRY_LSCR= 
+      - WUD_REGISTRY_LSCR
 ```
 #### **Docker**
 ```bash
 docker run \
-  -e WUD_REGISTRY_LSCR="" \
+  -e WUD_REGISTRY_LSCR= \
   ...
-  lscr.io/linuxserver/radarr:3.2.1.5070-ls105
+  fmartinou/whats-up-docker
 ```
 <!-- tabs:end -->

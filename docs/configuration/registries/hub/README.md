@@ -32,12 +32,12 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-      - WUD_REGISTRY_HUB_AUTH=
+      - WUD_REGISTRY_HUB
 ```
 #### **Docker**
 ```bash
 docker run \
-  -e WUD_REGISTRY_HUB_AUTH="" \
+  -e WUD_REGISTRY_HUB= \
   ...
   fmartinou/whats-up-docker
 ```

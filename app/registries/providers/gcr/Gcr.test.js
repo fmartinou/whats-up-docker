@@ -66,6 +66,21 @@ test('match should return false when registry url is not from gcr', () => {
     })).toBeFalsy();
 });
 
+test('normalizeImage should return the proper registry v2 endpoint', () => {
+    expect(gcr.normalizeImage({
+        name: 'test/image',
+        registry: {
+            url: 'eu.gcr.io/test/image',
+        },
+    })).toStrictEqual({
+        name: 'test/image',
+        registry: {
+            name: 'gcr',
+            url: 'https://eu.gcr.io/test/image/v2',
+        },
+    });
+});
+
 test('authenticate should call ecr auth endpoint', () => {
     expect(gcr.authenticate({}, { headers: {} })).resolves.toEqual({
         headers: {

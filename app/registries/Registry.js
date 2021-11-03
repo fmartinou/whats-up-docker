@@ -81,12 +81,15 @@ class Registry extends Component {
         const tags = [];
         let page;
         let hasNext = true;
+        let link;
         while (hasNext) {
             const lastItem = page ? page.body.tags[page.body.tags.length - 1] : undefined;
             // eslint-disable-next-line no-await-in-loop
-            page = await this.getTagsPage(image, lastItem);
+            page = await this.getTagsPage(image, lastItem, link);
+            const pageTags = page.body.tags ? page.body.tags : [];
+            link = page.headers.link;
             hasNext = page.headers.link !== undefined;
-            tags.push(...page.body.tags);
+            tags.push(...pageTags);
         }
 
         // Sort alpha then reverse to get higher values first

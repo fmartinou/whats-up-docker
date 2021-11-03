@@ -1,16 +1,10 @@
 const Ghcr = require('./Ghcr');
 
-jest.mock('request-promise-native', () => jest.fn().mockImplementation(() => ({
-    token: 'xxxxx',
-})));
-
 const ghcr = new Ghcr();
 ghcr.configuration = {
     username: 'user',
     token: 'token',
 };
-
-jest.mock('request-promise-native');
 
 test('validatedConfiguration should initialize when configuration is valid', () => {
     expect(ghcr.validateConfiguration({
@@ -49,6 +43,21 @@ test('match should return false when registry url is not from ghcr', () => {
             url: 'grr.io',
         },
     })).toBeFalsy();
+});
+
+test('normalizeImage should return the proper registry v2 endpoint', () => {
+    expect(ghcr.normalizeImage({
+        name: 'test/image',
+        registry: {
+            url: 'ghcr.io/test/image',
+        },
+    })).toStrictEqual({
+        name: 'test/image',
+        registry: {
+            name: 'ghcr',
+            url: 'https://ghcr.io/test/image/v2',
+        },
+    });
 });
 
 test('authenticate should populate header with base64 bearer', () => {

@@ -34,3 +34,18 @@ test('match should return false when registry url is not from lscr', () => {
         },
     })).toBeFalsy();
 });
+
+test('normalizeImage should return the proper registry v2 endpoint', () => {
+    expect(lscr.normalizeImage({
+        name: 'test/image',
+        registry: {
+            url: 'lscr.io/test/image',
+        },
+    })).toStrictEqual({
+        name: 'test/image',
+        registry: {
+            name: 'lscr',
+            url: 'https://lscr.io/test/image/v2',
+        },
+    });
+});

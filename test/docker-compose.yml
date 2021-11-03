@@ -1,121 +1,127 @@
 version: '3'
 
 services:
-
-    apprise_latest:
-      image: caronc/apprise:latest
-      container_name: apprise
-      ports:
-        - 8000:8000
-      labels:
-        - wud.watch=false
-
-    homeassistant_latest:
-      image: homeassistant/home-assistant
-      container_name: homeassistant_latest
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^latest$$
-        - wud.watch.digest=true
-
-    homeassistant_202166:
-      image: homeassistant/home-assistant:2021.6.6
-      container_name: homeassistant_202166
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^\d+\.\d+.\d+$$
-        - wud.link.template=https://github.com/home-assistant/core/releases/tag/$${major}.$${minor}.$${patch}
-
-    nginx_latest:
-      image: nginx
-      container_name: nginx_latest
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^latest$$
-        - wud.watch.digest=true
-
-    omnidb_latest:
-      image: omnidbteam/omnidb
-      container_name: omnidb_latest
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^latest$$
-        - wud.watch.digest=true
-
-    pihole_57:
-      image: pihole/pihole:v5.7
-      container_name: pihole_57
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^v\d+\.\d+.\d+$$
-
-    pihole_latest:
-      image: pihole/pihole
-      container_name: pihole_latest
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^latest$$
-        - wud.watch.digest=true
-
-    pyload_latest:
-      image: writl/pyload
-      container_name: pyload_latest
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^latest$$
-        - wud.watch.digest=true
-
+#
+#    apprise_latest:
+#      image: caronc/apprise:latest
+#      container_name: apprise
+#      ports:
+#        - 8000:8000
+#      labels:
+#        - wud.watch=false
+#
+#    homeassistant_latest:
+#      image: homeassistant/home-assistant
+#      container_name: homeassistant_latest
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^latest$$
+#        - wud.watch.digest=true
+#
+#    homeassistant_202166:
+#      image: homeassistant/home-assistant:2021.6.6
+#      container_name: homeassistant_202166
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^\d+\.\d+.\d+$$
+#        - wud.link.template=https://github.com/home-assistant/core/releases/tag/$${major}.$${minor}.$${patch}
+#
+#    nginx_latest:
+#      image: nginx
+#      container_name: nginx_latest
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^latest$$
+#        - wud.watch.digest=true
+#
+#    omnidb_latest:
+#      image: omnidbteam/omnidb
+#      container_name: omnidb_latest
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^latest$$
+#        - wud.watch.digest=true
+#
+#    pihole_57:
+#      image: pihole/pihole:v5.7
+#      container_name: pihole_57
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^v\d+\.\d+.\d+$$
+#
+#    pihole_latest:
+#      image: pihole/pihole
+#      container_name: pihole_latest
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^latest$$
+#        - wud.watch.digest=true
+#
+#    pyload_latest:
+#      image: writl/pyload
+#      container_name: pyload_latest
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^latest$$
+#        - wud.watch.digest=true
+#
     traefik_245:
       image: traefik:2.4.5
       container_name: traefik_245
       labels:
         - wud.watch=true
         - wud.tag.include=^\d+\.\d+.\d+$$
+#
+#  traefik_latest:
+#    image: traefik
+#    container_name: traefik_latest
+#    labels:
+#      - wud.watch=true
+#      - wud.tag.include=^latest$$
+#      - wud.watch.digest=true
+#
+#  vaultwarden_1210:
+#    image: vaultwarden/server:1.21.0-alpine
+#    container_name: vaultwarden_1210
+#    labels:
+#      - wud.watch=true
+#      - wud.tag.include=^\d+\.\d+.\d+-alpine$$
+#      - wud.watch.digest=true
+#
+#  vaultwarden_latest:
+#    image: vaultwarden/server
+#    container_name: vaultwarden_latest
+#    labels:
+#      - wud.watch=true
+#      - wud.tag.include=^latest$$
+#
+#  youtubedl_latest:
+#    image:
+#      jeeaaasustest/youtube-dl
+#    container_name: youtubedl_latest
+#    labels:
+#      - wud.watch=true
+#      - wud.tag.include=^latest$$
+#      - wud.watch.digest=true
+#
+    ghcr_radarr:
+      image:
+        ghcr.io/linuxserver/radarr:3.2.1.5070-ls105
+      container_name: ghcr_radarr
+      labels:
+        - wud.watch=true
+        - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$
 
-  traefik_latest:
-    image: traefik
-    container_name: traefik_latest
-    labels:
-      - wud.watch=true
-      - wud.tag.include=^latest$$
-      - wud.watch.digest=true
+    lscr_radarr:
+      image:
+        lscr.io/linuxserver/radarr:3.2.1.5070-ls105
+      container_name: lscr_radarr
+      labels:
+        - wud.watch=true
+        - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$
 
-  vaultwarden_1210:
-    image: vaultwarden/server:1.21.0-alpine
-    container_name: vaultwarden_1210
-    labels:
-      - wud.watch=true
-      - wud.tag.include=^\d+\.\d+.\d+-alpine$$
-      - wud.watch.digest=true
-
-  vaultwarden_latest:
-    image: vaultwarden/server
-    container_name: vaultwarden_latest
-    labels:
-      - wud.watch=true
-      - wud.tag.include=^latest$$
-
-  youtubedl_latest:
-    image:
-      jeeaaasustest/youtube-dl
-    container_name: youtubedl_latest
-    labels:
-      - wud.watch=true
-      - wud.tag.include=^latest$$
-      - wud.watch.digest=true
-
-  ghcr_radarr:
-    image:
-      ghcr.io/linuxserver/radarr:3.2.1.5070-ls105
-    container_name: ghcr_radarr
-    labels:
-      - wud.watch=true
-      - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$
-
-  lscr_radarr:
-    image:
-      lscr.io/linuxserver/radarr:3.2.1.5070-ls105
-    container_name: lscr_radarr
-    labels:
-      - wud.watch=true
-      - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$
+    quay_prom:
+      image: quay.io/prometheus/prometheus:v2.30.0
+      labels:
+        - wud.watch=true
+        - wud.tag.include=^v\d+\.\d+\.\d+$$

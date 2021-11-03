@@ -33,17 +33,20 @@ Gets you notified when new versions of your Docker containers are available and 
 > (e.g. automatically update containers when minor or patch versions are available & notify by email when major versions are available)
 
 ## Many supported registries
-> [**Azure Container Registry**](https://azure.microsoft.com/services/container-registry)
 
 > [**AWS Elastic Container Registry**](https://aws.amazon.com/ecr)
 
-> [**Google Container Registry**](https://cloud.google.com/container-registry)
+> [**Azure Container Registry**](https://azure.microsoft.com/services/container-registry)
+
+> [**Docker Hub**](http://hub.docker.com)
 
 > [**Github Container Registry**](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry)
 
-> [**Docker Hub (public & private repositories)**](http://hub.docker.com)
+> [**Google Container Registry**](https://cloud.google.com/container-registry)
 
 > [**LinuxServer Container Registry (lscr.io)**](https://www.linuxserver.io/blog/wrap-up-warm-for-the-winter)
+
+> [**Redhat Quay**](https://quay.io/)
 
 ## REST API & Web UI
 ![image](docs/ui/ui.png)
@@ -53,17 +56,18 @@ Gets you notified when new versions of your Docker containers are available and 
 - [Basic authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)
 
 ## Good integration with
-> [**Home-Assistant**](https://www.home-assistant.io/)
-
-> [**Prometheus**](https://prometheus.io/)
-
-> [**Grafana**](https://grafana.com/)
 
 > [**Authelia**](https://www.authelia.com/)
 
 > [**Authentik**](https://goauthentik.io/)
 
+> [**Grafana**](https://grafana.com/)
+
+> [**Home-Assistant**](https://www.home-assistant.io/)
+
 > [**Keycloak**](https://www.keycloak.org/)
+
+> [**Prometheus**](https://prometheus.io/)
 
 > ...
 

@@ -29,6 +29,9 @@ function getRegistryProviderIcon(provider) {
     case "hub":
       icon = "mdi-docker";
       break;
+    case "quay":
+      icon = "mdi-redhat";
+      break;
   }
   return icon;
 }

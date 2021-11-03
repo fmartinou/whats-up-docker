@@ -82,6 +82,21 @@ test('maskConfiguration should mask configuration secrets', () => {
     });
 });
 
+test('normalizeImage should return the proper registry v2 endpoint', () => {
+    expect(ecr.normalizeImage({
+        name: 'test/image',
+        registry: {
+            url: '123456789.dkr.ecr.eu-west-1.amazonaws.com/test/image',
+        },
+    })).toStrictEqual({
+        name: 'test/image',
+        registry: {
+            name: 'ecr',
+            url: 'https://123456789.dkr.ecr.eu-west-1.amazonaws.com/test/image/v2',
+        },
+    });
+});
+
 test('authenticate should call ecr auth endpoint', () => {
     expect(ecr.authenticate(undefined, { headers: {} })).resolves.toEqual({
         headers: {

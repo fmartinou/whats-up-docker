@@ -45,6 +45,21 @@ test('match should return false when registry url is not from acr', () => {
     })).toBeFalsy();
 });
 
+test('normalizeImage should return the proper registry v2 endpoint', () => {
+    expect(acr.normalizeImage({
+        name: 'test/image',
+        registry: {
+            url: 'test.azurecr.io/test/image',
+        },
+    })).toStrictEqual({
+        name: 'test/image',
+        registry: {
+            name: 'acr',
+            url: 'https://test.azurecr.io/test/image/v2',
+        },
+    });
+});
+
 test('authenticate should add basic auth', () => {
     expect(acr.authenticate(undefined, { headers: {} })).resolves.toEqual({
         headers: {

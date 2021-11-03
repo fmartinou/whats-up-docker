@@ -10,6 +10,7 @@
         - [GHCR](configuration/registries/ghcr/)
         - [HUB](configuration/registries/hub/)
         - [LSCR](configuration/registries/lscr/)
+        - [QUAY](configuration/registries/quay/)
     - [Storage](configuration/storage/)    
     - [Triggers](configuration/triggers/)
     - [Watchers](configuration/watchers/)

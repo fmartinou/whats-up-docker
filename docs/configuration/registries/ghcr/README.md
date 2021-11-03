@@ -20,20 +20,18 @@ The `ghcr` registry lets you configure [GHCR](https://docs.github.com/en/package
 version: '3'
 
 services:
-  radarr:
-    image: ghcr.io/linuxserver/radarr:3.2.1.5070-ls105
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
     ...
     environment:
-      - WUD_REGISTRY_GHCR_USERNAME=
-      - WUD_REGISTRY_GHCR_TOKEN= 
+      - WUD_REGISTRY_GHCR
 ```
 #### **Docker**
 ```bash
 docker run \
-  -e WUD_REGISTRY_GHCR_USERNAME="" \
-  -e WUD_REGISTRY_GHCR_TOKEN="" \
+  -e WUD_REGISTRY_GHCR= \
   ...
-  ghcr.io/linuxserver/radarr:3.2.1.5070-ls105
+  fmartinou/whats-up-docker
 ```
 <!-- tabs:end -->
 
