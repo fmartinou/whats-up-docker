@@ -5,16 +5,17 @@ The `oidc` authentication lets you protect WUD access using the [Openid Connect 
 
 ### Variables
 
-| Env var                                  | Required     | Description             | Supported values | Default value when missing |
-| ---------------------------------------- |:------------:| ----------------------- | ---------------- | -------------------------- |
-| `WUD_AUTH_OIDC_{auth_name}_CLIENTID`     | :red_circle: | Client ID               |                  |                            |
-| `WUD_AUTH_OIDC_{auth_name}_CLIENTSECRET` | :red_circle: | Client Secret           |                  |                            |
-| `WUD_AUTH_OIDC_{auth_name}_DISCOVERY`    | :red_circle: | Oidc discovery URL      |                  |                            |
+| Env var                                  | Required       | Description                                                            | Supported values | Default value when missing |
+| ---------------------------------------- |:--------------:| ---------------------------------------------------------------------- | ---------------- | -------------------------- |
+| `WUD_AUTH_OIDC_{auth_name}_CLIENTID`     | :red_circle:   | Client ID                                                              |                  |                            |
+| `WUD_AUTH_OIDC_{auth_name}_CLIENTSECRET` | :red_circle:   | Client Secret                                                          |                  |                            |
+| `WUD_AUTH_OIDC_{auth_name}_DISCOVERY`    | :red_circle:   | Oidc discovery URL                                                     |                  |                            |
+| `WUD_AUTH_OIDC_{auth_name}_REDIRECT`     | :white_circle: | Skip internal login page & automatically redirect to the OIDC provider | `true`, `false`  | `false`                    |
 
-?> The callback URL (to configure in the IDP is built as `${wud_public_address}/auth/oidc/${auth_name}/cb`
+?> The callback URL (to configure in the IDP is built as `${wud_public_url}/auth/oidc/${auth_name}/cb`
 
 !> WUD tries its best to determine the public address to forge redirections on its own. \
-If it fails (irregular reverse proxy configuration...), you can enforce the value using the env var `WUD_PUBLIC_ADDRESS` 
+If it fails (irregular reverse proxy configuration...), you can enforce the value using the env var `WUD_PUBLIC_URL` 
 
 ### How to integrate with&nbsp;[Authelia](https://www.authelia.com)
 ![logo](authelia.png)

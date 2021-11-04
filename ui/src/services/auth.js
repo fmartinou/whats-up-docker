@@ -72,11 +72,12 @@ async function getOidcRedirection(name) {
  * @returns {Promise<any>}
  */
 async function logout() {
-  await fetch(`/auth/logout`, {
+  const response = await fetch(`/auth/logout`, {
     method: "POST",
     redirect: "manual",
   });
   user = undefined;
+  return response.json();
 }
 
 export { getStrategies, getUser, loginBasic, getOidcRedirection, logout };

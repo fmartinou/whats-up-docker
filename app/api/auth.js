@@ -58,12 +58,7 @@ function useStrategy(authentication, app) {
     }
 }
 
-/**
- * Return the registered strategies from the registry.
- * @param req
- * @param res
- */
-function getStrategies(req, res) {
+function getUniqueStrategies() {
     const strategies = Object.values(registry.getState().authentication)
         .map((authentication) => authentication.getStrategyDescription());
     const uniqueStrategies = [];
@@ -76,9 +71,26 @@ function getStrategies(req, res) {
             uniqueStrategies.push(strategy);
         }
     });
-    uniqueStrategies.sort((s1, s2) => s1.name.localeCompare(s2.name));
-    res.json(uniqueStrategies);
+    return uniqueStrategies.sort((s1, s2) => s1.name.localeCompare(s2.name));
 }
+
+/**
+ * Return the registered strategies from the registry.
+ * @param req
+ * @param res
+ */
+function getStrategies(req, res) {
+    res.json(getUniqueStrategies());
+}
+
+function getLogoutRedirectUrl() {
+    const strategyWithRedirectUrl = getUniqueStrategies().find((strategy) => strategy.logoutUrl);
+    if (strategyWithRedirectUrl) {
+        return strategyWithRedirectUrl.logoutUrl;
+    }
+    return undefined;
+}
+
 /**
  * Get current user.
  * @param req
@@ -105,7 +117,9 @@ function login(req, res) {
  */
 function logout(req, res) {
     req.logout();
-    res.status(200).json({});
+    res.status(200).json({
+        logoutUrl: getLogoutRedirectUrl(),
+    });
 }
 
 /**

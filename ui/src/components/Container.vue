@@ -79,7 +79,7 @@
             <v-col xs="12" sm="6" md="4" lg="2" xl="2">
               <property name="Transform tags" :value="container.transformTags">
                 <v-chip label v-if="container.transformTags"
-                >{{ container.transformTags }}
+                  >{{ container.transformTags }}
                 </v-chip>
                 <v-icon v-else large>mdi-cancel</v-icon>
               </property>

@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { getStrategies } from "@/services/auth";
+import { getOidcRedirection, getStrategies } from "@/services/auth";
 import LoginBasic from "@/components/LoginBasic";
 import LoginOidc from "@/components/LoginOidc";
 import logo from "@/assets/wud_logo_white.png";
@@ -103,7 +103,6 @@ export default {
    */
   async beforeRouteEnter(to, from, next) {
     try {
-      // await logout();
       const strategies = await getStrategies();
 
       // If anonymous auth is enabled then no need to login => go home
@@ -111,10 +110,19 @@ export default {
         next("/");
       }
 
-      // Filter on supported auth for UI
-      next(async (vm) => {
-        vm.strategies = strategies.filter(vm.isSupportedStrategy);
-      });
+      // If oidc strategy supporting redirect
+      const oidcWithRedirect = strategies.find(
+        (strategy) => strategy.type === "oidc" && strategy.redirect
+      );
+      if (oidcWithRedirect) {
+        const redirection = await getOidcRedirection(oidcWithRedirect.name);
+        window.location.href = redirection.url;
+      } else {
+        // Filter on supported auth for UI
+        next(async (vm) => {
+          vm.strategies = strategies.filter(vm.isSupportedStrategy);
+        });
+      }
     } catch (e) {
       this.$root.$emit(
         "notify",

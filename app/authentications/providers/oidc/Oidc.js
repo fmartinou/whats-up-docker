@@ -17,6 +17,7 @@ class Oidc extends Authentication {
             discovery: this.joi.string().uri().required(),
             clientid: this.joi.string().required(),
             clientsecret: this.joi.string().required(),
+            redirect: this.joi.boolean().default(false),
         });
     }
 
@@ -28,6 +29,11 @@ class Oidc extends Authentication {
             client_secret: this.configuration.clientsecret,
             response_types: ['code'],
         });
+        try {
+            this.logoutUrl = this.client.endSessionUrl();
+        } catch (e) {
+            this.log.warn('End session url is not supported');
+        }
     }
 
     /**
@@ -67,6 +73,8 @@ class Oidc extends Authentication {
         return {
             type: 'oidc',
             name: this.name,
+            redirect: this.configuration.redirect,
+            logoutUrl: this.logoutUrl,
         };
     }
 

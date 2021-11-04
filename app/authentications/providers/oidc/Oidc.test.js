@@ -12,6 +12,7 @@ const configurationValid = {
     clientid: '123465798',
     clientsecret: 'secret',
     discovery: 'https://idp/.well-known/openid-configuration',
+    redirect: false,
 };
 
 const oidc = new Oidc();
@@ -45,5 +46,6 @@ test('maskConfiguration should mask configuration secrets', () => {
         clientid: '1*******8',
         clientsecret: 's****t',
         discovery: 'https://idp/.well-known/openid-configuration',
+        redirect: false,
     });
 });

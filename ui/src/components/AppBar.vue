@@ -40,10 +40,14 @@ export default {
      */
     async logout() {
       try {
-        await logout();
-        await this.$router.push({
-          name: "login",
-        });
+        const logoutResult = await logout();
+        if (logoutResult.logoutUrl) {
+          window.location = logoutResult.logoutUrl;
+        } else {
+          await this.$router.push({
+            name: "login",
+          });
+        }
       } catch (e) {
         this.$root.$emit(
           "notify",

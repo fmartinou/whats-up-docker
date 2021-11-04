@@ -1,0 +1,45 @@
+---
+version: '3.2'
+
+services:
+  postgresql:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_PASSWORD=authentik
+      - POSTGRES_USER=authentik
+      - POSTGRES_DB=authentik
+    env_file:
+      - .env
+
+  redis:
+    image: redis:alpine
+
+  server:
+    image: goauthentik.io/server:2021.10.2
+    command: server
+    environment:
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: authentik
+    env_file:
+      - .env
+    ports:
+      - "0.0.0.0:9000:9000"
+      - "0.0.0.0:9443:9443"
+
+  worker:
+    image: goauthentik.io/server:2021.10.2
+    command: worker
+    environment:
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: authentik
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env
