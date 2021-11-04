@@ -1,6 +1,6 @@
 # Changelog
 
-## develop
+## 5.10.0
 - :star: Add LinuxServer Container Registry support (lscr.io)
 - :star: Add Quay Registry support (quay.io)
 - :star: Update all dependencies
