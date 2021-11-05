@@ -65,12 +65,12 @@ services:
 #        - wud.tag.include=^latest$$
 #        - wud.watch.digest=true
 #
-    traefik_245:
-      image: traefik:2.4.5
-      container_name: traefik_245
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^\d+\.\d+.\d+$$
+#    traefik_245:
+#      image: traefik:2.4.5
+#      container_name: traefik_245
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^\d+\.\d+.\d+$$
 #
 #  traefik_latest:
 #    image: traefik
@@ -104,24 +104,33 @@ services:
 #      - wud.tag.include=^latest$$
 #      - wud.watch.digest=true
 #
-    ghcr_radarr:
-      image:
-        ghcr.io/linuxserver/radarr:3.2.1.5070-ls105
-      container_name: ghcr_radarr
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$
+#    ghcr_radarr:
+#      image:
+#        ghcr.io/linuxserver/radarr:3.2.1.5070-ls105
+#      container_name: ghcr_radarr
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$
+#
+#    lscr_radarr:
+#      image:
+#        lscr.io/linuxserver/radarr:3.2.1.5070-ls105
+#      container_name: lscr_radarr
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$
+#
+#    quay_prom:
+#      image: quay.io/prometheus/prometheus:v2.30.0
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^v\d+\.\d+\.\d+$$
 
-    lscr_radarr:
-      image:
-        lscr.io/linuxserver/radarr:3.2.1.5070-ls105
-      container_name: lscr_radarr
+    nginx_local:
+      image: nginx:1.21.3-alpine-customized
+      container_name: nginx_local
       labels:
         - wud.watch=true
-        - wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$$
-
-    quay_prom:
-      image: quay.io/prometheus/prometheus:v2.30.0
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^v\d+\.\d+\.\d+$$
+        - wud.tag.include=^\d+\.\d+\.\d+\-alpine$$
+        - wud.tag.transform=^(\d+\.\d+\.\d+\-alpine).*$$ => $$1
+        - wud.watch.digest=true

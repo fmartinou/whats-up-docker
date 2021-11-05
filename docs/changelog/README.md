@@ -2,6 +2,8 @@
 
 ## develop
 - :star: Add OIDC auto redirect capabilities
+- :star: Add Authentik configuration documentation
+- :fire: Fix wrong updateAvailable value when transform function is used
 
 ## 5.10.0
 - :star: Add LinuxServer Container Registry support (lscr.io)

@@ -123,3 +123,48 @@ docker run \
 ![image](auth0_00.png)
 
 ![image](auth0_01.png)
+
+
+### How to integrate with&nbsp;[Authentik](https://goauthentik.io/)
+![logo](authentik.png)
+
+#### On Authentik, create a provider with type `Oauth2/OpenID` (or configure an existing one)
+![image](authentik_00.png)
+
+#### Important values:
+- Client Type: `Confidential`
+- Client ID: `<generated value>`
+- Client Secret: `<generated value>`
+- Redirect URIs/Origins: `https://<your_wud_public_domain>/auth/oidc/auth0/cb`
+- Scopes: `email`, `openid`, `profile`
+
+#### On Authentik, create an application associated to the previously created provider
+![image](authentik_01.png)
+
+#### Configure WUD
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_AUTH_OIDC_AUTHENTIK_CLIENTID=<paste the Client ID from authentik wud_oidc provider>
+      - WUD_AUTH_OIDC_AUTHENTIK_CLIENTSECRET=<paste the Client Secret from authentik wud_oidc provider>
+      - WUD_AUTH_OIDC_AUTHENTIK_DISCOVERY=<authentik_url>/application/o/<authentik_application_name>/.well-known/openid-configuration
+      - WUD_AUTH_OIDC_AUTHENTIK_REDIRECT=true # optional (to skip internal login page)
+```
+#### **Docker**
+```bash
+docker run \
+  -e WUD_AUTH_OIDC_AUTHENTIK_CLIENTID="<paste the Client ID from authentik wud_oidc provider>" \
+  -e WUD_AUTH_OIDC_AUTHENTIK_CLIENTSECRET="<paste the Client Secret from authentik wud_oidc provider>" \
+  -e WUD_AUTH_OIDC_AUTHENTIK_DISCOVERY="<authentik_url>/application/o/<authentik_application_name>/.well-known/openid-configuration" \
+  -e WUD_AUTH_OIDC_AUTHENTIK_REDIRECT=true # optional (to skip internal login page) \  
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->

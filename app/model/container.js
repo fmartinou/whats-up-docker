@@ -2,6 +2,7 @@ const joi = require('joi');
 const flat = require('flat');
 const { snakeCase } = require('snake-case');
 const { parse: parseSemver, diff: diffSemver } = require('../tag');
+const { transform: transformTag } = require('../tag');
 
 // Container data schema
 const schema = joi.object({
@@ -93,7 +94,9 @@ function addUpdateAvailableProperty(container) {
                     return false;
                 }
                 // Different tags?
-                let updateAvailable = this.image.tag.value !== this.result.tag;
+                const localTag = transformTag(container.transformTags, this.image.tag.value);
+                const remoteTag = transformTag(container.transformTags, this.result.tag);
+                let updateAvailable = localTag !== remoteTag;
 
                 // Compare digests?
                 if (this.image.digest.watch) {
