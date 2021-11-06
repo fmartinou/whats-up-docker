@@ -1,5 +1,8 @@
 # Changelog
 
+## 5.11.1
+- :fire: Rollback node-open-id dependency version from v5 to v4 because of JWT signature error (experimented on Authelia) 
+
 ## 5.11.0
 - :star: Add OIDC auto redirect capabilities
 - :star: Add Authentik configuration documentation
