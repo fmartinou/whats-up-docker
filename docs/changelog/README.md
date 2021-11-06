@@ -1,6 +1,6 @@
 # Changelog
 
-## develop
+## 5.11.0
 - :star: Add OIDC auto redirect capabilities
 - :star: Add Authentik configuration documentation
 - :fire: Fix wrong updateAvailable value when transform function is used
