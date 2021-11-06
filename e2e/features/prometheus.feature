@@ -40,4 +40,4 @@ Feature: Prometheus exposure
       | hub_vaultwarden_latest   | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server           | latest           | latest           | false           |
       | hub_youtubedb_latest     | hub      | https://registry-1.docker.io/v2                         | jeeaaasustest/youtube-dl     | latest           | latest           | false           |
       | lscr_radarr              | lscr     | https://lscr.io/v2                                      | linuxserver/radarr           | 3.2.1.5070-ls105 | 3.2.2.5080-ls119 | true            |
-      | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus        | v2.30.0          | v2.31.0          | true            |
+      | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus        | v2.30.0          |v2.31.1          | true            |

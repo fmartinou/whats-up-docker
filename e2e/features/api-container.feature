@@ -36,7 +36,7 @@ Feature: WUD Container API Exposure
       | 15    | hub_vaultwarden_latest   | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server           | latest           | latest           | false           |
       | 16    | hub_youtubedb_latest     | hub      | https://registry-1.docker.io/v2                         | jeeaaasustest/youtube-dl     | latest           | latest           | false           |
       | 17    | lscr_radarr              | lscr     | https://lscr.io/v2                                      | linuxserver/radarr           | 3.2.1.5070-ls105 | 3.2.2.5080-ls119 | true            |
-      | 18    | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus        | v2.30.0          | v2.31.0          | true            |
+      | 18    | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus        | v2.30.0          |v2.31.1          | true            |
 
   Scenario: WUD must allow to get a container with semver
     Given I GET /api/containers
