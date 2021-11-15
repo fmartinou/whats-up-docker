@@ -118,77 +118,77 @@ test('getCurrentContainer should throw error when error occurs', async () => {
 test('inspectContainer should return container details from dockerApi', async () => {
     await expect(docker.inspectContainer({
         inspect: () => (Promise.resolve({})),
-    })).resolves.toEqual({});
+    }, log)).resolves.toEqual({});
 });
 
 test('inspectContainer should throw error when error occurs', async () => {
     await expect(docker.inspectContainer({
         inspect: () => (Promise.reject(new Error('No container'))),
-    })).rejects.toThrowError('No container');
+    }, log)).rejects.toThrowError('No container');
 });
 
 test('stopContainer should stop container from dockerApi', async () => {
     await expect(docker.stopContainer({
         stop: () => (Promise.resolve()),
-    })).resolves.toBeUndefined();
+    }, 'name', 'id', log)).resolves.toBeUndefined();
 });
 
 test('stopContainer should throw error when error occurs', async () => {
     await expect(docker.stopContainer({
         stop: () => (Promise.reject(new Error('No container'))),
-    })).rejects.toThrowError('No container');
+    }, 'name', 'id', log)).rejects.toThrowError('No container');
 });
 
 test('removeContainer should stop container from dockerApi', async () => {
     await expect(docker.removeContainer({
         remove: () => (Promise.resolve()),
-    })).resolves.toBeUndefined();
+    }, 'name', 'id', log)).resolves.toBeUndefined();
 });
 
 test('removeContainer should throw error when error occurs', async () => {
     await expect(docker.removeContainer({
         remove: () => (Promise.reject(new Error('No container'))),
-    })).rejects.toThrowError('No container');
+    }, 'name', 'id', log)).rejects.toThrowError('No container');
 });
 
 test('startContainer should stop container from dockerApi', async () => {
     await expect(docker.startContainer({
         start: () => (Promise.resolve()),
-    })).resolves.toBeUndefined();
+    }, 'name', log)).resolves.toBeUndefined();
 });
 
 test('startContainer should throw error when error occurs', async () => {
     await expect(docker.startContainer({
         start: () => (Promise.reject(new Error('No container'))),
-    })).rejects.toThrowError('No container');
+    }, 'name', log)).rejects.toThrowError('No container');
 });
 
 test('createContainer should stop container from dockerApi', async () => {
     await expect(docker.createContainer(docker.getWatcher({ watcher: 'test' }).dockerApi, {
         name: 'container-name',
-    })).resolves.not.toBeUndefined();
+    }, 'name', log)).resolves.not.toBeUndefined();
 });
 
 test('createContainer should throw error when error occurs', async () => {
     await expect(docker.createContainer(docker.getWatcher({ watcher: 'test' }).dockerApi, {
         name: 'ko',
-    })).rejects.toThrowError('Error when creating container');
+    }, 'name', log)).rejects.toThrowError('Error when creating container');
 });
 
 test('pull should pull image from dockerApi', async () => {
-    await expect(docker.pullImage(docker.getWatcher({ watcher: 'test' }).dockerApi, undefined, 'test/test:1.2.3')).resolves.toBeUndefined();
+    await expect(docker.pullImage(docker.getWatcher({ watcher: 'test' }).dockerApi, undefined, 'test/test:1.2.3', log)).resolves.toBeUndefined();
 });
 
 test('pull should throw error when error occurs', async () => {
-    await expect(docker.pullImage(docker.getWatcher({ watcher: 'test' }).dockerApi, undefined, 'test/test:unknown')).rejects.toThrowError('Error when pulling image');
+    await expect(docker.pullImage(docker.getWatcher({ watcher: 'test' }).dockerApi, undefined, 'test/test:unknown', log)).rejects.toThrowError('Error when pulling image');
 });
 
 test('removeImage should pull image from dockerApi', async () => {
-    await expect(docker.removeImage(docker.getWatcher({ watcher: 'test' }).dockerApi, 'test/test:1.2.3')).resolves.toBeUndefined();
+    await expect(docker.removeImage(docker.getWatcher({ watcher: 'test' }).dockerApi, 'test/test:1.2.3', log)).resolves.toBeUndefined();
 });
 
 test('removeImage should throw error when error occurs', async () => {
-    await expect(docker.removeImage(docker.getWatcher({ watcher: 'test' }).dockerApi, 'test/test:unknown')).rejects.toThrowError('Error when removing image');
+    await expect(docker.removeImage(docker.getWatcher({ watcher: 'test' }).dockerApi, 'test/test:unknown', log)).rejects.toThrowError('Error when removing image');
 });
 
 test('clone should clone an existing container spec', () => {

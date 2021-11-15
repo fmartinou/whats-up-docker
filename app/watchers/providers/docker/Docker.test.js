@@ -4,6 +4,7 @@ const prometheusWatcher = require('../../../prometheus/watcher');
 
 jest.mock('../../../event');
 jest.mock('../../../log');
+
 const storeContainer = require('../../../store/container');
 
 const Docker = require('./Docker');
@@ -26,6 +27,7 @@ const configurationValid = {
     port: 2375,
     watchbydefault: true,
     watchall: false,
+    watchevents: true,
     cron: '0 * * * *',
 };
 

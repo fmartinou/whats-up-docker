@@ -85,7 +85,8 @@ function getLink(linkTemplate, tagValue, isSemver) {
  * @returns {boolean}
  */
 function addUpdateAvailableProperty(container) {
-    Object.defineProperty(container,
+    Object.defineProperty(
+        container,
         'updateAvailable',
         {
             enumerable: true,
@@ -116,7 +117,8 @@ function addUpdateAvailableProperty(container) {
                 }
                 return updateAvailable;
             },
-        });
+        },
+    );
 }
 
 /**
@@ -158,7 +160,8 @@ function addLinkProperty(container) {
  * @returns {{semverDiff: undefined, kind: string, remoteValue: undefined, localValue: undefined}}
  */
 function addUpdateKindProperty(container) {
-    Object.defineProperty(container,
+    Object.defineProperty(
+        container,
         'updateKind',
         {
             enumerable: true,
@@ -219,7 +222,8 @@ function addUpdateKindProperty(container) {
                 }
                 return updateKind;
             },
-        });
+        },
+    );
 }
 
 /**

@@ -3,6 +3,7 @@ const Dockerode = require('dockerode');
 const joi = require('joi-cron-expression')(require('joi'));
 const cron = require('node-cron');
 const parse = require('parse-docker-image-name');
+const debounce = require('just-debounce');
 const { parse: parseSemver, isGreater: isGreaterSemver, transform: transformTag } = require('../../../tag');
 const event = require('../../../event');
 const {
@@ -19,6 +20,12 @@ const Component = require('../../../registry/Component');
 const { validate: validateContainer, fullName } = require('../../../model/container');
 const registry = require('../../../registry');
 const { getWatchContainerGauge } = require('../../../prometheus/watcher');
+
+// The delay before starting the watcher when the app is started
+const START_WATCHER_DELAY_MS = 1000;
+
+// Debounce delay used when performing a watch after a docker event has been received
+const DEBOUNCED_WATCH_CRON_MS = 20000;
 
 /**
  * Return all supported registries
@@ -203,6 +210,7 @@ class Docker extends Component {
             watchbydefault: this.joi.boolean().default(true),
             watchall: this.joi.boolean().default(false),
             watchdigest: this.joi.any(),
+            watchevents: this.joi.boolean().default(true),
         });
     }
 
@@ -218,7 +226,22 @@ class Docker extends Component {
         this.watchCron = cron.schedule(this.configuration.cron, () => this.watchFromCron());
 
         // watch at startup (after all components have been registered)
-        setTimeout(() => this.watchFromCron(), 1000);
+        this.watchCronTimeout = setTimeout(
+            () => this.watchFromCron(),
+            START_WATCHER_DELAY_MS,
+        );
+
+        // listen to docker events
+        if (this.configuration.watchevents) {
+            this.watchCronDebounced = debounce(
+                () => { this.watchFromCron(); },
+                DEBOUNCED_WATCH_CRON_MS,
+            );
+            this.listenDockerEventsTimeout = setTimeout(
+                () => this.listenDockerEvents(),
+                START_WATCHER_DELAY_MS,
+            );
+        }
     }
 
     initWatcher() {
@@ -248,6 +271,81 @@ class Docker extends Component {
     async deregisterComponent() {
         if (this.watchCron) {
             this.watchCron.stop();
+            delete this.watchCron;
+        }
+        if (this.watchCronTimeout) {
+            clearTimeout(this.watchCronTimeout);
+        }
+        if (this.listenDockerEventsTimeout) {
+            clearTimeout(this.listenDockerEventsTimeout);
+            delete this.watchCronDebounced;
+        }
+    }
+
+    /**
+     * Listen and react to docker events.
+     * @return {Promise<void>}
+     */
+    async listenDockerEvents() {
+        this.log.info('Listening to docker events');
+        const options = {
+            filters: {
+                type: ['container'],
+                event: [
+                    'create',
+                    'destroy',
+                    'start',
+                    'stop',
+                    'pause',
+                    'unpause',
+                    'die',
+                    'update',
+                ],
+            },
+        };
+        this.dockerApi.getEvents(options, (err, stream) => {
+            if (err) {
+                this.log.warn(`Unable to listen to Docker events [${err.message}]`);
+                this.log.debug(err);
+            } else {
+                stream.on('data', (chunk) => this.onDockerEvent(chunk));
+            }
+        });
+    }
+
+    /**
+     * Process a docker event.
+     * @param dockerEventChunk
+     * @return {Promise<void>}
+     */
+    async onDockerEvent(dockerEventChunk) {
+        const dockerEvent = JSON.parse(dockerEventChunk.toString());
+        const action = dockerEvent.Action;
+        const containerId = dockerEvent.id;
+
+        // If the container was created or destroyed => perform a watch
+        if (action === 'destroy' || action === 'create') {
+            await this.watchCronDebounced();
+        } else {
+            // Update container state in db if so
+            try {
+                const container = await this.dockerApi.getContainer(containerId);
+                const containerInspect = await container.inspect();
+                const newStatus = containerInspect.State.Status;
+                const containerFound = storeContainer.getContainer(containerId);
+                if (containerFound) {
+                    // Child logger for the container to process
+                    const logContainer = this.log.child({ container: fullName(containerFound) });
+                    const oldStatus = containerFound.status;
+                    containerFound.status = newStatus;
+                    if (oldStatus !== newStatus) {
+                        storeContainer.updateContainer(containerFound);
+                        logContainer.info(`Status changed from ${oldStatus} to ${newStatus}`);
+                    }
+                }
+            } catch (e) {
+                this.log.debug(`Unable to get container details for container id=[${containerId}]`);
+            }
         }
     }
 
@@ -347,7 +445,8 @@ class Docker extends Component {
         const filteredContainers = containers
             .filter(
                 (container) => isContainerToWatch(
-                    container.Labels[wudWatch], this.configuration.watchbydefault,
+                    container.Labels[wudWatch],
+                    this.configuration.watchbydefault,
                 ),
             );
         const containerPromises = filteredContainers

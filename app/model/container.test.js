@@ -287,7 +287,8 @@ test('getLink should render link templates when called', () => {
     expect(getLink(
         // eslint-disable-next-line no-template-curly-in-string
         'https://test-${major}.${minor}.${patch}.acme.com',
-        '10.5.2', true,
+        '10.5.2',
+        true,
     )).toEqual('https://test-10.5.2.acme.com');
 });
 

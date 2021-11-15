@@ -1,8 +1,10 @@
 # Changelog
 
 ## develop
+- :star: [Docker watcher] - Add ability to listen to Docker events
 - :star: [Docker / Docker-compose trigger] - Add dry-run feature (pull only new images)
 - :star: [Smtp trigger] - Add ability to skip tls verify
+- :star: Update all dependencies
 
 ## 5.11.2
 - :star: Push wud image to ghcr.io in addition to docker hub

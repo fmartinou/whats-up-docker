@@ -18,6 +18,7 @@ The ```docker``` watcher lets you configure the Docker hosts you want to watch.
 | `WUD_WATCHER_{watcher_name}_CRON`                         | :white_circle: | Scheduling options                                              | [Valid CRON expression](https://crontab.guru/) | `0 * * * *` (every hour)                                        |
 | `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT`               | :white_circle: | If WUD must monitor all containers by default                   | `true`, `false`                                | `true`                                                          |
 | `WUD_WATCHER_{watcher_name}_WATCHALL`                     | :white_circle: | If WUD must monitor all containers instead of just running ones | `true`, `false`                                | `false`                                                         |
+| `WUD_WATCHER_{watcher_name}_WATCHEVENTS`                  | :white_circle: | If WUD must monitor docker events                               | `true`, `false`                                | `true`                                                          |
 | ~~`WUD_WATCHER_{watcher_name}_WATCHDIGEST`~~ (deprecated) | :white_circle: | If WUD must monitor container digests                           |                                                | `false` for semver image tags, `true` for non semver image tags |
 
 ?> If no watcher is configured, a default one named `local` will be automatically created (reading the Docker socket).
