@@ -1,5 +1,8 @@
 # Changelog
 
+## develop
+- :fire: Remove extra blank lines from Pushover notifications
+
 ## 5.11.1
 - :fire: Rollback node-open-id dependency version from v5 to v4 because of JWT signature error (experimented on Authelia) 
 

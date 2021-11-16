@@ -109,6 +109,15 @@ class Pushover extends Trigger {
             });
         });
     }
+
+    /**
+     * Render trigger body batch (override) to remove empty lines between containers.
+     * @param containers
+     * @returns {*}
+     */
+    renderBatchBody(containers) {
+        return containers.map((container) => `- ${this.renderSimpleBody(container)}`).join('\n');
+    }
 }
 
 module.exports = Pushover;
