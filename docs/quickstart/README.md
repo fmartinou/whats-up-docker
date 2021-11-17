@@ -26,6 +26,10 @@ docker run -d --name wud \
 ```
 <!-- tabs:end -->
 
+?> Please notice that wud is available on multiple container registries \
+\- Docker Hub: `fmartinou/whats-up-docker` \
+\- Github Container Registry: `ghcr.io/fmartinou/whats-up-docker`
+
 ## Open the UI
 [Open the UI](http://localhost:3000) in a browser and check that everything is working as expected.
 

@@ -12,4 +12,6 @@ build:
 	docker buildx build --push \
 		--platform ${PLATFORMS} \
 		--build-arg WUD_VERSION=${IMAGE_VERSION} \
-		-t ${IMAGE_NAME}:${IMAGE_VERSION} .
+		-t ${DOCKER_USERNAME}/${IMAGE_NAME}:${IMAGE_VERSION} \
+		-t ghcr.io/${GITHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_VERSION} \
+		.

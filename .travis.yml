@@ -194,7 +194,8 @@ after_success:
   - if [ ! -z "$TRAVIS_TAG" ] ; then export IMAGE_VERSION=$TRAVIS_TAG; fi
 
   # Build & push image
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker login         -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker login ghcr.io -u "$GITHUB_USERNAME" -p "$GITHUB_TOKEN"
   - docker version
   - make prepare
-  - make build IMAGE_NAME=$DOCKER_USERNAME/whats-up-docker IMAGE_VERSION=$IMAGE_VERSION PLATFORMS=linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64
+  - make build IMAGE_NAME=whats-up-docker IMAGE_VERSION=$IMAGE_VERSION PLATFORMS=linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64 DOCKER_USERNAME=$DOCKER_USERNAME GITHUB_USERNAME=$GITHUB_USERNAME
