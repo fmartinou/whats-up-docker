@@ -1,6 +1,6 @@
 # Changelog
 
-## develop
+## 5.11.2
 - :star: Push wud image to ghcr.io in addition to docker hub
 - :fire: Remove extra blank lines from Pushover notifications
 
