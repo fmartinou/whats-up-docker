@@ -24,7 +24,7 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-      - WUD_REGISTRY_GHCR
+      - WUD_REGISTRY_GHCR=
 ```
 #### **Docker**
 ```bash

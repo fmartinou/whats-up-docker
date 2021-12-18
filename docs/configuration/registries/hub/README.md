@@ -32,7 +32,7 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-      - WUD_REGISTRY_HUB
+      - WUD_REGISTRY_HUB=
 ```
 #### **Docker**
 ```bash

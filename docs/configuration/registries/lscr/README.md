@@ -21,7 +21,7 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-      - WUD_REGISTRY_LSCR
+      - WUD_REGISTRY_LSCR=
 ```
 #### **Docker**
 ```bash
