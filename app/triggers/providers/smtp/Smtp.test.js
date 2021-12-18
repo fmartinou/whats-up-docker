@@ -27,6 +27,10 @@ test('validateConfiguration should return validated configuration when valid', (
     expect(validatedConfiguration).toStrictEqual({
         ...configurationValid,
         port: 465,
+        tls: {
+            enabled: false,
+            verify: true,
+        },
     });
 });
 
@@ -52,6 +56,9 @@ test('init should create a mailer transporter with expected configuration when c
         auth: {
             user: configurationValid.user,
             pass: configurationValid.pass,
+        },
+        tls: {
+            rejectUnauthorized: false,
         },
     }));
 });

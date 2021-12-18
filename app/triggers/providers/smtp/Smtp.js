@@ -17,6 +17,13 @@ class Smtp extends Trigger {
             pass: this.joi.string().required(),
             from: this.joi.string().email().required(),
             to: this.joi.string().email().required(),
+            tls: this.joi.object({
+                enabled: this.joi.boolean().default(false),
+                verify: this.joi.boolean().default(true),
+            }).default({
+                enabled: false,
+                verify: true,
+            }),
         });
     }
 
@@ -41,6 +48,11 @@ class Smtp extends Trigger {
             auth: {
                 user: this.configuration.user,
                 pass: this.configuration.pass,
+            },
+            secure: this.configuration.tls && this.configuration.tls.enabled,
+            tls: {
+                rejectUnauthorized: !this.configuration.tls
+                    ? false : !this.configuration.tls.verify,
             },
         });
     }
