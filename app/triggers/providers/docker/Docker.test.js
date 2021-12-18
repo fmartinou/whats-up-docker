@@ -4,6 +4,7 @@ const log = require('../../../log');
 
 const configurationValid = {
     prune: false,
+    dryrun: false,
     threshold: 'all',
     mode: 'single',
     once: true,

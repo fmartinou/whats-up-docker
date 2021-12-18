@@ -33,19 +33,17 @@ class Dockercompose extends Trigger {
         });
     }
 
-    initTrigger() {
+    async initTrigger() {
         // Force mode=batch to avoid docker-compose concurrent operations
         this.configuration.mode = 'batch';
-    }
 
-    /**
-     * Only implement notifyBatch.
-     * @param container
-     * @returns {Promise<*>}
-     */
-    // eslint-disable-next-line class-methods-use-this,no-unused-vars
-    async trigger(container) {
-        throw new Error('This trigger does not support "single" mode');
+        // Check docker-compose file is found
+        try {
+            await fs.access(this.configuration.file);
+        } catch (e) {
+            this.log.error(`The file ${this.configuration.file} does not exist`);
+            throw e;
+        }
     }
 
     /**
@@ -71,17 +69,23 @@ class Dockercompose extends Trigger {
             composeUpdated = this.updateService(compose, container);
         });
 
-        // Backup docker-compose file
-        if (this.configuration.backup) {
-            const backupFile = `${this.configuration.file}.back`;
-            await this.backup(this.configuration.file, backupFile);
+        // Dry-run?
+        if (this.configuration.dryrun) {
+            this.log.info('Do not replace existing docker-compose file (dry-run mode enabled)');
+        } else {
+            // Backup docker-compose file
+            if (this.configuration.backup) {
+                const backupFile = `${this.configuration.file}.back`;
+                await this.backup(this.configuration.file, backupFile);
+            }
+
+            // Write docker-compose.yml file back
+            await this.writeComposeFile(this.configuration.file, yaml.stringify(composeUpdated));
         }
 
-        // Write docker-compose.yml file back
-        await this.writeComposeFile(this.configuration.file, yaml.stringify(composeUpdated));
-
         // Update all containers
-        await Promise.all(containersFiltered.map((container) => super.notify(container)));
+        // (super.notify will take care of the dry-run mode as well for each container)
+        await Promise.all(containersFiltered.map((container) => this.trigger(container)));
     }
 
     /**

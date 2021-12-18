@@ -42,12 +42,12 @@ services:
 #        - wud.tag.include=^latest$$
 #        - wud.watch.digest=true
 #
-#    pihole_57:
-#      image: pihole/pihole:v5.7
-#      container_name: pihole_57
-#      labels:
-#        - wud.watch=true
-#        - wud.tag.include=^v\d+\.\d+.\d+$$
+    pihole_57:
+      image: pihole/pihole:v5.7
+      container_name: pihole_57
+      labels:
+        - wud.watch=true
+        - wud.tag.include=^v\d+\.\d+.\d+$$
 #
 #    pihole_latest:
 #      image: pihole/pihole
@@ -125,12 +125,12 @@ services:
 #      labels:
 #        - wud.watch=true
 #        - wud.tag.include=^v\d+\.\d+\.\d+$$
-
-    nginx_local:
-      image: nginx:1.21.3-alpine-customized
-      container_name: nginx_local
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^\d+\.\d+\.\d+\-alpine$$
-        - wud.tag.transform=^(\d+\.\d+\.\d+\-alpine).*$$ => $$1
-        - wud.watch.digest=true
+#
+#    nginx_local:
+#      image: nginx:1.21.3-alpine-customized
+#      container_name: nginx_local
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^\d+\.\d+\.\d+\-alpine$$
+#        - wud.tag.transform=^(\d+\.\d+\.\d+\-alpine).*$$ => $$1
+#        - wud.watch.digest=true

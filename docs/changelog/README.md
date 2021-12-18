@@ -1,6 +1,7 @@
 # Changelog
 
 ## develop
+- :star: [Docker / Docker-compose trigger] - Add dry-run feature (pull only new images)
 - :star: [Smtp trigger] - Add ability to skip tls verify
 
 ## 5.11.2

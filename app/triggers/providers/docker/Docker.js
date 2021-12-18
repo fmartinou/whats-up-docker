@@ -12,6 +12,7 @@ class Docker extends Trigger {
     getConfigurationSchema() {
         return this.joi.object().keys({
             prune: this.joi.boolean().default(false),
+            dryrun: this.joi.boolean().default(false),
         });
     }
 
@@ -216,37 +217,45 @@ class Docker extends Trigger {
             // Pull new image ahead of time
             await this.pullImage(dockerApi, auth, newImage);
 
-            // Clone current container spec
-            const containerToCreateInspect = this.cloneContainer(currentContainerSpec, newImage);
-
-            // Stop current container
-            if (currentContainerState.Running) {
-                await this.stopContainer(currentContainer, container.name, container.id);
-            }
-
-            // Remove current container
-            await this.removeContainer(currentContainer, container.name, container.id);
-
-            // Create new container
-            const newContainer = await this.createContainer(
-                dockerApi,
-                containerToCreateInspect,
-                container.name,
-            );
-
-            // Start container if it was running
-            if (currentContainerState.Running) {
-                await this.startContainer(newContainer, container.name);
-            }
-
-            // Remove previous image
-            if (this.configuration.prune) {
-                // Rebuild image definition string
-                const oldImage = registry.getImageFullName(
-                    container.image,
-                    container.image.tag.value,
+            // Dry-run?
+            if (this.configuration.dryrun) {
+                this.log.info('Do not replace the existing container (dry-run mode enabled)');
+            } else {
+                // Clone current container spec
+                const containerToCreateInspect = this.cloneContainer(
+                    currentContainerSpec,
+                    newImage,
                 );
-                await this.removeImage(dockerApi, oldImage);
+
+                // Stop current container
+                if (currentContainerState.Running) {
+                    await this.stopContainer(currentContainer, container.name, container.id);
+                }
+
+                // Remove current container
+                await this.removeContainer(currentContainer, container.name, container.id);
+
+                // Create new container
+                const newContainer = await this.createContainer(
+                    dockerApi,
+                    containerToCreateInspect,
+                    container.name,
+                );
+
+                // Start container if it was running
+                if (currentContainerState.Running) {
+                    await this.startContainer(newContainer, container.name);
+                }
+
+                // Remove previous image
+                if (this.configuration.prune) {
+                    // Rebuild image definition string
+                    const oldImage = registry.getImageFullName(
+                        container.image,
+                        container.image.tag.value,
+                    );
+                    await this.removeImage(dockerApi, oldImage);
+                }
             }
         } else {
             this.log.warn(`Unable to update container ${container.name} with id ${container.id} because does not exist`);
