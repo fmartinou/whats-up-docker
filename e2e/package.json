@@ -15,9 +15,9 @@
     "apickli": "3.0.1"
   },
   "devDependencies": {
-    "eslint": "8.1.0",
-    "eslint-config-airbnb-base": "14.2.1",
+    "eslint": "8.5.0",
+    "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-cucumber": "1.4.0",
-    "eslint-plugin-import": "2.25.2"
+    "eslint-plugin-import": "2.25.3"
   }
 }
