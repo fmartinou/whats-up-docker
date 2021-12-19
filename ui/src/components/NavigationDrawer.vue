@@ -2,12 +2,14 @@
   <v-navigation-drawer
     app
     :mini-variant="mini"
+    :mini-variant-width="70"
     permanent
     :disable-route-watcher="true"
     color="primary"
     dark
+    :clipped="true"
   >
-    <v-toolbar flat color="primary" dark outlined>
+    <v-toolbar flat color="primary" dark class="ml-1">
       <v-app-bar-nav-icon @click.stop="mini = !mini"></v-app-bar-nav-icon>
       <v-toolbar-title class="font-weight-bold"
         >What's up Docker?</v-toolbar-title

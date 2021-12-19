@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="primary" flat dark>
+  <v-app-bar app color="primary" flat dark tile clipped-left>
     <v-toolbar-title class="text-capitalize">{{ viewName }}</v-toolbar-title>
     <v-spacer />
     <v-menu left bottom v-if="user && user.username !== 'anonymous'">

@@ -1,5 +1,8 @@
 # Changelog
 
+# develop
+- :star: [UI] - Add PWA (Progressive Web Application) for better mobile experience
+
 # 5.12.1
 - :star: [Mqtt trigger] - Send mqtt message when container status change
 - :fire: [Smtp trigger] - Fix documentation regarding how to configure Gmail since _less secure apps_ are disabled.

@@ -4,6 +4,7 @@ import vuetify from "./plugins/vuetify";
 import clipboard from "./plugins/clipboard";
 import router from "./router";
 import { registerFilters } from "./filters";
+import "./registerServiceWorker";
 
 Vue.config.productionTip = false;
 registerFilters();
