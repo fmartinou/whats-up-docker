@@ -1,7 +1,11 @@
 const mqtt = require('async-mqtt');
 const capitalize = require('capitalize');
 const Trigger = require('../Trigger');
-const { registerContainerAdded, registerContainerRemoved } = require('../../../event');
+const {
+    registerContainerAdded,
+    registerContainerUpdated,
+    registerContainerRemoved,
+} = require('../../../event');
 const { flatten } = require('../../../model/container');
 const { getVersion } = require('../../../configuration');
 
@@ -60,6 +64,7 @@ class Mqtt extends Trigger {
         }
         this.client = await mqtt.connectAsync(this.configuration.url, options);
 
+        registerContainerUpdated((container) => this.trigger(container));
         if (this.configuration.hass.enabled) {
             registerContainerAdded((container) => this.addHassDevice(container));
             registerContainerRemoved((container) => this.removeHassDevice(container));

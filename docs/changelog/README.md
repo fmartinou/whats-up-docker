@@ -1,5 +1,8 @@
 # Changelog
 
+# develop
+- :fire: [Mqtt trigger] - Send mqtt message when container status change
+
 ## 5.12.0
 - :star: [Docker watcher] - Add ability to listen to Docker events
 - :star: [Docker / Docker-compose trigger] - Add dry-run feature (pull only new images)
