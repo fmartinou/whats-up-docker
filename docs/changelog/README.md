@@ -1,7 +1,8 @@
 # Changelog
 
-# develop
-- :fire: [Mqtt trigger] - Send mqtt message when container status change
+# 5.12.1
+- :star: [Mqtt trigger] - Send mqtt message when container status change
+- :fire: [Smtp trigger] - Fix documentation regarding how to configure Gmail since _less secure apps_ are disabled.
 
 ## 5.12.0
 - :star: [Docker watcher] - Add ability to listen to Docker events

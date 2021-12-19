@@ -37,6 +37,7 @@ services:
         - WUD_TRIGGER_SMTP_GMAIL_PASS=mysecretpass
         - WUD_TRIGGER_SMTP_GMAIL_FROM=john.doe@gmail.com
         - WUD_TRIGGER_SMTP_GMAIL_TO=jane.doe@gmail.com
+        - WUD_TRIGGER_SMTP_GMAIL_TLS_ENABLED=true 
 ```
 
 #### **Docker**
@@ -48,9 +49,10 @@ docker run \
     -e WUD_TRIGGER_SMTP_GMAIL_PASS="mysecretpass" \
     -e WUD_TRIGGER_SMTP_GMAIL_FROM="john.doe@gmail.com" \
     -e WUD_TRIGGER_SMTP_GMAIL_TO="jane.doe@gmail.com" \
+    -e WUD_TRIGGER_SMTP_GMAIL_TLS_ENABLED="true" \
   ...
   fmartinou/whats-up-docker
 ```
 <!-- tabs:end -->
 
-!> For Gmail, you need to enable less secure apps first ([See gmail documentation](https://myaccount.google.com/lesssecureapps)).
+!> For Gmail, you need to create an application specific password first ([See gmail documentation](https://security.google.com/settings/security/apppasswords)).
