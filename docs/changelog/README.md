@@ -1,6 +1,6 @@
 # Changelog
 
-# develop
+# 5.13.0
 - :star: [UI] - Add PWA (Progressive Web Application) for better mobile experience
 
 # 5.12.1
