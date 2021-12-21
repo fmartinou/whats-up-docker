@@ -1,64 +1,57 @@
 <template>
-  <v-container fluid>
-    <v-row>
+  <v-container>
+    <v-row
+      :class="$vuetify.breakpoint.mdAndUp ? 'pa-15 ma-15' : ''"
+      :dense="$vuetify.breakpoint.smAndDown"
+    >
       <v-col xs="12" sm="12" md="6" lg="3" xl="3">
-        <v-card class="home-card text-center">
-          <v-card-text class="pb-0">
-            <v-icon color="primary" class="home-icon">{{
-              containerIcon
-            }}</v-icon>
-          </v-card-text>
-          <v-card-subtitle class="pt-0">
-            <v-btn plain color="accent" x-large to="/containers"
-              >{{ containersCount }} containers</v-btn
-            >
-            <br />
-            <v-btn
-              small
-              plain
-              color="warning"
-              to="/containers?update-available=true"
-              >({{ containersToUpdateCount }} updates)</v-btn
-            >
-          </v-card-subtitle>
+        <v-card class="home-card text-center" outlined>
+          <v-icon color="secondary" class="home-icon">{{
+            containerIcon
+          }}</v-icon>
+          <br />
+          <v-btn plain x-large to="/containers"
+            >{{ containersCount }} containers</v-btn
+          >
+          <br />
+          <v-btn
+            small
+            plain
+            color="warning"
+            to="/containers?update-available=true"
+            v-if="containersToUpdateCount > 0"
+            >({{ containersToUpdateCount }} updates)</v-btn
+          >
         </v-card>
       </v-col>
       <v-col xs="12" sm="12" md="6" lg="3" xl="3">
-        <v-card class="home-card text-center">
-          <v-card-text class="pb-0">
-            <v-icon color="primary" class="home-icon">{{ triggerIcon }}</v-icon>
-          </v-card-text>
-          <v-card-subtitle class="pt-0">
-            <v-btn plain color="accent" x-large to="/configuration/triggers"
-              >{{ triggersCount }} triggers</v-btn
-            >
-          </v-card-subtitle>
+        <v-card class="home-card text-center" outlined>
+          <v-icon color="secondary" class="home-icon">{{ triggerIcon }}</v-icon>
+          <br />
+          <v-btn plain x-large to="/configuration/triggers"
+            >{{ triggersCount }} triggers</v-btn
+          >
+          <br />
         </v-card>
       </v-col>
       <v-col xs="12" sm="12" md="6" lg="3" xl="3">
-        <v-card class="home-card text-center">
-          <v-card-text class="pb-0">
-            <v-icon color="primary" class="home-icon">{{ watcherIcon }}</v-icon>
-          </v-card-text>
-          <v-card-subtitle class="pt-0">
-            <v-btn plain color="accent" x-large to="/configuration/watchers"
-              >{{ watchersCount }} watchers</v-btn
-            >
-          </v-card-subtitle>
+        <v-card class="home-card text-center" outlined>
+          <v-icon color="secondary" class="home-icon">{{ watcherIcon }}</v-icon>
+          <br />
+          <v-btn plain x-large to="/configuration/watchers"
+            >{{ watchersCount }} watchers</v-btn
+          >
         </v-card>
       </v-col>
       <v-col xs="12" sm="12" md="6" lg="3" xl="3">
-        <v-card class="home-card text-center">
-          <v-card-text class="pb-0">
-            <v-icon color="primary" class="home-icon">{{
-              registryIcon
-            }}</v-icon>
-          </v-card-text>
-          <v-card-subtitle class="pt-0">
-            <v-btn plain color="accent" x-large to="/configuration/registries"
-              >{{ registriesCount }} registries</v-btn
-            >
-          </v-card-subtitle>
+        <v-card class="home-card text-center" outlined>
+          <v-icon color="secondary" class="home-icon">{{
+            registryIcon
+          }}</v-icon>
+          <br />
+          <v-btn plain x-large to="/configuration/registries"
+            >{{ registriesCount }} registries</v-btn
+          >
         </v-card>
       </v-col>
     </v-row>
@@ -111,7 +104,7 @@ export default {
 </script>
 <style scoped>
 .home-card {
-  height: 180px;
+  height: 160px;
 }
 
 .home-icon {

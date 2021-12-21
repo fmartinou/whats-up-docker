@@ -12,8 +12,8 @@ module.exports = {
     msTileColor: "#00355E",
     appleMobileWebAppCapable: "yes",
     manifestOptions: {
-      short_name: 'WUD',
-      background_color: "#00355E"
-    }
+      short_name: "WUD",
+      background_color: "#00355E",
+    },
   },
 };

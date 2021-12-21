@@ -1,103 +1,117 @@
 <template>
-  <div>
-    <v-card-subtitle class="text-h6 font-weight-bold">Image </v-card-subtitle>
-    <v-card-text>
-      <v-row>
-        <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-          <property name="Id" :value="image.id">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-chip
-                  label
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="copyToClipboard('image id', image.id)"
-                >
-                  {{ image.id | short(15) }}
-                </v-chip>
-              </template>
-              <span>Click to copy the full id</span>
-            </v-tooltip>
-          </property>
-        </v-col>
-        <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-          <property name="Registry" :value="image.registry.name">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon v-text="registryIcon" large v-bind="attrs" v-on="on" />
-              </template>
-              <span>{{ image.registry.name }} ({{ image.registry.url }})</span>
-            </v-tooltip>
-          </property>
-        </v-col>
-        <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-          <property name="Name" :value="image.name" />
-        </v-col>
-        <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-          <property name="Tag" :value="image.tag">
-            <v-badge
-              v-if="image.tag.semver"
-              content="semver"
-              overlap
-              tile
-              color="success"
-            >
-              <v-chip label>{{ image.tag.value }}</v-chip>
-            </v-badge>
-            <v-chip v-else label>{{ image.tag.value }}</v-chip>
-          </property>
-        </v-col>
-        <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-          <property name="Digest" :value="image.digest.value">
-            <v-tooltip bottom v-if="image.digest.value">
-              <template v-slot:activator="{ on, attrs }">
-                <v-chip
-                  label
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="copyToClipboard('digest', image.digest.value)"
-                  >{{ image.digest.value | short(15) }}
-                </v-chip>
-              </template>
-              <span>Click to copy the full digest</span>
-            </v-tooltip>
-            <v-tooltip v-else bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon large v-bind="attrs" v-on="on">mdi-cancel</v-icon>
-              </template>
-              <span>Digest not tracked or not found</span>
-            </v-tooltip>
-          </property>
-        </v-col>
-        <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-          <property name="OS / Arch" :value="image.os">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon v-text="osIcon" large v-bind="attrs" v-on="on" />
-              </template>
-              <span class="text-capitalize"
-                >{{ image.os }} / {{ image.architecture }}</span
+  <v-list dense>
+    <v-list-item>
+      <v-list-item-avatar>
+        <v-icon color="secondary">mdi-identifier</v-icon>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title>
+          Id
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                x-small
+                v-bind="attrs"
+                v-on="on"
+                @click="copyToClipboard('image id', image.id)"
               >
-            </v-tooltip>
-          </property>
-        </v-col>
-        <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-          <property name="Created" :value="image.created | date" />
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </div>
+                <v-icon>mdi-clipboard</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Copy to clipboard</span>
+          </v-tooltip>
+        </v-list-item-title>
+        <v-list-item-subtitle>{{ image.id }}</v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item>
+      <v-list-item-avatar>
+        <v-icon color="secondary">mdi-pencil</v-icon>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title>Name</v-list-item-title>
+        <v-list-item-subtitle>{{ image.name }}</v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item>
+      <v-list-item-avatar>
+        <v-icon color="secondary" v-text="registryIcon" />
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title>Registry</v-list-item-title>
+        <v-list-item-subtitle>{{ image.registry.name }}</v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item>
+      <v-list-item-avatar>
+        <v-icon color="secondary">mdi-tag</v-icon>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title>
+          Tag &nbsp;<v-chip v-if="image.tag.semver" x-small label outlined
+            >semver</v-chip
+          >
+        </v-list-item-title>
+        <v-list-item-subtitle>
+          {{ image.tag.value }}
+        </v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item v-if="image.digest.value">
+      <v-list-item-avatar>
+        <v-icon color="secondary">mdi-function-variant</v-icon>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title>
+          Digest
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                x-small
+                v-bind="attrs"
+                v-on="on"
+                @click="copyToClipboard('image digest', image.digest.value)"
+              >
+                <v-icon>mdi-clipboard</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Copy to clipboard</span>
+          </v-tooltip>
+        </v-list-item-title>
+        <v-list-item-subtitle>
+          {{ image.digest.value }}
+        </v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item>
+      <v-list-item-avatar>
+        <v-icon color="secondary" v-text="osIcon" />
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title>OS / Architecture</v-list-item-title>
+        <v-list-item-subtitle
+          >{{ image.os }} / {{ image.architecture }}</v-list-item-subtitle
+        >
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item v-if="image.created">
+      <v-list-item-avatar>
+        <v-icon color="secondary">mdi-calendar</v-icon>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title>Created</v-list-item-title>
+        <v-list-item-subtitle>{{ image.created | date }}</v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
+  </v-list>
 </template>
 
 <script>
-import Property from "@/components/Property";
 import { getRegistryProviderIcon } from "@/services/registry";
 
 export default {
-  components: {
-    Property,
-  },
-
   props: {
     image: {
       type: Object,

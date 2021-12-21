@@ -9,17 +9,17 @@
     dark
     :clipped="true"
   >
-    <v-toolbar flat color="primary" dark class="ml-1">
-      <v-app-bar-nav-icon @click.stop="mini = !mini"></v-app-bar-nav-icon>
-      <v-toolbar-title class="font-weight-bold"
+    <v-toolbar flat color="primary" dark class="ml-1 pa-0">
+      <v-app-bar-nav-icon @click.stop="mini = !mini">
+        <v-icon v-if="!mini">mdi-close</v-icon>
+        <v-icon v-else>mdi-menu</v-icon>
+      </v-app-bar-nav-icon>
+      <v-toolbar-title class="font-weight-bold text-body-1"
         >What's up Docker?</v-toolbar-title
       >
     </v-toolbar>
-    <v-list nav>
+    <v-list nav class="pt-0 pb-0">
       <v-fade-transition group hide-on-leave mode="in-out">
-        <v-list-item v-if="!mini" key="logo">
-          <v-img :src="logo" alt="logo" max-width="200px" />
-        </v-list-item>
         <v-list-item to="/" key="home" class="mb-0">
           <v-list-item-icon>
             <v-icon>mdi-home</v-icon>
@@ -37,7 +37,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item key="divider" class="mb-0">
+        <v-list-item key="divider" class="mb-0" dense>
           <v-divider />
         </v-list-item>
 
@@ -54,6 +54,7 @@
             </v-list-item-content>
           </template>
           <v-list-item
+            dense
             v-for="configurationItem in configurationItemsSorted"
             :key="configurationItem.to"
             :to="configurationItem.to"

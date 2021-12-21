@@ -1,182 +1,166 @@
 <template>
   <v-card>
     <v-app-bar
-      color="secondary"
-      dark
       flat
-      rounded
       dense
-      @click="showDetail = !showDetail"
+      tile
+      @click="collapseDetail()"
       style="cursor: pointer"
     >
-      <v-toolbar-title class="text-body-1">{{
+      <v-toolbar-title class="text-body-2">{{
         container.name
       }}</v-toolbar-title>
-      <v-badge
+      <v-chip
+        v-if="$vuetify.breakpoint.mdAndUp"
         class="ma-4"
-        :content="newVersion"
-        v-if="updateAvailable"
-        tile
-        :color="newVersionClass"
+        label
+        outlined
+        disabled
       >
-        <v-chip label outlined>{{ container.image.tag.value }}</v-chip>
-      </v-badge>
-      <v-chip class="ma-4" label outlined v-else>{{
-        container.image.tag.value
-      }}</v-chip>
+        {{ container.image.tag.value }}
+      </v-chip>
       <v-spacer />
+      <v-tooltip bottom v-if="$vuetify.breakpoint.mdAndUp">
+        <template v-slot:activator="{ on, attrs }">
+          <v-chip
+            v-if="container.updateAvailable"
+            label
+            outlined
+            :color="newVersionClass"
+            v-bind="attrs"
+            v-on="on"
+            @click="
+              copyToClipboard('container new version', newVersion);
+              $event.stopImmediatePropagation();
+            "
+          >
+            {{ newVersion }}
+            <v-icon right small> mdi-clipboard-outline </v-icon>
+          </v-chip>
+        </template>
+        <span class="text-caption">Copy to clipboard</span>
+      </v-tooltip>
       <v-icon>{{ showDetail ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
     </v-app-bar>
     <v-expand-transition>
       <div v-show="showDetail">
-        <v-card-subtitle class="text-h6 font-weight-bold"
-          >Container
-        </v-card-subtitle>
-        <v-card-text>
-          <v-row>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Id" :value="container.id">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-chip
-                      label
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="copyToClipboard('container id', container.id)"
-                    >
-                      {{ container.id | short(8) }}
-                    </v-chip>
-                  </template>
-                  <span>Click to copy the full id</span>
-                </v-tooltip>
-              </property>
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Watcher" :value="container.watcher" />
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Name" :value="container.name" />
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Status" :value="container.status" />
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Include tags" :value="container.includeTags">
-                <v-chip label v-if="container.includeTags"
-                  >{{ container.includeTags }}
-                </v-chip>
-                <v-icon v-else large>mdi-cancel</v-icon>
-              </property>
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Exclude tags" :value="container.excludeTags">
-                <v-chip label v-if="container.excludeTags"
-                  >{{ container.excludeTags }}
-                </v-chip>
-                <v-icon v-else large>mdi-cancel</v-icon>
-              </property>
-            </v-col>
-            <v-col xs="12" sm="6" md="4" lg="2" xl="2">
-              <property name="Transform tags" :value="container.transformTags">
-                <v-chip label v-if="container.transformTags"
-                  >{{ container.transformTags }}
-                </v-chip>
-                <v-icon v-else large>mdi-cancel</v-icon>
-              </property>
-            </v-col>
-            <v-col cols="12">
-              <property name="Link template" :value="container.linkTemplate">
-                <v-chip label v-if="container.linkTemplate"
-                  >{{ container.linkTemplate }}
-                </v-chip>
-                <v-icon v-else large>mdi-cancel</v-icon>
-              </property>
-            </v-col>
-            <v-col cols="12">
-              <property name="Link" :value="container.link">
-                <v-chip
-                  label
-                  v-if="container.link"
-                  :href="container.link"
-                  target="_blank"
-                  >{{ container.link }}
-                </v-chip>
-                <v-icon v-else large>mdi-cancel</v-icon>
-              </property>
-            </v-col>
-          </v-row>
-        </v-card-text>
+        <v-tabs
+          :icons-and-text="$vuetify.breakpoint.mdAndUp"
+          fixed-tabs
+          v-model="tab"
+          ref="tabs"
+        >
+          <v-tab>
+            <span v-if="$vuetify.breakpoint.mdAndUp">Container</span>
+            <v-icon>mdi-docker</v-icon>
+          </v-tab>
+          <v-tab>
+            <span v-if="$vuetify.breakpoint.mdAndUp">Image</span>
+            <v-icon>mdi-package-variant-closed</v-icon>
+          </v-tab>
+          <v-tab v-if="container.result">
+            <span v-if="$vuetify.breakpoint.mdAndUp">Update</span>
+            <v-icon>mdi-package-down</v-icon>
+          </v-tab>
+          <v-tab v-if="container.error">
+            <span v-if="$vuetify.breakpoint.mdAndUp">Error</span>
+            <v-icon>mdi-alert</v-icon>
+          </v-tab>
+        </v-tabs>
 
-        <!-- Container image -->
-        <container-image :image="container.image" />
+        <v-tabs-items v-model="tab">
+          <v-tab-item>
+            <container-detail :container="container" />
+          </v-tab-item>
+          <v-tab-item>
+            <container-image :image="container.image" />
+          </v-tab-item>
+          <v-tab-item v-if="container.result">
+            <container-update
+              :result="container.result"
+              :semver="container.image.tag.semver"
+              :update-kind="container.updateKind"
+              :update-available="container.updateAvailable"
+            />
+          </v-tab-item>
+          <v-tab-item v-if="container.error">
+            <container-error :error="container.error" />
+          </v-tab-item>
+        </v-tabs-items>
 
-        <!-- Container result -->
-        <container-result
-          :result="result"
-          :error="error"
-          :semver="container.image.tag.semver"
-          :updateKind="updateKind"
-        />
-
-        <v-card-text>
+        <v-card-actions>
           <v-row>
             <v-col class="text-center">
               <v-dialog v-model="dialogDelete" width="500">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="error" outlined v-bind="attrs" v-on="on">
+                  <v-btn small color="error" outlined v-bind="attrs" v-on="on">
                     Delete
                     <v-icon right>mdi-delete</v-icon>
                   </v-btn>
                 </template>
 
                 <v-card class="text-center">
-                  <v-app-bar color="warning" dark flat>
-                    <v-toolbar-title class="text-body-1"
-                      >Are you sure you want to delete
-                      <span class="font-weight-bold">{{ container.name }}</span>
-                      from the list?</v-toolbar-title
-                    >
+                  <v-app-bar color="error" dark flat dense>
+                    <v-toolbar-title class="text-body-1">
+                      Delete the container?
+                    </v-toolbar-title>
                   </v-app-bar>
-                  <v-card-title class="text-body-1 font-italic">
-                    The real container won't be deleted.
-                  </v-card-title>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn outlined @click="dialogDelete = false">
-                      Cancel
-                    </v-btn>
-                    <v-btn
-                      color="error"
-                      text
-                      @click="
-                        dialogDelete = false;
-                        deleteContainer();
-                      "
-                    >
-                      Delete
-                    </v-btn>
-                  </v-card-actions>
+                  <v-card-subtitle class="text-body-2">
+                    <v-row class="mt-2" no-gutters>
+                      <v-col>
+                        Delete
+                        <span class="font-weight-bold error--text">{{
+                          container.name
+                        }}</span>
+                        from the list?
+                        <br />
+                        <span class="font-italic"
+                          >(The real container won't be deleted)</span
+                        >
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col class="text-center">
+                        <v-btn outlined @click="dialogDelete = false" small>
+                          Cancel
+                        </v-btn>
+                        &nbsp;
+                        <v-btn
+                          color="error"
+                          small
+                          @click="
+                            dialogDelete = false;
+                            deleteContainer();
+                          "
+                        >
+                          Delete
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-card-subtitle>
                 </v-card>
               </v-dialog>
             </v-col>
           </v-row>
-        </v-card-text>
+        </v-card-actions>
       </div>
     </v-expand-transition>
   </v-card>
 </template>
 
 <script>
-import Property from "@/components/Property";
+import ContainerDetail from "@/components/ContainerDetail";
 import ContainerImage from "@/components/ContainerImage";
-import ContainerResult from "@/components/ContainerResult";
+import ContainerUpdate from "@/components/ContainerUpdate";
+import ContainerError from "@/components/ContainerError";
 import { getRegistryProviderIcon } from "@/services/registry";
 
 export default {
   components: {
-    Property,
+    ContainerDetail,
     ContainerImage,
-    ContainerResult,
+    ContainerUpdate,
+    ContainerError,
   },
 
   props: {
@@ -189,10 +173,7 @@ export default {
     return {
       showDetail: false,
       dialogDelete: false,
-      result: this.container.result,
-      error: this.container.error,
-      updateKind: this.container.updateKind,
-      updateAvailable: this.container.updateAvailable || false,
+      tab: 0,
     };
   },
   computed: {
@@ -216,15 +197,15 @@ export default {
     newVersion() {
       let newVersion = "unknown";
       if (
-        this.result.created &&
-        this.container.image.created !== this.result.created
+        this.container.result.created &&
+        this.container.image.created !== this.container.result.created
       ) {
-        newVersion = this.$options.filters.date(this.result.created);
+        newVersion = this.$options.filters.date(this.container.result.created);
       }
-      if (this.updateKind) {
-        newVersion = this.updateKind.remoteValue;
+      if (this.container.updateKind) {
+        newVersion = this.container.updateKind.remoteValue;
       }
-      if (this.updateKind.kind === "digest") {
+      if (this.container.updateKind.kind === "digest") {
         newVersion = this.$options.filters.short(newVersion, 15);
       }
       return newVersion;
@@ -232,8 +213,11 @@ export default {
 
     newVersionClass() {
       let color = "warning";
-      if (this.updateKind && this.updateKind.kind === "tag") {
-        switch (this.updateKind.semverDiff) {
+      if (
+        this.container.updateKind &&
+        this.container.updateKind.kind === "tag"
+      ) {
+        switch (this.container.updateKind.semverDiff) {
           case "major":
             color = "error";
             break;
@@ -258,6 +242,27 @@ export default {
       this.$clipboard(value);
       this.$root.$emit("notify", `${kind} copied to clipboard`);
     },
+
+    collapseDetail() {
+      // Prevent collapse when selecting text only
+      if (window.getSelection().type !== "Range") {
+        this.showDetail = !this.showDetail;
+      }
+
+      // Hack because of a render bu on tabs inside a collapsible element
+      this.$refs.tabs.onResize();
+    },
   },
 };
 </script>
+
+<style scoped>
+.v-chip--disabled {
+  opacity: 1;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+</style>

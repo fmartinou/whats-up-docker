@@ -1,61 +1,57 @@
 <template>
-  <v-card>
-    <v-tooltip bottom>
-      <template v-slot:activator="{ on, attrs }">
+  <v-container
+    fluid
+    class="ma-0 mb-3"
+    :class="$vuetify.breakpoint.mdAndUp ? 'pa-0' : ''"
+  >
+    <v-row dense>
+      <v-col>
+        <v-select
+          :hide-details="true"
+          v-model="registrySelected"
+          :items="registries"
+          @change="emitRegistryChanged"
+          :clearable="true"
+          label="Registry"
+          outlined
+          dense
+        ></v-select>
+      </v-col>
+      <v-col>
+        <v-select
+          :hide-details="true"
+          v-model="watcherSelected"
+          :items="watchers"
+          @change="emitWatcherChanged"
+          :clearable="true"
+          label="Watcher"
+          outlined
+          dense
+        ></v-select>
+      </v-col>
+      <v-col>
+        <v-switch
+          class="switch-top"
+          label="Update available"
+          @change="emitUpdateAvailableChanged"
+          :value="updateAvailable"
+          :hide-details="true"
+          dense
+        />
+      </v-col>
+      <v-col class="text-right">
         <v-btn
-          v-bind="attrs"
-          v-on="on"
-          fab
-          absolute
-          top
-          right
-          color="accent"
+          color="secondary"
           @click.stop="refreshAllContainers"
           :loading="isRefreshing"
-          style="z-index: 1000"
         >
+          Watch now
           <v-icon> mdi-refresh</v-icon>
         </v-btn>
-      </template>
-      <span>Refresh all</span>
-    </v-tooltip>
-    <v-card-text>
-      <v-row>
-        <v-col xs="12" sm="12" md="4" lg="3" xl="3">
-          <v-select
-            :hide-details="true"
-            v-model="registrySelected"
-            :items="registries"
-            @change="emitRegistryChanged"
-            :clearable="true"
-            label="Registry"
-            outlined
-            dense
-          ></v-select>
-        </v-col>
-        <v-col xs="12" sm="12" md="4" lg="3" xl="3">
-          <v-select
-            :hide-details="true"
-            v-model="watcherSelected"
-            :items="watchers"
-            @change="emitWatcherChanged"
-            :clearable="true"
-            label="Watcher"
-            outlined
-            dense
-          ></v-select>
-        </v-col>
-        <v-col xs="12" sm="12" md="4" lg="3" xl="3" class="pa-0">
-          <v-switch
-            label="Update available"
-            @change="emitUpdateAvailableChanged"
-            :value="updateAvailable"
-            dense
-          />
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
+        <br />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -114,3 +110,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.switch-top {
+  margin-top: 4px;
+}
+</style>

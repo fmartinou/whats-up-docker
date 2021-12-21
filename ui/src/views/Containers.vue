@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row>
+    <v-row dense>
       <v-col>
         <container-filter
           :registries="registries"

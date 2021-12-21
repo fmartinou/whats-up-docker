@@ -1,55 +1,48 @@
 <template>
   <v-card>
-    <v-app-bar color="secondary" flat dark dense>
+    <v-app-bar flat dense tile @click="collapse()" style="cursor: pointer">
       <v-toolbar-title class="text-capitalize text-body-1">{{
         displayName
       }}</v-toolbar-title>
       <v-spacer />
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon v-text="item.icon" v-bind="attrs" v-on="on"></v-icon>
-        </template>
-        <span class="text-capitalize">{{ item.type }}</span>
-      </v-tooltip>
+      <v-icon v-text="item.icon"></v-icon>
+      <v-icon>{{ showDetail ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
     </v-app-bar>
-    <v-card-text>
-      <v-row v-if="configurationItems.length > 0">
-        <v-col
-          xs="12"
-          sm="6"
-          md="4"
-          lg="2"
-          xl="2"
-          v-for="configurationItem in configurationItems"
-          :key="configurationItem.key"
-        >
-          <property
-            :name="configurationItem.key"
-            :value="configurationItem.value"
-          />
-        </v-col>
-      </v-row>
-      <v-row v-else>
-        <v-col>
-          <span>Default configuration</span>
-        </v-col>
-      </v-row>
-    </v-card-text>
+    <v-expand-transition>
+      <v-card-text v-show="showDetail">
+        <v-list dense v-if="configurationItems.length > 0">
+          <v-list-item
+            v-for="configurationItem in configurationItems"
+            :key="configurationItem.key"
+          >
+            <v-list-item-content>
+              <v-list-item-title class="text-capitalize">{{
+                configurationItem.key
+              }}</v-list-item-title>
+              <v-list-item-subtitle>
+                {{ configurationItem.value }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+        <span v-else>Default configuration</span>
+      </v-card-text>
+    </v-expand-transition>
   </v-card>
 </template>
 
 <script>
-import Property from "@/components/Property";
-
 export default {
-  components: {
-    Property,
-  },
   props: {
     item: {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      showDetail: false,
+    };
   },
   computed: {
     configurationItems() {
@@ -73,6 +66,12 @@ export default {
         return this.item.name;
       }
       return "Unknown";
+    },
+  },
+
+  methods: {
+    collapse() {
+      this.showDetail = !this.showDetail;
     },
   },
 };

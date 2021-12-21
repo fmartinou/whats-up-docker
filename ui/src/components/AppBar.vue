@@ -1,24 +1,32 @@
 <template>
-  <v-app-bar app color="primary" flat dark tile clipped-left>
-    <v-toolbar-title class="text-capitalize">{{ viewName }}</v-toolbar-title>
+  <v-app-bar app color="primary" flat dark tile clipped-left dense>
+    <v-app-bar-nav-icon>
+      <v-img :src="logo" alt="logo" max-width="48px" />
+    </v-app-bar-nav-icon>
+
+    <v-toolbar-title v-if="'home'.toLowerCase() !== viewName.toLowerCase()" class="text-body-1 text-capitalize ml-2">{{ viewName }}</v-toolbar-title>
+
     <v-spacer />
     <v-menu left bottom v-if="user && user.username !== 'anonymous'">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn v-bind="attrs" v-on="on" text>
+        <v-btn v-bind="attrs" v-on="on" text small class="text-lowercase">
           {{ user.username }}
-          <v-icon>mdi-account</v-icon>
+          &nbsp;
+          <v-icon dense>mdi-account</v-icon>
         </v-btn>
       </template>
-      <v-list>
+      <v-list dense>
         <v-list-item @click="logout">
-          <v-list-item-title>Log out</v-list-item-title>
+          <v-list-item-content class="text-body-2">Log out</v-list-item-content>
         </v-list-item>
       </v-list>
     </v-menu>
   </v-app-bar>
 </template>
 <script>
+
 import { logout } from "@/services/auth";
+import logo from "@/assets/wud_logo_white.png";
 
 export default {
   props: {
@@ -26,6 +34,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      logo,
+    }
   },
   computed: {
     viewName() {

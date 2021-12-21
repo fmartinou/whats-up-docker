@@ -2,8 +2,9 @@
   <v-snackbar
     :value="show"
     :timeout="timeout"
-    :color="level"
+    color="primary"
     @input="closeSnackbar"
+    outlined
   >
     {{ message }}
     <template v-slot:action="{ attrs }">

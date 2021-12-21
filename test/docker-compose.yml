@@ -8,14 +8,14 @@ services:
         - 8000:8000
       labels:
         - wud.watch=true
-
-    homeassistant_latest:
-      image: homeassistant/home-assistant
-      container_name: homeassistant_latest
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^latest$$
-        - wud.watch.digest=true
+#
+#    homeassistant_latest:
+#      image: homeassistant/home-assistant
+#      container_name: homeassistant_latest
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^latest$$
+#        - wud.watch.digest=true
 
     homeassistant_202166:
       image: homeassistant/home-assistant:2021.6.6
@@ -24,7 +24,7 @@ services:
         - wud.watch=true
         - wud.tag.include=^\d+\.\d+.\d+$$
         - wud.link.template=https://github.com/home-assistant/core/releases/tag/$${major}.$${minor}.$${patch}
-
+#
     nginx_latest:
       image: nginx
       container_name: nginx_latest
@@ -41,12 +41,12 @@ services:
   #        - wud.tag.include=^latest$$
   #        - wud.watch.digest=true
   #
-  #  pihole_57:
-  #    image: pihole/pihole:v5.7
-  #    container_name: pihole_57
-  #    labels:
-  #      - wud.watch=true
-  #      - wud.tag.include=^v\d+\.\d+.\d+$$
+    pihole_57:
+      image: pihole/pihole:v5.7
+      container_name: pihole_57
+      labels:
+        - wud.watch=true
+        - wud.tag.include=^v\d+\.\d+.\d+$$
   #
   #    pihole_latest:
   #      image: pihole/pihole
@@ -79,13 +79,13 @@ services:
 #      - wud.tag.include=^latest$$
 #      - wud.watch.digest=true
 #
-#  vaultwarden_1210:
-#    image: vaultwarden/server:1.21.0-alpine
-#    container_name: vaultwarden_1210
-#    labels:
-#      - wud.watch=true
-#      - wud.tag.include=^\d+\.\d+.\d+-alpine$$
-#      - wud.watch.digest=true
+    vaultwarden_1210:
+      image: vaultwarden/server:1.21.0-alpine
+      container_name: vaultwarden_1210
+      labels:
+        - wud.watch=true
+        - wud.tag.include=^\d+\.\d+.\d+-alpine$$
+        - wud.watch.digest=true
 #
 #  vaultwarden_latest:
 #    image: vaultwarden/server
