@@ -1,7 +1,8 @@
 # Changelog
 
 # develop
-- :star: [Docker / Docker-compose trigger] - Fix errors when pulling the new image
+- :fire: [Docker / Docker-compose trigger] - Fix errors when pulling the new image
+- :fire: [Quay.io registry] - Fix paging error
 
 # 5.14.0
 - :star: [UI] - Revamping

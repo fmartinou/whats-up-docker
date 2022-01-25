@@ -120,7 +120,7 @@ class Quay extends Registry {
         const itemsPerPage = 1000;
         let nextPage = '';
         if (link) {
-            const nextPageRegex = link.match(/^.*next_page=(.*)&n=.*$/);
+            const nextPageRegex = link.match(/^.*next_page=(.*)$/);
             nextPage = `&next_page=${nextPageRegex[1]}`;
         }
         return this.callRegistry({
