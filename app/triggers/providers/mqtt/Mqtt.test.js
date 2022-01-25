@@ -140,6 +140,7 @@ test('addHassDevice should publish message to expected hass discovery topic', as
             sw_version: 'unknown',
         },
         force_update: true,
+        device_class: 'update',
         icon: 'mdi:docker',
         json_attributes_topic: 'wud/container/local/library/test',
         name: 'wud_container_local_library_test',

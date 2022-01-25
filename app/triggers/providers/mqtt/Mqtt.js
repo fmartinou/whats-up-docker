@@ -137,6 +137,7 @@ class Mqtt extends Trigger {
                 name: capitalize(hassDeviceName),
                 sw_version: getVersion(),
             },
+            device_class: 'update',
             icon: hassEntityIcon,
             force_update: true,
             state_topic: containerTopic,

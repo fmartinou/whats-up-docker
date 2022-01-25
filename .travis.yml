@@ -179,9 +179,6 @@ script:
   # Run E2E Tests
   - (cd e2e && npm run cucumber)
 
-after_script:
-  - docker container logs wud
-
 after_success:
 
   # Report to Code Climate
