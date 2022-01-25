@@ -121,10 +121,7 @@ class Dockercompose extends Trigger {
         });
 
         // Rebuild image definition string
-        const newImage = registry.getImageFullName(
-            container.image,
-            container.updateKind.remoteValue,
-        );
+        const newImage = this.getNewImageFullName(registry, container);
 
         if (serviceKeyToUpdate) {
             composeUpdated.services[serviceKeyToUpdate].image = newImage;

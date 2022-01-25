@@ -69,8 +69,10 @@ class Docker extends Trigger {
     async pullImage(dockerApi, auth, newImage, logContainer) {
         logContainer.info(`Pull image ${newImage}`);
         try {
-            await dockerApi.pull(newImage, auth);
-            logContainer.debug(`Image ${newImage} pulled with success`);
+            const pullStream = await dockerApi.pull(newImage, auth);
+            /* eslint-disable-next-line no-promise-executor-return */
+            await new Promise((res) => dockerApi.modem.followProgress(pullStream, res));
+            logContainer.info(`Image ${newImage} pulled with success`);
         } catch (e) {
             logContainer.warn(`Error when pulling image ${newImage} (${e.message})`);
             throw e;
@@ -90,7 +92,7 @@ class Docker extends Trigger {
         logContainer.info(`Stop container ${containerName} with id ${containerId}`);
         try {
             await container.stop();
-            logContainer.debug(`Container ${containerName} with id ${containerId} stopped with success`);
+            logContainer.info(`Container ${containerName} with id ${containerId} stopped with success`);
         } catch (e) {
             logContainer.warn(`Error when stopping container ${containerName} with id ${containerId}`);
             throw e;
@@ -109,7 +111,7 @@ class Docker extends Trigger {
         logContainer.info(`Remove container ${containerName} with id ${containerId}`);
         try {
             await container.remove();
-            logContainer.debug(`Container ${containerName} with id ${containerId} removed with success`);
+            logContainer.info(`Container ${containerName} with id ${containerId} removed with success`);
         } catch (e) {
             logContainer.warn(`Error when removing container ${containerName} with id ${containerId}`);
             throw e;
@@ -128,7 +130,7 @@ class Docker extends Trigger {
         logContainer.info(`Create container ${containerName}`);
         try {
             const newContainer = await dockerApi.createContainer(containerToCreate);
-            logContainer.debug(`Container ${containerName} recreated on image with success`);
+            logContainer.info(`Container ${containerName} recreated on new image with success`);
             return newContainer;
         } catch (e) {
             logContainer.warn(`Error when creating container ${containerName} (${e.message})`);
@@ -147,7 +149,7 @@ class Docker extends Trigger {
         logContainer.info(`Start container ${containerName}`);
         try {
             await container.start();
-            logContainer.debug(`Container ${containerName} started with success`);
+            logContainer.info(`Container ${containerName} started with success`);
         } catch (e) {
             logContainer.warn(`Error when starting container ${containerName}`);
             throw e;
@@ -166,7 +168,7 @@ class Docker extends Trigger {
         try {
             const image = await dockerApi.getImage(imageToRemove);
             await image.remove();
-            logContainer.debug(`Image ${imageToRemove} removed with success`);
+            logContainer.info(`Image ${imageToRemove} removed with success`);
         } catch (e) {
             logContainer.warn(`Error when removing image ${imageToRemove}`);
             throw e;
@@ -188,6 +190,24 @@ class Docker extends Trigger {
             Image: newImage,
             HostConfig: currentContainer.HostConfig,
         };
+    }
+
+    /**
+     * Get image full name.
+     * @param registry the registry
+     * @param container the container
+     */
+    getNewImageFullName(registry, container) {
+        // Tag to pull/run is
+        // either the same (when updateKind is digest)
+        // or the new one (when updateKind is tag)
+        const tagOrDigest = container.updateKind.kind === 'digest' ? container.image.tag.value : container.updateKind.remoteValue;
+
+        // Rebuild image definition string
+        return registry.getImageFullName(
+            container.image,
+            tagOrDigest,
+        );
     }
 
     /**
@@ -213,10 +233,7 @@ class Docker extends Trigger {
         const auth = registry.getAuthPull();
 
         // Rebuild image definition string
-        const newImage = registry.getImageFullName(
-            container.image,
-            container.updateKind.remoteValue,
-        );
+        const newImage = this.getNewImageFullName(registry, container);
 
         // Get current container
         const currentContainer = await this.getCurrentContainer(dockerApi, container);
@@ -273,8 +290,8 @@ class Docker extends Trigger {
                     await this.startContainer(newContainer, container.name, logContainer);
                 }
 
-                // Remove previous image
-                if (this.configuration.prune) {
+                // Remove previous image (only when updateKind is tag)
+                if (this.configuration.prune && container.updateKind.kind === 'tag') {
                     // Rebuild image definition string
                     const oldImage = registry.getImageFullName(
                         container.image,

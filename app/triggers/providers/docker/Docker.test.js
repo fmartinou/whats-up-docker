@@ -66,6 +66,9 @@ jest.mock('../../../registry', () => ({
                                 return Promise.reject(new Error('Error when removing image'));
                             },
                         }),
+                        modem: {
+                            followProgress: (pullStream, res) => res(),
+                        },
                     },
                 },
             },

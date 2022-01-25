@@ -1,5 +1,8 @@
 # Changelog
 
+# develop
+- :star: [Docker / Docker-compose trigger] - Fix errors when pulling the new image
+
 # 5.14.0
 - :star: [UI] - Revamping
 

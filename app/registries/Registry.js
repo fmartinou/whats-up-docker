@@ -211,7 +211,10 @@ class Registry extends Component {
 
     // eslint-disable-next-line class-methods-use-this
     getImageFullName(image, tagOrDigest) {
-        let fullName = `${image.registry.url}/${image.name}:${tagOrDigest}`;
+        // digests are separated with @ whereas tags are separated with :
+        const tagOrDigestWithSeparator = tagOrDigest.indexOf(':') !== -1 ? `@${tagOrDigest}` : `:${tagOrDigest}`;
+        let fullName = `${image.registry.url}/${image.name}${tagOrDigestWithSeparator}`;
+
         fullName = fullName.replace(/https?:\/\//, '');
         fullName = fullName.replace(/\/v2/, '');
         return fullName;
