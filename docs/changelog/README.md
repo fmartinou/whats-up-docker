@@ -1,6 +1,6 @@
 # Changelog
 
-# develop
+# 5.14.1
 - :star: [MQTT trigger] - Add `update` class to home-assistant devices
 - :fire: [Docker / Docker-compose trigger] - Fix errors when pulling the new image
 - :fire: [Quay.io registry] - Fix paging error
