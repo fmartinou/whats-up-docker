@@ -4,7 +4,11 @@
       <v-img :src="logo" alt="logo" max-width="48px" />
     </v-app-bar-nav-icon>
 
-    <v-toolbar-title v-if="'home'.toLowerCase() !== viewName.toLowerCase()" class="text-body-1 text-capitalize ml-2">{{ viewName }}</v-toolbar-title>
+    <v-toolbar-title
+      v-if="'home'.toLowerCase() !== viewName.toLowerCase()"
+      class="text-body-1 text-capitalize ml-2"
+      >{{ viewName }}</v-toolbar-title
+    >
 
     <v-spacer />
     <v-menu left bottom v-if="user && user.username !== 'anonymous'">
@@ -24,7 +28,6 @@
   </v-app-bar>
 </template>
 <script>
-
 import { logout } from "@/services/auth";
 import logo from "@/assets/wud_logo_white.png";
 
@@ -38,7 +41,7 @@ export default {
   data() {
     return {
       logo,
-    }
+    };
   },
   computed: {
     viewName() {

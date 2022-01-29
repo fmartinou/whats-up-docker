@@ -184,12 +184,28 @@ class Docker extends Trigger {
     // eslint-disable-next-line class-methods-use-this
     cloneContainer(currentContainer, newImage) {
         const containerName = currentContainer.Name.replace('/', '');
-        return {
+        const containerClone = {
             ...currentContainer.Config,
             name: containerName,
             Image: newImage,
             HostConfig: currentContainer.HostConfig,
+            NetworkingConfig: {
+                EndpointsConfig: currentContainer.NetworkSettings.Networks,
+            },
         };
+
+        if (containerClone.NetworkingConfig.EndpointsConfig) {
+            Object
+                .values(containerClone.NetworkingConfig.EndpointsConfig)
+                .forEach((endpointConfig) => {
+                    if (endpointConfig.Aliases && endpointConfig.Aliases.length > 0) {
+                        // eslint-disable-next-line
+                        endpointConfig.Aliases = endpointConfig.Aliases
+                            .filter((alias) => !currentContainer.Id.startsWith(alias));
+                    }
+                });
+        }
+        return containerClone;
     }
 
     /**

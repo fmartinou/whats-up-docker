@@ -33,8 +33,16 @@ jest.mock('../../../registry', () => ({
                                 return Promise.resolve({
                                     inspect: () => Promise.resolve({
                                         Name: '/container-name',
+                                        Id: '123456798',
                                         State: {
                                             Running: true,
+                                        },
+                                        NetworkSettings: {
+                                            Networks: {
+                                                test: {
+                                                    Aliases: ['9708fc7b44f2', 'test'],
+                                                },
+                                            },
                                         },
                                     }),
                                     stop: () => Promise.resolve(),
@@ -197,6 +205,7 @@ test('removeImage should throw error when error occurs', async () => {
 test('clone should clone an existing container spec', () => {
     const clone = docker.cloneContainer({
         Name: '/test',
+        Id: '123456789',
         HostConfig: {
             a: 'a',
             b: 'b',
@@ -204,6 +213,13 @@ test('clone should clone an existing container spec', () => {
         Config: {
             configA: 'a',
             configB: 'b',
+        },
+        NetworkSettings: {
+            Networks: {
+                test: {
+                    Aliases: ['9708fc7b44f2', 'test'],
+                },
+            },
         },
     }, 'test/test:2.0.0');
     expect(clone).toEqual({
@@ -215,6 +231,13 @@ test('clone should clone an existing container spec', () => {
         configA: 'a',
         configB: 'b',
         name: 'test',
+        NetworkingConfig: {
+            EndpointsConfig: {
+                test: {
+                    Aliases: ['9708fc7b44f2', 'test'],
+                },
+            },
+        },
     });
 });
 

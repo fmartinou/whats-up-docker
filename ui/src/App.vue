@@ -1,6 +1,6 @@
 <template>
   <v-app class="main-background">
-    <snackbar
+    <snack-bar
       :message="snackbarMessage"
       :show="snackbarShow"
       :level="snackbarLevel"
@@ -26,14 +26,14 @@
 <script>
 import NavigationDrawer from "@/components/NavigationDrawer";
 import AppBar from "@/components/AppBar";
-import Snackbar from "@/components/Snackbar";
+import SnackBar from "@/components/SnackBar";
 import AppFooter from "@/components/AppFooter";
 
 export default {
   components: {
     NavigationDrawer,
     AppBar,
-    Snackbar,
+    SnackBar,
     AppFooter,
   },
   data() {

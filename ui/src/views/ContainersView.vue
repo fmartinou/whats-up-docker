@@ -18,7 +18,7 @@
       <template v-for="container in containersFiltered">
         <v-row :key="container.id">
           <v-col class="pt-2 pb-2">
-            <container
+            <container-item
               :container="container"
               @delete-container="deleteContainer(container)"
               @container-deleted="removeContainerFromList(container)"
@@ -34,13 +34,13 @@
 </template>
 
 <script>
-import Container from "@/components/Container";
+import ContainerItem from "@/components/ContainerItem";
 import ContainerFilter from "@/components/ContainerFilter";
 import { deleteContainer, getAllContainers } from "@/services/container";
 
 export default {
   components: {
-    Container,
+    ContainerItem,
     ContainerFilter,
   },
 

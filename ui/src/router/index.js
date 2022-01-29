@@ -8,47 +8,47 @@ const routes = [
   {
     path: "/",
     name: "home",
-    component: () => import("../views/Home.vue"),
+    component: () => import("../views/HomeView.vue"),
   },
   {
     path: "/login",
     name: "login",
-    component: () => import("../views/Login.vue"),
+    component: () => import("../views/LoginView.vue"),
   },
   {
     path: "/containers",
     name: "containers",
-    component: () => import("../views/Containers.vue"),
+    component: () => import("../views/ContainersView.vue"),
   },
   {
     path: "/configuration/authentications",
     name: "authentications",
-    component: () => import("../views/ConfigurationAuthentications.vue"),
+    component: () => import("../views/ConfigurationAuthenticationsView.vue"),
   },
   {
     path: "/configuration/logs",
     name: "logs",
-    component: () => import("../views/ConfigurationLogs.vue"),
+    component: () => import("../views/ConfigurationLogsView.vue"),
   },
   {
     path: "/configuration/registries",
     name: "registries",
-    component: () => import("../views/ConfigurationRegistries.vue"),
+    component: () => import("../views/ConfigurationRegistriesView.vue"),
   },
   {
     path: "/configuration/state",
     name: "state",
-    component: () => import("../views/ConfigurationState.vue"),
+    component: () => import("../views/ConfigurationStateView.vue"),
   },
   {
     path: "/configuration/triggers",
     name: "triggers",
-    component: () => import("../views/ConfigurationTriggers.vue"),
+    component: () => import("../views/ConfigurationTriggersView.vue"),
   },
   {
     path: "/configuration/watchers",
     name: "watchers",
-    component: () => import("../views/ConfigurationWatchers.vue"),
+    component: () => import("../views/ConfigurationWatchersView.vue"),
   },
 ];
 

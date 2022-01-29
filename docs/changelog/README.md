@@ -1,5 +1,8 @@
 # Changelog
 
+# develop
+- :fire: [Docker / Docker-compose trigger] - Add cloning Network settings from current container 
+
 # 5.14.1
 - :star: [MQTT trigger] - Add `update` class to home-assistant devices
 - :fire: [Docker / Docker-compose trigger] - Fix errors when pulling the new image
