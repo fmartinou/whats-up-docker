@@ -7,9 +7,9 @@
       @click="collapseDetail()"
       style="cursor: pointer"
     >
-      <v-toolbar-title class="text-body-2">{{
-        container.name
-      }}</v-toolbar-title>
+      <v-toolbar-title class="text-body-2">
+        {{ container.displayName }}</v-toolbar-title
+      >
       <v-chip
         v-if="$vuetify.breakpoint.mdAndUp"
         class="ma-4"
@@ -52,7 +52,7 @@
         >
           <v-tab>
             <span v-if="$vuetify.breakpoint.mdAndUp">Container</span>
-            <v-icon>mdi-docker</v-icon>
+            <v-icon>{{ containerIcon }}</v-icon>
           </v-tab>
           <v-tab>
             <span v-if="$vuetify.breakpoint.mdAndUp">Image</span>
@@ -177,6 +177,10 @@ export default {
     };
   },
   computed: {
+    containerIcon() {
+      return this.container.displayIcon.replace("mdi:", "mdi-");
+    },
+
     registryIcon() {
       return getRegistryProviderIcon(this.container.image.registry.name);
     },

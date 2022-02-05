@@ -16,6 +16,9 @@ The `mqtt` trigger lets you send container update notifications to an MQTT broke
 
 ?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration) but only supports the `single` mode.
 
+?> You want to customize the name & icon of the Home-Assistant entity? \
+[Use the `wud.display.name` and `wud.display.icon` labels](configuration/watchers/?id=labels).
+
 ### Examples
 
 #### Post a message to a local mosquitto broker

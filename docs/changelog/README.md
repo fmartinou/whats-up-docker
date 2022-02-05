@@ -1,6 +1,7 @@
 # Changelog
 
 # develop
+- :star: Add ability to customize the display of the container ([see `wud.display.name` and `wud.display.icon`](configuration/watchers/?id=label))
 - :fire: [Docker / Docker-compose trigger] - Add cloning Network settings from current container 
 
 # 5.14.1

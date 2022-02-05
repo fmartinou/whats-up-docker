@@ -14,15 +14,34 @@ const hassDefaultPrefix = 'homeassistant';
 const hassDeviceId = 'wud';
 const hassDeviceName = 'What\'s up Docker?';
 const hassManufacturer = 'fmartinou';
-const hassEntityIcon = 'mdi:docker';
 const hassEntityValueTemplate = '{{ value_json.update_available }}';
 
+/**
+ * get mqtt base topic.
+ * @param baseTopic
+ * @param container
+ * @return {string}
+ */
 function getContainerTopic({ baseTopic, container }) {
     return `${baseTopic}/${container.watcher}/${container.name}`;
 }
 
+/**
+ * Get hass entity unique id.
+ * @param containerTopic
+ * @return {*}
+ */
 function getHassEntityId(containerTopic) {
     return containerTopic.replace(/\//g, '_');
+}
+
+/**
+ * Sanitize icon to meet hass requirements.
+ * @param icon
+ * @return {*}
+ */
+function sanitizeIcon(icon) {
+    return icon.replace('mdi-', 'mdi:');
 }
 
 /**
@@ -129,7 +148,7 @@ class Mqtt extends Trigger {
         this.log.info(`Add hass device [id=${entityId}]`);
         await this.client.publish(discoveryTopic, JSON.stringify({
             unique_id: entityId,
-            name: entityId,
+            name: container.displayName,
             device: {
                 identifiers: [hassDeviceId],
                 manufacturer: capitalize(hassManufacturer),
@@ -138,7 +157,7 @@ class Mqtt extends Trigger {
                 sw_version: getVersion(),
             },
             device_class: 'update',
-            icon: hassEntityIcon,
+            icon: sanitizeIcon(container.displayIcon),
             force_update: true,
             state_topic: containerTopic,
             value_template: hassEntityValueTemplate,

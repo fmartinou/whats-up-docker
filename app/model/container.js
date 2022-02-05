@@ -8,6 +8,8 @@ const { transform: transformTag } = require('../tag');
 const schema = joi.object({
     id: joi.string().min(1).required(),
     name: joi.string().min(1).required(),
+    displayName: joi.string().default(joi.ref('name')),
+    displayIcon: joi.string().default('mdi-docker'),
     status: joi.string().default('unknown'),
     watcher: joi.string().min(1).required(),
     includeTags: joi.string(),

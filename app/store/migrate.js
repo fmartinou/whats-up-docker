@@ -1,11 +1,29 @@
 const log = require('../log').child({ component: 'store' });
-const { getContainers, deleteContainer } = require('./container');
+const { getContainers, deleteContainer, updateContainer } = require('./container');
 
 /**
  * Migrate from legacy unknown version.
  */
 function migrateFromUndefined() {
     getContainers({}).forEach((container) => deleteContainer(container.id));
+}
+
+/**
+ * Add displayName & displayIcon if missing.
+ */
+function addDisplayNameAndIcon() {
+    getContainers({}).forEach((container) => {
+        const containerMigrated = {
+            ...container,
+        };
+        if (container.displayName === undefined) {
+            containerMigrated.displayName = container.name;
+        }
+        if (container.displayIcon === undefined) {
+            containerMigrated.displayIcon = 'mdi-docker';
+        }
+        updateContainer(containerMigrated);
+    });
 }
 
 /**
@@ -18,6 +36,8 @@ function migrate(from, to) {
     if (from === undefined) {
         migrateFromUndefined();
     }
+
+    addDisplayNameAndIcon();
 }
 
 module.exports = {

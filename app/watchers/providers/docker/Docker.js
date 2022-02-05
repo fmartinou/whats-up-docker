@@ -13,6 +13,8 @@ const {
     wudTagTransform,
     wudWatchDigest,
     wudLinkTemplate,
+    wudDisplayName,
+    wudDisplayIcon,
 } = require('./label');
 const storeContainer = require('../../../store/container');
 const log = require('../../../log');
@@ -450,24 +452,15 @@ class Docker extends Component {
                 ),
             );
         const containerPromises = filteredContainers
-            .map((container) => {
-                const labels = container.Labels;
-                const includeTags = labels[wudTagInclude] !== undefined
-                    ? labels[wudTagInclude] : undefined;
-                const excludeTags = labels[wudTagExclude] !== undefined
-                    ? labels[wudTagExclude] : undefined;
-                const transformTags = labels[wudTagTransform] !== undefined
-                    ? labels[wudTagTransform] : undefined;
-                const linkTemplate = labels[wudLinkTemplate] !== undefined
-                    ? labels[wudLinkTemplate] : undefined;
-                return this.addImageDetailsToContainer(
-                    container,
-                    includeTags,
-                    excludeTags,
-                    transformTags,
-                    linkTemplate,
-                );
-            });
+            .map((container) => this.addImageDetailsToContainer(
+                container,
+                container.Labels[wudTagInclude],
+                container.Labels[wudTagExclude],
+                container.Labels[wudTagTransform],
+                container.Labels[wudLinkTemplate],
+                container.Labels[wudDisplayName],
+                container.Labels[wudDisplayIcon],
+            ));
         const containersWithImage = await Promise.all(containerPromises);
 
         // Return containers to process
@@ -541,6 +534,8 @@ class Docker extends Component {
      * @param excludeTags
      * @param transformTags
      * @param linkTemplate
+     * @param displayName
+     * @param displayIcon
      * @returns {Promise<Image>}
      */
     async addImageDetailsToContainer(
@@ -549,6 +544,8 @@ class Docker extends Component {
         excludeTags,
         transformTags,
         linkTemplate,
+        displayName,
+        displayIcon,
     ) {
         const containerId = container.Id;
 
@@ -602,6 +599,8 @@ class Docker extends Component {
             excludeTags,
             transformTags,
             linkTemplate,
+            displayName,
+            displayIcon,
             image: {
                 id: imageId,
                 registry: {

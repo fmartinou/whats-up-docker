@@ -33,4 +33,14 @@ module.exports = {
      */
     wudLinkTemplate: 'wud.link.template',
 
+    /**
+     * Optional friendly name to display.
+     */
+    wudDisplayName: 'wud.display.name',
+
+    /**
+     * Optional friendly icon to display.
+     */
+    wudDisplayIcon: 'wud.display.icon',
+
 };
