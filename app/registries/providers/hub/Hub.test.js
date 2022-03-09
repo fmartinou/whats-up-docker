@@ -5,6 +5,7 @@ const hub = new Hub();
 hub.configuration = {
     login: 'login',
     token: 'token',
+    url: 'https://registry-1.docker.io',
 };
 
 jest.mock('request-promise-native');
@@ -12,39 +13,14 @@ jest.mock('request-promise-native');
 test('validatedConfiguration should initialize when configuration is valid', () => {
     expect(hub.validateConfiguration({
         login: 'login',
-        token: 'token',
+        password: 'password',
     })).toStrictEqual({
         login: 'login',
-        token: 'token',
+        password: 'password',
     });
     expect(hub.validateConfiguration({ auth: 'auth' })).toStrictEqual({ auth: 'auth' });
     expect(hub.validateConfiguration({})).toStrictEqual({});
     expect(hub.validateConfiguration(undefined)).toStrictEqual({});
-});
-
-test('validatedConfiguration should throw error when login without token', () => {
-    expect(() => {
-        hub.validateConfiguration({
-            login: 'login',
-        });
-    }).toThrow('"login" is not allowed');
-});
-
-test('validatedConfiguration should throw error when token without login', () => {
-    expect(() => {
-        hub.validateConfiguration({
-            token: 'token',
-        });
-    }).toThrow('"login" is required');
-});
-
-test('validatedConfiguration should throw error when login & auth at the same time', () => {
-    expect(() => {
-        hub.validateConfiguration({
-            login: 'login',
-            auth: 'auth',
-        });
-    }).toThrow('"login" is not allowed');
 });
 
 test('validatedConfiguration should throw error when auth is not base64', () => {
@@ -60,6 +36,7 @@ test('maskConfiguration should mask configuration secrets', () => {
         auth: undefined,
         login: 'login',
         token: 't***n',
+        url: 'https://registry-1.docker.io',
     });
 });
 

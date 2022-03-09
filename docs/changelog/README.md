@@ -1,7 +1,9 @@
 # Changelog
 
 # develop
-- :star: Enable by default all registries with possible anonymous access (hub, ghcr, lscr, quay) 
+- :star: Add support for [custom registries](configuration/registries/custom/)
+- :star: Enable by default all registries with possible anonymous access (hub, ghcr, lscr, quay)
+- :fire: [Docker / Docker-compose trigger] - Fix error when pulling from private registry
 
 # 5.15.0
 - :star: Add ability to customize the display of the container ([see `wud.display.name` and `wud.display.icon`](configuration/watchers/?id=label))

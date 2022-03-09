@@ -4,6 +4,8 @@ WUD supports most registries:
 
 ?> [**ACR** (Azure Container Registry)](configuration/registries/acr/)
 
+?> [**CUSTOM** (Self-hosted Registry)](configuration/registries/custom/)
+
 ?> [**ECR** (Amazon Elastic Container Registry)](configuration/registries/ecr/)
 
 ?> [**GCR** (Google Container Registry)](configuration/registries/gcr/)

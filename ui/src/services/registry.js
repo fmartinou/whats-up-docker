@@ -32,6 +32,9 @@ function getRegistryProviderIcon(provider) {
     case "quay":
       icon = "mdi-redhat";
       break;
+    case "custom":
+      icon = "mdi-home";
+      break;
   }
   return icon;
 }

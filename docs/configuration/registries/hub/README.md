@@ -13,11 +13,12 @@ Don't forget to configure authentication if you're using [Docker Hub Private Rep
 
 ### Variables
 
-| Env var                  | Required       | Description                                                               | Supported values                                  | Default value when missing |
-| ------------------------ |:--------------:| ---------------------------------------------------------------- | ---------------------------------------------------------- | -------------------------- | 
-| `WUD_REGISTRY_HUB_LOGIN` | :white_circle: | A valid Docker Hub Login                                                  | WUD_REGISTRY_HUB_TOKEN must be defined            |                            |
-| `WUD_REGISTRY_HUB_TOKEN` | :white_circle: | A valid Docker Hub Token                                                  | WUD_REGISTRY_HUB_LOGIN must be defined            |                            |
-| `WUD_REGISTRY_HUB_AUTH`  | :white_circle: | A valid Docker Hub Base64 Auth String (empty string for anonymous access) | WUD_REGISTRY_HUB_LOGIN/TOKEN  must not be defined |                            |
+| Env var                     | Required       | Description                                                                 | Supported values                                  | Default value when missing |
+| --------------------------- |:--------------:| --------------------------------------------------------------------------- | ------------------------------------------------- | -------------------------- | 
+| `WUD_REGISTRY_HUB_LOGIN`    | :white_circle: | A valid Docker Hub Login                                                    | WUD_REGISTRY_HUB_TOKEN must be defined            |                            |
+| `WUD_REGISTRY_HUB_PASSWORD` | :white_circle: | A valid Docker Hub Token                                                    | WUD_REGISTRY_HUB_LOGIN must be defined            |                            |
+| `WUD_REGISTRY_HUB_TOKEN`    | :white_circle: | A valid Docker Hub Token (deprecated; replaced by WUD_REGISTRY_HUB_PASSWORD | WUD_REGISTRY_HUB_LOGIN must be defined            |                            |
+| `WUD_REGISTRY_HUB_AUTH`     | :white_circle: | A valid Docker Hub Base64 Auth String                                       | WUD_REGISTRY_HUB_LOGIN/TOKEN  must not be defined |                            |
 
 ### Examples
 
@@ -65,13 +66,13 @@ services:
     ...
     environment:
       - WUD_REGISTRY_HUB_LOGIN=mylogin
-      - WUD_REGISTRY_HUB_TOKEN=fb4d5db9-e64d-3648-8846-74d0846e55de
+      - WUD_REGISTRY_HUB_PASSWORD=fb4d5db9-e64d-3648-8846-74d0846e55de
 ```
 #### **Docker**
 ```bash
 docker run \
   -e WUD_REGISTRY_HUB_LOGIN="mylogin"
-  -e WUD_REGISTRY_HUB_TOKEN="fb4d5db9-e64d-3648-8846-74d0846e55de"
+  -e WUD_REGISTRY_HUB_PASSWORD="fb4d5db9-e64d-3648-8846-74d0846e55de"
   ...
   fmartinou/whats-up-docker
 ```

@@ -1,13 +1,25 @@
 version: '3'
 
 services:
-    apprise_latest:
-      image: caronc/apprise:latest
-      container_name: apprise
+    registry:
+      image: registry:2.8.1
+      container_name: registry
       ports:
-        - 8000:8000
-      labels:
-        - wud.watch=true
+        - 5000:5000
+      environment:
+        - REGISTRY_AUTH=htpasswd
+        - REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm
+        - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+      volumes:
+        - ./registry/auth:/auth
+#
+#    apprise_latest:
+#      image: caronc/apprise:latest
+#      container_name: apprise
+#      ports:
+#        - 8000:8000
+#      labels:
+#        - wud.watch=true
 #
 #    homeassistant_latest:
 #      image: homeassistant/home-assistant
@@ -25,13 +37,13 @@ services:
 #        - wud.tag.include=^\d+\.\d+.\d+$$
 #        - wud.link.template=https://github.com/home-assistant/core/releases/tag/$${major}.$${minor}.$${patch}
 #
-    nginx_latest:
-      image: nginx
-      container_name: nginx_latest
-      labels:
-        - wud.watch=true
-        - wud.tag.include=^latest$$
-        - wud.watch.digest=true
+#    nginx_latest:
+#      image: nginx
+#      container_name: nginx_latest
+#      labels:
+#        - wud.watch=true
+#        - wud.tag.include=^latest$$
+#        - wud.watch.digest=true
   #
   #    omnidb_latest:
   #      image: omnidbteam/omnidb
@@ -67,6 +79,13 @@ services:
     traefik_245:
       image: traefik:2.4.5
       container_name: traefik_245
+      labels:
+        - wud.watch=true
+        - wud.tag.include=^\d+\.\d+.\d+$$
+
+    registry_traefik_245:
+      image: localhost:5000/traefik:2.4.5
+      container_name: registry_traefik_245
       labels:
         - wud.watch=true
         - wud.tag.include=^\d+\.\d+.\d+$$

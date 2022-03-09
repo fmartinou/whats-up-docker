@@ -48,6 +48,8 @@ Gets you notified when new versions of your Docker containers are available and 
 
 > [**Redhat Quay**](https://quay.io/)
 
+> [**Self-hosted Docker Registry**](https://docs.docker.com/registry/)
+
 ## REST API & Web UI
 ![image](docs/ui/ui.png)
 

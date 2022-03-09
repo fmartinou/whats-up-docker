@@ -48,7 +48,7 @@ class Docker extends Trigger {
      * @returns {Promise<*>}
      */
     async inspectContainer(container, logContainer) {
-        this.log.debug(`Inspect container ${container.Id}`);
+        this.log.debug(`Inspect container ${container.id}`);
         try {
             return await container.inspect();
         } catch (e) {
@@ -69,7 +69,7 @@ class Docker extends Trigger {
     async pullImage(dockerApi, auth, newImage, logContainer) {
         logContainer.info(`Pull image ${newImage}`);
         try {
-            const pullStream = await dockerApi.pull(newImage, auth);
+            const pullStream = await dockerApi.pull(newImage, { authconfig: auth });
             /* eslint-disable-next-line no-promise-executor-return */
             await new Promise((res) => dockerApi.modem.followProgress(pullStream, res));
             logContainer.info(`Image ${newImage} pulled with success`);

@@ -35,7 +35,7 @@ class Registry extends Component {
         this.name = name;
 
         this.configuration = this.validateConfiguration(configuration);
-        this.log.info(`Register ${kind} with configuration ${JSON.stringify(this.maskConfiguration(configuration))}`);
+        this.log.info(`Register with configuration ${JSON.stringify(this.maskConfiguration(configuration))}`);
         await this.init();
         return this;
     }

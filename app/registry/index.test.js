@@ -84,7 +84,7 @@ test('registerRegistries should warn when registration errors occur', async () =
         },
     };
     await registry.__get__('registerRegistries')();
-    expect(spyLog).toHaveBeenCalledWith('Some registries failed to register (Error when registering component hub ("login" is not allowed))');
+    expect(spyLog).toHaveBeenCalledWith('Some registries failed to register (Error when registering component hub ("login" must be a string))');
 });
 
 test('registerTriggers should register all triggers', async () => {

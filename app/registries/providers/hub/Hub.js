@@ -1,19 +1,15 @@
 const rp = require('request-promise-native');
-const Registry = require('../../Registry');
+const Custom = require('../custom/Custom');
 
 /**
  * Docker Hub integration.
  */
-class Hub extends Registry {
-    getConfigurationSchema() {
-        return this.joi.alternatives([
-            this.joi.string().allow(''),
-            this.joi.object().keys({
-                login: this.joi.alternatives().conditional('token', { not: undefined, then: this.joi.string().required(), otherwise: this.joi.any().forbidden() }),
-                token: this.joi.alternatives().conditional('login', { not: undefined, then: this.joi.string().required(), otherwise: this.joi.any().forbidden() }),
-                auth: this.joi.alternatives().conditional('login', { not: undefined, then: this.joi.any().forbidden(), otherwise: this.joi.alternatives().try(this.joi.string().base64(), this.joi.string().valid('')) }),
-            }),
-        ]);
+class Hub extends Custom {
+    init() {
+        this.configuration.url = 'https://registry-1.docker.io';
+        if (this.configuration.token) {
+            this.configuration.password = this.configuration.token;
+        }
     }
 
     /**
@@ -21,14 +17,27 @@ class Hub extends Registry {
      * @returns {*}
      */
     maskConfiguration() {
-        const confMasked = { ...this.configuration };
+        const confMasked = super.maskConfiguration();
         if (confMasked.token) {
             confMasked.token = Hub.mask(confMasked.token);
         }
-        if (confMasked.auth) {
-            confMasked.auth = Hub.mask(confMasked.auth);
-        }
         return confMasked;
+    }
+
+    /**
+     * Get the Hub configuration schema.
+     * @returns {*}
+     */
+    getConfigurationSchema() {
+        return this.joi.alternatives([
+            this.joi.string().allow(''),
+            this.joi.object().keys({
+                login: this.joi.string(),
+                password: this.joi.string(),
+                token: this.joi.string(),
+                auth: this.joi.string().base64(),
+            }),
+        ]);
     }
 
     /**
@@ -48,9 +57,8 @@ class Hub extends Registry {
      */
     // eslint-disable-next-line class-methods-use-this
     normalizeImage(image) {
-        const imageNormalized = image;
+        const imageNormalized = super.normalizeImage(image);
         imageNormalized.registry.name = 'hub';
-        imageNormalized.registry.url = 'https://registry-1.docker.io/v2';
         if (imageNormalized.name) {
             imageNormalized.name = imageNormalized.name.includes('/') ? imageNormalized.name : `library/${imageNormalized.name}`;
         }
@@ -86,36 +94,12 @@ class Hub extends Registry {
         return requestOptionsWithAuth;
     }
 
-    /**
-     * Return Base64 credentials if any.
-     * @returns {string|undefined|*}
-     */
-    getAuthCredentials() {
-        if (this.configuration.auth) {
-            return this.configuration.auth;
-        }
-        if (this.configuration.login && this.configuration.token) {
-            return Hub.base64Encode(this.configuration.login, this.configuration.token);
-        }
-        return undefined;
-    }
-
     // eslint-disable-next-line class-methods-use-this
     getImageFullName(image, tagOrDigest) {
         let fullName = super.getImageFullName(image, tagOrDigest);
         fullName = fullName.replace(/registry-1.docker.io\//, '');
         fullName = fullName.replace(/library\//, '');
         return fullName;
-    }
-
-    getAuthPull() {
-        if (this.configuration.login && this.configuration.token) {
-            return {
-                username: this.configuration.login,
-                password: this.configuration.token,
-            };
-        }
-        return undefined;
     }
 }
 

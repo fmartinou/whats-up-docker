@@ -5,6 +5,7 @@
     - [Logs](configuration/logs/)
     - [Registries](configuration/registries/)
         - [ACR](configuration/registries/acr/)
+        - [CUSTOM](configuration/registries/custom/)
         - [ECR](configuration/registries/ecr/)
         - [GCR](configuration/registries/gcr/)
         - [GHCR](configuration/registries/ghcr/)
