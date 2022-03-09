@@ -125,19 +125,28 @@ async function registerTriggers() {
  */
 async function registerRegistries() {
     const configurations = getRegistryConfigurations();
-    let registriesToRegister = [];
+    const registriesToRegister = {};
+
+    // Default registries
+    registriesToRegister.ghcr = () => registerComponent('registry', 'ghcr', 'ghcr', '', '../registries/providers');
+    registriesToRegister.hub = () => registerComponent('registry', 'hub', 'hub', '', '../registries/providers');
+    registriesToRegister.lscr = () => registerComponent('registry', 'lscr', 'lscr', '', '../registries/providers');
+    registriesToRegister.quay = () => registerComponent('registry', 'quay', 'quay', '', '../registries/providers');
+
     try {
-        if (Object.keys(configurations).length === 0) {
-            log.info('No Registry configured => Init a default one (Docker Hub with default options)');
-            registriesToRegister.push(registerComponent('registry', 'hub', 'hub', {}, '../registries/providers'));
-        } else {
-            registriesToRegister = registriesToRegister
-                .concat(Object.keys(configurations).map((registryKey) => {
-                    const registryKeyNormalize = registryKey.toLowerCase();
-                    return registerComponent('registry', registryKeyNormalize, registryKeyNormalize, configurations[registryKeyNormalize], '../registries/providers');
-                }));
-        }
-        await Promise.all(registriesToRegister);
+        Object.keys(configurations).forEach((registryKey) => {
+            const registryKeyNormalize = registryKey.toLowerCase();
+            registriesToRegister[registryKeyNormalize] = () => registerComponent(
+                'registry',
+                registryKeyNormalize,
+                registryKeyNormalize,
+                configurations[registryKeyNormalize],
+                '../registries/providers',
+            );
+        });
+        await Promise.all(Object.values(registriesToRegister)
+            .sort()
+            .map(((registerFn) => registerFn())));
     } catch (e) {
         log.warn(`Some registries failed to register (${e.message})`);
         log.debug(e);
