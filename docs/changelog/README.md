@@ -3,6 +3,8 @@
 # develop
 - :star: Add support for [custom registries](configuration/registries/custom/)
 - :star: Enable by default all registries with possible anonymous access (hub, ghcr, lscr, quay)
+- :star: Add [HTTPS support](configuration/server/?id=server)
+- :star: Update all dependencies
 - :fire: [Docker / Docker-compose trigger] - Fix error when pulling from private registry
 
 # 5.15.0

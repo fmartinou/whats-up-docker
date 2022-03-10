@@ -1,5 +1,5 @@
 function getStoreIcon() {
-  return "mdi-content-save";
+  return "mdi-file-multiple";
 }
 
 async function getStore() {

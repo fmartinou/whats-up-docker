@@ -6,6 +6,7 @@
         - [Openid Connect](configuration/authentications/oidc/)
     - [Logs](configuration/logs/)
     - [Registries](configuration/registries/)
+    - [Server](configuration/server/)
     - [Storage](configuration/storage/)    
     - [Triggers](configuration/triggers/)
     - [Watchers](configuration/watchers/)

@@ -8,6 +8,7 @@ const registryRouter = require('./registry');
 const authenticationRouter = require('./authentication');
 const logRouter = require('./log');
 const storeRouter = require('./store');
+const serverRouter = require('./server');
 const auth = require('./auth');
 
 /**
@@ -28,6 +29,9 @@ function init() {
 
     // Mount store router
     router.use('/store', storeRouter.init());
+
+    // Mount server router
+    router.use('/server', serverRouter.init());
 
     // Mount container router
     router.use('/containers', containerRouter.init());

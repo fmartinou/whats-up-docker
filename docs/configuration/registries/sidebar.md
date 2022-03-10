@@ -12,6 +12,7 @@
         - [HUB](configuration/registries/hub/)
         - [LSCR](configuration/registries/lscr/)
         - [QUAY](configuration/registries/quay/)
+    - [Server](configuration/server/)    
     - [Storage](configuration/storage/)    
     - [Triggers](configuration/triggers/)
     - [Watchers](configuration/watchers/)

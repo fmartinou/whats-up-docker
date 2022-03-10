@@ -1,3 +1,5 @@
+const fs = require('fs');
+const https = require('https');
 const joi = require('joi');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -8,17 +10,22 @@ const uiRouter = require('./ui');
 const prometheusRouter = require('./prometheus');
 const healthRouter = require('./health');
 
-const { getApiConfiguration } = require('../configuration');
+const { getServerConfiguration } = require('../configuration');
 
 // Configuration Schema
 const configurationSchema = joi.object().keys({
     enabled: joi.boolean().default(true),
     port: joi.number().default(3000).integer().min(0)
         .max(65535),
+    tls: joi.object({
+        enabled: joi.boolean().default(false),
+        key: joi.string().when('enabled', { is: true, then: joi.required(), otherwise: joi.optional() }),
+        cert: joi.string().when('enabled', { is: true, then: joi.required(), otherwise: joi.optional() }),
+    }).default({}),
 });
 
 // Validate Configuration
-const configurationToValidate = configurationSchema.validate(getApiConfiguration() || {});
+const configurationToValidate = configurationSchema.validate(getServerConfiguration() || {});
 if (configurationToValidate.error) {
     throw configurationToValidate.error;
 }
@@ -57,10 +64,32 @@ async function init() {
         // Serve ui (resulting from ui built & copied on docker build)
         app.use('/', uiRouter.init());
 
-        // Listen
-        app.listen(configuration.port, () => {
-            log.info(`API/UI exposed on port ${configuration.port}`);
-        });
+        if (configuration.tls.enabled) {
+            let serverKey;
+            let serverCert;
+            try {
+                serverKey = fs.readFileSync(configuration.tls.key);
+            } catch (e) {
+                log.error(`Unable to read the key file under ${configuration.tls.key} (${e.message})`);
+                throw e;
+            }
+            try {
+                serverCert = fs.readFileSync(configuration.tls.cert);
+            } catch (e) {
+                log.error(`Unable to read the cert file under ${configuration.tls.cert} (${e.message})`);
+                throw e;
+            }
+            https
+                .createServer({ key: serverKey, cert: serverCert }, app)
+                .listen(configuration.port, () => {
+                    log.info(`Server listening on port ${configuration.port} (HTTPS)`);
+                });
+        } else {
+            // Listen plain HTTP
+            app.listen(configuration.port, () => {
+                log.info(`Server listening on port ${configuration.port} (HTTP)`);
+            });
+        }
     } else {
         log.debug('API/UI disabled');
     }

@@ -45,10 +45,20 @@ function getStoreConfiguration() {
 }
 
 /**
- * Get API configurations.
+ * Get Server configurations.
  */
-function getApiConfiguration() {
-    return envProp.get('wud.api');
+function getServerConfiguration() {
+    // Deprecated env var namespace; to be removed on next major version
+    const apiConfiguration = envProp.get('wud.api');
+
+    // New en var namespace
+    const serverConfiguration = envProp.get('wud.server');
+
+    // Merge deprecated & new env vars
+    return {
+        ...apiConfiguration,
+        ...serverConfiguration,
+    };
 }
 
 function getPublicUrl(req) {
@@ -68,6 +78,6 @@ module.exports = {
     getTriggerConfigurations,
     getRegistryConfigurations,
     getAuthenticationConfigurations,
-    getApiConfiguration,
+    getServerConfiguration,
     getPublicUrl,
 };

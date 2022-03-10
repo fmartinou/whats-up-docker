@@ -93,10 +93,9 @@
 
 <script>
 import { getContainerIcon } from "@/services/container";
-import { getLogIcon } from "@/services/log";
 import { getRegistryIcon } from "@/services/registry";
 import { getTriggerIcon } from "@/services/trigger";
-import { getStoreIcon } from "@/services/store";
+import { getServerIcon } from "@/services/server";
 import { getWatcherIcon } from "@/services/watcher";
 import { getAuthenticationIcon } from "@/services/authentication";
 import logo from "@/assets/wud_logo_white.png";
@@ -128,14 +127,9 @@ export default {
         icon: getWatcherIcon(),
       },
       {
-        to: "/configuration/logs",
-        name: "logs",
-        icon: getLogIcon(),
-      },
-      {
-        to: "/configuration/state",
-        name: "state",
-        icon: getStoreIcon(),
+        to: "/configuration/server",
+        name: "server",
+        icon: getServerIcon(),
       },
     ],
   }),

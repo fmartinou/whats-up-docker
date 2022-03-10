@@ -78,8 +78,17 @@ test('getStoreConfiguration should return configured store', () => {
     expect(configuration.getStoreConfiguration()).toStrictEqual({ x: 'x', y: 'y' });
 });
 
-test('getApiConfiguration should return configured api', () => {
+test('getServerConfiguration should return configured api (deprecated vars)', () => {
     process.env.WUD_API_X = 'x';
     process.env.WUD_API_Y = 'y';
-    expect(configuration.getApiConfiguration()).toStrictEqual({ x: 'x', y: 'y' });
+    expect(configuration.getServerConfiguration()).toStrictEqual({ x: 'x', y: 'y' });
+});
+
+test('getServerConfiguration should return configured api (new vars)', () => {
+    process.env.WUD_API_W = 'w';
+    process.env.WUD_API_X = 'x';
+    process.env.WUD_API_Y = 'y';
+    process.env.WUD_SERVER_X = 'x2';
+    process.env.WUD_SERVER_Y = 'y2';
+    expect(configuration.getServerConfiguration()).toStrictEqual({ w: 'w', x: 'x2', y: 'y2' });
 });

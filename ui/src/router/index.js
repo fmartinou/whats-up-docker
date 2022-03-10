@@ -26,19 +26,14 @@ const routes = [
     component: () => import("../views/ConfigurationAuthenticationsView.vue"),
   },
   {
-    path: "/configuration/logs",
-    name: "logs",
-    component: () => import("../views/ConfigurationLogsView.vue"),
-  },
-  {
     path: "/configuration/registries",
     name: "registries",
     component: () => import("../views/ConfigurationRegistriesView.vue"),
   },
   {
-    path: "/configuration/state",
-    name: "state",
-    component: () => import("../views/ConfigurationStateView.vue"),
+    path: "/configuration/server",
+    name: "server",
+    component: () => import("../views/ConfigurationServerView.vue"),
   },
   {
     path: "/configuration/triggers",

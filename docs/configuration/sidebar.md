@@ -4,6 +4,7 @@
     - [Authentication](configuration/authentications/)    
     - [Logs](configuration/logs/)
     - [Registries](configuration/registries/)
+    - [Server](configuration/server/)
     - [Storage](configuration/storage/)
     - [Timezone](configuration/timezone/)
     - [Triggers](configuration/triggers/)
