@@ -1,6 +1,6 @@
 # Changelog
 
-# develop
+# 5.16.0
 - :star: Add support for [custom registries](configuration/registries/custom/)
 - :star: Enable by default all registries with possible anonymous access (hub, ghcr, lscr, quay)
 - :star: Add [HTTPS support](configuration/server/?id=server)
