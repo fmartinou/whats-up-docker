@@ -1,5 +1,8 @@
 # Changelog
 
+# 5.16.1
+- :fire: Fix regression on basic Auth authentication (present in `5.16.0`)
+
 # 5.16.0
 - :star: Add support for [custom registries](configuration/registries/custom/)
 - :star: Enable by default all registries with possible anonymous access (hub, ghcr, lscr, quay)

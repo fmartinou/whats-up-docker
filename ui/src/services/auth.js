@@ -40,9 +40,7 @@ async function getUser() {
  * @returns {Promise<*>}
  */
 async function loginBasic(username, password) {
-  const base64 = Buffer.from(`${username}:${password}`, "utf-8").toString(
-    "base64"
-  );
+  const base64 = btoa(`${username}:${password}`);
   const response = await fetch(`/auth/login`, {
     method: "POST",
     headers: {
