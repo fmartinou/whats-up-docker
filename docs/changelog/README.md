@@ -1,5 +1,8 @@
 # Changelog
 
+# develop
+- :fire: [Docker / Docker-compose trigger] - Fix prune old image when updateKind=digest
+
 # 5.16.1
 - :fire: Fix regression on basic Auth authentication (present in `5.16.0`)
 

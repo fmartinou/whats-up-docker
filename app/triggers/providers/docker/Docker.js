@@ -307,13 +307,15 @@ class Docker extends Trigger {
                 }
 
                 // Remove previous image (only when updateKind is tag)
-                if (this.configuration.prune && container.updateKind.kind === 'tag') {
+                if (this.configuration.prune) {
+                    const tagOrDigestToRemove = container.updateKind.kind === 'tag' ? container.image.tag.value : container.image.digest.repo;
+
                     // Rebuild image definition string
                     const oldImage = registry.getImageFullName(
                         container.image,
-                        container.image.tag.value,
+                        tagOrDigestToRemove,
                     );
-                    await this.removeImage(dockerApi, oldImage);
+                    await this.removeImage(dockerApi, oldImage, logContainer);
                 }
             }
         } else {
