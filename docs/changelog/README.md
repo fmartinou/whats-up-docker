@@ -1,6 +1,6 @@
 # Changelog
 
-# develop
+# 5.16.2
 - :fire: [Docker / Docker-compose trigger] - Fix prune old image when updateKind=digest
 
 # 5.16.1
