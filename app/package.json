@@ -19,6 +19,7 @@
     "bunyan": "1.8.15",
     "capitalize": "2.0.4",
     "connect-loki": "1.2.0",
+    "cors": "2.8.5",
     "dockerode": "3.3.1",
     "env-dot-prop": "3.0.0",
     "express": "4.17.3",

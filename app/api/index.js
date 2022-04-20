@@ -2,6 +2,7 @@ const fs = require('fs');
 const https = require('https');
 const joi = require('joi');
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const log = require('../log').child({ component: 'api' });
 const auth = require('./auth');
@@ -21,6 +22,11 @@ const configurationSchema = joi.object().keys({
         enabled: joi.boolean().default(false),
         key: joi.string().when('enabled', { is: true, then: joi.required(), otherwise: joi.optional() }),
         cert: joi.string().when('enabled', { is: true, then: joi.required(), otherwise: joi.optional() }),
+    }).default({}),
+    cors: joi.object({
+        enabled: joi.boolean().default(false),
+        origin: joi.string().default('*'),
+        methods: joi.string().default('GET,HEAD,PUT,PATCH,POST,DELETE'),
     }).default({}),
 });
 
@@ -45,6 +51,14 @@ async function init() {
 
         // Trust proxy (helpful to resolve public facing hostname & protocol)
         app.set('trust proxy', true);
+
+        if (configuration.cors.enabled) {
+            log.warn(`CORS is enabled, please make sure that the provided configuration is not a security breech (${JSON.stringify(configuration.cors)})`);
+            app.use(cors({
+                origin: configuration.cors.origin,
+                methods: configuration.cors.methods,
+            }));
+        }
 
         // Init auth
         auth.init(app);

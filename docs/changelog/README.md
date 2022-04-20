@@ -1,5 +1,8 @@
 # Changelog
 
+# dev
+- :star: Add [CORS support](configuration/server/?id=server)
+
 # 5.16.2
 - :fire: [Docker / Docker-compose trigger] - Fix prune old image when updateKind=digest
 
