@@ -20,7 +20,7 @@ function addDisplayNameAndIcon() {
             containerMigrated.displayName = container.name;
         }
         if (container.displayIcon === undefined) {
-            containerMigrated.displayIcon = 'mdi-docker';
+            containerMigrated.displayIcon = 'mdi:docker';
         }
         updateContainer(containerMigrated);
     });

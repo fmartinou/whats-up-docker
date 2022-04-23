@@ -111,7 +111,7 @@ test('addHassDevice should publish message to expected hass discovery topic', as
     await mqtt.addHassDevice({
         id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
         displayName: 'wud_container_local_library_test',
-        displayIcon: 'mdi-docker',
+        displayIcon: 'mdi:docker',
         watcher: 'local',
         registry: {
             name: 'hub',

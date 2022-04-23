@@ -35,7 +35,7 @@
             "
           >
             {{ newVersion }}
-            <v-icon right small> mdi-clipboard-outline </v-icon>
+            <v-icon right small>mdi-clipboard-outline</v-icon>
           </v-chip>
         </template>
         <span class="text-caption">Copy to clipboard</span>
@@ -178,7 +178,24 @@ export default {
   },
   computed: {
     containerIcon() {
-      return this.container.displayIcon.replace("mdi:", "mdi-");
+      let icon = this.container.displayIcon;
+      icon = icon
+        .replace("mdi:", "mdi-")
+        .replace("fa:", "fa-")
+        .replace("fab:", "fab-")
+        .replace("far:", "far-")
+        .replace("fas:", "fas-")
+        .replace("si:", "si-");
+      if (icon.startsWith("fab-")) {
+        icon = this.normalizeFontawesome(icon, "fab");
+      }
+      if (icon.startsWith("far-")) {
+        icon = this.normalizeFontawesome(icon, "far");
+      }
+      if (icon.startsWith("fas-")) {
+        icon = this.normalizeFontawesome(icon, "fas");
+      }
+      return icon;
     },
 
     registryIcon() {
@@ -255,6 +272,10 @@ export default {
 
       // Hack because of a render bu on tabs inside a collapsible element
       this.$refs.tabs.onResize();
+    },
+
+    normalizeFontawesome(iconString, prefix) {
+      return `${prefix} fa-${iconString.replace(`${prefix}:`, "")}`;
     },
   },
 };

@@ -188,16 +188,16 @@ docker run \
 
 To fine-tune the behaviour of WUD _per container_, you can add labels on them.
 
-| Label               | Required       | Description                                        | Supported values                                                                            | Default value when missing                                                            |
-| ------------------- |:--------------:| -------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `wud.watch`         | :white_circle: | Watch this container                               | Valid Boolean                                                                               | `true` when `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` is `true` (`false` otherwise) |
-| `wud.watch.digest`  | :white_circle: | Watch this container digest                        | Valid Boolean                                                                               | `false`                                                                               |
-| `wud.tag.include`   | :white_circle: | Regex to include specific tags only                | Valid JavaScript Regex                                                                      |                                                                                       |
-| `wud.tag.exclude`   | :white_circle: | Regex to exclude specific tags                     | Valid JavaScript Regex                                                                      |                                                                                       |
-| `wud.tag.transform` | :white_circle: | Transform function to apply to the tag             | `$valid_regex => $valid_string_with_placeholders` (see below)                               |                                                                                       |
-| `wud.link.template` | :white_circle: | Browsable link associated to the container version | String template with placeholders `${raw}` `${major}` `${minor}` `${patch}`                 |                                                                                       |
-| `wud.display.name`  | :white_circle: | Custom display name for the container              | Valid String                                                                                | Container name                                                                        |
-| `wud.display.icon`  | :white_circle: | Custom display icon for the container              | Valid [Material Design Icon](https://materialdesignicons.com/) prefixed by `mdi:` or `mdi-` | `mdi-docker`                                                                          |
+| Label               | Required       | Description                                        | Supported values                                                                                                                                                            | Default value when missing                                                            |
+| ------------------- |:--------------:| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `wud.watch`         | :white_circle: | Watch this container                               | Valid Boolean                                                                                                                                                               | `true` when `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` is `true` (`false` otherwise) |
+| `wud.watch.digest`  | :white_circle: | Watch this container digest                        | Valid Boolean                                                                                                                                                               | `false`                                                                               |
+| `wud.tag.include`   | :white_circle: | Regex to include specific tags only                | Valid JavaScript Regex                                                                                                                                                      |                                                                                       |
+| `wud.tag.exclude`   | :white_circle: | Regex to exclude specific tags                     | Valid JavaScript Regex                                                                                                                                                      |                                                                                       |
+| `wud.tag.transform` | :white_circle: | Transform function to apply to the tag             | `$valid_regex => $valid_string_with_placeholders` (see below)                                                                                                               |                                                                                       |
+| `wud.link.template` | :white_circle: | Browsable link associated to the container version | String template with placeholders `${raw}` `${major}` `${minor}` `${patch}`                                                                                                 |                                                                                       |
+| `wud.display.name`  | :white_circle: | Custom display name for the container              | Valid String                                                                                                                                                                | Container name                                                                        |
+| `wud.display.icon`  | :white_circle: | Custom display icon for the container              | Valid [Material Design Icon](https://materialdesignicons.com/), [Fontawesome Icon](https://fontawesome.com/) or [Simple icon](https://simpleicons.org/) (see details below) | `mdi:docker`                                                                          |
 
 ## Label examples
 
@@ -396,6 +396,15 @@ docker run -d --name mariadb --label 'wud.link.template=https://mariadb.com/kb/e
 ### Customize the name and the icon to display
 You can customize the name & the icon of a container (displayed in the UI, in Home-Assistant...)
 
+Icons must be prefixed with:
+- `mdi:` or `mdi-` for [Material Design icons](https://materialdesignicons.com/) (`mdi:database`, `mdi-server`...)
+- `fab:` or `fab-` for [Fontawesome brand icons](https://fontawesome.com/) (`fab:github`, `fab-mailchimp`...)
+- `far:` or `far-` for [Fontawesome regular icons](https://fontawesome.com/) (`far:heart`, `far-house`...)
+- `fas:` or `fas-` for [Fontawesome solid icons](https://fontawesome.com/) (`fas:heart`, `fas-house`...)
+- `si:` or `si-` for [Simple icons](https://simpleicons.org/) (`si:mysql`, `si-plex`...)
+
+?> If you want to display Fontawesome icons or Simple icons in Home-Assistant, you need to install first the [HASS-fontawesome](https://github.com/thomasloven/hass-fontawesome) and the [HASS-simpleicons](https://github.com/vigonotion/hass-simpleicons) components.
+
 <!-- tabs:start -->
 #### **Docker Compose**
 ```yaml
@@ -407,7 +416,7 @@ services:
     image: mariadb:10.6.4
     labels:
       - wud.display.name=Maria DB
-      - wud.display.icon=mdi-database
+      - wud.display.icon=si:mariadb
 ```
 
 #### **Docker**

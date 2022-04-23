@@ -41,7 +41,13 @@ function getHassEntityId(containerTopic) {
  * @return {*}
  */
 function sanitizeIcon(icon) {
-    return icon.replace('mdi-', 'mdi:');
+    return icon
+        .replace('mdi-', 'mdi:')
+        .replace('fa-', 'fa:')
+        .replace('fab-', 'fab:')
+        .replace('far-', 'far:')
+        .replace('fas-', 'fas:')
+        .replace('si-', 'si:');
 }
 
 /**

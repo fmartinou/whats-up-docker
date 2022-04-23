@@ -3,6 +3,13 @@ import "@fontsource/roboto";
 
 // Material design icons
 import "@mdi/font/css/materialdesignicons.css";
+
+// Font-awesome
+import "@fortawesome/fontawesome-free/css/all.css";
+
+// Simple icons
+import "simple-icons-font/font/simple-icons.min.css";
+
 import Vue from "vue";
 import Vuetify from "vuetify/lib/framework";
 

@@ -2,6 +2,7 @@
 
 # dev
 - :star: Add [CORS support](configuration/server/?id=server)
+- :star: Add [Fontawesome icons](https://fontawesome.com/) and [Simple icons](https://simpleicons.org/) support
 
 # 5.16.2
 - :fire: [Docker / Docker-compose trigger] - Fix prune old image when updateKind=digest

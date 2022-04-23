@@ -17,3 +17,4 @@ services:
     labels:
       - wud.watch=true
       - wud.tag.include=^\d+\.\d+.\d+$$
+      - wud.display.icon=si:bitwarden
