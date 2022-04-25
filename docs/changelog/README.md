@@ -1,7 +1,7 @@
 # Changelog
 
 # 5.17.0
-- :star: Add [CORS support](configuration/server/?id=server)
+- :star: Add [CORS](configuration/server/?id=server) support
 - :star: Add [Fontawesome icons](https://fontawesome.com/) and [Simple icons](https://simpleicons.org/) support
 
 # 5.16.2
