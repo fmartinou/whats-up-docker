@@ -1,5 +1,8 @@
 # Changelog
 
+# 5.17.1
+- :fire: [Docker / Docker-compose trigger] - Fix error when recreating a container using `network_mode: service:other_service`
+
 # 5.17.0
 - :star: Add [CORS](configuration/server/?id=server) support
 - :star: Add [Fontawesome icons](https://fontawesome.com/) and [Simple icons](https://simpleicons.org/) support
