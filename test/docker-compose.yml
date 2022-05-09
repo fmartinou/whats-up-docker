@@ -11,10 +11,12 @@ services:
       - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
     volumes:
       - ./registry/auth:/auth
-  traefik_245:
-    image: traefik:2.6.3
-    container_name: traefik_245
+  sabnzbd:
+    image: linuxserver/sabnzbd:3.5.3
+    container_name: sabnzbd
+    network_mode: service:registry
+    depends_on:
+      - registry
     labels:
       - wud.watch=true
       - wud.tag.include=^\d+\.\d+.\d+$$
-      - wud.display.icon=si:bitwarden

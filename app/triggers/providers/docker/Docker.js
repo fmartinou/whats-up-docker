@@ -205,6 +205,16 @@ class Docker extends Trigger {
                     }
                 });
         }
+        // Handle situation when container is using network_mode: service:other_service
+        if (
+            containerClone.HostConfig
+            && containerClone.HostConfig.NetworkMode
+            && containerClone.HostConfig.NetworkMode.startsWith('container:')
+        ) {
+            delete containerClone.Hostname;
+            delete containerClone.ExposedPorts;
+        }
+
         return containerClone;
     }
 

@@ -34,3 +34,29 @@ All implemented triggers, in addition to their specific configuration, also supp
 ?> Threshold `patch` means that the trigger will run only if this is a `patch` semver change
 
 ?> `WUD_TRIGGER_{{trigger_type}}}_{trigger_name}_ONCE=false` can be useful when `WUD_TRIGGER_{{trigger_type}}}_{trigger_name}_MODE=batch` to get a report with all pending updates.
+
+
+### Examples
+
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_TRIGGER_SMTP_GMAIL_SIMPLETITLE=Container $${name} can be updated
+      - WUD_TRIGGER_SMTP_GMAIL_SIMPLEBODY=Container $${name} can be updated from version $${local} to version $${remote}
+```
+#### **Docker**
+```bash
+docker run \
+  -e 'WUD_TRIGGER_SMTP_GMAIL_SIMPLETITLE=Container ${name} can be updated' \
+  -e 'WUD_TRIGGER_SMTP_GMAIL_SIMPLEBODY=Container ${name} can be updated from version ${local} to version ${remote}'
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
