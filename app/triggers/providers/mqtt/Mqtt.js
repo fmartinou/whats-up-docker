@@ -154,6 +154,7 @@ class Mqtt extends Trigger {
         this.log.info(`Add hass device [id=${entityId}]`);
         await this.client.publish(discoveryTopic, JSON.stringify({
             unique_id: entityId,
+            object_id: entityId,
             name: container.displayName,
             device: {
                 identifiers: [hassDeviceId],
