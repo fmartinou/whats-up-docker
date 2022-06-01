@@ -150,6 +150,7 @@ test('addHassDevice should publish message to expected hass discovery topic', as
         payload_on: true,
         state_topic: 'wud/container/local/library/test',
         unique_id: 'wud_container_local_library_test',
+        object_id: 'wud_container_local_library_test',
         value_template: '{{ value_json.update_available }}',
     });
 });
