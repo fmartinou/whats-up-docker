@@ -135,7 +135,7 @@ docker run \
 - Client Type: `Confidential`
 - Client ID: `<generated value>`
 - Client Secret: `<generated value>`
-- Redirect URIs/Origins: `https://<your_wud_public_domain>/auth/oidc/auth0/cb`
+- Redirect URIs/Origins: `https://<your_wud_public_domain>/auth/oidc/authentik/cb`
 - Scopes: `email`, `openid`, `profile`
 
 #### On Authentik, create an application associated to the previously created provider
