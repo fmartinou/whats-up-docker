@@ -1,5 +1,8 @@
 # Changelog
 
+# dev
+- :fire: [Home-Assistant] - Fix entity id when multiple identical containers on different hosts
+
 # 5.17.1
 - :fire: [Docker / Docker-compose trigger] - Fix error when recreating a container using `network_mode: service:other_service`
 
