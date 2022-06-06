@@ -1,6 +1,6 @@
 # Changelog
 
-# dev
+# 5.17.2
 - :fire: [Home-Assistant] - Fix entity id when multiple identical containers on different hosts
 
 # 5.17.1
