@@ -10,7 +10,7 @@ const configurationValid = {
     url: 'http://xxx.com',
     method: 'POST',
     threshold: 'all',
-    mode: 'single',
+    mode: 'simple',
     once: true,
     // eslint-disable-next-line no-template-curly-in-string
     simpletitle: 'New ${kind} found for container ${name}',

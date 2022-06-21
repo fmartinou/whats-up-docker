@@ -370,7 +370,7 @@ test('addUpdateKindProperty should detect patch update', () => {
     });
 });
 
-test('addUpdateKindProperty should detect unknown semver update', () => {
+test('addUpdateKindProperty should detect prerelease semver update', () => {
     const addUpdateKindProperty = container.__get__('addUpdateKindProperty');
     const containerObject = {
         updateAvailable: true,
@@ -389,7 +389,7 @@ test('addUpdateKindProperty should detect unknown semver update', () => {
         kind: 'tag',
         localValue: '1.0.0-test1',
         remoteValue: '1.0.0-test2',
-        semverDiff: 'unknown',
+        semverDiff: 'prerelease',
     });
 });
 

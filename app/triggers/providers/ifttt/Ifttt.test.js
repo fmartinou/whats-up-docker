@@ -11,7 +11,7 @@ const configurationValid = {
     key: 'secret',
     event: 'wud-image',
     threshold: 'all',
-    mode: 'single',
+    mode: 'simple',
     once: true,
     // eslint-disable-next-line no-template-curly-in-string
     simpletitle: 'New ${kind} found for container ${name}',

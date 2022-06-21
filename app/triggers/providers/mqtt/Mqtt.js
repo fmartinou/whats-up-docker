@@ -77,8 +77,8 @@ class Mqtt extends Trigger {
     }
 
     async initTrigger() {
-        // Enforce single mode
-        this.configuration.mode = 'single';
+        // Enforce simple mode
+        this.configuration.mode = 'simple';
 
         const options = {};
         if (this.configuration.user) {

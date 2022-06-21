@@ -12,7 +12,7 @@ const configurationValid = {
     from: 'from@xx.com',
     to: 'to@xx.com',
     threshold: 'all',
-    mode: 'single',
+    mode: 'simple',
     once: true,
     // eslint-disable-next-line no-template-curly-in-string
     simpletitle: 'New ${kind} found for container ${name}',

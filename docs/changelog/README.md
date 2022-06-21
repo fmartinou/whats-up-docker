@@ -1,5 +1,9 @@
 # Changelog
 
+# dev
+- :star: Add support for `prerelease` placeholder in link templates
+- :fire: Rename trigger `single` mode to `simple` mode for better consistency with `simple_title` and `simple_body` variables
+
 # 5.17.2
 - :fire: [Home-Assistant] - Fix entity id when multiple identical containers on different hosts
 

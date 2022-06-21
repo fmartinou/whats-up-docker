@@ -26,7 +26,7 @@ function renderSimple(template, container) {
  */
 class Trigger extends Component {
     /**
-     * Handle container report (single mode).
+     * Handle container report (simple mode).
      * @param containerReport
      * @returns {Promise<void>}
      */
@@ -115,8 +115,8 @@ class Trigger extends Component {
      */
     async init() {
         await this.initTrigger();
-        if (this.configuration.mode.toLowerCase() === 'single') {
-            this.log.debug('Configure "single" mode');
+        if (this.configuration.mode.toLowerCase() === 'simple') {
+            this.log.debug('Configure "simple" mode');
             event.registerContainerReport(
                 async (containerReport) => this.handleContainerReport(containerReport),
             );
@@ -145,8 +145,8 @@ class Trigger extends Component {
             mode: this.joi
                 .string()
                 .insensitive()
-                .valid('single', 'batch')
-                .default('single'),
+                .valid('simple', 'batch')
+                .default('simple'),
             once: this.joi
                 .boolean()
                 .default(true),
@@ -184,7 +184,7 @@ class Trigger extends Component {
     /* eslint-disable-next-line */
     trigger(containerWithResult) {
         // do nothing by default
-        this.log.warn('Cannot trigger container result; this trigger doe not implement "single" mode');
+        this.log.warn('Cannot trigger container result; this trigger doe not implement "simple" mode');
         return containerWithResult;
     }
 

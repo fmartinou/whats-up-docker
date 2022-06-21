@@ -16,6 +16,25 @@ If the application is healthy, the Http Response Status Code is `200` (`500` oth
 }
 ```
 
+You can use it to configure health checks performed by your container orchestrator, for example:
+
+```yaml
+version: '3'
+
+services:
+
+  whatsupdocker:
+    image: fmartinou/whats-up-docker:5.1.0
+    ...
+    healthcheck:
+      test: wget --no-verbose --tries=1 --no-check-certificate --spider http://localhost:3000
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+```
+
+
 ## Prometheus metrics
 ![logo](prometheus.png)
 

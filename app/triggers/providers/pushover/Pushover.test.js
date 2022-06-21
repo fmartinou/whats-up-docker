@@ -17,7 +17,7 @@ const configurationValid = {
     priority: 0,
     sound: 'pushover',
     threshold: 'all',
-    mode: 'single',
+    mode: 'simple',
     once: true,
     // eslint-disable-next-line no-template-curly-in-string
     simpletitle: 'New ${kind} found for container ${name}',
@@ -50,7 +50,7 @@ test('validateConfiguration should throw error when invalid', () => {
 test('maskConfiguration should mask sensitive data', () => {
     pushover.configuration = configurationValid;
     expect(pushover.maskConfiguration()).toEqual({
-        mode: 'single',
+        mode: 'simple',
         priority: 0,
         // eslint-disable-next-line no-template-curly-in-string
         simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',

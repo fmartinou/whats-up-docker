@@ -188,14 +188,14 @@ docker run \
 
 To fine-tune the behaviour of WUD _per container_, you can add labels on them.
 
-| Label               | Required       | Description                                        | Supported values                                                                                                                                                            | Default value when missing                                                            |
-| ------------------- |:--------------:| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Label               |    Required    | Description                                        | Supported values                                                                                                                                                            | Default value when missing                                                            |
+|---------------------|:--------------:|----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
 | `wud.watch`         | :white_circle: | Watch this container                               | Valid Boolean                                                                                                                                                               | `true` when `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` is `true` (`false` otherwise) |
 | `wud.watch.digest`  | :white_circle: | Watch this container digest                        | Valid Boolean                                                                                                                                                               | `false`                                                                               |
 | `wud.tag.include`   | :white_circle: | Regex to include specific tags only                | Valid JavaScript Regex                                                                                                                                                      |                                                                                       |
 | `wud.tag.exclude`   | :white_circle: | Regex to exclude specific tags                     | Valid JavaScript Regex                                                                                                                                                      |                                                                                       |
 | `wud.tag.transform` | :white_circle: | Transform function to apply to the tag             | `$valid_regex => $valid_string_with_placeholders` (see below)                                                                                                               |                                                                                       |
-| `wud.link.template` | :white_circle: | Browsable link associated to the container version | String template with placeholders `${raw}` `${major}` `${minor}` `${patch}`                                                                                                 |                                                                                       |
+| `wud.link.template` | :white_circle: | Browsable link associated to the container version | String template with placeholders `${raw}` `${major}` `${minor}` `${patch}` `${prerelease}`                                                                                 |                                                                                       |
 | `wud.display.name`  | :white_circle: | Custom display name for the container              | Valid String                                                                                                                                                                | Container name                                                                        |
 | `wud.display.icon`  | :white_circle: | Custom display icon for the container              | Valid [Material Design Icon](https://materialdesignicons.com/), [Fontawesome Icon](https://fontawesome.com/) or [Simple icon](https://simpleicons.org/) (see details below) | `mdi:docker`                                                                          |
 
@@ -371,8 +371,9 @@ you would specify a template like `https://mariadb.com/kb/en/mariadb-${major}${m
 The available placeholders are:
 - `${raw}` the full unparsed version
 - `${major}` the major version (if valid semver)
-- `${minor}` the major version (if valid semver)
-- `${patch}` the major version (if valid semver)
+- `${minor}` the minor version (if valid semver)
+- `${patch}` the patch version (if valid semver)
+- `${prerelease}` the prerelease version (if valid semver)
 
 <!-- tabs:start -->
 #### **Docker Compose**

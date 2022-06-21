@@ -16,7 +16,7 @@ let trigger;
 const configurationValid = {
     threshold: 'all',
     once: true,
-    mode: 'single',
+    mode: 'simple',
     // eslint-disable-next-line no-template-curly-in-string
     simpletitle: 'New ${kind} found for container ${name}',
     // eslint-disable-next-line no-template-curly-in-string
@@ -46,7 +46,7 @@ test('validateConfiguration should throw error when invalid', () => {
     }).toThrowError(ValidationError);
 });
 
-test('init should register to container report when single mode enabled', async () => {
+test('init should register to container report when simple mode enabled', async () => {
     const spy = jest.spyOn(event, 'registerContainerReport');
     await trigger.init();
     expect(spy).toHaveBeenCalled();
@@ -102,7 +102,7 @@ test.each(handleContainerReportTestCases)(
         trigger.configuration = {
             threshold: item.threshold,
             once: item.once,
-            mode: 'single',
+            mode: 'simple',
         };
         await trigger.init();
 
@@ -136,7 +136,7 @@ test.each(handleContainerReportTestCases)(
 test('handleContainerReport should warn when trigger method of the trigger fails', async () => {
     trigger.configuration = {
         threshold: 'all',
-        mode: 'single',
+        mode: 'simple',
     };
     trigger.trigger = () => { throw new Error('Fail!!!'); };
     await trigger.init();
@@ -194,7 +194,7 @@ test.each(handleContainerReportsTestCases)(
         trigger.configuration = {
             threshold: item.threshold,
             once: item.once,
-            mode: 'single',
+            mode: 'simple',
         };
         await trigger.init();
 

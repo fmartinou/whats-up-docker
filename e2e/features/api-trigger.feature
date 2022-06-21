@@ -9,7 +9,7 @@ Feature: WUD Trigger API Exposure
     And response body path $[0].type should be mock
     And response body path $[0].name should be example
     And response body path $[0].configuration.threshold should be all
-    And response body path $[0].configuration.mode should be single
+    And response body path $[0].configuration.mode should be simple
     And response body path $[0].configuration.once should be true
     And response body path $[0].configuration.simpletitle should be New \$\{kind\} found for container \$\{name\}
     And response body path $[0].configuration.batchtitle should be \$\{count\} updates available
@@ -23,7 +23,7 @@ Feature: WUD Trigger API Exposure
     And response body path $.type should be mock
     And response body path $.name should be example
     And response body path $.configuration.threshold should be all
-    And response body path $.configuration.mode should be single
+    And response body path $.configuration.mode should be simple
     And response body path $.configuration.once should be true
     And response body path $.configuration.simpletitle should be New \$\{kind\} found for container \$\{name\}
     And response body path $.configuration.batchtitle should be \$\{count\} updates available

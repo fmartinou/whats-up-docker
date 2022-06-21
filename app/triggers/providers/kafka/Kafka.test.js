@@ -13,7 +13,7 @@ const configurationValid = {
     clientId: 'wud',
     ssl: false,
     threshold: 'all',
-    mode: 'single',
+    mode: 'simple',
     once: true,
     // eslint-disable-next-line no-template-curly-in-string
     simpletitle: 'New ${kind} found for container ${name}',

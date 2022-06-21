@@ -52,7 +52,7 @@ const schema = joi.object({
         kind: joi.string().allow('tag', 'digest', 'unknown').required(),
         localValue: joi.string(),
         remoteValue: joi.string(),
-        semverDiff: joi.string().allow('major', 'minor', 'patch', 'unknown'),
+        semverDiff: joi.string().allow('major', 'minor', 'patch', 'prerelease', 'unknown'),
     }).default({ kind: 'unknown' }),
     resultChanged: joi.function(),
 });
@@ -73,10 +73,13 @@ function getLink(linkTemplate, tagValue, isSemver) {
     link = link.replace(/\${\s*raw\s*}/g, raw);
     if (isSemver) {
         const versionSemver = parseSemver(tagValue);
-        const { major, minor, patch } = versionSemver;
+        const {
+            major, minor, patch, prerelease,
+        } = versionSemver;
         link = link.replace(/\${\s*major\s*}/g, major);
         link = link.replace(/\${\s*minor\s*}/g, minor);
         link = link.replace(/\${\s*patch\s*}/g, patch);
+        link = link.replace(/\${\s*prerelease\s*}/g, prerelease && prerelease.length > 0 ? prerelease[0] : '');
     }
     return link;
 }
@@ -206,6 +209,9 @@ function addUpdateKindProperty(container) {
                             case 'patch':
                             case 'prepatch':
                                 semverDiffWud = 'patch';
+                                break;
+                            case 'prerelease':
+                                semverDiffWud = 'prerelease';
                                 break;
                             default:
                                 semverDiffWud = 'unknown';

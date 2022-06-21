@@ -11,7 +11,7 @@ const configurationValid = {
     urls: 'maito://user:pass@gmail.com',
     threshold: 'all',
     once: true,
-    mode: 'single',
+    mode: 'simple',
     // eslint-disable-next-line no-template-curly-in-string
     simpletitle: 'New ${kind} found for container ${name}',
     // eslint-disable-next-line no-template-curly-in-string
