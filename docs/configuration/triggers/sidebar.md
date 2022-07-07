@@ -21,4 +21,5 @@
 - [UI](ui/)
 - [Api](api/)
 - [Monitoring](monitoring/)
+- [FAQ](faq/)
 - [Changelog](changelog/)

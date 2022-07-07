@@ -10,6 +10,6 @@
   "repository": "fmartinou/whats-up-docker",
   "license": "MIT",
   "devDependencies": {
-    "docsify-cli": "4.4.3"
+    "docsify-cli": "4.4.4"
   }
 }
