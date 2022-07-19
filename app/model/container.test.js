@@ -218,6 +218,43 @@ test('model should flag updateAvailable when created is different', () => {
     expect(containerValidated.resultChanged(containerDifferent)).toBeTruthy();
 });
 
+test('model should support transforms for links', () => {
+    const containerValidated = container.validate({
+        id: 'container-123456789',
+        name: 'test',
+        watcher: 'test',
+        transformTags: '^(\\d+\\.\\d+)-.*-(\\d+) => $1.$2',
+        // eslint-disable-next-line no-template-curly-in-string
+        linkTemplate: 'https://release-${major}.${minor}.${patch}.acme.com',
+        image: {
+            id: 'image-123456789',
+            registry: {
+                name: 'hub',
+                url: 'https://hub',
+            },
+            name: 'organization/image',
+            tag: {
+                value: '1.2-foo-3',
+                semver: true,
+            },
+            digest: {
+            },
+            architecture: 'arch',
+            os: 'os',
+        },
+        result: {
+            tag: '1.2-bar-4',
+        },
+    });
+
+    expect(containerValidated).toMatchObject({
+        link: 'https://release-1.2.3.acme.com',
+        result: {
+            link: 'https://release-1.2.4.acme.com',
+        },
+    });
+});
+
 test('flatten should be flatten the nested properties with underscores when called', () => {
     const containerValidated = container.validate({
         id: 'container-123456789',

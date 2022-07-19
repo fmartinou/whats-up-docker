@@ -138,7 +138,7 @@ function addLinkProperty(container) {
             get() {
                 return getLink(
                     container.linkTemplate,
-                    container.image.tag.value,
+                    transformTag(container.transformTags, container.image.tag.value),
                     container.image.tag.semver,
                 );
             },
@@ -150,7 +150,7 @@ function addLinkProperty(container) {
                 get() {
                     return getLink(
                         container.linkTemplate,
-                        container.result.tag,
+                        transformTag(container.transformTags, container.result.tag),
                         container.image.tag.semver,
                     );
                 },
