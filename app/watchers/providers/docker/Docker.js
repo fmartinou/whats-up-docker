@@ -581,7 +581,7 @@ class Docker extends Component {
         }
         const parsedImage = parse(imageNameToParse);
         const tagName = parsedImage.tag || 'latest';
-        const parsedTag = parseSemver(tagName);
+        const parsedTag = parseSemver(transformTag(transformTags, tagName));
         const isSemver = parsedTag !== null && parsedTag !== undefined;
         const watchDigest = isDigestToWatch(
             container.Labels[wudWatchDigest],
