@@ -370,6 +370,30 @@ test('addUpdateKindProperty should detect patch update', () => {
     });
 });
 
+test('addUpdateKindProperty should support transforms', () => {
+    const addUpdateKindProperty = container.__get__('addUpdateKindProperty');
+    const containerObject = {
+        transformTags: '^(\\d+\\.\\d+)-.*-(\\d+) => $1.$2',
+        updateAvailable: true,
+        image: {
+            tag: {
+                value: '1.2-foo-3',
+                semver: true,
+            },
+        },
+        result: {
+            tag: '1.2-bar-4',
+        },
+    };
+    addUpdateKindProperty(containerObject);
+    expect(containerObject.updateKind).toEqual({
+        kind: 'tag',
+        localValue: '1.2-foo-3',
+        remoteValue: '1.2-bar-4',
+        semverDiff: 'patch',
+    });
+});
+
 test('addUpdateKindProperty should detect prerelease semver update', () => {
     const addUpdateKindProperty = container.__get__('addUpdateKindProperty');
     const containerObject = {

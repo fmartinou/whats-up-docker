@@ -194,8 +194,8 @@ function addUpdateKindProperty(container) {
                         const isSemver = container.image.tag.semver;
                         if (isSemver) {
                             const semverDiff = diffSemver(
-                                container.image.tag.value,
-                                container.result.tag,
+                                transformTag(container.transformTags, container.image.tag.value),
+                                transformTag(container.transformTags, container.result.tag),
                             );
                             switch (semverDiff) {
                             case 'major':
