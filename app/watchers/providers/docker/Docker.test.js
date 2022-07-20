@@ -413,6 +413,43 @@ test('addImageDetailsToContainer should add an image definition to the container
     });
 });
 
+test('addImageDetailsToContainer should support transforms', async () => {
+    docker.dockerApi = {
+        getImage: () => ({
+            inspect: () => ({
+                Id: 'image-123456789',
+                Architecture: 'arch',
+                Os: 'os',
+            }),
+        }),
+    };
+    const container = {
+        Id: 'container-123456789',
+        Image: 'organization/image:version',
+        Names: ['/test'],
+        Labels: {},
+    };
+    const tagTransform = '^(version)$ => $1-1.0.0';
+
+    const containerWithImage = await docker.addImageDetailsToContainer(
+        container,
+        undefined, // tagInclude
+        undefined, // tagExclude
+        tagTransform,
+    );
+    expect(containerWithImage).toMatchObject({
+        image: {
+            tag: {
+                value: 'version',
+                semver: true,
+            },
+        },
+        result: {
+            tag: 'version',
+        },
+    });
+});
+
 test('watchContainer should return container report when found', async () => {
     storeContainer.getContainer = () => (undefined);
     storeContainer.insertContainer = (container) => (container);
