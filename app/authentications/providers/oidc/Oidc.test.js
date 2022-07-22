@@ -48,5 +48,6 @@ test('maskConfiguration should mask configuration secrets', () => {
         clientsecret: 's****t',
         discovery: 'https://idp/.well-known/openid-configuration',
         redirect: false,
+        timeout: 5000,
     });
 });
