@@ -13,6 +13,7 @@ const configurationValid = {
     clientsecret: 'secret',
     discovery: 'https://idp/.well-known/openid-configuration',
     redirect: false,
+    timeout: 5000,
 };
 
 const oidc = new Oidc();

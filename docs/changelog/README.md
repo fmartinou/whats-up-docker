@@ -2,6 +2,7 @@
 
 # dev
 - :star: Add Hotio Registry support
+- :star: Add custom timeout configuration on OIDC authentication providers
 - :fire: Fix missing transform function calls when computing links and semver comparisons
 
 # 5.18.0

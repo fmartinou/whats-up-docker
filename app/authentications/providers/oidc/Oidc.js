@@ -1,4 +1,4 @@
-const { Issuer, generators } = require('openid-client');
+const { Issuer, generators, custom } = require('openid-client');
 const { v4: uuid } = require('uuid');
 const Authentication = require('../Authentication');
 const OidcStrategy = require('./OidcStrategy');
@@ -18,11 +18,15 @@ class Oidc extends Authentication {
             clientid: this.joi.string().required(),
             clientsecret: this.joi.string().required(),
             redirect: this.joi.boolean().default(false),
+            timeout: this.joi.number().greater(500).default(5000),
         });
     }
 
     async initAuthentication() {
         this.log.debug(`Discovering configuration from ${this.configuration.discovery}`);
+        custom.setHttpOptionsDefaults({
+            timeout: this.configuration.timeout,
+        });
         const issuer = await Issuer.discover(this.configuration.discovery);
         this.client = new issuer.Client({
             client_id: this.configuration.clientid,
