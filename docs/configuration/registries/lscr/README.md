@@ -1,7 +1,7 @@
 # LSCR (LinuxServer Container Registry)
 ![logo](linuxserver.png)
 
-The `lscr` registry lets you configure [LSCR](https://www.linuxserver.io/blog/wrap-up-warm-for-the-winter) integration.
+The `lscr` registry lets you configure [LSCR](https://fleet.linuxserver.io/) integration.
 
 ### Variables
 

@@ -20,3 +20,10 @@ services:
     labels:
       - wud.watch=true
       - wud.tag.include=^\d+\.\d+.\d+$$
+
+  hotio_radarr:
+    image: cr.hotio.dev/hotio/radarr:release-4.0.4.5922
+    container_name: hotio_radarr
+    labels:
+      - wud.watch=true
+      - wud.tag.include=^release-\d+\.\d+.\d+.\d+$$

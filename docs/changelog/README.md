@@ -1,6 +1,7 @@
 # Changelog
 
 # dev
+- :star: Add Hotio Registry support
 - :fire: Fix missing transform function calls when computing links and semver comparisons
 
 # 5.18.0
