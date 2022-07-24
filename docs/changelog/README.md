@@ -1,6 +1,6 @@
 # Changelog
 
-# dev
+# 5.20.0
 - :star: Add [Gitlab Registry](/configuration/registries/gitlab/) support
 
 # 5.19.0
