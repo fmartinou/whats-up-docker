@@ -9,6 +9,7 @@
         - [ECR](configuration/registries/ecr/)
         - [GCR](configuration/registries/gcr/)
         - [GHCR](configuration/registries/ghcr/)
+        - [GITLAB](configuration/registries/gitlab/)
         - [HOTIO](configuration/registries/hotio/)
         - [HUB](configuration/registries/hub/)
         - [LSCR](configuration/registries/lscr/)

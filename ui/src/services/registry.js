@@ -26,6 +26,9 @@ function getRegistryProviderIcon(provider) {
     case "gcr":
       icon = "mdi-google-cloud";
       break;
+    case "gitlab":
+      icon = "mdi-gitlab";
+      break;
     case "hub":
       icon = "mdi-docker";
       break;

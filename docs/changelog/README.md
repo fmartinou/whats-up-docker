@@ -1,7 +1,10 @@
 # Changelog
 
+# dev
+- :star: Add [Gitlab Registry](/configuration/registries/gitlab/) support
+
 # 5.19.0
-- :star: Add Hotio Registry support
+- :star: Add [Hotio Registry](/configuration/registries/hotio/) support
 - :star: Add custom timeout configuration on OIDC authentication providers
 - :fire: Fix missing transform function calls when computing links and semver comparisons
 

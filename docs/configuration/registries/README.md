@@ -12,6 +12,8 @@ WUD supports most registries:
 
 ?> [**GHCR** (Github Container Registry)](configuration/registries/ghcr/)
 
+?> [**GITLAB (Gitlab Container Registry)**](configuration/registries/gitlab/)
+
 ?> [**HOTIO** (Hotio.dev)](configuration/registries/hotio/)
 
 ?> [**HUB** (Docker Hub)](configuration/registries/hub/)

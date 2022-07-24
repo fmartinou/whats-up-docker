@@ -42,6 +42,8 @@ Gets you notified when new versions of your Docker containers are available and 
 
 > [**Github Container Registry**](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry)
 
+> [**Gitlab Container Registry**](https://docs.gitlab.com/ee/user/packages/container_registry/)
+
 > [**Google Container Registry**](https://cloud.google.com/container-registry)
 
 > [**Hotio**](https://hotio.dev)

@@ -53,6 +53,9 @@ install:
 
 script:
 
+  # Login to private registries
+  - docker login registry.gitlab.com -u "$GITLAB_USERNAME" -p "$GITLAB_TOKEN"
+
   # Pull nginx as a test image
   - docker pull nginx:1.10-alpine
   - docker pull nginx:1.20-alpine
@@ -117,6 +120,9 @@ script:
   # GHCR
   - docker run -d --name ghcr_radarr              --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+\.\d+\.\d+-ls\d+$'               ghcr.io/linuxserver/radarr:3.2.1.5070-ls105
 
+  # GITLAB
+  - docker run -d --name gitlab_test              --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+\.\d+$'                         registry.gitlab.com/manfred-martin/docker-registry-test:1.0.0
+
   # HOTIO
   - docker run -d --name hotio_radarr              --label 'wud.watch=true' --label 'wud.tag.include=^release-\d+\.\d+.\d+.\d+$'               cr.hotio.dev/hotio/radarr:release-4.0.4.5922
 
@@ -165,6 +171,7 @@ script:
     --env WUD_REGISTRY_ECR_REGION=eu-west-1
     --env WUD_REGISTRY_GCR_CLIENTEMAIL="$GCR_CLIENT_EMAIL"
     --env WUD_REGISTRY_GCR_PRIVATEKEY="$GCR_PRIVATE_KEY"
+    --env WUD_REGISTRY_GITLAB_TOKEN="$GITLAB_TOKEN"
     --env WUD_AUTH_BASIC_JOHN_USER="john"
     --env WUD_AUTH_BASIC_JOHN_HASH='$apr1$8zDVtSAY$62WBh9DspNbUKMZXYRsjS/'
     wud
