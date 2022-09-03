@@ -23,7 +23,7 @@ services:
     ...
     environment:
       - WUD_REGISTRY_LSCR_USERNAME=john@doe
-      - WUD_REGISTRY_GLSR_TOKEN=xxxxx 
+      - WUD_REGISTRY_LSCR_TOKEN=xxxxx 
 ```
 #### **Docker**
 ```bash
@@ -43,5 +43,5 @@ docker run \
 Choose an expiration time & appropriate scopes (`read:packages` is only needed for wud) and generate.
 ![image](lscr_01.png)
 
-#### Copy the token & use it as the WUD_REGISTRY_GHCR_TOKEN value
+#### Copy the token & use it as the WUD_REGISTRY_LSCR_TOKEN value
 ![image](lscr_02.png)
