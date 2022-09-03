@@ -116,7 +116,7 @@ function login(req, res) {
  * @param res
  */
 function logout(req, res) {
-    req.logout();
+    req.logout(() => {});
     res.status(200).json({
         logoutUrl: getLogoutRedirectUrl(),
     });
