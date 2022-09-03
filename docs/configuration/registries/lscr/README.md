@@ -5,10 +5,10 @@ The `lscr` registry lets you configure [LSCR](https://fleet.linuxserver.io/) int
 
 ### Variables
 
-| Env var                      | Required       | Description     | Supported values                         | Default value when missing |
-|------------------------------|:--------------:|-----------------|------------------------------------------|----------------------------| 
-| `WUD_REGISTRY_LSCR_USERNAME` | :white_circle: | Github username |                                          |                            |
-| `WUD_REGISTRY_LSCR_TOKEN`    | :white_circle: | Github token    | Github password or Github Personal Token |                            |
+| Env var                      |   Required    | Description     | Supported values                         | Default value when missing |
+|------------------------------|:-------------:|-----------------|------------------------------------------|----------------------------| 
+| `WUD_REGISTRY_LSCR_USERNAME` | :red_circle:  | Github username |                                          |                            |
+| `WUD_REGISTRY_LSCR_TOKEN`    | :red_circle:  | Github token    | Github password or Github Personal Token |                            |
 
 ### Examples
 
