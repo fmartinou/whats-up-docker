@@ -131,7 +131,6 @@ async function registerRegistries() {
     registriesToRegister.ghcr = () => registerComponent('registry', 'ghcr', 'ghcr', '', '../registries/providers');
     registriesToRegister.hotio = () => registerComponent('registry', 'hotio', 'hotio', '', '../registries/providers');
     registriesToRegister.hub = () => registerComponent('registry', 'hub', 'hub', '', '../registries/providers');
-    registriesToRegister.lscr = () => registerComponent('registry', 'lscr', 'lscr', '', '../registries/providers');
     registriesToRegister.quay = () => registerComponent('registry', 'quay', 'quay', '', '../registries/providers');
 
     try {

@@ -68,12 +68,12 @@ test('registerRegistries should register all registries', async () => {
         },
     };
     await registry.__get__('registerRegistries')();
-    expect(Object.keys(registry.getState().registry).sort()).toEqual(['ecr', 'ghcr', 'hotio', 'hub', 'lscr', 'quay']);
+    expect(Object.keys(registry.getState().registry).sort()).toEqual(['ecr', 'ghcr', 'hotio', 'hub', 'quay']);
 });
 
 test('registerRegistries should register all anonymous registries by default', async () => {
     await registry.__get__('registerRegistries')();
-    expect(Object.keys(registry.getState().registry).sort()).toEqual(['ghcr', 'hotio', 'hub', 'lscr', 'quay']);
+    expect(Object.keys(registry.getState().registry).sort()).toEqual(['ghcr', 'hotio', 'hub', 'quay']);
 });
 
 test('registerRegistries should warn when registration errors occur', async () => {
@@ -212,7 +212,7 @@ test('init should register all components', async () => {
         },
     };
     await registry.init();
-    expect(Object.keys(registry.getState().registry).sort()).toEqual(['ecr', 'ghcr', 'hotio', 'hub', 'lscr', 'quay']);
+    expect(Object.keys(registry.getState().registry).sort()).toEqual(['ecr', 'ghcr', 'hotio', 'hub', 'quay']);
     expect(Object.keys(registry.getState().trigger)).toEqual(['trigger.mock.mock1', 'trigger.mock.mock2']);
     expect(Object.keys(registry.getState().watcher)).toEqual(['watcher.docker.watcher1', 'watcher.docker.watcher2']);
     expect(Object.keys(registry.getState().authentication)).toEqual(['authentication.basic.john', 'authentication.basic.jane']);

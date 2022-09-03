@@ -5,7 +5,7 @@
         displayName
       }}</v-toolbar-title>
       <v-spacer />
-      <v-icon v-text="item.icon"></v-icon>
+      <v-icon>{{ item.icon }}</v-icon>
       <v-icon>{{ showDetail ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
     </v-app-bar>
     <v-expand-transition>

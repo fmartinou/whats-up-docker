@@ -1,11 +1,14 @@
-const Registry = require('../../Registry');
+const Ghcr = require('../ghcr/Ghcr');
 
 /**
  * Linux-Server Container Registry integration.
  */
-class Lscr extends Registry {
+class Lscr extends Ghcr {
     getConfigurationSchema() {
-        return this.joi.string().allow('');
+        return this.joi.object().keys({
+            username: this.joi.string().allow('').required(),
+            token: this.joi.string().allow('').required(),
+        });
     }
 
     /**

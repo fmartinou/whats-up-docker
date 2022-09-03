@@ -1,7 +1,7 @@
 version: "3"
 services:
   registry:
-    image: registry:2.8.1
+    image: registry:2.8.4
     container_name: registry
     ports:
       - 5000:5000
@@ -20,9 +20,13 @@ services:
     labels:
       - wud.watch=true
       - wud.tag.include=^\d+\.\d+.\d+$$
-
+  lscr_radarr:
+    image: lscr.io/linuxserver/radarr:arm64v8-version-v0.2.0.1504
+    container_name: lscr_radarr
+    labels:
+      - wud.watch=true
   hotio_radarr:
-    image: cr.hotio.dev/hotio/radarr:release-4.0.4.5922
+    image: cr.hotio.dev/hotio/radarr:release-4.1.0.6175
     container_name: hotio_radarr
     labels:
       - wud.watch=true

@@ -1,5 +1,9 @@
 # Changelog
 
+# dev
+- :star: Update all dependencies
+- :fire: Fix LSCR registry (github credentials are now required)
+
 # 5.20.0
 - :star: Add [Gitlab Registry](/configuration/registries/gitlab/) support
 
@@ -30,7 +34,7 @@
 
 # 5.16.0
 - :star: Add support for [custom registries](configuration/registries/custom/)
-- :star: Enable by default all registries with possible anonymous access (hub, ghcr, lscr, quay)
+- :star: Enable by default all registries with possible anonymous access (hub, ghcr, quay)
 - :star: Add [HTTPS support](configuration/server/?id=server)
 - :star: Update all dependencies
 - :fire: [Docker / Docker-compose trigger] - Fix error when pulling from private registry

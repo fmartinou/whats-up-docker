@@ -36,7 +36,7 @@
     </v-list-item>
     <v-list-item>
       <v-list-item-avatar>
-        <v-icon color="secondary" v-text="registryIcon" />
+        <v-icon color="secondary">{{ registryIcon }}</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title>Registry</v-list-item-title>
@@ -87,7 +87,7 @@
     </v-list-item>
     <v-list-item>
       <v-list-item-avatar>
-        <v-icon color="secondary" v-text="osIcon" />
+        <v-icon color="secondary">{{ osIcon }}</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title>OS / Architecture</v-list-item-title>

@@ -26,5 +26,4 @@ WUD supports most registries:
 GHCR \
 HOTIO \
 HUB \
-LSCR \
 QUAY

@@ -61,7 +61,7 @@
             class="mb-0"
           >
             <v-list-item-icon>
-              <v-icon v-text="configurationItem.icon" />
+              <v-icon>{{ configurationItem.icon }}</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="text-capitalize"
@@ -78,7 +78,7 @@
           class="mb-0"
         >
           <v-list-item-icon>
-            <v-icon v-text="configurationItem.icon" />
+            <v-icon>{{ configurationItem.icon }}</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title class="text-capitalize"
