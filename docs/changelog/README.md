@@ -1,5 +1,8 @@
 # Changelog
 
+# dev
+- :fire: Fix favicon on Firefox
+
 # 5.20.1
 - :star: Update all dependencies
 - :fire: Fix LSCR registry (github credentials are now required)
