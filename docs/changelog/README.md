@@ -1,6 +1,6 @@
 # Changelog
 
-# dev
+# 5.20.2
 - :fire: Fix favicon on Firefox
 
 # 5.20.1
