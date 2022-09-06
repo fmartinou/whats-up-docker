@@ -4,20 +4,6 @@ const Trigger = require('../docker/Docker');
 const { getState } = require('../../../registry');
 
 /**
- * Read docker-compose file.
- * @returns {Promise<any>}
- */
-async function getComposeFile(file) {
-    try {
-        const composeFileBuffer = await fs.readFile(file);
-        return yaml.parse(composeFileBuffer.toString());
-    } catch (e) {
-        this.log.error(`File not found (${file})`);
-        throw e;
-    }
-}
-
-/**
  * Update a Docker compose stack with an updated one.
  */
 class Dockercompose extends Trigger {
@@ -52,7 +38,7 @@ class Dockercompose extends Trigger {
      * @returns {Promise<void>}
      */
     async triggerBatch(containers) {
-        const compose = await getComposeFile(this.configuration.file);
+        const compose = await this.getComposeFile();
         let composeUpdated = compose;
 
         // Filter on containers running on local host
@@ -141,6 +127,20 @@ class Dockercompose extends Trigger {
         } catch (e) {
             this.log.error(`Error when writing ${file} (${e.message})`);
             this.log.debug(e);
+        }
+    }
+
+    /**
+     * Read docker-compose file.
+     * @returns {Promise<any>}
+     */
+    async getComposeFile() {
+        try {
+            const composeFileBuffer = await fs.readFile(this.configuration.file);
+            return yaml.parse(composeFileBuffer.toString());
+        } catch (e) {
+            this.log.error(`Error when parsing the docker-compose yaml file (${e.message})`);
+            throw e;
         }
     }
 }
