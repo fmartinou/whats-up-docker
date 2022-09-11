@@ -1,5 +1,9 @@
 # Changelog
 
+# dev
+- :fire: [Docker-compose trigger] Fix missing comments & formatting when rewriting the docker-compose.yaml file
+- :fire: [Docker-compose trigger] Improve docker-compose.yaml file parsing errors
+
 # 5.20.2
 - :fire: Fix favicon on Firefox
 

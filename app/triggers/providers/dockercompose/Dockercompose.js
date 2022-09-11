@@ -33,13 +33,12 @@ class Dockercompose extends Trigger {
     }
 
     /**
-     * Update the compose stack.
+     * Update the docker-compose stack.
      * @param containers the containers
      * @returns {Promise<void>}
      */
     async triggerBatch(containers) {
-        const compose = await this.getComposeFile();
-        let composeUpdated = compose;
+        const compose = await this.getComposeFileAsObject();
 
         // Filter on containers running on local host
         const containersFiltered = containers.filter((container) => {
@@ -51,9 +50,10 @@ class Dockercompose extends Trigger {
             return false;
         });
 
-        containersFiltered.forEach((container) => {
-            composeUpdated = this.updateService(compose, container);
-        });
+        // [{ current: '1.0.0', update: '2.0.0' }, {...}]
+        const currentVersionToUpdateVersionArray = containersFiltered
+            .map((container) => this.mapCurrentVersionToUpdateVersion(compose, container))
+            .filter((map) => map !== undefined);
 
         // Dry-run?
         if (this.configuration.dryrun) {
@@ -65,12 +65,23 @@ class Dockercompose extends Trigger {
                 await this.backup(this.configuration.file, backupFile);
             }
 
+            // Read the compose file as a string
+            let composeFileStr = (await this.getComposeFile()).toString();
+
+            // Replace all versions
+            currentVersionToUpdateVersionArray
+                .forEach(
+                    ({ current, update }) => {
+                        composeFileStr = composeFileStr.replaceAll(current, update);
+                    },
+                );
+
             // Write docker-compose.yml file back
-            await this.writeComposeFile(this.configuration.file, yaml.stringify(composeUpdated));
+            await this.writeComposeFile(this.configuration.file, composeFileStr);
         }
 
         // Update all containers
-        // (super.notify will take care of the dry-run mode as well for each container)
+        // (super.notify will take care of the dry-run mode for each container as well)
         await Promise.all(containersFiltered.map((container) => this.trigger(container)));
     }
 
@@ -89,8 +100,15 @@ class Dockercompose extends Trigger {
         }
     }
 
-    updateService(compose, container) {
-        const composeUpdated = compose;
+    /**
+     * Return a map containing the image declaration
+     * with the current version
+     * and the image declaration with the update version.
+     * @param compose
+     * @param container
+     * @returns {{current, update}|undefined}
+     */
+    mapCurrentVersionToUpdateVersion(compose, container) {
         // Get registry configuration
         this.log.debug(`Get ${container.image.registry.name} registry manager`);
         const registry = getState().registry[container.image.registry.name];
@@ -101,8 +119,8 @@ class Dockercompose extends Trigger {
             container.image.tag.value,
         );
 
-        const serviceKeyToUpdate = Object.keys(composeUpdated.services).find((serviceKey) => {
-            const service = composeUpdated.services[serviceKey];
+        const serviceKeyToUpdate = Object.keys(compose.services).find((serviceKey) => {
+            const service = compose.services[serviceKey];
             return service.image.includes(currentImage);
         });
 
@@ -110,9 +128,13 @@ class Dockercompose extends Trigger {
         const newImage = this.getNewImageFullName(registry, container);
 
         if (serviceKeyToUpdate) {
-            composeUpdated.services[serviceKeyToUpdate].image = newImage;
+            return {
+                current: compose.services[serviceKeyToUpdate].image,
+                update: newImage,
+            };
         }
-        return composeUpdated;
+        this.log.debug(`Container [${container.name}] does not belong to this compose file => ignoring`);
+        return undefined;
     }
 
     /**
@@ -131,13 +153,25 @@ class Dockercompose extends Trigger {
     }
 
     /**
-     * Read docker-compose file.
+     * Read docker-compose file as a buffer.
      * @returns {Promise<any>}
      */
-    async getComposeFile() {
+    getComposeFile() {
         try {
-            const composeFileBuffer = await fs.readFile(this.configuration.file);
-            return yaml.parse(composeFileBuffer.toString());
+            return fs.readFile(this.configuration.file);
+        } catch (e) {
+            this.log.error(`Error when reading the docker-compose yaml file (${e.message})`);
+            throw e;
+        }
+    }
+
+    /**
+     * Read docker-compose file as an object.
+     * @returns {Promise<any>}
+     */
+    async getComposeFileAsObject() {
+        try {
+            return yaml.parse((await this.getComposeFile()).toString());
         } catch (e) {
             this.log.error(`Error when parsing the docker-compose yaml file (${e.message})`);
             throw e;

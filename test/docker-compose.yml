@@ -1,33 +1,35 @@
-version: "3"
+version: '3'
+
 services:
+
+  # Self-hosted registry
   registry:
-    image: registry:2.8.4
+    image: registry:2.8.1
     container_name: registry
     ports:
-      - 5000:5000
+      - "8000:8000"
+    labels:
+      - wud.watch=true
     environment:
       - REGISTRY_AUTH=htpasswd
       - REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm
       - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
     volumes:
       - ./registry/auth:/auth
-  sabnzbd:
-    image: linuxserver/sabnzbd:3.5.3
-    container_name: sabnzbd
-    network_mode: service:registry
-    depends_on:
-      - registry
+
+  # Nginx
+  nginx_latest:
+    image: nginx
+    container_name: nginx_latest
     labels:
       - wud.watch=true
-      - wud.tag.include=^\d+\.\d+.\d+$$
-  lscr_radarr:
-    image: lscr.io/linuxserver/radarr:arm64v8-version-v0.2.0.1504
-    container_name: lscr_radarr
+      - wud.tag.include=^latest$$
+      - wud.watch.digest=true
+
+  # Traefik
+  traefik_245:
+    image: traefik:2.8.4
+    container_name: traefik_245
     labels:
-      - wud.watch=true
-  hotio_radarr:
-    image: cr.hotio.dev/hotio/radarr:release-4.1.0.6175
-    container_name: hotio_radarr
-    labels:
-      - wud.watch=true
-      - wud.tag.include=^release-\d+\.\d+.\d+.\d+$$
+      - wud.watch=true                    # check that comments are preserved
+      - wud.tag.include=^\d+\.\d+.\d+$$   # check that comments are preserved
