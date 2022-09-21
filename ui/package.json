@@ -15,7 +15,7 @@
     "v-clipboard": "2.2.3",
     "vue": "2.7.10",
     "vue-router": "3.6.4",
-    "vuetify": "2.6.9"
+    "vuetify": "2.6.10"
   },
   "devDependencies": {
     "@babel/core": "7.18.13",
