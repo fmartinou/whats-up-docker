@@ -1,5 +1,8 @@
 # Changelog
 
+# dev
+- :fire: [UI] Fix misaligned icons in sidebar
+
 # 5.20.3
 - :fire: [Docker-compose trigger] Fix missing comments & formatting when rewriting the docker-compose.yaml file
 - :fire: [Docker-compose trigger] Improve docker-compose.yaml file parsing errors

@@ -1,8 +1,7 @@
 <template>
   <v-navigation-drawer
     app
-    :mini-variant="mini"
-    :mini-variant-width="70"
+    :mini-variant.sync="mini"
     permanent
     :disable-route-watcher="true"
     color="primary"
@@ -10,7 +9,7 @@
     :clipped="true"
   >
     <v-toolbar flat color="primary" dark class="ml-1 pa-0">
-      <v-app-bar-nav-icon @click.stop="mini = !mini">
+      <v-app-bar-nav-icon @click.stop="mini = !mini" style="margin-left: -16px">
         <v-icon v-if="!mini">mdi-close</v-icon>
         <v-icon v-else>mdi-menu</v-icon>
       </v-app-bar-nav-icon>

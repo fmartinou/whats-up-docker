@@ -5,7 +5,7 @@
     </v-app-bar-nav-icon>
 
     <v-toolbar-title
-      v-if="'home'.toLowerCase() !== viewName.toLowerCase()"
+      v-if="viewName && 'home'.toLowerCase() !== viewName.toLowerCase()"
       class="text-body-1 text-capitalize ml-2"
       >{{ viewName }}</v-toolbar-title
     >
