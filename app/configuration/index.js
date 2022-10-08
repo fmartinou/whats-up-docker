@@ -1,24 +1,73 @@
-const envProp = require('env-dot-prop');
+const fs = require('fs');
+const setValue = require('set-value');
+
+const VAR_FILE_SUFFIX = '__FILE';
+
+/*
+* Get a prop by path from environment variables.
+* @param prop
+* @returns {{}}
+*/
+function get(prop, env = process.env) {
+    const object = {};
+    const envVarPattern = prop.replace(/\./g, '_').toUpperCase();
+    const matchingEnvVars = Object.keys(env).filter((envKey) => envKey.startsWith(envVarPattern));
+    matchingEnvVars.forEach((matchingEnvVar) => {
+        const envVarValue = env[matchingEnvVar];
+        const matchingPropPath = matchingEnvVar.replace(/_/g, '.').toLowerCase();
+        const matchingPropPathWithoutPrefix = matchingPropPath.replace(`${prop}.`, '');
+        setValue(object, matchingPropPathWithoutPrefix, envVarValue);
+    });
+    return object;
+}
+
+/**
+ * Lookup external secrets defined in files.
+ * @param wudEnvVars
+ */
+/* eslint-disable no-param-reassign */
+function replaceSecrets(wudEnvVars) {
+    const secretFileEnvVars = Object.keys(wudEnvVars)
+        .filter((wudEnvVar) => wudEnvVar.toUpperCase().endsWith(VAR_FILE_SUFFIX));
+    secretFileEnvVars.forEach((secretFileEnvVar) => {
+        const secretKey = secretFileEnvVar.replace(VAR_FILE_SUFFIX, '');
+        const secretFilePath = wudEnvVars[secretFileEnvVar];
+        const secretFileValue = fs.readFileSync(secretFilePath, 'utf-8');
+        delete wudEnvVars[secretFileEnvVar];
+        wudEnvVars[secretKey] = secretFileValue;
+    });
+}
+
+// 1. Get a copy of all wud related env vars
+const wudEnvVars = {};
+Object.keys(process.env)
+    .filter((envVar) => envVar.toUpperCase().startsWith('WUD'))
+    .forEach((wudEnvVar) => {
+        wudEnvVars[wudEnvVar] = process.env[wudEnvVar];
+    });
+
+// 2. Replace all secret files referenced by their secret values
+replaceSecrets(wudEnvVars);
 
 function getVersion() {
-    return process.env.WUD_VERSION || 'unknown';
+    return wudEnvVars.WUD_VERSION || 'unknown';
 }
 
 function getLogLevel() {
-    return process.env.WUD_LOG_LEVEL || 'info';
+    return wudEnvVars.WUD_LOG_LEVEL || 'info';
 }
 /**
  * Get watcher configuration.
  */
 function getWatcherConfigurations() {
-    return envProp.get('wud.watcher') || {};
+    return get('wud.watcher', wudEnvVars);
 }
 
 /**
  * Get trigger configurations.
  */
 function getTriggerConfigurations() {
-    return envProp.get('wud.trigger') || {};
+    return get('wud.trigger', wudEnvVars);
 }
 
 /**
@@ -26,7 +75,7 @@ function getTriggerConfigurations() {
  * @returns {*}
  */
 function getRegistryConfigurations() {
-    return envProp.get('wud.registry') || {};
+    return get('wud.registry', wudEnvVars);
 }
 
 /**
@@ -34,14 +83,14 @@ function getRegistryConfigurations() {
  * @returns {*}
  */
 function getAuthenticationConfigurations() {
-    return envProp.get('wud.auth') || {};
+    return get('wud.auth', wudEnvVars);
 }
 
 /**
  * Get Input configurations.
  */
 function getStoreConfiguration() {
-    return envProp.get('wud.store');
+    return get('wud.store', wudEnvVars);
 }
 
 /**
@@ -49,10 +98,10 @@ function getStoreConfiguration() {
  */
 function getServerConfiguration() {
     // Deprecated env var namespace; to be removed on next major version
-    const apiConfiguration = envProp.get('wud.api');
+    const apiConfiguration = get('wud.api', wudEnvVars);
 
     // New en var namespace
-    const serverConfiguration = envProp.get('wud.server');
+    const serverConfiguration = get('wud.server', wudEnvVars);
 
     // Merge deprecated & new env vars
     return {
@@ -62,7 +111,7 @@ function getServerConfiguration() {
 }
 
 function getPublicUrl(req) {
-    const publicUrl = process.env.WUD_PUBLIC_URL;
+    const publicUrl = wudEnvVars.WUD_PUBLIC_URL;
     if (publicUrl) {
         return publicUrl;
     }
@@ -71,6 +120,9 @@ function getPublicUrl(req) {
 }
 
 module.exports = {
+    wudEnvVars,
+    get,
+    replaceSecrets,
     getVersion,
     getLogLevel,
     getStoreConfiguration,
