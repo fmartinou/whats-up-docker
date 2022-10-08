@@ -66,8 +66,7 @@ test('maskConfiguration should mask sensitive data', () => {
             enabled: false,
             prefix: 'homeassistant',
         },
-        key: 'p******d',
-        password: 'password',
+        password: 'p******d',
         topic: 'wud/container',
         url: 'mqtt://host:1883',
     });

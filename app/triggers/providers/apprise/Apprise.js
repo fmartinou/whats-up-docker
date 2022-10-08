@@ -26,6 +26,7 @@ class Apprise extends Trigger {
     maskConfiguration() {
         return {
             ...this.configuration,
+            url: this.configuration.url,
             urls: Apprise.mask(this.configuration.urls),
         };
     }

@@ -55,6 +55,9 @@ class Pushover extends Trigger {
     maskConfiguration() {
         return {
             ...this.configuration,
+            device: this.configuration.device,
+            sound: this.configuration.sound,
+            priority: this.configuration.priority,
             user: Pushover.mask(this.configuration.user),
             token: Pushover.mask(this.configuration.token),
         };

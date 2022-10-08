@@ -128,6 +128,7 @@ async function registerRegistries() {
     const registriesToRegister = {};
 
     // Default registries
+    registriesToRegister.ecr = () => registerComponent('registry', 'ecr', 'ecr', '', '../registries/providers');
     registriesToRegister.ghcr = () => registerComponent('registry', 'ghcr', 'ghcr', '', '../registries/providers');
     registriesToRegister.hotio = () => registerComponent('registry', 'hotio', 'hotio', '', '../registries/providers');
     registriesToRegister.hub = () => registerComponent('registry', 'hub', 'hub', '', '../registries/providers');

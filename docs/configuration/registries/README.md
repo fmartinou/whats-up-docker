@@ -23,6 +23,7 @@ WUD supports most registries:
 ?> [**Quay**](configuration/registries/quay/)
 
 !> By default, without any further configuration, WUD is handling _out-of-the-box_ public images hosted on \
+ECR (public.ecr.aws) \
 GHCR \
 HOTIO \
 HUB \

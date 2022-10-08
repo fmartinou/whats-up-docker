@@ -34,7 +34,13 @@ class Smtp extends Trigger {
     maskConfiguration() {
         return {
             ...this.configuration,
+            host: this.configuration.host,
+            port: this.configuration.port,
+            user: this.configuration.user,
             pass: Smtp.mask(this.configuration.pass),
+            from: this.configuration.from,
+            to: this.configuration.to,
+            tls: this.configuration.tls,
         };
     }
 

@@ -32,16 +32,18 @@ class Kafka extends Trigger {
      * @returns {*}
      */
     maskConfiguration() {
-        const conf = {
+        return {
             ...this.configuration,
+            brokers: this.configuration.brokers,
+            topic: this.configuration.topic,
+            clientId: this.configuration.clientId,
+            ssl: this.configuration.ssl,
+            authentication: this.configuration.authentication ? {
+                type: this.configuration.authentication.type,
+                user: this.configuration.authentication.user,
+                password: Kafka.mask(this.configuration.authentication.password),
+            } : undefined,
         };
-        if (conf.authentication) {
-            conf.authentication = {
-                ...conf.authentication,
-                password: Kafka.mask(conf.authentication.password),
-            };
-        }
-        return conf;
     }
 
     /**

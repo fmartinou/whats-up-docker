@@ -6,17 +6,6 @@ const Registry = require('../../Registry');
  */
 class Gitlab extends Registry {
     /**
-     * Sanitize sensitive data
-     * @returns {*}
-     */
-    maskConfiguration() {
-        return {
-            ...this.configuration,
-            token: Gitlab.mask(this.configuration.token),
-        };
-    }
-
-    /**
      * Get the Gitlab configuration schema.
      * @returns {*}
      */
@@ -26,6 +15,19 @@ class Gitlab extends Registry {
             authurl: this.joi.string().uri().default('https://gitlab.com'),
             token: this.joi.string().required(),
         });
+    }
+
+    /**
+     * Sanitize sensitive data
+     * @returns {*}
+     */
+    maskConfiguration() {
+        return {
+            ...this.configuration,
+            url: this.configuration.url,
+            authurl: this.configuration.authurl,
+            token: Gitlab.mask(this.configuration.token),
+        };
     }
 
     /**

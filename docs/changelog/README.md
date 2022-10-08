@@ -1,6 +1,7 @@
 # Changelog
 
 # dev
+- :star: [ECR] Add support for public.ecr.aws gallery
 - :fire: [UI] Fix misaligned icons in sidebar
 
 # 5.20.3

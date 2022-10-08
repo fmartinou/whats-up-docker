@@ -24,11 +24,12 @@ class Quay extends Registry {
      * @returns {*}
      */
     maskConfiguration() {
-        const confMasked = { ...this.configuration };
-        if (confMasked.token) {
-            confMasked.token = Quay.mask(confMasked.token);
-        }
-        return confMasked;
+        return {
+            ...this.configuration,
+            namespace: this.configuration.namespace,
+            account: this.configuration.account,
+            token: Quay.mask(this.configuration.token),
+        };
     }
 
     /**

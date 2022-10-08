@@ -23,6 +23,7 @@ class Slack extends Trigger {
     maskConfiguration() {
         return {
             ...this.configuration,
+            channel: this.configuration.channel,
             token: Slack.mask(this.configuration.token),
         };
     }

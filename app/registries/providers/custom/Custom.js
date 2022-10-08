@@ -5,12 +5,15 @@ const Registry = require('../../Registry');
  */
 class Custom extends Registry {
     getConfigurationSchema() {
-        return this.joi.object().keys({
-            url: this.joi.string().uri().required(),
-            login: this.joi.alternatives().conditional('password', { not: undefined, then: this.joi.string().required(), otherwise: this.joi.any().forbidden() }),
-            password: this.joi.alternatives().conditional('login', { not: undefined, then: this.joi.string().required(), otherwise: this.joi.any().forbidden() }),
-            auth: this.joi.alternatives().conditional('login', { not: undefined, then: this.joi.any().forbidden(), otherwise: this.joi.alternatives().try(this.joi.string().base64(), this.joi.string().valid('')) }),
-        });
+        return this.joi.alternatives([
+            this.joi.string().allow(''),
+            this.joi.object().keys({
+                url: this.joi.string().uri().required(),
+                login: this.joi.alternatives().conditional('password', { not: undefined, then: this.joi.string().required(), otherwise: this.joi.any().forbidden() }),
+                password: this.joi.alternatives().conditional('login', { not: undefined, then: this.joi.string().required(), otherwise: this.joi.any().forbidden() }),
+                auth: this.joi.alternatives().conditional('login', { not: undefined, then: this.joi.any().forbidden(), otherwise: this.joi.alternatives().try(this.joi.string().base64(), this.joi.string().valid('')) }),
+            }),
+        ]);
     }
 
     /**
@@ -18,14 +21,11 @@ class Custom extends Registry {
      * @returns {*}
      */
     maskConfiguration() {
-        const confMasked = { ...this.configuration };
-        if (confMasked.password) {
-            confMasked.password = Custom.mask(confMasked.password);
-        }
-        if (confMasked.auth) {
-            confMasked.auth = Custom.mask(confMasked.auth);
-        }
-        return confMasked;
+        return {
+            ...this.configuration,
+            password: Custom.mask(this.configuration.password),
+            auth: Custom.mask(this.configuration.auth),
+        };
     }
 
     /**

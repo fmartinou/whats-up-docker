@@ -52,6 +52,9 @@ async function init() {
         // Trust proxy (helpful to resolve public facing hostname & protocol)
         app.set('trust proxy', true);
 
+        // Replace undefined values by null to prevent them from being removed from json responses
+        app.set('json replacer', (key, value) => (value === undefined ? null : value));
+
         if (configuration.cors.enabled) {
             log.warn(`CORS is enabled, please make sure that the provided configuration is not a security breech (${JSON.stringify(configuration.cors)})`);
             app.use(cors({

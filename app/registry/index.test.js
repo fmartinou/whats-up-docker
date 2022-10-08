@@ -73,7 +73,7 @@ test('registerRegistries should register all registries', async () => {
 
 test('registerRegistries should register all anonymous registries by default', async () => {
     await registry.__get__('registerRegistries')();
-    expect(Object.keys(registry.getState().registry).sort()).toEqual(['ghcr', 'hotio', 'hub', 'quay']);
+    expect(Object.keys(registry.getState().registry).sort()).toEqual(['ecr', 'ghcr', 'hotio', 'hub', 'quay']);
 });
 
 test('registerRegistries should warn when registration errors occur', async () => {
