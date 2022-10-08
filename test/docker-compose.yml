@@ -28,7 +28,7 @@ services:
 
   # Traefik
   traefik_245:
-    image: traefik:2.8.7
+    image: traefik:2.9.1
     container_name: traefik_245
     labels:
       - wud.watch=true                    # check that comments are preserved

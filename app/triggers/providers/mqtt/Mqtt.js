@@ -76,6 +76,21 @@ class Mqtt extends Trigger {
         });
     }
 
+    /**
+     * Sanitize sensitive data
+     * @returns {*}
+     */
+    maskConfiguration() {
+        return {
+            ...this.configuration,
+            url: this.configuration.url,
+            topic: this.configuration.topic,
+            user: this.configuration.user,
+            password: Mqtt.mask(this.configuration.password),
+            hass: this.configuration.hass,
+        };
+    }
+
     async initTrigger() {
         // Enforce simple mode
         this.configuration.mode = 'simple';
@@ -94,17 +109,6 @@ class Mqtt extends Trigger {
             registerContainerAdded((container) => this.addHassDevice(container));
             registerContainerRemoved((container) => this.removeHassDevice(container));
         }
-    }
-
-    /**
-     * Sanitize sensitive data
-     * @returns {*}
-     */
-    maskConfiguration() {
-        return {
-            ...this.configuration,
-            key: Mqtt.mask(this.configuration.password),
-        };
     }
 
     /**

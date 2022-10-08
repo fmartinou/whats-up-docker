@@ -23,7 +23,7 @@ class Basic extends Authentication {
      */
     maskConfiguration() {
         return {
-            ...this.configuration,
+            user: this.configuration.user,
             hash: Basic.mask(this.configuration.hash),
         };
     }

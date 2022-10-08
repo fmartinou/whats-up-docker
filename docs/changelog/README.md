@@ -1,6 +1,8 @@
 # Changelog
 
 # dev
+- :star: [ECR] Add support for public.ecr.aws gallery
+- :star: Allow to externalize [secrets to external files](/configuration/?id=secret-management) 
 - :fire: [UI] Fix misaligned icons in sidebar
 
 # 5.20.3

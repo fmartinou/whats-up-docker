@@ -20,7 +20,7 @@
                 configurationItem.key
               }}</v-list-item-title>
               <v-list-item-subtitle>
-                {{ configurationItem.value }}
+                {{ configurationItem.value | formatValue }}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -72,6 +72,11 @@ export default {
   methods: {
     collapse() {
       this.showDetail = !this.showDetail;
+    },
+  },
+  filters: {
+    formatValue(value) {
+      return value ? value : "<empty>";
     },
   },
 };

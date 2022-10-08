@@ -11,6 +11,6 @@
     "WUD_REGISTRY_CUSTOM_LOGIN": "john",
     "WUD_REGISTRY_CUSTOM_PASSWORD": "doe",
     "WUD_AUTH_BASIC_JOHN_USER": "john",
-    "WUD_AUTH_BASIC_JOHN_HASH": "$apr1$ox8b3gue$R9BVC6cliTOGZOiol3EWr/"
+    "WUD_AUTH_BASIC_JOHN_HASH__FILE": "../test/john_hash.txt"
   }
 }

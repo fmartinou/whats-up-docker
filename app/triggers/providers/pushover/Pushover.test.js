@@ -52,6 +52,7 @@ test('maskConfiguration should mask sensitive data', () => {
     expect(pushover.maskConfiguration()).toEqual({
         mode: 'simple',
         priority: 0,
+        device: undefined,
         // eslint-disable-next-line no-template-curly-in-string
         simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
         // eslint-disable-next-line no-template-curly-in-string

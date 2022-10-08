@@ -18,6 +18,7 @@ class Acr extends Registry {
     maskConfiguration() {
         return {
             ...this.configuration,
+            clientid: this.configuration.clientid,
             clientsecret: Acr.mask(this.configuration.clientsecret),
         };
     }

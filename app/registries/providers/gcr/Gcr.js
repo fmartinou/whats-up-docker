@@ -19,6 +19,7 @@ class Gcr extends Registry {
     maskConfiguration() {
         return {
             ...this.configuration,
+            clientemail: this.configuration.clientemail,
             privatekey: Gcr.mask(this.configuration.privatekey),
         };
     }

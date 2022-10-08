@@ -19,11 +19,11 @@ class Ghcr extends Registry {
      * @returns {*}
      */
     maskConfiguration() {
-        const confMasked = { ...this.configuration };
-        if (confMasked.token) {
-            confMasked.token = Ghcr.mask(confMasked.token);
-        }
-        return confMasked;
+        return {
+            ...this.configuration,
+            username: this.configuration.username,
+            token: Ghcr.mask(this.configuration.token),
+        };
     }
 
     /**

@@ -1,5 +1,5 @@
 # Configuration
-WUD is relying on Environment Variables and [Docker labels](https://docs.docker.com/config/labels-custom-metadata/) to configure all the components.
+WUD is relying on **Environment Variables** and **[Docker labels](https://docs.docker.com/config/labels-custom-metadata/)** to configure all the components.
 
 Please find below the documentation for each of them:
 > [**Authentication**](/configuration/authentications/)
@@ -79,3 +79,19 @@ services:
       - 'wud.tag.include=^\d+\.\d+\.\d+$$'
       - 'wud.link.template=https://github.com/fmartinou/whats-up-docker/releases/tag/$${major}.$${minor}.$${patch}'
 ```
+
+## Secret management
+!> If you don't want to expose your secret values as environment variables, you can externalize them in external files and reference them by suffixing the original env var name with `__FILE`.
+
+For example, instead of providing the Basic auth details as
+```
+WUD_AUTH_BASIC_JOHN_HASH=$$apr1$$aefKbZEa$$ZSA5Y3zv9vDQOxr283NGx/
+```
+
+You can create an external file with the appropriate permissions (let's say `/tmp/john_hash`) containing the secret value (`$$apr1$$aefKbZEa$$ZSA5Y3zv9vDQOxr283NGx/`).
+Then you need to reference this file by using the following env var
+```
+WUD_AUTH_BASIC_JOHN_HASH__FILE=/tmp/john_hash
+```
+
+?> This feature can be used for any WUD env var (no restrictions).

@@ -13,18 +13,6 @@ class Hub extends Custom {
     }
 
     /**
-     * Sanitize sensitive data
-     * @returns {*}
-     */
-    maskConfiguration() {
-        const confMasked = super.maskConfiguration();
-        if (confMasked.token) {
-            confMasked.token = Hub.mask(confMasked.token);
-        }
-        return confMasked;
-    }
-
-    /**
      * Get the Hub configuration schema.
      * @returns {*}
      */
@@ -38,6 +26,21 @@ class Hub extends Custom {
                 auth: this.joi.string().base64(),
             }),
         ]);
+    }
+
+    /**
+     * Sanitize sensitive data
+     * @returns {*}
+     */
+    maskConfiguration() {
+        return {
+            ...this.configuration,
+            url: this.configuration.url,
+            login: this.configuration.login,
+            password: Hub.mask(this.configuration.password),
+            token: Hub.mask(this.configuration.token),
+            auth: Hub.mask(this.configuration.auth),
+        };
     }
 
     /**

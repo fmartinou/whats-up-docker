@@ -22,6 +22,21 @@ class Oidc extends Authentication {
         });
     }
 
+    /**
+     * Sanitize sensitive data
+     * @returns {*}
+     */
+    maskConfiguration() {
+        return {
+            ...this.configuration,
+            discovery: this.configuration.discovery,
+            clientid: Oidc.mask(this.configuration.clientid),
+            clientsecret: Oidc.mask(this.configuration.clientsecret),
+            redirect: this.configuration.redirect,
+            timeout: this.configuration.timeout,
+        };
+    }
+
     async initAuthentication() {
         this.log.debug(`Discovering configuration from ${this.configuration.discovery}`);
         custom.setHttpOptionsDefaults({
@@ -38,18 +53,6 @@ class Oidc extends Authentication {
         } catch (e) {
             this.log.warn('End session url is not supported');
         }
-    }
-
-    /**
-     * Sanitize sensitive data
-     * @returns {*}
-     */
-    maskConfiguration() {
-        return {
-            ...this.configuration,
-            clientid: Oidc.mask(this.configuration.clientid),
-            clientsecret: Oidc.mask(this.configuration.clientsecret),
-        };
     }
 
     /**

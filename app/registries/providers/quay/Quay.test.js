@@ -40,7 +40,7 @@ test('validatedConfiguration should throw error when configuration is missing', 
 
 test('maskConfiguration should mask anonymous configuration secrets', () => {
     const quayInstance = new Quay();
-    quayInstance.configuration = undefined;
+    quayInstance.configuration = '';
     expect(quayInstance.maskConfiguration()).toEqual({});
 });
 
