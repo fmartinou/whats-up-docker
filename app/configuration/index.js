@@ -3,6 +3,21 @@ const setValue = require('set-value');
 
 const VAR_FILE_SUFFIX = '__FILE';
 
+const configDir = process.env.WUD_CONFIG_DIR || '/wud/config';
+
+if (fs.existsSync(configDir)) {
+    console.log(`Config directory ${configDir} exists`);
+    const configDirContentList = fs.readdirSync(configDir,  { withFileTypes: true });
+    const configDirYamlFiles = configDirContentList.filter((content) => content.name.toString().endsWith('yaml') || content.name.toString().endsWith('yml'));
+    if (configDirYamlFiles.length === 0) {
+        console.log(`Config directory ${configDir} does not contain any yaml configuration files`);
+    } else {
+        configDirYamlFiles.forEach(configDirYamlFile => console.log(`Loading configuration file from ${configDirYamlFile}`));
+    }
+} else {
+    console.log(`Config directory ${configDir} does not exist; no file configuration will be pick up`);
+}
+
 /*
 * Get a prop by path from environment variables.
 * @param prop

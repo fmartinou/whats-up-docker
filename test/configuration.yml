@@ -1,0 +1,40 @@
+---
+
+# Server
+server:
+  enabled: true
+  port: 3000
+
+# Auth
+auth:
+  basic:
+    john:
+      user: john
+      hash: $$apr1$$8zDVtSAY$$62WBh9DspNbUKMZXYRsjS/
+
+# Watchers
+watchers:
+  docker:
+    local:
+      socket: /var/run/docker.sock
+      watch-by-default: true
+
+# Triggers
+triggers:
+  mqtt:
+    mosquitto:
+      url: mqtt://localhost:1883
+
+# Registries
+registries:
+  hub:
+    login: john
+    password: doe
+
+# Containers
+containers:
+  watch-digest: true
+  tag-include: true
+  tag-exclude: true
+  tag-transform: xxx
+  link-template: xxx
