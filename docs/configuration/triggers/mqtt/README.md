@@ -37,13 +37,47 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-        - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtt://localhost:1883 \
+        - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtt://localhost:1883
 ```
 
 #### **Docker**
 ```bash
 docker run \
     -e WUD_TRIGGER_MQTT_MOSQUITTO_URL="mqtt://localhost:1883" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
+
+#### Post a message to a local mosquitto broker with mTLS enabled
+
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+        - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtts://localhost:8883
+        - WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CLIENTKEY=/wud/mqtt/client-key.pem
+        - WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CLIENTCERT=/wud/mqtt/client-cert.pem
+        - WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CACHAIN=/wud/mqtt/ca.pem
+    volumes:
+      - /mosquitto/tls/client/client-key.pem:/wud/mqtt/client-key.pem
+      - /mosquitto/tls/client/client-cert.pem:/wud/mqtt/client-cert.pem
+      - /mosquitto/tls/ca.pem:/wud/mqtt/ca.pem
+```
+
+#### **Docker**
+```bash
+docker run \
+    -e WUD_TRIGGER_MQTT_MOSQUITTO_URL="mqtts://localhost:8883" \
+    -e WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CLIENTKEY="/wud/mqtt/client-key.pem" \
+    -e WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CLIENTCERT="/wud/mqtt/client-cert.pem" \
+    -e WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CACHAIN="/wud/mqtt/ca.pem" \
   ...
   fmartinou/whats-up-docker
 ```
