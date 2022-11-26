@@ -1,3 +1,4 @@
+const fs = require('fs').promises;
 const mqtt = require('async-mqtt');
 const capitalize = require('capitalize');
 const Trigger = require('../Trigger');
@@ -73,6 +74,17 @@ class Mqtt extends Trigger {
                 enabled: false,
                 prefix: hassDefaultPrefix,
             }),
+            tls: this.joi.object({
+                clientkey: this.joi.string(),
+                clientcert: this.joi.string(),
+                cachain: this.joi.string(),
+                rejectunauthorized: this.joi.boolean().default(true),
+            }).default({
+                clientkey: undefined,
+                clientcert: undefined,
+                cachain: undefined,
+                rejectunauthorized: true,
+            }),
         });
     }
 
@@ -102,6 +114,17 @@ class Mqtt extends Trigger {
         if (this.configuration.password) {
             options.password = this.configuration.password;
         }
+        if (this.configuration.tls.clientkey) {
+            options.key = await fs.readFile(this.configuration.tls.clientkey);
+        }
+        if (this.configuration.tls.clientcert) {
+            options.cert = await fs.readFile(this.configuration.tls.clientcert);
+        }
+        if (this.configuration.tls.cachain) {
+            options.ca = [await fs.readFile(this.configuration.tls.cachain)];
+        }
+        options.rejectUnauthorized = this.configuration.tls.rejectunauthorized;
+
         this.client = await mqtt.connectAsync(this.configuration.url, options);
 
         registerContainerUpdated((container) => this.trigger(container));

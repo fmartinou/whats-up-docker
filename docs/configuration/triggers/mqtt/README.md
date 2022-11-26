@@ -5,14 +5,18 @@ The `mqtt` trigger lets you send container update notifications to an MQTT broke
 
 ### Variables
 
-| Env var                                        | Required       | Description                                                         | Supported values                    | Default value when missing |
-| ---------------------------------------------- |:--------------:| ------------------------------------------------------------------- | ----------------------------------- | -------------------------- | 
-| `WUD_TRIGGER_MQTT_{trigger_name}_URL`          | :red_circle:   | The URL of the MQTT broker                                          | Valid mqtt, mqtts, tcp, ws, wss url |                            |
-| `WUD_TRIGGER_MQTT_{trigger_name}_USER`         | :white_circle: | The username if broker authentication is enabled                    |                                     |                            |
-| `WUD_TRIGGER_MQTT_{trigger_name}_PASSWORD`     | :white_circle: | The password if broker authentication is enabled                    |                                     |                            |
-| `WUD_TRIGGER_MQTT_{trigger_name}_TOPIC`        | :white_circle: | The base topic where the updates are published to                   |                                     | `wud/container`            |
-| `WUD_TRIGGER_MQTT_{trigger_name}_HASS_ENABLED` | :white_circle: | Enable [Home-assistant](https://www.home-assistant.io/) integration | `true`, `false`                     | `false`                    |
-| `WUD_TRIGGER_MQTT_{trigger_name}_HASS_PREFIX`  | :white_circle: | Base topic for hass entity discovery                                |                                     | `homeassistant`            |
+| Env var                                                  | Required       | Description                                                                                         | Supported values                    | Default value when missing |
+|----------------------------------------------------------|:--------------:|-----------------------------------------------------------------------------------------------------|-------------------------------------|----------------------------| 
+| `WUD_TRIGGER_MQTT_{trigger_name}_URL`                    | :red_circle:   | The URL of the MQTT broker                                                                          | Valid mqtt, mqtts, tcp, ws, wss url |                            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_USER`                   | :white_circle: | The username if broker authentication is enabled                                                    |                                     |                            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_PASSWORD`               | :white_circle: | The password if broker authentication is enabled                                                    |                                     |                            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_TOPIC`                  | :white_circle: | The base topic where the updates are published to                                                   |                                     | `wud/container`            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_HASS_ENABLED`           | :white_circle: | Enable [Home-assistant](https://www.home-assistant.io/) integration                                 | `true`, `false`                     | `false`                    |
+| `WUD_TRIGGER_MQTT_{trigger_name}_HASS_PREFIX`            | :white_circle: | Base topic for hass entity discovery                                                                |                                     | `homeassistant`            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_TLS_CACHAIN`            | :white_circle: | The path to the file containing the server CA chain (when TLS with a private Certificate Authority) | Any valid file path                 |                            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_TLS_CLIENTCERT`         | :white_circle: | The path to the file containing the client public certificate (when TLS mutual authzentication)     | Any valid file path                 |                            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_TLS_CLIENTKEY`          | :white_circle: | The path to the file containing the client private key (when TLS mutual authzentication)            | Any valid file path                 |                            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_TLS_REJECTUNAUTHORIZED` | :white_circle: | Accept or reject when the TLS server certificate cannot be trusted                                  | `true`, `false`                     | `true`                     |
 
 ?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration) but only supports the `simple` mode.
 

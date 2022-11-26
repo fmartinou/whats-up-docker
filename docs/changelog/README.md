@@ -1,5 +1,8 @@
 # Changelog
 
+# dev
+- :star: [Mqtt trigger] Add support for (m)TLS
+
 # 5.21.0
 - :star: [ECR] Add support for public.ecr.aws gallery
 - :star: Allow to externalize [secrets to external files](/configuration/?id=secret-management) 

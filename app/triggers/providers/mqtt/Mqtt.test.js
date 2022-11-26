@@ -15,6 +15,12 @@ const configurationValid = {
         enabled: false,
         prefix: 'homeassistant',
     },
+    tls: {
+        clientkey: undefined,
+        clientcert: undefined,
+        cachain: undefined,
+        rejectunauthorized: true,
+    },
     threshold: 'all',
     mode: 'simple',
     once: true,
@@ -87,6 +93,7 @@ test('initTrigger should init Mqtt client', async () => {
     expect(spy).toHaveBeenCalledWith('mqtt://host:1883', {
         username: 'user',
         password: 'password',
+        rejectUnauthorized: true,
     });
 });
 
