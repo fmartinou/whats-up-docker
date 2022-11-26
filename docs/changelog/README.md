@@ -1,6 +1,6 @@
 # Changelog
 
-# dev
+# 5.22.0
 - :star: [Mqtt trigger] Add support for (m)TLS
 - :star: Update all dependencies
 - :fire: [Docker-compose trigger] Fix containers updated whereas not belonging to the Compose file
