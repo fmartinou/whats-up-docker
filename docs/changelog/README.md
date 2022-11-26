@@ -2,6 +2,8 @@
 
 # dev
 - :star: [Mqtt trigger] Add support for (m)TLS
+- :star: Update all dependencies
+- :fire: [Docker-compose trigger] Fix containers updated whereas not belonging to the Compose file
 
 # 5.21.0
 - :star: [ECR] Add support for public.ecr.aws gallery

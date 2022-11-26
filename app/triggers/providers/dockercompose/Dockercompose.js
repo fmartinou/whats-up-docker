@@ -4,6 +4,27 @@ const Trigger = require('../docker/Docker');
 const { getState } = require('../../../registry');
 
 /**
+ * Return true if the container belongs to the compose file.
+ * @param compose
+ * @param container
+ * @returns true/false
+ */
+function doesContainerBelongToCompose(compose, container) {
+    // Get registry configuration
+    const registry = getState().registry[container.image.registry.name];
+
+    // Rebuild image definition string
+    const currentImage = registry.getImageFullName(
+        container.image,
+        container.image.tag.value,
+    );
+    return Object.keys(compose.services).some((key) => {
+        const service = compose.services[key];
+        return service.image.includes(currentImage);
+    });
+}
+
+/**
  * Update a Docker compose stack with an updated one.
  */
 class Dockercompose extends Trigger {
@@ -40,15 +61,18 @@ class Dockercompose extends Trigger {
     async triggerBatch(containers) {
         const compose = await this.getComposeFileAsObject();
 
-        // Filter on containers running on local host
-        const containersFiltered = containers.filter((container) => {
-            const watcher = this.getWatcher(container);
-            if (watcher.dockerApi.modem.socketPath !== '') {
-                return true;
-            }
-            this.log.warn(`Cannot update container ${container.name} because not running on local host`);
-            return false;
-        });
+        const containersFiltered = containers
+            // Filter on containers running on local host
+            .filter((container) => {
+                const watcher = this.getWatcher(container);
+                if (watcher.dockerApi.modem.socketPath !== '') {
+                    return true;
+                }
+                this.log.warn(`Cannot update container ${container.name} because not running on local host`);
+                return false;
+            })
+            // Filter on containers defined in the compose file
+            .filter((container) => doesContainerBelongToCompose(compose, container));
 
         // [{ current: '1.0.0', update: '2.0.0' }, {...}]
         const currentVersionToUpdateVersionArray = containersFiltered
@@ -125,16 +149,10 @@ class Dockercompose extends Trigger {
         });
 
         // Rebuild image definition string
-        const newImage = this.getNewImageFullName(registry, container);
-
-        if (serviceKeyToUpdate) {
-            return {
-                current: compose.services[serviceKeyToUpdate].image,
-                update: newImage,
-            };
-        }
-        this.log.debug(`Container [${container.name}] does not belong to this compose file => ignoring`);
-        return undefined;
+        return {
+            current: compose.services[serviceKeyToUpdate].image,
+            update: this.getNewImageFullName(registry, container),
+        };
     }
 
     /**
