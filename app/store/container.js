@@ -71,7 +71,9 @@ function getContainers(query = {}) {
         return [];
     }
     const containerList = containers.find(filter).map((item) => validateContainer(item.data));
-    return containerList.sort(byValue((container) => container.name, byString()));
+    return containerList.sort(
+        byValue((container) => container.name, byString()),
+    );
 }
 
 /**

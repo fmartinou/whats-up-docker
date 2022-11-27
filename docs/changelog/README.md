@@ -1,5 +1,8 @@
 # Changelog
 
+# dev
+- :fire: Fix netlify es-sorter lib deprecation warning
+
 # 5.22.0
 - :star: [Mqtt trigger] Add support for (m)TLS
 - :star: Update all dependencies

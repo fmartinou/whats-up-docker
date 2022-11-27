@@ -17,10 +17,12 @@
           <v-btn
             small
             plain
-            color="warning"
+            :color="containersToUpdateCount > 0 ? 'warning' : 'success'"
             to="/containers?update-available=true"
-            v-if="containersToUpdateCount > 0"
-            >({{ containersToUpdateCount }} updates)</v-btn
+            :style="{
+              pointerEvents: containersToUpdateCount === 0 ? 'none' : 'auto',
+            }"
+            >({{ containerUpdateMessage }})</v-btn
           >
         </v-card>
       </v-col>
@@ -77,6 +79,15 @@ export default {
       triggerIcon: getTriggerIcon(),
       watcherIcon: getWatcherIcon(),
     };
+  },
+
+  computed: {
+    containerUpdateMessage() {
+      if (this.containersToUpdateCount > 0) {
+        return `${this.containersToUpdateCount} updates available`;
+      }
+      return "all containers are up-to-date";
+    },
   },
 
   async beforeRouteEnter(to, from, next) {

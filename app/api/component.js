@@ -27,8 +27,8 @@ function mapComponentsToList(listFunction) {
     return Object.keys(listFunction())
         .map((key) => mapComponentToItem(key, listFunction()[key]))
         .sort(byValues([
-            ['type', byString()],
-            ['name', byString()],
+            [(x) => x.type, byString()],
+            [(x) => x.name, byString()],
         ]));
 }
 
