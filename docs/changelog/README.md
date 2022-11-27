@@ -1,6 +1,6 @@
 # Changelog
 
-# dev
+# 5.22.1
 - :fire: Fix netlify es-sorter lib deprecation warning
 
 # 5.22.0
