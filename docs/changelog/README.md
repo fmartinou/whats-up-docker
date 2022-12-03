@@ -1,5 +1,13 @@
 # Changelog
 
+# dev
+- :star: [Mqtt trigger / Home-assistant] - Replace binary sensors by [update sensors](https://www.home-assistant.io/integrations/update/)
+
+!> **Breaking changes!** \
+New Home-Assistant sensors are now created as `update` sensors instead of `binary` sensors. \
+Existing Home-Assistant sensors must be manually cleaned up. \
+Do not forget to adjust your existing HA configuration accordingly (automations, dashboards... if needed) 
+
 # 5.22.1
 - :fire: Fix netlify es-sorter lib deprecation warning
 

@@ -15,7 +15,8 @@ const hassDefaultPrefix = 'homeassistant';
 const hassDeviceId = 'wud';
 const hassDeviceName = 'What\'s up Docker?';
 const hassManufacturer = 'fmartinou';
-const hassEntityValueTemplate = '{{ value_json.update_available }}';
+const hassEntityValueTemplate = '{{ value_json.image_tag_value }}';
+const hassLatestVersionTemplate = '{{ value_json.result_tag or value_json.result_digest }}';
 
 /**
  * get mqtt base topic.
@@ -130,6 +131,7 @@ class Mqtt extends Trigger {
         registerContainerUpdated((container) => this.trigger(container));
         if (this.configuration.hass.enabled) {
             registerContainerAdded((container) => this.addHassDevice(container));
+            registerContainerUpdated((container) => this.addHassDevice(container));
             registerContainerRemoved((container) => this.removeHassDevice(container));
         }
     }
@@ -176,7 +178,7 @@ class Mqtt extends Trigger {
         const entityId = getHassEntityId(containerTopic);
 
         // Hass discovery topic
-        const discoveryTopic = `${this.configuration.hass.prefix}/binary_sensor/${entityId}/config`;
+        const discoveryTopic = `${this.configuration.hass.prefix}/update/${entityId}/config`;
 
         this.log.info(`Add hass device [id=${entityId}]`);
         await this.client.publish(discoveryTopic, JSON.stringify({
@@ -190,13 +192,14 @@ class Mqtt extends Trigger {
                 name: capitalize(hassDeviceName),
                 sw_version: getVersion(),
             },
-            device_class: 'update',
             icon: sanitizeIcon(container.displayIcon),
+            entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
             force_update: true,
             state_topic: containerTopic,
             value_template: hassEntityValueTemplate,
-            payload_off: false,
-            payload_on: true,
+            latest_version_topic: containerTopic,
+            latest_version_template: hassLatestVersionTemplate,
+            release_url: container.result ? container.result.link : undefined,
             json_attributes_topic: containerTopic,
         }), {
             retain: true,

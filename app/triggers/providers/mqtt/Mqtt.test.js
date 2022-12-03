@@ -136,7 +136,7 @@ test('addHassDevice should publish message to expected hass discovery topic', as
         os: 'linux',
         created: '2021-06-12T05:33:38.440Z',
     });
-    expect(mqtt.client.topic).toEqual('homeassistant/binary_sensor/wud_container_local_library_test/config');
+    expect(mqtt.client.topic).toEqual('homeassistant/update/wud_container_local_library_test/config');
     expect(JSON.parse(mqtt.client.message)).toStrictEqual({
         device: {
             identifiers: [
@@ -148,16 +148,16 @@ test('addHassDevice should publish message to expected hass discovery topic', as
             sw_version: 'unknown',
         },
         force_update: true,
-        device_class: 'update',
         icon: 'mdi:docker',
         json_attributes_topic: 'wud/container/local/library/test',
         name: 'wud_container_local_library_test',
-        payload_off: false,
-        payload_on: true,
         state_topic: 'wud/container/local/library/test',
         unique_id: 'wud_container_local_library_test',
         object_id: 'wud_container_local_library_test',
-        value_template: '{{ value_json.update_available }}',
+        value_template: '{{ value_json.image_tag_value }}',
+        latest_version_template: '{{ value_json.result_tag or value_json.result_digest }}',
+        latest_version_topic: 'wud/container/local/library/test',
+        entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
     });
 });
 
