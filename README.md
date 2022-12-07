@@ -5,6 +5,7 @@
 ![Coverage](https://img.shields.io/codeclimate/coverage/fmartinou/whats-up-docker)
 ![Docker pulls](https://img.shields.io/docker/pulls/fmartinou/whats-up-docker)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?business=ZSDMEC3ZE8DQ8&no_recurring=0&currency_code=EUR)
+[![Donate](https://img.shields.io/badge/-buy_me_a%C2%A0coffee-gray?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/61rUNMm)
 
 #### [:blue_book: User documentation](https://fmartinou.github.io/whats-up-docker/)
 
