@@ -1,6 +1,6 @@
 # Changelog
 
-# dev
+# 6.0.0
 - :star: [Mqtt trigger / Home-assistant] - Replace binary sensors by [update sensors](https://www.home-assistant.io/integrations/update/)
 
 !> **Breaking changes!** \
