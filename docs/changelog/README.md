@@ -1,5 +1,8 @@
 # Changelog
 
+# dev
+- :fire: [Mqtt trigger / Home-assistant] - Fix update sensor state for non semver images (e.g.`latest`, `dev`...)
+
 # 6.0.0
 - :star: [Mqtt trigger / Home-assistant] - Replace binary sensors by [update sensors](https://www.home-assistant.io/integrations/update/)
 

@@ -28,7 +28,7 @@ Feature: Prometheus exposure
       | ghcr_radarr              | ghcr     | https://ghcr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   |4.2.4.6635-ls158    | true            |
       | gitlab_test              | gitlab   | https://registry.gitlab.com/v2                          | manfred-martin/docker-registry-test | 1.0.0              | 2.0.0              | true            |
       | hotio_radarr             | hotio    | https://cr.hotio.dev/v2                                 | hotio/radarr                        | release-4.0.4.5922 | release-4.2.4.6635 | true            |
-      | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | 2021.6.1           | 2022.12.0          | true            |
+      | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | 2021.6.1           | 2022.12.7          | true            |
       | hub_homeassistant_latest | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | latest             | latest             | false           |
       | hub_nginx_120            | hub      | https://registry-1.docker.io/v2                         | library/nginx                       | 1.20-alpine        | 1.23-alpine        | true            |
       | hub_nginx_latest         | hub      | https://registry-1.docker.io/v2                         | library/nginx                       | latest             | latest             | true            |
@@ -42,4 +42,4 @@ Feature: Prometheus exposure
       | hub_vaultwarden_latest   | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server                  | latest             | latest             | false           |
       | hub_youtubedb_latest     | hub      | https://registry-1.docker.io/v2                         | jeeaaasustest/youtube-dl            | latest             | latest             | false           |
       | lscr_radarr              | lscr     | https://lscr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   |4.2.4.6635-ls158    | true            |
-      | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus               | v2.30.0            |v2.40.5             | true            |
+      | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus               | v2.30.0            |v2.40.7             | true            |

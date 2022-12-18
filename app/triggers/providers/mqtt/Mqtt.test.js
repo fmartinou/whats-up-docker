@@ -155,7 +155,7 @@ test('addHassDevice should publish message to expected hass discovery topic', as
         unique_id: 'wud_container_local_library_test',
         object_id: 'wud_container_local_library_test',
         value_template: '{{ value_json.image_tag_value }}',
-        latest_version_template: '{{ value_json.result_tag or value_json.result_digest }}',
+        latest_version_template: '{% if value_json.update_kind_kind == "digest" %}{{ value_json.result_digest[:15] }}{% else %}{{ value_json.result_tag }}{% endif %}',
         latest_version_topic: 'wud/container/local/library/test',
         entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
     });
