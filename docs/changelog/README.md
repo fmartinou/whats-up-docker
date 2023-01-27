@@ -2,6 +2,7 @@
 
 # dev
 - :star: Add `watcher` placeholder visible to trigger templates  
+- :fire: Fix support for `application/vnd.oci.image.index.v1+json manifests`
 
 # 6.0.1
 - :fire: [Mqtt trigger / Home-assistant] - Fix update sensor state for non semver images (e.g.`latest`, `dev`...)

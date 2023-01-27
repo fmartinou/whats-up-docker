@@ -48,7 +48,7 @@ test('getImageManifestDigest should return digest for application/vnd.docker.dis
     const registryMocked = new Registry();
     registryMocked.log = log;
     registryMocked.callRegistry = (options) => {
-        if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json') {
+        if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json') {
             return {
                 schemaVersion: 2,
                 mediaType: 'application/vnd.docker.distribution.manifest.list.v2+json',
@@ -103,7 +103,7 @@ test('getImageManifestDigest should return digest for application/vnd.docker.dis
     const registryMocked = new Registry();
     registryMocked.log = log;
     registryMocked.callRegistry = (options) => {
-        if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json') {
+        if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json') {
             return {
                 schemaVersion: 2,
                 mediaType: 'application/vnd.docker.distribution.manifest.list.v2+json',
@@ -151,7 +151,7 @@ test('getImageManifestDigest should return digest for application/vnd.docker.dis
     const registryMocked = new Registry();
     registryMocked.log = log;
     registryMocked.callRegistry = (options) => {
-        if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json') {
+        if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json') {
             return {
                 schemaVersion: 2,
                 mediaType: 'application/vnd.docker.distribution.manifest.v2+json',
@@ -192,7 +192,7 @@ test('getImageManifestDigest should return digest for application/vnd.docker.con
     const registryMocked = new Registry();
     registryMocked.log = log;
     registryMocked.callRegistry = (options) => {
-        if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json') {
+        if (options.headers.Accept === 'application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json') {
             return {
                 schemaVersion: 1,
                 history: [{

@@ -130,12 +130,12 @@ class Registry extends Component {
             image,
             url: `${image.registry.url}/${image.name}/manifests/${tagOrDigest}`,
             headers: {
-                Accept: 'application/vnd.docker.distribution.manifest.list.v2+json',
+                Accept: 'application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json',
             },
         });
         if (responseManifests) {
             if (responseManifests.schemaVersion === 2) {
-                if (responseManifests.mediaType === 'application/vnd.docker.distribution.manifest.list.v2+json') {
+                if (responseManifests.mediaType === 'application/vnd.docker.distribution.manifest.list.v2+json' || responseManifests.mediaType === 'application/vnd.oci.image.index.v1+json') {
                     const manifestFound = responseManifests.manifests
                         .find((manifest) => manifest.platform.architecture === image.architecture
                             && manifest.platform.os === image.os
@@ -144,7 +144,7 @@ class Registry extends Component {
                         manifestDigestFound = manifestFound.digest;
                         manifestMediaType = manifestFound.mediaType;
                     }
-                } else if (responseManifests.mediaType === 'application/vnd.docker.distribution.manifest.v2+json') {
+                } else if (responseManifests.mediaType === 'application/vnd.docker.distribution.manifest.v2+json' || responseManifests.mediaType === 'application/vnd.oci.image.manifest.v1+json') {
                     manifestDigestFound = responseManifests.config.digest;
                     manifestMediaType = responseManifests.config.mediaType;
                 }
@@ -156,7 +156,7 @@ class Registry extends Component {
                     version: 1,
                 };
             }
-            if (manifestDigestFound && manifestMediaType === 'application/vnd.docker.distribution.manifest.v2+json') {
+            if ((manifestDigestFound && manifestMediaType === 'application/vnd.docker.distribution.manifest.v2+json') || (manifestDigestFound && manifestMediaType === 'application/vnd.oci.image.manifest.v1+json')) {
                 const responseManifest = await this.callRegistry({
                     image,
                     method: 'head',
@@ -171,7 +171,7 @@ class Registry extends Component {
                     version: 2,
                 };
             }
-            if (manifestDigestFound && manifestMediaType === 'application/vnd.docker.container.image.v1+json') {
+            if ((manifestDigestFound && manifestMediaType === 'application/vnd.docker.container.image.v1+json') || (manifestDigestFound && manifestMediaType === 'application/vnd.oci.image.config.v1+json')) {
                 return {
                     digest: manifestDigestFound,
                     version: 1,
