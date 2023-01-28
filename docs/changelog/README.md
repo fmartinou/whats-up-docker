@@ -1,6 +1,6 @@
 # Changelog
 
-# dev
+# 6.0.2
 - :star: Add `watcher` placeholder visible to trigger templates  
 - :fire: Fix support for `application/vnd.oci.image.index.v1+json manifests`
 - :fire: [HUB] Fix images from Docker hub prepended with `docker.io/` 
