@@ -1,5 +1,8 @@
 # Changelog
 
+# dev
+- :star: Add `watcher` placeholder visible to trigger templates  
+
 # 6.0.1
 - :fire: [Mqtt trigger / Home-assistant] - Fix update sensor state for non semver images (e.g.`latest`, `dev`...)
 

@@ -95,7 +95,7 @@ script:
 
   # Pull vaultwarden
   - docker pull vaultwarden/server
-  - docker pull vaultwarden/server:1.26.0-alpine
+  - docker pull vaultwarden/server:1.27.0-alpine
 
   # Pull youtubedl
   - docker pull jeeaaasustest/youtube-dl

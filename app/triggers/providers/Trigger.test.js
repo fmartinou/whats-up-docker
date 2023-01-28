@@ -29,7 +29,7 @@ beforeEach(() => {
     jest.resetAllMocks();
     trigger = new Trigger();
     trigger.log = log;
-    trigger.configuration = configurationValid;
+    trigger.configuration = { ...configurationValid };
 });
 
 test('validateConfiguration should return validated configuration when valid', () => {
@@ -344,6 +344,15 @@ test('renderSimpleBody should replace placeholders when called', async () => {
             link: 'http://test',
         },
     })).toEqual('Container container-name running with tag 1.0.0 can be updated to tag 2.0.0\nhttp://test');
+});
+
+test('renderSimpleBody should replace placeholders when template is a customized one', async () => {
+    // eslint-disable-next-line no-template-curly-in-string
+    trigger.configuration.simplebody = 'Watcher ${watcher} reports container ${name} available update';
+    expect(trigger.renderSimpleBody({
+        name: 'container-name',
+        watcher: 'DUMMY',
+    })).toEqual('Watcher DUMMY reports container container-name available update');
 });
 
 test('renderBatchTitle should replace placeholders when called', async () => {
