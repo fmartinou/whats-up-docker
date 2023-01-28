@@ -46,6 +46,14 @@ test('match should return true when no registry on the image', () => {
     })).toBeTruthy();
 });
 
+test('match should return true when registry id docker.io on the image', () => {
+    expect(hub.match({
+        registry: {
+            url: 'docker.io',
+        },
+    })).toBeTruthy();
+});
+
 test('match should return false when registry on the image', () => {
     expect(hub.match({
         registry: {
