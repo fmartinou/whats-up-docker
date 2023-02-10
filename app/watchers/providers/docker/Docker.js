@@ -572,12 +572,9 @@ class Docker extends Component {
         // Parse image to get registry, organization...
         let imageNameToParse = container.Image;
         if (imageNameToParse.includes('sha256:')) {
-            if (!image.RepoTags || image.RepoTags.length === 0) {
-                this.log.warn(`Cannot get a reliable tag for this image [${imageNameToParse}]`);
-                return Promise.resolve();
-            }
-            // Get the first repo tag (better than nothing ;)
-            [imageNameToParse] = image.RepoTags;
+            // Use image information from container.config.image
+            const containerDetails = await this.dockerApi.getContainer(containerId).inspect();
+            [imageNameToParse] = containerDetails.Config.Image.split('@');
         }
         const parsedImage = parse(imageNameToParse);
         const tagName = parsedImage.tag || 'latest';
