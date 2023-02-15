@@ -53,7 +53,7 @@ class Ghcr extends Registry {
 
     async authenticate(image, requestOptions) {
         const requestOptionsWithAuth = requestOptions;
-        const bearer = Ghcr.base64Encode(this.configuration.username, this.configuration.token);
+        const bearer = Buffer.from(this.configuration.token, 'utf-8').toString('base64');
         requestOptionsWithAuth.headers.Authorization = `Bearer ${bearer}`;
         return requestOptionsWithAuth;
     }

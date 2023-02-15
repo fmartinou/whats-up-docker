@@ -63,7 +63,7 @@ test('normalizeImage should return the proper registry v2 endpoint', () => {
 test('authenticate should populate header with base64 bearer', () => {
     expect(ghcr.authenticate({}, { headers: {} })).resolves.toEqual({
         headers: {
-            Authorization: 'Bearer dXNlcjp0b2tlbg==',
+            Authorization: 'Bearer dG9rZW4=',
         },
     });
 });
