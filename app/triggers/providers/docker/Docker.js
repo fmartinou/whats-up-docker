@@ -1,6 +1,8 @@
+const parse = require('parse-docker-image-name');
 const Trigger = require('../Trigger');
 const { getState } = require('../../../registry');
 const { fullName } = require('../../../model/container');
+
 /**
  * Replace a Docker container with an updated one.
  */
@@ -54,6 +56,70 @@ class Docker extends Trigger {
         } catch (e) {
             logContainer.warn(`Error when inspecting container ${container.id}`);
             throw e;
+        }
+    }
+
+    /* eslint-disable class-methods-use-this */
+    /**
+     * Prune previous image versions.
+     * @param dockerApi
+     * @param registry
+     * @param container
+     * @param logContainer
+     * @returns {Promise<void>}
+     */
+    async pruneImages(dockerApi, registry, container, logContainer) {
+        logContainer.info('Pruning previous tags');
+        try {
+            // Get all pulled images
+            const images = await dockerApi.listImages();
+
+            // Find all pulled images to remove
+            const imagesToRemove = images
+                .filter((image) => {
+                    // Exclude images without repo tags
+                    if (!image.RepoTags || image.RepoTags.length === 0) {
+                        return false;
+                    }
+                    const imageParsed = parse(image.RepoTags[0]);
+                    const imageNormalized = registry.normalizeImage({
+                        registry: {
+                            url: imageParsed.domain ? imageParsed.domain : '',
+                        },
+                        tag: {
+                            value: imageParsed.tag,
+                        },
+                        name: imageParsed.path,
+                    });
+
+                    // Exclude different registries
+                    if (imageNormalized.registry.name !== container.image.registry.name) {
+                        return false;
+                    }
+
+                    // Exclude different names
+                    if (imageNormalized.name !== container.image.name) {
+                        return false;
+                    }
+
+                    // Exclude current container image
+                    if (imageNormalized.tag.value === container.updateKind.localValue) {
+                        return false;
+                    }
+
+                    // Exclude candidate image
+                    if (imageNormalized.tag.value === container.updateKind.remoteValue) {
+                        return false;
+                    }
+                    return true;
+                })
+                .map((imageToRemove) => dockerApi.getImage(imageToRemove.Id));
+            await Promise.all(imagesToRemove.map((imageToRemove) => {
+                logContainer.info(`Prune image ${imageToRemove.name}`);
+                return imageToRemove.remove();
+            }));
+        } catch (e) {
+            logContainer.warn(`Some errors occurred when trying to prune previous tags (${e.message})`);
         }
     }
 
@@ -270,6 +336,16 @@ class Docker extends Trigger {
                 logContainer,
             );
             const currentContainerState = currentContainerSpec.State;
+
+            // Try to remove previous pulled images
+            if (this.configuration.prune) {
+                await this.pruneImages(
+                    dockerApi,
+                    registry,
+                    container,
+                    logContainer,
+                );
+            }
 
             // Pull new image ahead of time
             await this.pullImage(dockerApi, auth, newImage, logContainer);

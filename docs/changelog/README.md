@@ -1,7 +1,8 @@
 # Changelog
 
 # dev
-- :star: Focus login input field on page load
+- :star: [Docker / Docker-compose trigger] Allow to prune old versions (except current one and candidate one)
+- :star: Focus login input field on page load 
 - :fire: [GHCR] Fix ghcr bearer authentication
 
 # 6.0.2
