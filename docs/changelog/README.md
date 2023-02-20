@@ -1,6 +1,7 @@
 # Changelog
 
 # dev
+- :star: Focus login input field on page load
 - :fire: [GHCR] Fix ghcr bearer authentication
 
 # 6.0.2

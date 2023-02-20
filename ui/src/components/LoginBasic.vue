@@ -7,6 +7,7 @@
         append-icon="mdi-account"
         :rules="[rules.required]"
         outlined
+        autofocus
       />
       <v-text-field
         label="Password"
