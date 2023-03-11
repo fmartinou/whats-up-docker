@@ -32,6 +32,49 @@ test('validateConfiguration should return validated configuration when valid', (
     expect(validatedConfiguration).toStrictEqual(configurationValid);
 });
 
+test('validateConfiguration should fail when priority is 2 and no retry set', () => {
+    expect(() => {
+        pushover.validateConfiguration({
+            ...configurationValid,
+            priority: 2,
+        });
+    }).toThrowError(ValidationError);
+});
+
+test('validateConfiguration should fail when priority is 2 and retry too small', () => {
+    expect(() => {
+        pushover.validateConfiguration({
+            ...configurationValid,
+            priority: 2,
+            retry: 10,
+        });
+    }).toThrowError(ValidationError);
+});
+
+test('validateConfiguration should fail when priority is 2 and no expire', () => {
+    expect(() => {
+        pushover.validateConfiguration({
+            ...configurationValid,
+            priority: 2,
+            retry: 100,
+        });
+    }).toThrowError(ValidationError);
+});
+
+test('validateConfiguration should succeed when priority is 2 and expire and retry set', () => {
+    expect({
+        ...configurationValid,
+        priority: 2,
+        retry: 100,
+        expire: 200,
+    }).toStrictEqual({
+        ...configurationValid,
+        priority: 2,
+        retry: 100,
+        expire: 200,
+    });
+});
+
 test('validateConfiguration should apply_default_configuration', () => {
     const validatedConfiguration = pushover.validateConfiguration({
         user: configurationValid.user,
