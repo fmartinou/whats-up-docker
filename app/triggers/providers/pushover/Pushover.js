@@ -45,6 +45,10 @@ class Pushover extends Trigger {
                 .min(-2)
                 .max(2)
                 .default(0),
+            retry: this.joi.number().integer().min(30)
+                .when('priority', { is: 2, then: this.joi.required(), otherwise: this.joi.optional() }),
+            expire: this.joi.number().integer().min(1).max(10800)
+                .when('priority', { is: 2, then: this.joi.required(), otherwise: this.joi.optional() }),
         });
     }
 
@@ -55,9 +59,6 @@ class Pushover extends Trigger {
     maskConfiguration() {
         return {
             ...this.configuration,
-            device: this.configuration.device,
-            sound: this.configuration.sound,
-            priority: this.configuration.priority,
             user: Pushover.mask(this.configuration.user),
             token: Pushover.mask(this.configuration.token),
         };
@@ -73,9 +74,6 @@ class Pushover extends Trigger {
         return this.sendMessage({
             title: this.renderSimpleTitle(container),
             message: this.renderSimpleBody(container),
-            sound: this.configuration.sound,
-            device: this.configuration.device,
-            priority: this.configuration.priority,
         });
     }
 
@@ -88,13 +86,23 @@ class Pushover extends Trigger {
         return this.sendMessage({
             title: this.renderBatchTitle(containers),
             message: this.renderBatchBody(containers),
-            sound: this.configuration.sound,
-            device: this.configuration.device,
-            priority: this.configuration.priority,
         });
     }
 
     async sendMessage(message) {
+        const messageToSend = {
+            ...message,
+            sound: this.configuration.sound,
+            device: this.configuration.device,
+            priority: this.configuration.priority,
+        };
+
+        // Emergency priority needs retry/expire props
+        if (this.configuration.priority === 2) {
+            messageToSend.expire = this.configuration.expire;
+            messageToSend.retry = this.configuration.retry;
+        }
+
         return new Promise((resolve, reject) => {
             const push = new Push({
                 user: this.configuration.user,
@@ -103,7 +111,7 @@ class Pushover extends Trigger {
 
             push.onerror = (err) => { reject(new Error(err)); };
 
-            push.send(message, (err, res) => {
+            push.send(messageToSend, (err, res) => {
                 if (err) {
                     reject(new Error(err));
                 } else {
