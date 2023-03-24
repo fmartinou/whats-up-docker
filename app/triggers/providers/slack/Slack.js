@@ -1,4 +1,4 @@
-const SlackClient = require('slack');
+const { WebClient } = require('@slack/web-api');
 const Trigger = require('../Trigger');
 
 /*
@@ -32,9 +32,7 @@ class Slack extends Trigger {
      * Init trigger.
      */
     initTrigger() {
-        this.client = new SlackClient({
-            token: this.configuration.token,
-        });
+        this.client = new WebClient(this.configuration.token);
     }
 
     /*
@@ -44,16 +42,22 @@ class Slack extends Trigger {
      * @returns {Promise<void>}
      */
     async trigger(container) {
-        return this.client.chat.postMessage({
-            channel: this.configuration.channel,
-            text: this.renderSimpleBody(container),
-        });
+        return this.postMessage(this.renderSimpleBody(container));
     }
 
     async triggerBatch(containers) {
+        return this.postMessage(this.renderBatchBody(containers));
+    }
+
+    /**
+     * Post a message to a Slack channel.
+     * @param text the text to post
+     * @returns {Promise<ChatPostMessageResponse>}
+     */
+    async postMessage(text) {
         return this.client.chat.postMessage({
             channel: this.configuration.channel,
-            text: this.renderBatchBody(containers),
+            text,
         });
     }
 }

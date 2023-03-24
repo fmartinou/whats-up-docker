@@ -1,7 +1,7 @@
 const { ValidationError } = require('joi');
-const SlackClient = require('slack');
+const { WebClient } = require('@slack/web-api');
 
-jest.mock('slack');
+jest.mock('@slack/web-api');
 const Slack = require('./Slack');
 
 const slack = new Slack();
@@ -45,9 +45,7 @@ test('maskConfiguration should mask sensitive data', () => {
 test('initTrigger should init Slack client', async () => {
     slack.configuration = configurationValid;
     await slack.initTrigger();
-    expect(SlackClient).toHaveBeenCalledWith({
-        token: 'token',
-    });
+    expect(WebClient).toHaveBeenCalledWith('token');
 });
 
 test('trigger should format text as expected', async () => {
