@@ -66,6 +66,7 @@ class Mqtt extends Trigger {
                 scheme: ['mqtt', 'mqtts', 'tcp', 'tls', 'ws', 'wss'],
             }).required(),
             topic: this.joi.string().default(containerDefaultTopic),
+            clientid: this.joi.string().default(`wud_${Math.random().toString(16).substring(2, 10)}`),
             user: this.joi.string(),
             password: this.joi.string(),
             hass: this.joi.object({
@@ -108,7 +109,9 @@ class Mqtt extends Trigger {
         // Enforce simple mode
         this.configuration.mode = 'simple';
 
-        const options = {};
+        const options = {
+            clientId: this.configuration.clientid,
+        };
         if (this.configuration.user) {
             options.username = this.configuration.user;
         }
