@@ -15,7 +15,7 @@ The `pushover` trigger lets you send realtime notifications to your devices (And
 | `WUD_TRIGGER_PUSHOVER_{trigger_name}_EXPIRE`   | :white_circle: | The notification expire in seconds (only when priority=2) | [see here](https://pushover.net/api#priority)                                                      |                             |
 | `WUD_TRIGGER_PUSHOVER_{trigger_name}_RETRY`    | :white_circle: | The notification retry in seconds (only when priority=2)  | [see here](https://pushover.net/api#priority)                                                      |                             |
 
-?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration).
 
 ### Examples
 

@@ -15,7 +15,7 @@ The `smtp` trigger lets you send emails with smtp.
 | `WUD_TRIGGER_SMTP_{trigger_name}_TLS_ENABLED` | :white_circle: | Use TLS                       | `true`, `false`               | `false`                    |
 | `WUD_TRIGGER_SMTP_{trigger_name}_TLS_VERIFY`  | :white_circle: | Verify server TLS certificate | `true`, `false`               | `true`                     |
 
-?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration).
 
 ### Examples
 

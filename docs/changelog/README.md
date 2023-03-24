@@ -2,6 +2,7 @@
 
 # dev
 - :star: [Docker / Docker-compose trigger] - Allow to prune old versions (except current one and candidate one)
+- :star: [Apprise] - Add support for [Apprise persistent yaml configuration](https://github.com/caronc/apprise/wiki/config_yaml)
 - :star: [MQTT] - Prefix client id with `wud_` instead of the generic `mqttjs_` prefix 
 - :star: [UI] - Focus login input field on page load 
 - :fire: [GHCR] - Fix ghcr bearer authentication

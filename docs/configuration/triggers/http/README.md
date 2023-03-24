@@ -9,7 +9,7 @@ The `http` trigger lets you send container update notifications via HTTP.
 | `WUD_TRIGGER_HTTP_{trigger_name}_URL`    | :red_circle:   | The URL of the webhook | Valid http or https endpoint  |                            |
 | `WUD_TRIGGER_HTTP_{trigger_name}_METHOD` | :white_circle: | The HTTP method to use | `GET`, `POST`                 | `POST`                     |
 
-?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration).
 
 ### Examples
 
