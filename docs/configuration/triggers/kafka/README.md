@@ -16,7 +16,7 @@ The `kafka` trigger lets you publish container update notifications to a Kafka t
 
 !> The topic must already exist on the broker (the trigger won't automatically create it)
 
-?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration).
 
 ### Examples
 

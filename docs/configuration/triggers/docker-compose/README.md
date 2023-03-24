@@ -22,7 +22,7 @@ The trigger will:
 | `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_PRUNE`  | :white_circle: | If the old image must be pruned after upgrade                  | `true`, `false`  | `false`                    |
 | `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_DRYRUN` | :white_circle: | When enabled, only pull the new image ahead of time            | `true`, `false`  | `false`                    |
 
-?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration) but only supports the `batch` mode.
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration). but only supports the `batch` mode.
 
 !> This trigger will only work with locally watched containers.
 

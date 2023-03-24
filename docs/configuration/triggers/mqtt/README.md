@@ -19,7 +19,7 @@ The `mqtt` trigger lets you send container update notifications to an MQTT broke
 | `WUD_TRIGGER_MQTT_{trigger_name}_TLS_CLIENTKEY`          | :white_circle: | The path to the file containing the client private key (when TLS mutual authzentication)            | Any valid file path                 |                            |
 | `WUD_TRIGGER_MQTT_{trigger_name}_TLS_REJECTUNAUTHORIZED` | :white_circle: | Accept or reject when the TLS server certificate cannot be trusted                                  | `true`, `false`                     | `true`                     |
 
-?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration) but only supports the `simple` mode.
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration). but only supports the `simple` mode.
 
 ?> You want to customize the name & icon of the Home-Assistant entity? \
 [Use the `wud.display.name` and `wud.display.icon` labels](configuration/watchers/?id=labels).

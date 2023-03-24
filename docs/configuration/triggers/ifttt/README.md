@@ -10,7 +10,7 @@ The `ifttt` trigger lets you send container update notifications to Ifttt via th
 | `WUD_TRIGGER_IFTTT_{trigger_name}_KEY`   | :red_circle:   | The Webhook key |                  |                            |
 | `WUD_TRIGGER_IFTTT_{trigger_name}_EVENT` | :white_circle: | The event name  |                  | `wud-container`            |
 
-?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration).
 
 ### Ifttt ingredients
 On Webhook call, Ifttt captures the following ingredients:

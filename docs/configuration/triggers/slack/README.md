@@ -12,7 +12,7 @@ The `slack` trigger lets you post image update notifications to a Slack channel.
 
 !> The Slack channel must already exist on the workspace (the trigger won't automatically create it)
 
-?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration)
+?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration).
 
 ### Examples
 

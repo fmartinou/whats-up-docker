@@ -38,6 +38,16 @@ test('validateConfiguration should throw error when invalid', () => {
     }).toThrowError(ValidationError);
 });
 
+test('validateConfiguration should throw error when urls and config are set at the same time', () => {
+    const configuration = {
+        ...configurationValid,
+        config: 'config',
+    };
+    expect(() => {
+        apprise.validateConfiguration(configuration);
+    }).toThrowError(ValidationError);
+});
+
 test('trigger should send POST http request to notify endpoint', async () => {
     apprise.configuration = configurationValid;
     const container = {
