@@ -11,6 +11,7 @@ mqtt.log = log;
 const configurationValid = {
     url: 'mqtt://host:1883',
     topic: 'wud/container',
+    clientid: 'wud',
     hass: {
         enabled: false,
         prefix: 'homeassistant',
@@ -44,6 +45,7 @@ test('validateConfiguration should return validated configuration when valid', (
 test('validateConfiguration should apply_default_configuration', () => {
     const validatedConfiguration = mqtt.validateConfiguration({
         url: configurationValid.url,
+        clientid: 'wud',
     });
     expect(validatedConfiguration).toStrictEqual(configurationValid);
 });
@@ -83,6 +85,7 @@ test('initTrigger should init Mqtt client', async () => {
         ...configurationValid,
         user: 'user',
         password: 'password',
+        clientid: 'wud',
         hass: {
             enabled: true,
             prefix: 'homeassistant',
@@ -91,6 +94,7 @@ test('initTrigger should init Mqtt client', async () => {
     const spy = jest.spyOn(asyncMqtt, 'connectAsync');
     await mqtt.initTrigger();
     expect(spy).toHaveBeenCalledWith('mqtt://host:1883', {
+        clientId: 'wud',
         username: 'user',
         password: 'password',
         rejectUnauthorized: true,

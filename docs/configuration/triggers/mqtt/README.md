@@ -10,6 +10,7 @@ The `mqtt` trigger lets you send container update notifications to an MQTT broke
 | `WUD_TRIGGER_MQTT_{trigger_name}_URL`                    | :red_circle:   | The URL of the MQTT broker                                                                          | Valid mqtt, mqtts, tcp, ws, wss url |                            |
 | `WUD_TRIGGER_MQTT_{trigger_name}_USER`                   | :white_circle: | The username if broker authentication is enabled                                                    |                                     |                            |
 | `WUD_TRIGGER_MQTT_{trigger_name}_PASSWORD`               | :white_circle: | The password if broker authentication is enabled                                                    |                                     |                            |
+| `WUD_TRIGGER_MQTT_{trigger_name}_CLIENTID`               | :white_circle: | The Mqtt client Id to use                                                                           |                                     | `wud_$random`              |
 | `WUD_TRIGGER_MQTT_{trigger_name}_TOPIC`                  | :white_circle: | The base topic where the updates are published to                                                   |                                     | `wud/container`            |
 | `WUD_TRIGGER_MQTT_{trigger_name}_HASS_ENABLED`           | :white_circle: | Enable [Home-assistant](https://www.home-assistant.io/) integration                                 | `true`, `false`                     | `false`                    |
 | `WUD_TRIGGER_MQTT_{trigger_name}_HASS_PREFIX`            | :white_circle: | Base topic for hass entity discovery                                                                |                                     | `homeassistant`            |
@@ -37,7 +38,7 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-        - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtt://localhost:1883
+      - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtt://localhost:1883
 ```
 
 #### **Docker**
@@ -61,10 +62,10 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-        - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtts://localhost:8883
-        - WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CLIENTKEY=/wud/mqtt/client-key.pem
-        - WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CLIENTCERT=/wud/mqtt/client-cert.pem
-        - WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CACHAIN=/wud/mqtt/ca.pem
+      - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtts://localhost:8883
+      - WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CLIENTKEY=/wud/mqtt/client-key.pem
+      - WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CLIENTCERT=/wud/mqtt/client-cert.pem
+      - WUD_TRIGGER_MQTT_MOSQUITTO_TLS_CACHAIN=/wud/mqtt/ca.pem
     volumes:
       - /mosquitto/tls/client/client-key.pem:/wud/mqtt/client-key.pem
       - /mosquitto/tls/client/client-cert.pem:/wud/mqtt/client-cert.pem
@@ -95,10 +96,10 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-        - WUD_TRIGGER_MQTT_MAQIATTO_URL=tcp://maqiatto.com:1883
-        - WUD_TRIGGER_MQTT_MAQIATTO_USER=john@doe.com
-        - WUD_TRIGGER_MQTT_MAQIATTO_PASSWORD=mysecretpassword
-        - WUD_TRIGGER_MQTT_MAQIATTO_TOPIC=john@doe.com/wud/image
+      - WUD_TRIGGER_MQTT_MAQIATTO_URL=tcp://maqiatto.com:1883
+      - WUD_TRIGGER_MQTT_MAQIATTO_USER=john@doe.com
+      - WUD_TRIGGER_MQTT_MAQIATTO_PASSWORD=mysecretpassword
+      - WUD_TRIGGER_MQTT_MAQIATTO_TOPIC=john@doe.com/wud/image
 ```
 
 #### **Docker**
@@ -150,8 +151,8 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-        - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtt://localhost:1883
-        - WUD_TRIGGER_MQTT_MOSQUITTO_HASS_ENABLED=true
+      - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtt://localhost:1883
+      - WUD_TRIGGER_MQTT_MOSQUITTO_HASS_ENABLED=true
 ```
 
 #### **Docker**

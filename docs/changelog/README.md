@@ -1,10 +1,11 @@
 # Changelog
 
 # dev
-- :star: [Docker / Docker-compose trigger] Allow to prune old versions (except current one and candidate one)
-- :star: Focus login input field on page load 
-- :fire: [GHCR] Fix ghcr bearer authentication
-- :fire: [PUSHOVER] Allow to set needed `expire`, `retry` properties when `priority=2`
+- :star: [Docker / Docker-compose trigger] - Allow to prune old versions (except current one and candidate one)
+- :star: [MQTT] - Prefix client id with `wud_` instead of the generic `mqttjs_` prefix 
+- :star: [UI] - Focus login input field on page load 
+- :fire: [GHCR] - Fix ghcr bearer authentication
+- :fire: [PUSHOVER] - Allow to set needed `expire`, `retry` properties when `priority=2`
 
 # 6.0.2
 - :star: Add `watcher` placeholder visible to trigger templates  
