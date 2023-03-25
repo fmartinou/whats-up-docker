@@ -17,6 +17,14 @@ services:
     volumes:
       - ./registry/auth:/auth
 
+  # Nginx
+  nginx_latest:
+    image: nginx
+    container_name: nginx_latest
+    labels:
+      - wud.watch=true
+      - wud.tag.include=^latest$$
+      - wud.watch.digest=true
   # Mosquitto with mTLS enabled
   mosquitto:
     image: eclipse-mosquitto:2.0.14
@@ -35,3 +43,4 @@ services:
     labels:
       - wud.watch=true                    # check that comments are preserved
       - wud.tag.include=^\d+\.\d+.\d+$$   # check that comments are preserved
+
