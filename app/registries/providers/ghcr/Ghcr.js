@@ -8,7 +8,6 @@ class Ghcr extends Registry {
         return this.joi.alternatives([
             this.joi.string().allow(''),
             this.joi.object().keys({
-                username: this.joi.string().allow('').required(),
                 token: this.joi.string().allow('').required(),
             }),
         ]);
@@ -53,7 +52,10 @@ class Ghcr extends Registry {
 
     async authenticate(image, requestOptions) {
         const requestOptionsWithAuth = requestOptions;
-        const bearer = Buffer.from(this.configuration.token, 'utf-8').toString('base64');
+        const bearer = Buffer.from(
+            this.configuration.token ? this.configuration.token : ':',
+            'utf-8',
+        ).toString('base64');
         requestOptionsWithAuth.headers.Authorization = `Bearer ${bearer}`;
         return requestOptionsWithAuth;
     }

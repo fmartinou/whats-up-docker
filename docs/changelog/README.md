@@ -7,7 +7,8 @@
 - :star: [UI] - Focus login input field on page load
 - :star: Upgrade all dependencies
 - :star: Reduce docker image size
-- :fire: [GHCR] - Fix ghcr bearer authentication
+- :fire: [GHCR] - Fix bearer authentication (username is not needed anymore)
+- :fire: [GHCR] - Fix anonymous authentication
 - :fire: [PUSHOVER] - Allow to set needed `expire`, `retry` properties when `priority=2`
 
 # 6.0.2
