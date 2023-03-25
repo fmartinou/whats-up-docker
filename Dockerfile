@@ -1,4 +1,5 @@
-FROM node:16-alpine
+# Common Stage
+FROM node:16-alpine as base
 
 LABEL maintainer="fmartinou"
 EXPOSE 3000
@@ -13,25 +14,31 @@ WORKDIR /home/node/app
 
 RUN mkdir /store
 
-# Default entrypoint
-COPY Docker.entrypoint.sh /usr/bin/entrypoint.sh
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["/usr/bin/entrypoint.sh"]
-
-# Default Command
-CMD ["node", "index"]
-
 # Add TZDATA to allow easy local time configuration
 RUN apk update \
-    && apk add tzdata \
-    && apk add openssl \
+    && apk add --no-cache tzdata openssl \
     && rm -rf /var/cache/apk/*
+
+# Dependencies stage
+FROM base as dependencies
 
 # Copy app package.json
 COPY app/package* ./
 
 # Install dependencies
-RUN npm ci --production
+RUN npm ci --omit=dev --omit=optional --no-audit --no-fund --no-update-notifier
+
+# Release stage
+FROM base as release
+
+# Default entrypoint
+COPY Docker.entrypoint.sh /usr/bin/entrypoint.sh
+RUN chmod +x /usr/bin/entrypoint.sh
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+CMD ["node", "index"]
+
+## Copy node_modules
+COPY --from=dependencies /home/node/app/node_modules ./node_modules
 
 # Copy app
 COPY app/ ./

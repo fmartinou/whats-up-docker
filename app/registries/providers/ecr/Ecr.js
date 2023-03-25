@@ -1,4 +1,5 @@
 const ECR = require('aws-sdk/clients/ecr');
+require('aws-sdk/lib/maintenance_mode_message').suppress = true; // Disable aws sdk maintenance mode message at startup
 const rp = require('request-promise-native');
 const Registry = require('../../Registry');
 

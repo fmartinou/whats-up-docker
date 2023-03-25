@@ -6,6 +6,7 @@
 - :star: [MQTT] - Prefix client id with `wud_` instead of the generic `mqttjs_` prefix 
 - :star: [UI] - Focus login input field on page load
 - :star: Upgrade all dependencies
+- :star: Reduce docker image size
 - :fire: [GHCR] - Fix ghcr bearer authentication
 - :fire: [PUSHOVER] - Allow to set needed `expire`, `retry` properties when `priority=2`
 
