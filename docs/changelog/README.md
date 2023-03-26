@@ -1,7 +1,7 @@
 # Changelog
 
 # 6.1.1
-- :fire: [Docker watcher] - Fix `manifest not found` error on `amd64` images when no `variant` is defined
+- :fire: [Docker watcher] - Fix `manifest not found` error on `arm64` images when no `variant` is defined
 
 # 6.1.0
 - :star: [Docker / Docker-compose trigger] - Allow to prune old versions (except current one and candidate one)
