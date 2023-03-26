@@ -1,5 +1,8 @@
 # Changelog
 
+# 6.1.1
+- :fire: [Docker watcher] - Fix `manifest not found` error on `amd64` images when no `variant` is defined
+
 # 6.1.0
 - :star: [Docker / Docker-compose trigger] - Allow to prune old versions (except current one and candidate one)
 - :star: [Apprise] - Add support for [Apprise persistent yaml configuration](https://github.com/caronc/apprise/wiki/config_yaml)
