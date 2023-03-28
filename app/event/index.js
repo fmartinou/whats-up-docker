@@ -3,11 +3,16 @@ const events = require('events');
 // Build EventEmitter
 const eventEmitter = new events.EventEmitter();
 
+// Container related events
 const WUD_CONTAINER_ADDED = 'wud:container-added';
 const WUD_CONTAINER_UPDATED = 'wud:container-updated';
 const WUD_CONTAINER_REMOVED = 'wud:container-removed';
 const WUD_CONTAINER_REPORT = 'wud:container-report';
 const WUD_CONTAINER_REPORTS = 'wud:container-reports';
+
+// Watcher related events
+const WUD_WATCHER_START = 'wud:watcher-start';
+const WUD_WATCHER_STOP = 'wud:watcher-stop';
 
 /**
  * Emit ContainerReports event.
@@ -89,6 +94,21 @@ function registerContainerRemoved(handler) {
     eventEmitter.on(WUD_CONTAINER_REMOVED, handler);
 }
 
+function emitWatcherStart(watcher) {
+    eventEmitter.emit(WUD_WATCHER_START, watcher);
+}
+
+function registerWatcherStart(handler) {
+    eventEmitter.on(WUD_WATCHER_START, handler);
+}
+
+function emitWatcherStop(watcher) {
+    eventEmitter.emit(WUD_WATCHER_STOP, watcher);
+}
+
+function registerWatcherStop(handler) {
+    eventEmitter.on(WUD_WATCHER_STOP, handler);
+}
 module.exports = {
     emitContainerReports,
     registerContainerReports,
@@ -100,4 +120,8 @@ module.exports = {
     registerContainerUpdated,
     emitContainerRemoved,
     registerContainerRemoved,
+    emitWatcherStart,
+    registerWatcherStart,
+    emitWatcherStop,
+    registerWatcherStop,
 };
