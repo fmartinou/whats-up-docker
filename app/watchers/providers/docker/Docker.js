@@ -27,7 +27,7 @@ const { getWatchContainerGauge } = require('../../../prometheus/watcher');
 const START_WATCHER_DELAY_MS = 1000;
 
 // Debounce delay used when performing a watch after a docker event has been received
-const DEBOUNCED_WATCH_CRON_MS = 20000;
+const DEBOUNCED_WATCH_CRON_MS = 5000;
 
 /**
  * Return all supported registries
@@ -384,6 +384,9 @@ class Docker extends Component {
     async watch() {
         let containers = [];
 
+        // Dispatch event to notify start watching
+        event.emitWatcherStart(this);
+
         // List images to watch
         try {
             containers = await this.getContainers();
@@ -399,6 +402,9 @@ class Docker extends Component {
         } catch (e) {
             this.log.warn(`Error when processing some containers (${e.message})`);
             return [];
+        } finally {
+            // Dispatch event to notify stop watching
+            event.emitWatcherStop(this);
         }
     }
 

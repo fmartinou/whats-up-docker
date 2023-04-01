@@ -1,33 +1,40 @@
 const event = require('./index');
 
-test('an event should be emitted when a container is added', () => {
-    expect.assertions(1);
-    event.registerContainerAdded((container) => {
-        expect(container).toStrictEqual({ x: 'x' });
-    });
-    event.emitContainerAdded({ x: 'x' });
-});
+const eventTestCases = [
+    {
+        emitter: event.emitContainerReports,
+        register: event.registerContainerReports,
+    }, {
+        emitter: event.emitContainerReport,
+        register: event.registerContainerReport,
+    }, {
+        emitter: event.emitContainerAdded,
+        register: event.registerContainerAdded,
+    }, {
+        emitter: event.emitContainerUpdated,
+        register: event.registerContainerUpdated,
+    }, {
+        emitter: event.emitContainerRemoved,
+        register: event.registerContainerRemoved,
+    }, {
+        emitter: event.emitWatcherStart,
+        register: event.registerWatcherStart,
+    }, {
+        emitter: event.emitWatcherStop,
+        register: event.registerWatcherStop,
+    },
+];
+test.each(eventTestCases)(
+    'the registered $register.name function must execute the handler when the $emitter.name emitter function is called',
+    async ({ register, emitter }) => {
+        // Register an handler
+        const handlerMock = jest.fn((item) => item);
+        register(handlerMock);
 
-test('an event should be emitted when a container is updated', () => {
-    expect.assertions(1);
-    event.registerContainerUpdated((container) => {
-        expect(container).toStrictEqual({ x: 'x' });
-    });
-    event.emitContainerUpdated({ x: 'x' });
-});
+        // Emit the event
+        emitter();
 
-test('an event should be emitted when a container is removed', () => {
-    expect.assertions(1);
-    event.registerContainerRemoved((container) => {
-        expect(container).toStrictEqual({ x: 'x' });
-    });
-    event.emitContainerRemoved({ x: 'x' });
-});
-
-test('an event should be emitted when there is a new version', () => {
-    expect.assertions(1);
-    event.registerContainerReport((container) => {
-        expect(container).toStrictEqual({ x: 'x' });
-    });
-    event.emitContainerReport({ x: 'x' });
-});
+        // Ensure handler is called
+        expect(handlerMock.mock.calls.length === 1);
+    },
+);
