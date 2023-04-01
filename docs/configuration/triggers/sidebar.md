@@ -17,6 +17,7 @@
         - [Pushover](configuration/triggers/pushover/)
         - [Slack](configuration/triggers/slack/)
         - [Smtp](configuration/triggers/smtp/)
+        - [Telegram](configuration/triggers/telegram/)
     - [Watchers](configuration/watchers/)
 - [UI](ui/)
 - [Api](api/)

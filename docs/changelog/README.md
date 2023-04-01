@@ -2,6 +2,7 @@
 
 # dev
 - :star: [MQTT] - Add home-assistant global sensors (number of containers, number of containers to update...)
+- :star: [TELEGRAM] - Add [Telegram trigger](configuration/triggers/telegram/)
 
 # 6.1.1
 - :fire: [Docker watcher] - Fix `manifest not found` error on `arm64` images when no `variant` is defined
