@@ -20,7 +20,7 @@ Gets you notified when new versions of your Docker containers are available and 
 ![image](wud_arch.png)
 
 ## Many supported triggers
-> Send notifications using **Smtp**, [**Apprise**](https://github.com/caronc/apprise-api), [**Ifttt**](https://ifttt.com), [**Slack**](https://slack.com), [**Pushover**](https://pushover.net)...
+> Send notifications using **Smtp**, [**Apprise**](https://github.com/caronc/apprise-api), [**Ifttt**](https://ifttt.com), [**Pushover**](https://pushover.net), [**Slack**](https://slack.com), [**Telegram**](https://telegram.org/)...
 
 > Automatically update your [**docker**](https://www.docker.com) containers or your [**docker-compose**](https://docs.docker.com/compose) stack.
 
