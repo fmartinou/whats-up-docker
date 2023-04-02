@@ -5,12 +5,36 @@ The `gcr` registry lets you configure [GCR](https://cloud.google.com/container-r
 
 ### Variables
 
-| Env var                        | Required     | Description                  | Supported values                                                                                                     | Default value when missing |
-| ------------------------------ |:------------:| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------- | 
-| `WUD_REGISTRY_GCR_CLIENTEMAIL` | :red_circle: | Service Account Client Email | See [Service Account credentials](https://cloud.google.com/container-registry/docs/advanced-authentication#json-key) |                            |
-| `WUD_REGISTRY_GCR_PRIVATEKEY`  | :red_circle: | Service Account Private Key  | See [Service Account credentials](https://cloud.google.com/container-registry/docs/advanced-authentication#json-key) |                            |
+| Env var                        |    Required    | Description                                                       | Supported values                                                                                                     | Default value when missing |
+| ------------------------------ |:--------------:|-------------------------------------------------------------------| -------------------------------------------------------------------------------------------------------------------- | -------------------------- | 
+| `WUD_REGISTRY_GCR_CLIENTEMAIL` | :white_circle: | Service Account Client Email (required for private images access) | See [Service Account credentials](https://cloud.google.com/container-registry/docs/advanced-authentication#json-key) |                            |
+| `WUD_REGISTRY_GCR_PRIVATEKEY`  | :white_circle: | Service Account Private Key (required for private images access)  | See [Service Account credentials](https://cloud.google.com/container-registry/docs/advanced-authentication#json-key) |                            |
 
 ### Examples
+
+#### Configure for anonymous access
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    ...
+    environment:
+      - WUD_REGISTRY_GCR=
+```
+#### **Docker**
+```bash
+docker run \
+  -e WUD_REGISTRY_GCR="" \
+  ...
+  fmartinou/whats-up-docker
+```
+<!-- tabs:end -->
+
+#### Configure for authenticated access
 <!-- tabs:start -->
 #### **Docker Compose**
 ```yaml

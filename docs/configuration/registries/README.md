@@ -24,6 +24,7 @@ WUD supports most registries:
 
 !> By default, without any further configuration, WUD is handling _out-of-the-box_ public images hosted on \
 ECR (public.ecr.aws) \
+GCR \
 GHCR \
 HOTIO \
 HUB \
