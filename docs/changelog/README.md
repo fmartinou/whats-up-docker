@@ -1,6 +1,6 @@
 # Changelog
 
-# dev
+# 6.2.0
 - :star: [MQTT] - Add home-assistant global sensors (number of containers, number of containers to update...)
 - :star: [TELEGRAM] - Add [Telegram trigger](configuration/triggers/telegram/)
 
