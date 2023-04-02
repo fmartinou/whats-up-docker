@@ -6,10 +6,13 @@ const Registry = require('../../Registry');
  */
 class Gcr extends Registry {
     getConfigurationSchema() {
-        return this.joi.object().keys({
-            clientemail: this.joi.string().required(),
-            privatekey: this.joi.string().required(),
-        });
+        return this.joi.alternatives([
+            this.joi.string().allow(''),
+            this.joi.object().keys({
+                clientemail: this.joi.string().required(),
+                privatekey: this.joi.string().required(),
+            }),
+        ]);
     }
 
     /**
@@ -50,6 +53,9 @@ class Gcr extends Registry {
     }
 
     async authenticate(image, requestOptions) {
+        if (!this.configuration.clientemail) {
+            return requestOptions;
+        }
         const request = {
             method: 'GET',
             uri: `https://gcr.io/v2/token?scope=repository:${image.name}:pull`,
