@@ -24,6 +24,7 @@ export default new Vuetify({
         accent: "#06D6A0",
         error: "#E53935",
       },
+      dark: {},
     },
   },
 });

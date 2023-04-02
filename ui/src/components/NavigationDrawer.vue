@@ -1,21 +1,18 @@
 <template>
   <v-navigation-drawer
     app
+    dark
     :mini-variant.sync="mini"
     permanent
     :disable-route-watcher="true"
-    color="primary"
-    dark
     :clipped="true"
   >
-    <v-toolbar flat color="primary" dark class="ml-1 pa-0">
+    <v-toolbar flat class="ma-0 pa-0">
       <v-app-bar-nav-icon @click.stop="mini = !mini" style="margin-left: -16px">
         <v-icon v-if="!mini">mdi-close</v-icon>
         <v-icon v-else>mdi-menu</v-icon>
       </v-app-bar-nav-icon>
-      <v-toolbar-title class="font-weight-bold text-body-1"
-        >What's up Docker?</v-toolbar-title
-      >
+      <v-toolbar-title class="text-body-1">What's up Docker?</v-toolbar-title>
     </v-toolbar>
     <v-list nav class="pt-0 pb-0">
       <v-fade-transition group hide-on-leave mode="in-out">
@@ -52,12 +49,13 @@
               <v-list-item-title>Configuration</v-list-item-title>
             </v-list-item-content>
           </template>
+          <div></div>
           <v-list-item
             dense
             v-for="configurationItem in configurationItemsSorted"
             :key="configurationItem.to"
             :to="configurationItem.to"
-            class="mb-0"
+            class="mb-0 pl-8"
           >
             <v-list-item-icon>
               <v-icon>{{ configurationItem.icon }}</v-icon>
@@ -87,6 +85,26 @@
         </v-list-item>
       </v-fade-transition>
     </v-list>
+
+    <template v-slot:append v-if="!mini">
+      <v-list>
+        <v-list-item class="ml-2 mb-2">
+          <v-switch
+            dark
+            hide-details
+            inset
+            label="Dark mode"
+            v-model="darkMode"
+            @change="toggleDarkMode"
+          >
+            <template v-slot:label>
+              <v-icon>mdi-weather-night</v-icon>
+            </template>
+          </v-switch>
+        </v-list-item>
+      </v-list>
+      <div></div>
+    </template>
   </v-navigation-drawer>
 </template>
 
@@ -103,6 +121,7 @@ export default {
   data: () => ({
     logo,
     mini: true,
+    darkMode: localStorage.darkMode === "true",
     containerIcon: getContainerIcon(),
     configurationItems: [
       {
@@ -139,6 +158,20 @@ export default {
         item1.name.localeCompare(item2.name)
       );
     },
+  },
+
+  methods: {
+    toggleDarkMode: function () {
+      localStorage.darkMode = this.darkMode;
+      this.setDarkMode(this.darkMode);
+    },
+    setDarkMode(darkMode) {
+      this.$vuetify.theme.dark = darkMode;
+    },
+  },
+
+  beforeMount() {
+    this.setDarkMode(this.darkMode);
   },
 };
 </script>
