@@ -2,6 +2,7 @@
 
 # dev
 - :star: [GCR] - Allow anonymous access (for public images)
+- :star: [UI] - Add dark mode
 
 # 6.2.0
 - :star: [MQTT] - Add home-assistant global sensors (number of containers, number of containers to update...)

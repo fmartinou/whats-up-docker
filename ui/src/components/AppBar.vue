@@ -1,15 +1,14 @@
 <template>
-  <v-app-bar app color="primary" flat dark tile clipped-left dense>
+  <v-app-bar app flat dark tile clipped-left dense>
     <v-app-bar-nav-icon>
       <v-img :src="logo" alt="logo" max-width="48px" />
     </v-app-bar-nav-icon>
 
     <v-toolbar-title
       v-if="viewName && 'home'.toLowerCase() !== viewName.toLowerCase()"
-      class="text-body-1 text-capitalize ml-2"
+      class="text-body-1 text-capitalize ma-0 pl-4"
       >{{ viewName }}</v-toolbar-title
     >
-
     <v-spacer />
     <v-menu left bottom v-if="user && user.username !== 'anonymous'">
       <template v-slot:activator="{ on, attrs }">
