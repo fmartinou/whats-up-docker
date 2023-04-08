@@ -23,9 +23,9 @@ docker.log = log;
 jest.mock('../../../registry', () => ({
     getState() {
         return {
-            watcher: {
-                'watcher.docker.test': {
-                    getId: () => 'watcher.docker.test',
+            controller: {
+                'controller.docker.test': {
+                    getId: () => 'controller.docker.test',
                     watch: () => Promise.resolve(),
                     dockerApi: {
                         getContainer: (id) => {
@@ -108,20 +108,20 @@ test('validateConfiguration should throw error when invalid', () => {
     }).toThrowError(ValidationError);
 });
 
-test('getWatcher should return watcher responsible for a container', () => {
-    expect(docker.getWatcher({
-        watcher: 'test',
-    }).getId()).toEqual('watcher.docker.test');
+test('getController should return controller responsible for a container', () => {
+    expect(docker.getController({
+        controller: 'test',
+    }).getId()).toEqual('controller.docker.test');
 });
 
 test('getCurrentContainer should return container from dockerApi', async () => {
-    await expect(docker.getCurrentContainer(docker.getWatcher({ watcher: 'test' }).dockerApi, {
+    await expect(docker.getCurrentContainer(docker.getController({ controller: 'test' }).dockerApi, {
         id: '123456789',
     })).resolves.not.toBeUndefined();
 });
 
 test('getCurrentContainer should throw error when error occurs', async () => {
-    await expect(docker.getCurrentContainer(docker.getWatcher({ watcher: 'test' }).dockerApi, {
+    await expect(docker.getCurrentContainer(docker.getController({ controller: 'test' }).dockerApi, {
         id: 'unknown',
     })).rejects.toThrowError('Error when getting container');
 });
@@ -175,31 +175,31 @@ test('startContainer should throw error when error occurs', async () => {
 });
 
 test('createContainer should stop container from dockerApi', async () => {
-    await expect(docker.createContainer(docker.getWatcher({ watcher: 'test' }).dockerApi, {
+    await expect(docker.createContainer(docker.getController({ controller: 'test' }).dockerApi, {
         name: 'container-name',
     }, 'name', log)).resolves.not.toBeUndefined();
 });
 
 test('createContainer should throw error when error occurs', async () => {
-    await expect(docker.createContainer(docker.getWatcher({ watcher: 'test' }).dockerApi, {
+    await expect(docker.createContainer(docker.getController({ controller: 'test' }).dockerApi, {
         name: 'ko',
     }, 'name', log)).rejects.toThrowError('Error when creating container');
 });
 
 test('pull should pull image from dockerApi', async () => {
-    await expect(docker.pullImage(docker.getWatcher({ watcher: 'test' }).dockerApi, undefined, 'test/test:1.2.3', log)).resolves.toBeUndefined();
+    await expect(docker.pullImage(docker.getController({ controller: 'test' }).dockerApi, undefined, 'test/test:1.2.3', log)).resolves.toBeUndefined();
 });
 
 test('pull should throw error when error occurs', async () => {
-    await expect(docker.pullImage(docker.getWatcher({ watcher: 'test' }).dockerApi, undefined, 'test/test:unknown', log)).rejects.toThrowError('Error when pulling image');
+    await expect(docker.pullImage(docker.getController({ controller: 'test' }).dockerApi, undefined, 'test/test:unknown', log)).rejects.toThrowError('Error when pulling image');
 });
 
 test('removeImage should pull image from dockerApi', async () => {
-    await expect(docker.removeImage(docker.getWatcher({ watcher: 'test' }).dockerApi, 'test/test:1.2.3', log)).resolves.toBeUndefined();
+    await expect(docker.removeImage(docker.getController({ controller: 'test' }).dockerApi, 'test/test:1.2.3', log)).resolves.toBeUndefined();
 });
 
 test('removeImage should throw error when error occurs', async () => {
-    await expect(docker.removeImage(docker.getWatcher({ watcher: 'test' }).dockerApi, 'test/test:unknown', log)).rejects.toThrowError('Error when removing image');
+    await expect(docker.removeImage(docker.getController({ controller: 'test' }).dockerApi, 'test/test:unknown', log)).rejects.toThrowError('Error when removing image');
 });
 
 test('clone should clone an existing container spec', () => {
@@ -243,7 +243,7 @@ test('clone should clone an existing container spec', () => {
 
 test('trigger should not throw when all is ok', async () => {
     await expect(docker.trigger({
-        watcher: 'test',
+        controller: 'test',
         id: '123456789',
         Name: '/container-name',
         image: {

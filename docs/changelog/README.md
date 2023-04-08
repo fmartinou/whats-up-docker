@@ -9,7 +9,7 @@
 - :star: [TELEGRAM] - Add [Telegram trigger](configuration/triggers/telegram/)
 
 # 6.1.1
-- :fire: [Docker watcher] - Fix `manifest not found` error on `arm64` images when no `variant` is defined
+- :fire: [Docker controller] - Fix `manifest not found` error on `arm64` images when no `variant` is defined
 
 # 6.1.0
 - :star: [Docker / Docker-compose trigger] - Allow to prune old versions (except current one and candidate one)
@@ -23,7 +23,7 @@
 - :fire: [PUSHOVER] - Allow to set needed `expire`, `retry` properties when `priority=2`
 
 # 6.0.2
-- :star: Add `watcher` placeholder visible to trigger templates  
+- :star: Add `controller` placeholder visible to trigger templates  
 - :fire: Fix support for `application/vnd.oci.image.index.v1+json manifests`
 - :fire: [HUB] Fix images from Docker hub prepended with `docker.io/` 
 
@@ -98,7 +98,7 @@ Do not forget to adjust your existing HA configuration accordingly (automations,
 - :fire: [Docker / Docker-compose trigger] - Fix error when pulling from private registry
 
 # 5.15.0
-- :star: Add ability to customize the display of the container ([see `wud.display.name` and `wud.display.icon`](configuration/watchers/?id=label))
+- :star: Add ability to customize the display of the container ([see `wud.display.name` and `wud.display.icon`](configuration/controllers/?id=label))
 - :fire: [Docker / Docker-compose trigger] - Add cloning Network settings from current container 
 
 # 5.14.1
@@ -117,7 +117,7 @@ Do not forget to adjust your existing HA configuration accordingly (automations,
 - :fire: [Smtp trigger] - Fix documentation regarding how to configure Gmail since _less secure apps_ are disabled.
 
 ## 5.12.0
-- :star: [Docker watcher] - Add ability to listen to Docker events
+- :star: [Docker controller] - Add ability to listen to Docker events
 - :star: [Docker / Docker-compose trigger] - Add dry-run feature (pull only new images)
 - :star: [Smtp trigger] - Add ability to skip tls verify
 - :star: Update all dependencies
@@ -145,7 +145,7 @@ Do not forget to adjust your existing HA configuration accordingly (automations,
 - :star: Add Trigger configuration to customize title / body templates
 - :star: Add Trigger configuration to fire container updates individually or to fire all container updates as 1 batch
 - :star: Add Trigger configuration to ignore/repeat previous updates
-- :star: Add Trigger configuration to be able to transform tags before performing the analysis ([see here](configuration/watchers/?id=transform-the-tags-before-performing-the-analysis))
+- :star: Add Trigger configuration to be able to transform tags before performing the analysis ([see here](configuration/controllers/?id=transform-the-tags-before-performing-the-analysis))
 - :fire: Remove the container `Refresh` button from the UI because confusing
 
 ## 5.8.0
@@ -153,7 +153,7 @@ Do not forget to adjust your existing HA configuration accordingly (automations,
 - :fire: Rollback update detection for non semver tags (added in `5.7.1`)
 
 !> **Deprecation warnings** \
-[`WUD_WATCHER_{watcher_name}_WATCHDIGEST` environment variable](/configuration/watchers/?id=variables) is deprecated and won't be supported in upcoming versions.
+[`WUD_CONTROLLER_{controller_name}_WATCHDIGEST` environment variable](/configuration/controllers/?id=variables) is deprecated and won't be supported in upcoming versions.
 
 ## 5.7.2
 - :fire: [UI] Fix container bad state after manual refresh (or refresh all)
@@ -163,7 +163,7 @@ Do not forget to adjust your existing HA configuration accordingly (automations,
 
 ## 5.7.0
 - :star: Add Container status (running, stopped...)
-- :star: Add ability to watch all container digests (at `watcher` level)
+- :star: Add ability to watch all container digests (at `controller` level)
 - :star: Update all dependencies
 - :fire: Add support for prerelease tags (e.g. 1.2.3-alpha1)
 
@@ -172,11 +172,11 @@ Do not forget to adjust your existing HA configuration accordingly (automations,
 
 ## 5.5.0
 - :star: Add Openid Connect authentication ([see here](configuration/authentications/oidc/))
-- :fire: Fix duplicate notifications when multiple Docker watchers configured
+- :fire: Fix duplicate notifications when multiple Docker controllers configured
 
 ## 5.4.0
 - :star: Add Authentication system ([see here](configuration/authentications/))
-- :star: Add ability to specify a link pointing to the container version (changelog...) ([see here](configuration/watchers/?id=associate-a-link-to-the-container-version))
+- :star: Add ability to specify a link pointing to the container version (changelog...) ([see here](configuration/controllers/?id=associate-a-link-to-the-container-version))
 - :star: Update all dependencies
 
 ## 5.3.0

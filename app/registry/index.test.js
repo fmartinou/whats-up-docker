@@ -1,6 +1,6 @@
 const configuration = require('../configuration');
 const Component = require('./Component');
-const prometheusWatcher = require('../prometheus/watcher');
+const prometheusController = require('../prometheus/controller');
 
 jest.mock('../configuration');
 
@@ -8,31 +8,31 @@ configuration.getLogLevel = () => 'info';
 
 let registries = {};
 let triggers = {};
-let watchers = {};
+let controllers = {};
 let authentications = {};
 
 configuration.getRegistryConfigurations = () => (registries);
 configuration.getTriggerConfigurations = () => (triggers);
-configuration.getWatcherConfigurations = () => (watchers);
+configuration.getControllerConfigurations = () => (controllers);
 configuration.getAuthenticationConfigurations = () => (authentications);
 
 const registry = require('./index');
 
 beforeEach(() => {
     jest.resetAllMocks();
-    prometheusWatcher.init();
+    prometheusController.init();
     registries = {};
     triggers = {};
-    watchers = {};
+    controllers = {};
     authentications = {};
 });
 
 afterEach(async () => {
     try {
-        await registry.__get__('deregisterRegistries')();
-        await registry.__get__('deregisterTriggers')();
-        await registry.__get__('deregisterWatchers')();
-        await registry.__get__('deregisterAuthentications')();
+        await registry.__get__('unregisterRegistries')();
+        await registry.__get__('unregisterTriggers')();
+        await registry.__get__('unregisterControllers')();
+        await registry.__get__('unregisterAuthentications')();
     } catch (e) {
         // ignore error
     }
@@ -48,11 +48,11 @@ test('registerComponents should return empty array if not components', () => {
     expect(registerComponents('kind', undefined, 'path')).resolves.toEqual([]);
 });
 
-test('deregisterComponent should throw when component fails to deregister', () => {
-    const deregisterComponent = registry.__get__('deregisterComponent');
+test('unregisterComponent should throw when component fails to unregister', () => {
+    const unregisterComponent = registry.__get__('unregisterComponent');
     const component = new Component();
-    component.deregister = () => { throw new Error('Error x'); };
-    expect(deregisterComponent(component)).rejects.toThrowError('Error when deregistering component undefined.undefined');
+    component.unregister = () => { throw new Error('Error x'); };
+    expect(unregisterComponent(component)).rejects.toThrowError('Error when unregistering component undefined.undefined');
 });
 
 test('registerRegistries should register all registries', async () => {
@@ -109,33 +109,37 @@ test('registerTriggers should warn when registration errors occur', async () => 
     expect(spyLog).toHaveBeenCalledWith('Some triggers failed to register (Error when registering component trigger1 (Cannot find module \'../triggers/providers/trigger1/Trigger1\' from \'registry/index.js\'))');
 });
 
-test('registerWatchers should register all watchers', async () => {
-    watchers = {
-        watcher1: {
-            host: 'host1',
-        },
-        watcher2: {
-            host: 'host2',
+test('registerControllers should register all controllers', async () => {
+    controllers = {
+        docker: {
+            controller1: {
+                host: 'host1',
+            },
+            controller2: {
+                host: 'host2',
+            },
         },
     };
-    await registry.__get__('registerWatchers')();
-    expect(Object.keys(registry.getState().watcher)).toEqual(['watcher.docker.watcher1', 'watcher.docker.watcher2']);
+    await registry.__get__('registerControllers')();
+    expect(Object.keys(registry.getState().controller)).toEqual(['controller.docker.controller1', 'controller.docker.controller2']);
 });
 
-test('registerWatchers should register local docker watcher by default', async () => {
-    await registry.__get__('registerWatchers')();
-    expect(Object.keys(registry.getState().watcher)).toEqual(['watcher.docker.local']);
+test('registerControllers should register local docker controller by default', async () => {
+    await registry.__get__('registerControllers')();
+    expect(Object.keys(registry.getState().controller)).toEqual(['controller.docker.local']);
 });
 
-test('registerWatchers should warn when registration errors occur', async () => {
+test('registerControllers should warn when registration errors occur', async () => {
     const spyLog = jest.spyOn(registry.__get__('log'), 'warn');
-    watchers = {
-        watcher1: {
-            fail: true,
+    controllers = {
+        docker: {
+            controller1: {
+                fail: true,
+            },
         },
     };
-    await registry.__get__('registerWatchers')();
-    expect(spyLog).toHaveBeenCalledWith('Some watchers failed to register (Error when registering component docker ("fail" is not allowed))');
+    await registry.__get__('registerControllers')();
+    expect(spyLog).toHaveBeenCalledWith('Some controllers failed to register (Error when registering component docker ("fail" is not allowed))');
 });
 
 test('registerAuthentications should register all auth strategies', async () => {
@@ -191,12 +195,14 @@ test('init should register all components', async () => {
             mock2: {},
         },
     };
-    watchers = {
-        watcher1: {
-            host: 'host1',
-        },
-        watcher2: {
-            host: 'host2',
+    controllers = {
+        docker: {
+            controller1: {
+                host: 'host1',
+            },
+            controller2: {
+                host: 'host2',
+            },
         },
     };
     authentications = {
@@ -214,11 +220,11 @@ test('init should register all components', async () => {
     await registry.init();
     expect(Object.keys(registry.getState().registry).sort()).toEqual(['ecr', 'gcr', 'ghcr', 'hotio', 'hub', 'quay']);
     expect(Object.keys(registry.getState().trigger)).toEqual(['trigger.mock.mock1', 'trigger.mock.mock2']);
-    expect(Object.keys(registry.getState().watcher)).toEqual(['watcher.docker.watcher1', 'watcher.docker.watcher2']);
+    expect(Object.keys(registry.getState().controller)).toEqual(['controller.docker.controller1', 'controller.docker.controller2']);
     expect(Object.keys(registry.getState().authentication)).toEqual(['authentication.basic.john', 'authentication.basic.jane']);
 });
 
-test('deregisterAll should deregister all components', async () => {
+test('unregisterAll should unregister all components', async () => {
     registries = {
         hub: {
             login: 'login',
@@ -236,11 +242,11 @@ test('deregisterAll should deregister all components', async () => {
             mock2: {},
         },
     };
-    watchers = {
-        watcher1: {
+    controllers = {
+        controller1: {
             host: 'host1',
         },
-        watcher2: {
+        controller2: {
             host: 'host2',
         },
     };
@@ -257,53 +263,53 @@ test('deregisterAll should deregister all components', async () => {
         },
     };
     await registry.init();
-    await registry.__get__('deregisterAll')();
+    await registry.__get__('unregisterAll')();
     expect(Object.keys(registry.getState().registry).length).toEqual(0);
     expect(Object.keys(registry.getState().trigger).length).toEqual(0);
-    expect(Object.keys(registry.getState().watcher).length).toEqual(0);
+    expect(Object.keys(registry.getState().controller).length).toEqual(0);
     expect(Object.keys(registry.getState().authentication).length).toEqual(0);
 });
 
-test('deregisterAll should throw an error when any component fails to deregister', () => {
+test('unregisterAll should throw an error when any component fails to unregister', () => {
     const component = new Component();
-    component.deregister = () => { throw new Error('Fail!!!'); };
+    component.unregister = () => { throw new Error('Fail!!!'); };
     registry.getState().trigger = {
         trigger1: component,
     };
-    expect(registry.__get__('deregisterAll')())
+    expect(registry.__get__('unregisterAll')())
         .rejects
-        .toThrowError('Error when deregistering component undefined.undefined');
+        .toThrowError('Error when unregistering component undefined.undefined');
 });
 
-test('deregisterRegistries should throw when errors occurred', async () => {
+test('unregisterRegistries should throw when errors occurred', async () => {
     const component = new Component();
-    component.deregister = () => { throw new Error('Fail!!!'); };
+    component.unregister = () => { throw new Error('Fail!!!'); };
     registry.getState().registry = {
         registry1: component,
     };
-    expect(registry.__get__('deregisterRegistries')())
+    expect(registry.__get__('unregisterRegistries')())
         .rejects
-        .toThrowError('Error when deregistering component undefined.undefined');
+        .toThrowError('Error when unregistering component undefined.undefined');
 });
 
-test('deregisterTriggers should throw when errors occurred', async () => {
+test('unregisterTriggers should throw when errors occurred', async () => {
     const component = new Component();
-    component.deregister = () => { throw new Error('Fail!!!'); };
+    component.unregister = () => { throw new Error('Fail!!!'); };
     registry.getState().trigger = {
         trigger1: component,
     };
-    expect(registry.__get__('deregisterTriggers')())
+    expect(registry.__get__('unregisterTriggers')())
         .rejects
-        .toThrowError('Error when deregistering component undefined.undefined');
+        .toThrowError('Error when unregistering component undefined.undefined');
 });
 
-test('deregisterWatchers should throw when errors occurred', async () => {
+test('unregisterControllers should throw when errors occurred', async () => {
     const component = new Component();
-    component.deregister = () => { throw new Error('Fail!!!'); };
-    registry.getState().watcher = {
-        watcher1: component,
+    component.unregister = () => { throw new Error('Fail!!!'); };
+    registry.getState().controller = {
+        controller1: component,
     };
-    expect(registry.__get__('deregisterWatchers')())
+    expect(registry.__get__('unregisterControllers')())
         .rejects
-        .toThrowError('Error when deregistering component undefined.undefined');
+        .toThrowError('Error when unregistering component undefined.undefined');
 });

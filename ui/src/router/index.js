@@ -41,9 +41,9 @@ const routes = [
     component: () => import("../views/ConfigurationTriggersView.vue"),
   },
   {
-    path: "/configuration/watchers",
-    name: "watchers",
-    component: () => import("../views/ConfigurationWatchersView.vue"),
+    path: "/configuration/controller",
+    name: "controllers",
+    component: () => import("../views/ConfigurationControllersView.vue"),
   },
 ];
 

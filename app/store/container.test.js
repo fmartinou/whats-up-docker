@@ -46,7 +46,7 @@ test('insertContainer should insert doc and emit an event', () => {
     const containerToSave = {
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         image: {
             id: 'image-123456789',
             registry: {
@@ -94,7 +94,7 @@ test('updateContainer should update doc and emit an event', () => {
     const containerToSave = {
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         image: {
             id: 'image-123456789',
             registry: {
@@ -130,7 +130,7 @@ test('getContainers should return all containers sorted by name', () => {
     const containerExample = {
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         image: {
             id: 'image-123456789',
             registry: {
@@ -192,7 +192,7 @@ test('getContainer should return 1 container by id', () => {
         data: {
             id: 'container-123456789',
             name: 'test',
-            watcher: 'test',
+            controller: 'test',
             image: {
                 id: 'image-123456789',
                 registry: {
@@ -245,7 +245,7 @@ test('deleteContainer should delete doc and emit an event', () => {
         data: {
             id: 'container-123456789',
             name: 'test',
-            watcher: 'test',
+            controller: 'test',
             image: {
                 id: 'image-123456789',
                 registry: {

@@ -4,16 +4,56 @@ const {
     registerContainerAdded,
     registerContainerUpdated,
     registerContainerRemoved,
-    registerWatcherStart,
-    registerWatcherStop,
+    registerControllerStart,
+    registerControllerStop,
 } = require('../../../event');
 const containerStore = require('../../../store/container');
+const { flatten, fullName } = require('../../../model/container');
+const registry = require('../../../registry');
 
-const HASS_DEVICE_ID = 'wud';
-const HASS_DEVICE_NAME = 'What\'s up Docker?';
-const HASS_MANUFACTURER = 'fmartinou';
-const HASS_ENTITY_VALUE_TEMPLATE = '{{ value_json.image_tag_value }}';
-const HASS_LATEST_VERSION_TEMPLATE = '{% if value_json.update_kind_kind == "digest" %}{{ value_json.result_digest[:15] }}{% else %}{{ value_json.result_tag }}{% endif %}';
+const HASS_MANUFACTURER = 'wud';
+const VERSION_TEMPLATE = '{% if value_json.image_tag_value != "" %}{{ value_json.image_tag_value }}{% else %}{{ value_json.image_digest_value[:15] }}{% endif %}';
+const UPDATE_TEMPLATE = '{% if value_json.update_kind_kind == "digest" %}{{ value_json.result_digest[:15] }}{% else %}{{ value_json.result_tag }}{% endif %}';
+
+const CONTAINER_SENSORS_TO_EXPOSE = {
+    status: {
+        name: 'Status',
+        kind: 'sensor',
+    },
+    image_tag_value: {
+        name: 'Current version',
+        kind: 'update',
+        value_template: VERSION_TEMPLATE,
+        device_class: 'firmware',
+        entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
+        latest_version_template: UPDATE_TEMPLATE,
+    },
+    image_digest_value: {
+        name: 'Current version',
+        kind: 'update',
+        value_template: VERSION_TEMPLATE,
+        device_class: 'firmware',
+        entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
+        latest_version_template: UPDATE_TEMPLATE,
+    },
+    image_tag_semver: {
+        name: 'Semver',
+        kind: 'binary_sensor',
+        payload_off: false,
+        payload_on: true,
+    },
+    update_available: {
+        name: 'Update',
+        kind: 'binary_sensor',
+        device_class: 'update',
+        payload_off: false,
+        payload_on: true,
+    },
+    update_kind_semver_diff: {
+        name: 'Diff',
+        kind: 'sensor',
+    },
+};
 
 /**
  * Get hass entity unique id.
@@ -21,19 +61,42 @@ const HASS_LATEST_VERSION_TEMPLATE = '{% if value_json.update_kind_kind == "dige
  * @return {*}
  */
 function getHassEntityId(topic) {
-    return topic.replace(/\//g, '_');
+    return topic.replace(/\/|\./g, '_');
+}
+
+function getWudHaDevice() {
+    return {
+        identifiers: [HASS_MANUFACTURER],
+        manufacturer: capitalize(HASS_MANUFACTURER),
+        model: capitalize(HASS_MANUFACTURER),
+        name: `${capitalize(HASS_MANUFACTURER)}`,
+        sw_version: getVersion(),
+    };
+}
+
+function getControllerHaDevice(controller) {
+    return {
+        identifiers: [controller.getId()],
+        manufacturer: capitalize(HASS_MANUFACTURER),
+        model: capitalize(HASS_MANUFACTURER),
+        name: `${capitalize(controller.name)} Controller`,
+        sw_version: getVersion(),
+    };
 }
 
 /**
  * Get HA wud device info.
  * @returns {*}
  */
-function getHaDevice() {
+function getContainerHaDevice(container) {
+    // Get controller
+    const controller = registry.getState().controller[container.controller];
+
     return {
-        identifiers: [HASS_DEVICE_ID],
+        identifiers: [fullName(container)],
         manufacturer: capitalize(HASS_MANUFACTURER),
-        model: capitalize(HASS_DEVICE_ID),
-        name: capitalize(HASS_DEVICE_NAME),
+        model: capitalize(container.image.name),
+        name: `${capitalize(controller.name)} ${capitalize(container.displayName)} Container`,
         sw_version: getVersion(),
     };
 }
@@ -60,13 +123,17 @@ class Hass {
         this.log = log;
 
         // Subscribe to container events to sync HA
-        registerContainerAdded((container) => this.addContainerSensor(container));
-        registerContainerUpdated((container) => this.addContainerSensor(container));
+        registerContainerAdded((container) => this.addContainerSensors(container));
+        registerContainerUpdated((container) => this.addContainerSensors(container));
         registerContainerRemoved((container) => this.removeContainerSensor(container));
 
-        // Subscribe to watcher events to sync HA
-        registerWatcherStart((watcher) => this.updateWatcherSensors({ watcher, isRunning: true }));
-        registerWatcherStop((watcher) => this.updateWatcherSensors({ watcher, isRunning: false }));
+        // Subscribe to controller events to sync HA
+        registerControllerStart(
+            (controller) => this.updateControllerSensors({ controller, isRunning: true }),
+        );
+        registerControllerStop(
+            (controller) => this.updateControllerSensors({ controller, isRunning: false }),
+        );
     }
 
     /**
@@ -74,23 +141,55 @@ class Hass {
      * @param container
      * @returns {Promise<void>}
      */
-    async addContainerSensor(container) {
+    async addContainerSensors(container) {
         const containerStateTopic = this.getContainerStateTopic({ container });
+        const containerCommandTopic = this.getContainerCommandTopic({ container });
         this.log.info(`Add hass container update sensor [${containerStateTopic}]`);
-        await this.publishDiscoveryMessage({
-            discoveryTopic: this.getDiscoveryTopic({ kind: 'update', topic: containerStateTopic }),
-            stateTopic: containerStateTopic,
-            name: container.displayName,
-            icon: sanitizeIcon(container.displayIcon),
-            options: {
-                force_update: true,
-                value_template: HASS_ENTITY_VALUE_TEMPLATE,
-                latest_version_topic: containerStateTopic,
-                latest_version_template: HASS_LATEST_VERSION_TEMPLATE,
-                release_url: container.result ? container.result.link : undefined,
-                json_attributes_topic: containerStateTopic,
-            },
-        });
+
+        const containerFlatten = flatten(container);
+        const containerSensorPromises = Object.keys(containerFlatten)
+            .filter((property) => Object.keys(CONTAINER_SENSORS_TO_EXPOSE).indexOf(property) !== -1)
+            .filter((property) => containerFlatten[property] !== undefined)
+            .map((key) => {
+                const sensorStateTopic = `${this.configuration.topic}/${container.controller}/${container.name}/${key}`;
+                const sensorConfiguration = CONTAINER_SENSORS_TO_EXPOSE[key];
+                const discoveryMessage = {
+                    // Default common options
+                    value_template: `{{ value_json.${key} }}`,
+                    unique_id: `${fullName(container)}.${key}`,
+                    object_id: `${fullName(container)}.${key}`,
+                    device: getContainerHaDevice(container),
+                    state_topic: containerStateTopic,
+
+                    // Specific options
+                    ...sensorConfiguration,
+                };
+                if (sensorConfiguration.kind === 'update') {
+                    discoveryMessage.icon = sanitizeIcon(container.icon || 'mdi:docker');
+                    discoveryMessage.latest_version_topic = containerStateTopic;
+                    discoveryMessage.release_url = container.result
+                        ? container.result.link : undefined;
+                    discoveryMessage.json_attributes_topic = containerStateTopic;
+                    discoveryMessage.payload_install = JSON.stringify({
+                        action: 'update',
+                        id: container.id,
+                    });
+                    discoveryMessage.command_topic = containerCommandTopic;
+                }
+
+                return this.publishDiscoveryMessage({
+                    discoveryTopic: this.getDiscoveryTopic({
+                        kind: sensorConfiguration.kind,
+                        topic: sensorStateTopic,
+                    }),
+                    discoveryMessage,
+                });
+            });
+
+        // Create all container sensors
+        await Promise.all(containerSensorPromises);
+
+        // Update controller & global sensors
         await this.updateContainerSensors(container);
     }
 
@@ -111,53 +210,82 @@ class Hass {
         const totalCountTopic = `${this.configuration.topic}/total_count`;
         const totalUpdateCountTopic = `${this.configuration.topic}/update_count`;
         const totalUpdateStatusTopic = `${this.configuration.topic}/update_status`;
-        const watcherTotalCountTopic = `${this.configuration.topic}/${container.watcher}/total_count`;
-        const watcherUpdateCountTopic = `${this.configuration.topic}/${container.watcher}/update_count`;
-        const watcherUpdateStatusTopic = `${this.configuration.topic}/${container.watcher}/update_status`;
+        const controllerTotalCountTopic = `${this.configuration.topic}/${container.controller}/total_count`;
+        const controllerUpdateCountTopic = `${this.configuration.topic}/${container.controller}/update_count`;
+        const controllerUpdateStatusTopic = `${this.configuration.topic}/${container.controller}/update_status`;
 
         // Discovery topics
         const totalCountDiscoveryTopic = this.getDiscoveryTopic({ kind: 'sensor', topic: totalCountTopic });
         const totalUpdateCountDiscoveryTopic = this.getDiscoveryTopic({ kind: 'sensor', topic: totalUpdateCountTopic });
         const totalUpdateStatusDiscoveryTopic = this.getDiscoveryTopic({ kind: 'binary_sensor', topic: totalUpdateStatusTopic });
-        const watcherTotalCountDiscoveryTopic = this.getDiscoveryTopic({ kind: 'sensor', topic: watcherTotalCountTopic });
-        const watcherUpdateCountDiscoveryTopic = this.getDiscoveryTopic({ kind: 'sensor', topic: watcherUpdateCountTopic });
-        const watcherUpdateStatusDiscoveryTopic = this.getDiscoveryTopic({ kind: 'binary_sensor', topic: watcherUpdateStatusTopic });
+        const controllerTotalCountDiscoveryTopic = this.getDiscoveryTopic({ kind: 'sensor', topic: controllerTotalCountTopic });
+        const controllerUpdateCountDiscoveryTopic = this.getDiscoveryTopic({ kind: 'sensor', topic: controllerUpdateCountTopic });
+        const controllerUpdateStatusDiscoveryTopic = this.getDiscoveryTopic({ kind: 'binary_sensor', topic: controllerUpdateStatusTopic });
 
         // Publish discovery messages
         await this.publishDiscoveryMessage({
             discoveryTopic: totalCountDiscoveryTopic,
-            stateTopic: totalCountTopic,
-            name: 'Total container count',
+            discoveryMessage: {
+                name: 'Total container count',
+                unique_id: getHassEntityId(totalCountTopic),
+                object_id: getHassEntityId(totalCountTopic),
+                device: getWudHaDevice(),
+                state_topic: totalCountTopic,
+            },
         });
         await this.publishDiscoveryMessage({
             discoveryTopic: totalUpdateCountDiscoveryTopic,
-            stateTopic: totalUpdateCountTopic,
-            name: 'Total container update count',
+            discoveryMessage: {
+                name: 'Total container update count',
+                unique_id: getHassEntityId(totalUpdateCountTopic),
+                object_id: getHassEntityId(totalUpdateCountTopic),
+                device: getWudHaDevice(),
+                state_topic: totalUpdateCountTopic,
+            },
         });
         await this.publishDiscoveryMessage({
             discoveryTopic: totalUpdateStatusDiscoveryTopic,
-            stateTopic: totalUpdateStatusTopic,
-            name: 'Total container update status',
-            options: {
+            discoveryMessage: {
+                name: 'Total container update status',
+                unique_id: getHassEntityId(totalUpdateStatusTopic),
+                object_id: getHassEntityId(totalUpdateStatusTopic),
+                device: getWudHaDevice(),
+                state_topic: totalUpdateStatusTopic,
                 payload_on: true.toString(),
                 payload_off: false.toString(),
             },
         });
+
+        // Get controller
+        const controller = registry.getState().controller[container.controller];
         await this.publishDiscoveryMessage({
-            discoveryTopic: watcherTotalCountDiscoveryTopic,
-            stateTopic: watcherTotalCountTopic,
-            name: `Watcher ${container.watcher} container count`,
+            discoveryTopic: controllerTotalCountDiscoveryTopic,
+            discoveryMessage: {
+                name: `Controller ${container.controller} container count`,
+                unique_id: getHassEntityId(controllerTotalCountTopic),
+                object_id: getHassEntityId(controllerTotalCountTopic),
+                device: getControllerHaDevice(controller),
+                state_topic: controllerTotalCountTopic,
+            },
         });
         await this.publishDiscoveryMessage({
-            discoveryTopic: watcherUpdateCountDiscoveryTopic,
-            stateTopic: watcherUpdateCountTopic,
-            name: `Watcher ${container.watcher} container update count`,
+            discoveryTopic: controllerUpdateCountDiscoveryTopic,
+            discoveryMessage: {
+                name: `Controller ${container.controller} container update count`,
+                unique_id: getHassEntityId(controllerUpdateCountTopic),
+                object_id: getHassEntityId(controllerUpdateCountTopic),
+                device: getControllerHaDevice(controller),
+                state_topic: controllerUpdateCountTopic,
+            },
         });
         await this.publishDiscoveryMessage({
-            discoveryTopic: watcherUpdateStatusDiscoveryTopic,
-            stateTopic: watcherUpdateStatusTopic,
-            name: `Watcher ${container.watcher} container update status`,
-            options: {
+            discoveryTopic: controllerUpdateStatusDiscoveryTopic,
+            discoveryMessage: {
+                name: `Controller ${container.controller} container update status`,
+                unique_id: getHassEntityId(controllerUpdateStatusTopic),
+                object_id: getHassEntityId(controllerUpdateStatusTopic),
+                device: getControllerHaDevice(controller),
+                state_topic: controllerUpdateStatusTopic,
                 payload_on: true.toString(),
                 payload_off: false.toString(),
             },
@@ -167,12 +295,12 @@ class Hass {
         const totalCount = containerStore.getContainers().length;
         const updateCount = containerStore.getContainers({ updateAvailable: true }).length;
 
-        // Count all containers belonging to the current watcher
-        const watcherTotalCount = containerStore.getContainers({
-            watcher: container.watcher,
+        // Count all containers belonging to the current controller
+        const controllerTotalCount = containerStore.getContainers({
+            controller: container.controller,
         }).length;
-        const watcherUpdateCount = containerStore.getContainers({
-            watcher: container.watcher, updateAvailable: true,
+        const controllerUpdateCount = containerStore.getContainers({
+            controller: container.controller, updateAvailable: true,
         }).length;
 
         // Publish sensors
@@ -186,71 +314,48 @@ class Hass {
             topic: totalUpdateStatusTopic, value: updateCount > 0,
         });
         await this.updateSensor({
-            topic: watcherTotalCountTopic, value: watcherTotalCount,
+            topic: controllerTotalCountTopic, value: controllerTotalCount,
         });
         await this.updateSensor({
-            topic: watcherUpdateCountTopic, value: watcherUpdateCount,
+            topic: controllerUpdateCountTopic, value: controllerUpdateCount,
         });
         await this.updateSensor({
-            topic: watcherUpdateStatusTopic, value: watcherUpdateCount > 0,
+            topic: controllerUpdateStatusTopic, value: controllerUpdateCount > 0,
         });
 
-        // Delete watcher sensors when watcher does not exist anymore
-        if (watcherTotalCount === 0) {
-            await this.removeSensor({ discoveryTopic: watcherTotalCountDiscoveryTopic });
-            await this.removeSensor({ discoveryTopic: watcherUpdateCountDiscoveryTopic });
-            await this.removeSensor({ discoveryTopic: watcherUpdateStatusDiscoveryTopic });
+        // Delete controller sensors when controller does not exist anymore
+        if (controllerTotalCount === 0) {
+            await this.removeSensor({ discoveryTopic: controllerTotalCountDiscoveryTopic });
+            await this.removeSensor({ discoveryTopic: controllerUpdateCountDiscoveryTopic });
+            await this.removeSensor({ discoveryTopic: controllerUpdateStatusDiscoveryTopic });
         }
     }
 
-    async updateWatcherSensors({ watcher, isRunning }) {
-        const watcherStatusTopic = `${this.configuration.topic}/${watcher.name}/running`;
-        const watcherStatusDiscoveryTopic = this.getDiscoveryTopic({ kind: 'binary_sensor', topic: watcherStatusTopic });
+    async updateControllerSensors({ controller, isRunning }) {
+        const controllerStatusTopic = `${this.configuration.topic}/${controller.getId()}/running`;
+        const controllerStatusDiscoveryTopic = this.getDiscoveryTopic({ kind: 'binary_sensor', topic: controllerStatusTopic });
 
         // Publish discovery messages
         await this.publishDiscoveryMessage({
-            discoveryTopic: watcherStatusDiscoveryTopic,
-            stateTopic: watcherStatusTopic,
+            deviceId: controller.getId(),
+            deviceName: controller.getId(),
+            discoveryTopic: controllerStatusDiscoveryTopic,
+            stateTopic: controllerStatusTopic,
             options: {
                 payload_on: true.toString(),
                 payload_off: false.toString(),
             },
-            name: `Watcher ${watcher.name} running status`,
+            name: `Controller ${controller.name} running status`,
         });
 
         // Publish sensors
         await this.updateSensor({
-            topic: watcherStatusTopic, value: isRunning,
+            topic: controllerStatusTopic, value: isRunning,
         });
     }
 
-    /**
-     * Publish a discovery message.
-     * @param discoveryTopic
-     * @param stateTopic
-     * @param name
-     * @param icon
-     * @param options
-     * @returns {Promise<*>}
-     */
-    async publishDiscoveryMessage({
-        discoveryTopic,
-        stateTopic,
-        name,
-        icon,
-        options = {},
-    }) {
-        const entityId = getHassEntityId(stateTopic);
-        return this.client.publish(discoveryTopic, JSON.stringify({
-            unique_id: entityId,
-            object_id: entityId,
-            name: name || entityId,
-            device: getHaDevice(),
-            icon: icon || sanitizeIcon('mdi:docker'),
-            entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
-            state_topic: stateTopic,
-            ...options,
-        }), {
+    async publishDiscoveryMessage({ discoveryTopic, discoveryMessage }) {
+        return this.client.publish(discoveryTopic, JSON.stringify(discoveryMessage), {
             retain: true,
         });
     }
@@ -285,7 +390,11 @@ class Hass {
      * @return {string}
      */
     getContainerStateTopic({ container }) {
-        return `${this.configuration.topic}/${container.watcher}/${container.name}`;
+        return `${this.configuration.topic}/${container.controller}/${container.name}/state`;
+    }
+
+    getContainerCommandTopic({ container }) {
+        return `${this.configuration.topic}/${container.controller}/${container.name}/command`;
     }
 
     /**

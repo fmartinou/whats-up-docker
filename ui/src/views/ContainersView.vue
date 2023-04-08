@@ -4,10 +4,10 @@
       <v-col>
         <container-filter
           :registries="registries"
-          :watchers="watchers"
+          :controllers="controllers"
           :updateAvailable="updateAvailableSelected"
           @registry-changed="onRegistryChanged"
-          @watcher-changed="onWatcherChanged"
+          @controller-changed="onControllerChanged"
           @update-available-changed="onUpdateAvailableChanged"
           @refresh-all-containers="onRefreshAllContainers"
         />
@@ -48,7 +48,7 @@ export default {
     return {
       containers: [],
       registrySelected: undefined,
-      watcherSelected: undefined,
+      controllerSelected: undefined,
       updateAvailableSelected: false,
     };
   },
@@ -63,10 +63,10 @@ export default {
         ),
       ];
     },
-    watchers() {
+    controllers() {
       return [
         ...new Set(
-          this.containers.map((container) => container.watcher).sort()
+          this.containers.map((container) => container.controller).sort()
         ),
       ];
     },
@@ -78,8 +78,8 @@ export default {
             : true
         )
         .filter((container) =>
-          this.watcherSelected
-            ? this.watcherSelected === container.watcher
+          this.controllerSelected
+            ? this.controllerSelected === container.controller
             : true
         )
         .filter((container) =>
@@ -92,8 +92,8 @@ export default {
     onRegistryChanged(registrySelected) {
       this.registrySelected = registrySelected;
     },
-    onWatcherChanged(watcherSelected) {
-      this.watcherSelected = watcherSelected;
+    onControllerChanged(controllerSelected) {
+      this.controllerSelected = controllerSelected;
     },
     onUpdateAvailableChanged() {
       this.updateAvailableSelected = !this.updateAvailableSelected;

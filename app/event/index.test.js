@@ -17,11 +17,11 @@ const eventTestCases = [
         emitter: event.emitContainerRemoved,
         register: event.registerContainerRemoved,
     }, {
-        emitter: event.emitWatcherStart,
-        register: event.registerWatcherStart,
+        emitter: event.emitControllerStart,
+        register: event.registerControllerStart,
     }, {
-        emitter: event.emitWatcherStop,
-        register: event.registerWatcherStop,
+        emitter: event.emitControllerStop,
+        register: event.registerControllerStop,
     },
 ];
 test.each(eventTestCases)(

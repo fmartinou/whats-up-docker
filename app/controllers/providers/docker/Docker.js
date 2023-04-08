@@ -18,16 +18,17 @@ const {
 } = require('./label');
 const storeContainer = require('../../../store/container');
 const log = require('../../../log');
-const Component = require('../../../registry/Component');
+const Controller = require('../../Controller');
 const { validate: validateContainer, fullName } = require('../../../model/container');
 const registry = require('../../../registry');
-const { getWatchContainerGauge } = require('../../../prometheus/watcher');
+const { getControlledContainerGauge } = require('../../../prometheus/controller');
+const { getState } = require('../../../registry');
 
-// The delay before starting the watcher when the app is started
-const START_WATCHER_DELAY_MS = 1000;
+// The delay before starting the controller when the app is started
+const START_CONTROLLER_DELAY_MS = 1000;
 
 // Debounce delay used when performing a watch after a docker event has been received
-const DEBOUNCED_WATCH_CRON_MS = 5000;
+const DEBOUNCED_CONTROLLER_CRON_MS = 5000;
 
 /**
  * Return all supported registries
@@ -197,9 +198,9 @@ function isDigestToWatch(wudWatchDigestLabelValue, isSemver) {
 }
 
 /**
- * Docker Watcher Component.
+ * Docker Controller Component.
  */
-class Docker extends Component {
+class Docker extends Controller {
     getConfigurationSchema() {
         return joi.object().keys({
             socket: this.joi.string().default('/var/run/docker.sock'),
@@ -211,42 +212,31 @@ class Docker extends Component {
             cron: joi.string().cron().default('0 * * * *'),
             watchbydefault: this.joi.boolean().default(true),
             watchall: this.joi.boolean().default(false),
-            watchdigest: this.joi.any(),
             watchevents: this.joi.boolean().default(true),
         });
     }
 
-    /**
-     * Init the Watcher.
-     */
-    init() {
-        this.initWatcher();
-        if (this.configuration.watchdigest !== undefined) {
-            this.log.warn('WUD_WATCHER_{watcher_name}_WATCHDIGEST environment variable is deprecated and won\'t be supported in upcoming versions');
-        }
+    initController() {
         this.log.info(`Cron scheduled (${this.configuration.cron})`);
         this.watchCron = cron.schedule(this.configuration.cron, () => this.watchFromCron());
 
         // watch at startup (after all components have been registered)
         this.watchCronTimeout = setTimeout(
             () => this.watchFromCron(),
-            START_WATCHER_DELAY_MS,
+            START_CONTROLLER_DELAY_MS,
         );
 
         // listen to docker events
         if (this.configuration.watchevents) {
             this.watchCronDebounced = debounce(
                 () => { this.watchFromCron(); },
-                DEBOUNCED_WATCH_CRON_MS,
+                DEBOUNCED_CONTROLLER_CRON_MS,
             );
             this.listenDockerEventsTimeout = setTimeout(
                 () => this.listenDockerEvents(),
-                START_WATCHER_DELAY_MS,
+                START_CONTROLLER_DELAY_MS,
             );
         }
-    }
-
-    initWatcher() {
         const options = {};
         if (this.configuration.host) {
             options.host = this.configuration.host;
@@ -385,7 +375,7 @@ class Docker extends Component {
         let containers = [];
 
         // Dispatch event to notify start watching
-        event.emitWatcherStart(this);
+        event.emitControllerStart(this);
 
         // List images to watch
         try {
@@ -404,7 +394,7 @@ class Docker extends Component {
             return [];
         } finally {
             // Dispatch event to notify stop watching
-            event.emitWatcherStop(this);
+            event.emitControllerStop(this);
         }
     }
 
@@ -475,12 +465,12 @@ class Docker extends Component {
 
         // Prune old containers from the store
         try {
-            const containersFromTheStore = storeContainer.getContainers({ watcher: this.name });
+            const containersFromTheStore = storeContainer.getContainers({ controller: this.name });
             pruneOldContainers(containersToReturn, containersFromTheStore);
         } catch (e) {
             this.log.warn(`Error when trying to prune the old containers (${e.message})`);
         }
-        getWatchContainerGauge().set({
+        getControlledContainerGauge().set({
             type: this.type,
             name: this.name,
         }, containersToReturn.length);
@@ -600,7 +590,7 @@ class Docker extends Component {
             id: containerId,
             name: containerName,
             status,
-            watcher: this.name,
+            controller: this.getId(),
             includeTags,
             excludeTags,
             transformTags,
@@ -660,6 +650,350 @@ class Docker extends Component {
                 && containerWithResult.updateAvailable;
         }
         return containerReport;
+    }
+
+    async updateContainer({ container, log: logContainer }) {
+        // Get registry configuration
+        logContainer.debug(`Get ${container.image.registry.name} registry manager`);
+        const containerRegistry = getState().registry[container.image.registry.name];
+
+        logContainer.debug(`Get ${container.image.registry.name} registry credentials`);
+        const auth = containerRegistry.getAuthPull();
+
+        // Rebuild image definition string
+        const newImage = this.getNewImageFullName(containerRegistry, container);
+
+        // Get current container
+        const currentContainer = await this.getCurrentContainer({ container, logContainer });
+
+        if (currentContainer) {
+            const currentContainerSpec = await this.inspectContainer({
+                container: currentContainer,
+                logContainer,
+            });
+            const currentContainerState = currentContainerSpec.State;
+
+            // TODO
+            // Try to remove previous pulled images
+            /*
+            if (this.configuration.prune) {
+                await this.pruneImages(
+                    dockerApi,
+                    containerRegistry,
+                    container,
+                    logContainer,
+                );
+            }
+            */
+
+            // Pull new image ahead of time
+            await this.pullImage({ auth, newImage, logContainer });
+
+            // Dry-run?
+            if (this.configuration.dryrun) {
+                // TODO
+                // logContainer.info('Do not replace the existing container because dry-run mode is enabled');
+            } else {
+                // Clone current container spec
+                const containerToCreateInspect = this.cloneContainer({
+                    currentContainer: currentContainerSpec,
+                    newImage,
+                });
+
+                // Stop current container
+                if (currentContainerState.Running) {
+                    await this.stopContainer({
+                        container: currentContainer,
+                        containerName: container.name,
+                        containerId: container.id,
+                        logContainer,
+                    });
+                }
+
+                // Remove current container
+                await this.removeContainer({
+                    container: currentContainer,
+                    containerName: container.name,
+                    containerId: container.id,
+                    logContainer,
+                });
+
+                // Create new container
+                const newContainer = await this.createContainer({
+                    containerToCreate: containerToCreateInspect,
+                    containerName: container.name,
+                    logContainer,
+                });
+
+                // Start container if it was running
+                if (currentContainerState.Running) {
+                    await this.startContainer({
+                        container: newContainer,
+                        containerName: container.name,
+                        logContainer,
+                    });
+                }
+
+                // TODO
+                // Remove previous image (only when updateKind is tag)
+                /*
+                if (this.configuration.prune) {
+                    const tagOrDigestToRemove = container.updateKind.kind === 'tag' ? container.image.tag.value : container.image.digest.repo;
+
+                    // Rebuild image definition string
+                    const oldImage = containerRegistry.getImageFullName(
+                        container.image,
+                        tagOrDigestToRemove,
+                    );
+                    await this.removeImage(dockerApi, oldImage, logContainer);
+                }
+                */
+            }
+        } else {
+            logContainer.warn('Unable to update the container because it does not exist');
+        }
+    }
+
+    async getCurrentContainer({ container, logContainer }) {
+        logContainer.debug(`Get container (id=${container.id})`);
+        try {
+            return await this.dockerApi.getContainer(container.id);
+        } catch (e) {
+            this.log.warn(`Error when getting container ${container.id}`);
+            throw e;
+        }
+    }
+
+    async inspectContainer({ container, logContainer }) {
+        this.log.debug(`Inspect container ${container.id}`);
+        try {
+            return await container.inspect();
+        } catch (e) {
+            logContainer.warn(`Error when inspecting container ${container.id}`);
+            throw e;
+        }
+    }
+
+    /* eslint-disable class-methods-use-this */
+    /**
+     * Prune previous image versions.
+     * @param dockerApi
+     * @param registry
+     * @param container
+     * @param logContainer
+     * @returns {Promise<void>}
+     */
+    async pruneImages(dockerApi, registry, container, logContainer) {
+        logContainer.info('Pruning previous tags');
+        try {
+            // Get all pulled images
+            const images = await dockerApi.listImages();
+
+            // Find all pulled images to remove
+            const imagesToRemove = images
+                .filter((image) => {
+                    // Exclude images without repo tags
+                    if (!image.RepoTags || image.RepoTags.length === 0) {
+                        return false;
+                    }
+                    const imageParsed = parse(image.RepoTags[0]);
+                    const imageNormalized = registry.normalizeImage({
+                        registry: {
+                            url: imageParsed.domain ? imageParsed.domain : '',
+                        },
+                        tag: {
+                            value: imageParsed.tag,
+                        },
+                        name: imageParsed.path,
+                    });
+
+                    // Exclude different registries
+                    if (imageNormalized.registry.name !== container.image.registry.name) {
+                        return false;
+                    }
+
+                    // Exclude different names
+                    if (imageNormalized.name !== container.image.name) {
+                        return false;
+                    }
+
+                    // Exclude current container image
+                    if (imageNormalized.tag.value === container.updateKind.localValue) {
+                        return false;
+                    }
+
+                    // Exclude candidate image
+                    if (imageNormalized.tag.value === container.updateKind.remoteValue) {
+                        return false;
+                    }
+                    return true;
+                })
+                .map((imageToRemove) => dockerApi.getImage(imageToRemove.Id));
+            await Promise.all(imagesToRemove.map((imageToRemove) => {
+                logContainer.info(`Prune image ${imageToRemove.name}`);
+                return imageToRemove.remove();
+            }));
+        } catch (e) {
+            logContainer.warn(`Some errors occurred when trying to prune previous tags (${e.message})`);
+        }
+    }
+
+    async pullImage({ auth, newImage, logContainer }) {
+        logContainer.info(`Pull image ${newImage}`);
+        try {
+            const pullStream = await this.dockerApi.pull(newImage, { authconfig: auth });
+            /* eslint-disable-next-line no-promise-executor-return */
+            await new Promise((res) => this.dockerApi.modem.followProgress(pullStream, res));
+            logContainer.info(`Image ${newImage} pulled with success`);
+        } catch (e) {
+            logContainer.warn(`Error when pulling image ${newImage} (${e.message})`);
+            throw e;
+        }
+    }
+
+    /**
+     * Stop a container.
+     * @param container
+     * @param containerName
+     * @param containerId
+     * @param logContainer
+     * @returns {Promise<void>}
+     */
+    /* eslint-disable class-methods-use-this */
+    async stopContainer({
+        container, containerName, containerId, logContainer,
+    }) {
+        logContainer.info(`Stop container ${containerName} with id ${containerId}`);
+        try {
+            await container.stop();
+            logContainer.info(`Container ${containerName} with id ${containerId} stopped with success`);
+        } catch (e) {
+            logContainer.warn(`Error when stopping container ${containerName} with id ${containerId}`);
+            throw e;
+        }
+    }
+
+    async removeContainer({
+        container, containerName, containerId, logContainer,
+    }) {
+        logContainer.info(`Remove container ${containerName} with id ${containerId}`);
+        try {
+            await container.remove();
+            logContainer.info(`Container ${containerName} with id ${containerId} removed with success`);
+        } catch (e) {
+            logContainer.warn(`Error when removing container ${containerName} with id ${containerId}`);
+            throw e;
+        }
+    }
+
+    /**
+     * Create a new container.
+     * @param containerToCreate
+     * @param containerName
+     * @param logContainer
+     * @returns {Promise<*>}
+     */
+    async createContainer({ containerToCreate, containerName, logContainer }) {
+        logContainer.info(`Create container ${containerName}`);
+        try {
+            const newContainer = await this.dockerApi.createContainer(containerToCreate);
+            logContainer.info(`Container ${containerName} recreated on new image with success`);
+            return newContainer;
+        } catch (e) {
+            logContainer.warn(`Error when creating container ${containerName} (${e.message})`);
+            throw e;
+        }
+    }
+
+    /**
+     * Start container.
+     * @param container
+     * @param containerName
+     * @param logContainer
+     * @returns {Promise<void>}
+     */
+    async startContainer({ container, containerName, logContainer }) {
+        logContainer.info(`Start container ${containerName}`);
+        try {
+            await container.start();
+            logContainer.info(`Container ${containerName} started with success`);
+        } catch (e) {
+            logContainer.warn(`Error when starting container ${containerName}`);
+            throw e;
+        }
+    }
+
+    /**
+     * Remove an image.
+     * @param dockerApi
+     * @param imageToRemove
+     * @param logContainer
+     * @returns {Promise<void>}
+     */
+    async removeImage(dockerApi, imageToRemove, logContainer) {
+        logContainer.info(`Remove image ${imageToRemove}`);
+        try {
+            const image = await dockerApi.getImage(imageToRemove);
+            await image.remove();
+            logContainer.info(`Image ${imageToRemove} removed with success`);
+        } catch (e) {
+            logContainer.warn(`Error when removing image ${imageToRemove}`);
+            throw e;
+        }
+    }
+
+    cloneContainer({ currentContainer, newImage }) {
+        const containerName = currentContainer.Name.replace('/', '');
+        const containerClone = {
+            ...currentContainer.Config,
+            name: containerName,
+            Image: newImage,
+            HostConfig: currentContainer.HostConfig,
+            NetworkingConfig: {
+                EndpointsConfig: currentContainer.NetworkSettings.Networks,
+            },
+        };
+
+        if (containerClone.NetworkingConfig.EndpointsConfig) {
+            Object
+                .values(containerClone.NetworkingConfig.EndpointsConfig)
+                .forEach((endpointConfig) => {
+                    if (endpointConfig.Aliases && endpointConfig.Aliases.length > 0) {
+                        // eslint-disable-next-line
+                        endpointConfig.Aliases = endpointConfig.Aliases
+                            .filter((alias) => !currentContainer.Id.startsWith(alias));
+                    }
+                });
+        }
+        // Handle situation when container is using network_mode: service:other_service
+        if (
+            containerClone.HostConfig
+            && containerClone.HostConfig.NetworkMode
+            && containerClone.HostConfig.NetworkMode.startsWith('container:')
+        ) {
+            delete containerClone.Hostname;
+            delete containerClone.ExposedPorts;
+        }
+
+        return containerClone;
+    }
+
+    /**
+     * Get image full name.
+     * @param containerRegistry the registry
+     * @param container the container
+     */
+    getNewImageFullName(containerRegistry, container) {
+        // Tag to pull/run is
+        // either the same (when updateKind is digest)
+        // or the new one (when updateKind is tag)
+        const tagOrDigest = container.updateKind.kind === 'digest' ? container.image.tag.value : container.updateKind.remoteValue;
+
+        // Rebuild image definition string
+        return containerRegistry.getImageFullName(
+            container.image,
+            tagOrDigest,
+        );
     }
 }
 

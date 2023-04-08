@@ -20,11 +20,11 @@
       <v-col>
         <v-select
           :hide-details="true"
-          v-model="watcherSelected"
-          :items="watchers"
-          @change="emitWatcherChanged"
+          v-model="controllerSelected"
+          :items="controllers"
+          @change="emitControlerChanged"
           :clearable="true"
-          label="Watcher"
+          label="controller"
           outlined
           dense
         ></v-select>
@@ -63,7 +63,7 @@ export default {
       type: Array,
       required: true,
     },
-    watchers: {
+    controllerss: {
       type: Array,
       required: true,
     },
@@ -77,7 +77,7 @@ export default {
     return {
       isRefreshing: false,
       registrySelected: undefined,
-      watcherSelected: undefined,
+      controllerSelected: undefined,
     };
   },
 
@@ -85,8 +85,8 @@ export default {
     emitRegistryChanged() {
       this.$emit("registry-changed", this.registrySelected);
     },
-    emitWatcherChanged() {
-      this.$emit("watcher-changed", this.watcherSelected);
+    emitControllerChanged() {
+      this.$emit("controller-changed", this.controllerSelected);
     },
     emitUpdateAvailableChanged() {
       this.$emit("update-available-changed");

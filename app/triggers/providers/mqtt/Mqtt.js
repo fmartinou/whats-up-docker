@@ -5,10 +5,13 @@ const Hass = require('./Hass');
 const {
     registerContainerAdded,
     registerContainerUpdated,
+    emitUpdateCommand,
 } = require('../../../event');
-const { flatten } = require('../../../model/container');
+const { flatten, fullName} = require('../../../model/container');
+const { getContainer } = require('../../../store/container');
+const {getTriggerCounter} = require("../../../prometheus/trigger");
 
-const containerDefaultTopic = 'wud/container';
+const containerDefaultTopic = 'wud';
 const hassDefaultPrefix = 'homeassistant';
 
 /**
@@ -18,7 +21,15 @@ const hassDefaultPrefix = 'homeassistant';
  * @return {string}
  */
 function getContainerTopic({ baseTopic, container }) {
-    return `${baseTopic}/${container.watcher}/${container.name}`;
+    return `${baseTopic}/${container.controller}/${container.name}`;
+}
+
+function getContainerStateTopic({ baseTopic, container }) {
+    return `${getContainerTopic({ baseTopic, container })}/state`;
+}
+
+function getContainerCommandTopic({ baseTopic, container }) {
+    return `${getContainerTopic({ baseTopic, container })}/command`;
 }
 
 /**
@@ -109,6 +120,31 @@ class Mqtt extends Trigger {
         }
         registerContainerAdded((container) => this.trigger(container));
         registerContainerUpdated((container) => this.trigger(container));
+
+        // Consume container update commands (e.g. wud/controller.docker.local/traefik_245/command)
+        const containerCommandTopicPattern = `${this.configuration.topic}/+/+/command`;
+        this.client.subscribe(containerCommandTopicPattern, {}, (e) => {
+            this.log.error(`Error when subscribing to Mqtt events (${e.message}); mqtt command updates won't work`);
+        });
+        this.client.on(
+            'message',
+            (topic, message) => this.handleCommand({ topic, message }),
+        );
+    }
+
+    handleCommand({ topic, message }) {
+        this.log.debug(`Command received (topic=${topic}, message=${message.toString()})`);
+        const command = JSON.parse(message.toString());
+        const { action } = command;
+        if (!action) {
+            this.log.error(`Command received without action (topic=${topic}, message=${message.toString()})`);
+            return;
+        }
+        const container = getContainer(command.id);
+        switch (action.toLowerCase()) {
+        case 'update': emitUpdateCommand(container); break;
+        default: this.log.error(`Command received with invalid action (topic=${topic}, action=${action})`);
+        }
     }
 
     /**
@@ -118,7 +154,7 @@ class Mqtt extends Trigger {
      * @returns {Promise}
      */
     async trigger(container) {
-        const containerTopic = getContainerTopic({
+        const containerTopic = getContainerStateTopic({
             baseTopic: this.configuration.topic,
             container,
         });
@@ -136,6 +172,15 @@ class Mqtt extends Trigger {
     // eslint-disable-next-line class-methods-use-this
     async triggerBatch() {
         throw new Error('This trigger does not support "batch" mode');
+    }
+
+    /**
+     * Overridden because mqtt topic is interesting on all changes.
+     * @param containerReport
+     * @returns {Promise<void>}
+     */
+    async handleContainerReport(containerReport) {
+        await this.trigger(containerReport.container);
     }
 }
 

@@ -11,11 +11,11 @@ Gets you notified when new versions of your Docker containers are available and 
 
 #### WUD is built on 3 concepts:
 
-> `WATCHERS` query your Docker hosts to get the containers to watch
+> `CONTROLLERS` get Docker containers to watch & update them
 
-> `REGISTRIES` query the Docker registries to find available updates
+> `REGISTRIES` query Docker registries to find updates
 
-> `TRIGGERS` perform actions when updates are available
+> `TRIGGERS` perform actions (publish notifications, trigger updates...)
 
 ![image](wud_arch.png)
 

@@ -22,7 +22,7 @@ The `mqtt` trigger lets you send container update notifications to an MQTT broke
 ?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration). but only supports the `simple` mode.
 
 ?> You want to customize the name & icon of the Home-Assistant entity? \
-[Use the `wud.display.name` and `wud.display.icon` labels](configuration/watchers/?id=labels).
+[Use the `wud.display.name` and `wud.display.icon` labels](configuration/controllers/?id=labels).
 
 ### Examples
 
@@ -119,7 +119,7 @@ docker run \
 {
   "id":"31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816",
   "name":"homeassistant",
-  "watcher":"local",
+  "controller":"local",
   "include_tags":"^\\d+\\.\\d+.\\d+$",
   "image_id":"sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6",
   "image_registry_url":"123456789.dkr.ecr.eu-west-1.amazonaws.com",

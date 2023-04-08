@@ -51,7 +51,7 @@ docker run \
 - OccuredAt: `August 30, 2019 at 06:51PM`
 - Value1: `homeassistant`
 - Value2: `2021.6.5`
-- Value3: `{"id":"31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816","name":"homeassistant","watcher":"local","includeTags":"^\\d+\\.\\d+.\\d+$","image":{"id":"sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6","registry":{"url":"123456789.dkr.ecr.eu-west-1.amazonaws.com"},"name":"test","tag":{"value":"2021.6.4","semver":true},"digest":{"watch":false,"repo":"sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72"},"architecture":"amd64","os":"linux","created":"2021-06-12T05:33:38.440Z"},"result":{"tag":"2021.6.5"},"updateAvailable":true}`
+- Value3: `{"id":"31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816","name":"homeassistant","controller":"local","includeTags":"^\\d+\\.\\d+.\\d+$","image":{"id":"sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6","registry":{"url":"123456789.dkr.ecr.eu-west-1.amazonaws.com"},"name":"test","tag":{"value":"2021.6.4","semver":true},"digest":{"watch":false,"repo":"sha256:ca0edc3fb0b4647963629bdfccbb3ccfa352184b45a9b4145832000c2878dd72"},"architecture":"amd64","os":"linux","created":"2021-06-12T05:33:38.440Z"},"result":{"tag":"2021.6.5"},"updateAvailable":true}`
 
 ### How to find the IFTTT key
 #### Open the Webhook channel & Connect

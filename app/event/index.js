@@ -10,9 +10,11 @@ const WUD_CONTAINER_REMOVED = 'wud:container-removed';
 const WUD_CONTAINER_REPORT = 'wud:container-report';
 const WUD_CONTAINER_REPORTS = 'wud:container-reports';
 
-// Watcher related events
-const WUD_WATCHER_START = 'wud:watcher-start';
-const WUD_WATCHER_STOP = 'wud:watcher-stop';
+// Controller related events
+const WUD_CONTROLLER_START = 'wud:controller-start';
+const WUD_CONTROLLER_STOP = 'wud:controller-stop';
+
+const WUD_UPDATE_COMMAND = 'wud:update-command';
 
 /**
  * Emit ContainerReports event.
@@ -94,21 +96,30 @@ function registerContainerRemoved(handler) {
     eventEmitter.on(WUD_CONTAINER_REMOVED, handler);
 }
 
-function emitWatcherStart(watcher) {
-    eventEmitter.emit(WUD_WATCHER_START, watcher);
+function emitControllerStart(controller) {
+    eventEmitter.emit(WUD_CONTROLLER_START, controller);
 }
 
-function registerWatcherStart(handler) {
-    eventEmitter.on(WUD_WATCHER_START, handler);
+function registerControllerStart(handler) {
+    eventEmitter.on(WUD_CONTROLLER_START, handler);
 }
 
-function emitWatcherStop(watcher) {
-    eventEmitter.emit(WUD_WATCHER_STOP, watcher);
+function emitControllerStop(controller) {
+    eventEmitter.emit(WUD_CONTROLLER_STOP, controller);
 }
 
-function registerWatcherStop(handler) {
-    eventEmitter.on(WUD_WATCHER_STOP, handler);
+function registerControllerStop(handler) {
+    eventEmitter.on(WUD_CONTROLLER_STOP, handler);
 }
+
+function emitUpdateCommand(container) {
+    eventEmitter.emit(`${WUD_UPDATE_COMMAND}:${container.controller}`, container);
+}
+
+function registerUpdateCommand({ controllerId, handler }) {
+    eventEmitter.on(`${WUD_UPDATE_COMMAND}:${controllerId}`, handler);
+}
+
 module.exports = {
     emitContainerReports,
     registerContainerReports,
@@ -120,8 +131,10 @@ module.exports = {
     registerContainerUpdated,
     emitContainerRemoved,
     registerContainerRemoved,
-    emitWatcherStart,
-    registerWatcherStart,
-    emitWatcherStop,
-    registerWatcherStop,
+    emitControllerStart,
+    registerControllerStart,
+    emitControllerStop,
+    registerControllerStop,
+    emitUpdateCommand,
+    registerUpdateCommand,
 };

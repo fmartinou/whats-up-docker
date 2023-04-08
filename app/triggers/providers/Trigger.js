@@ -13,7 +13,7 @@ function renderSimple(template, container) {
     let value = template;
     value = value.replace(/\${\s*id\s*}/g, container.id ? container.id : '');
     value = value.replace(/\${\s*name\s*}/g, container.name ? container.name : '');
-    value = value.replace(/\${\s*watcher\s*}/g, container.watcher ? container.watcher : '');
+    value = value.replace(/\${\s*controller\s*}/g, container.controller ? container.controller : '');
     value = value.replace(/\${\s*kind\s*}/g, container.updateKind && container.updateKind.kind ? container.updateKind.kind : '');
     value = value.replace(/\${\s*semver\s*}/g, container.updateKind && container.updateKind.semverDiff ? container.updateKind.semverDiff : '');
     value = value.replace(/\${\s*local\s*}/g, container.updateKind && container.updateKind.localValue ? container.updateKind.localValue : '');

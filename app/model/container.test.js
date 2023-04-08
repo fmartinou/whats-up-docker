@@ -4,7 +4,7 @@ test('model should be validated when compliant', () => {
     const containerValidated = container.validate({
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         // eslint-disable-next-line no-template-curly-in-string
         linkTemplate: 'https://release-${major}.${minor}.${patch}.acme.com',
         image: {
@@ -73,7 +73,7 @@ test('model should be validated when compliant', () => {
             link: 'https://release-2.0.0.acme.com',
             tag: '2.0.0',
         },
-        watcher: 'test',
+        controller: 'test',
     });
 });
 
@@ -87,7 +87,7 @@ test('model should flag updateAvailable when tag is different', () => {
     const containerValidated = container.validate({
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         image: {
             id: 'image-123456789',
             registry: {
@@ -118,7 +118,7 @@ test('model should not flag updateAvailable when tag is equal', () => {
     const containerValidated = container.validate({
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         image: {
             id: 'image-123456789',
             registry: {
@@ -149,7 +149,7 @@ test('model should flag updateAvailable when digest is different', () => {
     const containerValidated = container.validate({
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         image: {
             id: 'image-123456789',
             registry: {
@@ -182,7 +182,7 @@ test('model should flag updateAvailable when created is different', () => {
     const containerValidated = container.validate({
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         image: {
             id: 'image-123456789',
             registry: {
@@ -222,7 +222,7 @@ test('model should support transforms for links', () => {
     const containerValidated = container.validate({
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         transformTags: '^(\\d+\\.\\d+)-.*-(\\d+) => $1.$2',
         // eslint-disable-next-line no-template-curly-in-string
         linkTemplate: 'https://release-${major}.${minor}.${patch}.acme.com',
@@ -259,7 +259,7 @@ test('flatten should be flatten the nested properties with underscores when call
     const containerValidated = container.validate({
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         // eslint-disable-next-line no-template-curly-in-string
         linkTemplate: 'https://release-${major}.${minor}.${patch}.acme.com',
         image: {
@@ -312,15 +312,15 @@ test('flatten should be flatten the nested properties with underscores when call
         update_kind_local_value: '1.0.0',
         update_kind_remote_value: '2.0.0',
         update_kind_semver_diff: 'major',
-        watcher: 'test',
+        controller: 'test',
     });
 });
 
-test('fullName should build an id with watcher name & container name when called', () => {
+test('fullName should build an id with controller name & container name when called', () => {
     expect(container.fullName({
-        watcher: 'watcher',
+        controller: 'controller',
         name: 'container_name',
-    })).toEqual('watcher_container_name');
+    })).toEqual('controller_container_name');
 });
 
 test('getLink should render link templates when called', () => {

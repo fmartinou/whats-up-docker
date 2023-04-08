@@ -1,10 +1,10 @@
 /**
- * Registry handling all components (registries, triggers, watchers).
+ * Registry handling all components (registries, triggers, controllers).
  */
 const capitalize = require('capitalize');
 const log = require('../log').child({ component: 'registry' });
 const {
-    getWatcherConfigurations,
+    getControllerConfigurations,
     getTriggerConfigurations,
     getRegistryConfigurations,
     getAuthenticationConfigurations,
@@ -15,7 +15,7 @@ const {
  */
 const state = {
     trigger: {},
-    watcher: {},
+    controller: {},
     registry: {},
     authentication: {},
 };
@@ -59,7 +59,7 @@ async function registerComponent(kind, provider, name, configuration, path) {
  * @param kind
  * @param configurations
  * @param path
- * @returns {*[]}
+ * @returns Promise
  */
 async function registerComponents(kind, configurations, path) {
     if (configurations) {
@@ -78,30 +78,23 @@ async function registerComponents(kind, configurations, path) {
         }).flat();
         return Promise.all(providerPromises);
     }
-    return [];
+    return Promise.resolve([]);
 }
 
 /**
- * Register watchers.
+ * Register controllers.
  * @returns {Promise}
  */
-async function registerWatchers() {
-    const configurations = getWatcherConfigurations();
-    let watchersToRegister = [];
+async function registerControllers() {
+    const configurations = getControllerConfigurations();
     try {
         if (Object.keys(configurations).length === 0) {
-            log.info('No Watcher configured => Init a default one (Docker with default options)');
-            watchersToRegister.push(registerComponent('watcher', 'docker', 'local', {}, '../watchers/providers'));
-        } else {
-            watchersToRegister = watchersToRegister
-                .concat(Object.keys(configurations).map((watcherKey) => {
-                    const watcherKeyNormalize = watcherKey.toLowerCase();
-                    return registerComponent('watcher', 'docker', watcherKeyNormalize, configurations[watcherKeyNormalize], '../watchers/providers');
-                }));
+            log.info('No Controller configured => Init a default one (Docker with default options)');
+            await registerComponent('controller', 'docker', 'local', {}, '../controllers/providers');
         }
-        await Promise.all(watchersToRegister);
+        await registerComponents('controller', configurations, '../controllers/providers');
     } catch (e) {
-        log.warn(`Some watchers failed to register (${e.message})`);
+        log.warn(`Some controllers failed to register (${e.message})`);
         log.debug(e);
     }
 }
@@ -173,16 +166,16 @@ async function registerAuthentications() {
 }
 
 /**
- * Deregister a component.
+ * Unregister a component.
  * @param component
  * @param kind
  * @returns {Promise}
  */
-async function deregisterComponent(component, kind) {
+async function unregisterComponent(component, kind) {
     try {
-        await component.deregister();
+        await component.unregister();
     } catch (e) {
-        throw new Error(`Error when deregistering component ${component.getId()}`);
+        throw new Error(`Error when unregistering component ${component.getId()}`);
     } finally {
         const components = getState()[kind];
         if (components) {
@@ -192,61 +185,61 @@ async function deregisterComponent(component, kind) {
 }
 
 /**
- * Deregister all components of kind.
+ * Unregister all components of kind.
  * @param components
  * @param kind
  * @returns {Promise}
  */
-async function deregisterComponents(components, kind) {
-    const deregisterPromises = components
-        .map(async (component) => deregisterComponent(component, kind));
-    return Promise.all(deregisterPromises);
+async function unregisterComponents(components, kind) {
+    const unregisterPromises = components
+        .map(async (component) => unregisterComponent(component, kind));
+    return Promise.all(unregisterPromises);
 }
 
 /**
- * Deregister all watchers.
+ * Unregister all controllers.
  * @returns {Promise}
  */
-async function deregisterWatchers() {
-    return deregisterComponents(Object.values(getState().watcher), 'watcher');
+async function unregisterControllers() {
+    return unregisterComponents(Object.values(getState().controller), 'controller');
 }
 
 /**
- * Deregister all triggers.
+ * Unregister all triggers.
  * @returns {Promise}
  */
-async function deregisterTriggers() {
-    return deregisterComponents(Object.values(getState().trigger), 'trigger');
+async function unregisterTriggers() {
+    return unregisterComponents(Object.values(getState().trigger), 'trigger');
 }
 
 /**
- * Deregister all registries.
+ * Unregister all registries.
  * @returns {Promise}
  */
-async function deregisterRegistries() {
-    return deregisterComponents(Object.values(getState().registry), 'registry');
+async function unregisterRegistries() {
+    return unregisterComponents(Object.values(getState().registry), 'registry');
 }
 
 /**
- * Deregister all authentications.
+ * Unregister all authentications.
  * @returns {Promise<unknown>}
  */
-async function deregisterAuthentications() {
-    return deregisterComponents(Object.values(getState().authentication), 'authentication');
+async function unregisterAuthentications() {
+    return unregisterComponents(Object.values(getState().authentication), 'authentication');
 }
 
 /**
  * Deregister all components.
  * @returns {Promise}
  */
-async function deregisterAll() {
+async function unregisterAll() {
     try {
-        await deregisterWatchers();
-        await deregisterTriggers();
-        await deregisterRegistries();
-        await deregisterAuthentications();
+        await unregisterControllers();
+        await unregisterTriggers();
+        await unregisterRegistries();
+        await unregisterAuthentications();
     } catch (e) {
-        throw new Error(`Error when trying to deregister ${e.message}`);
+        throw new Error(`Error when trying to unregister ${e.message}`);
     }
 }
 
@@ -257,15 +250,15 @@ async function init() {
     // Register registries
     await registerRegistries();
 
-    // Register watchers
-    await registerWatchers();
+    // Register controllers
+    await registerControllers();
 
     // Register authentications
     await registerAuthentications();
 
     // Gracefully exit when possible
-    process.on('SIGINT', deregisterAll);
-    process.on('SIGTERM', deregisterAll);
+    process.on('SIGINT', unregisterAll);
+    process.on('SIGTERM', unregisterAll);
 }
 
 module.exports = {

@@ -46,7 +46,7 @@ Feature: WUD Container API Exposure
     When I GET /api/containers/`containerId`
     Then response code should be 200
     And response body should be valid json
-    And response body path $.watcher should be local
+    And response body path $.controller should be local
     And response body path $.name should be ecr_sub_sub_test
     And response body path $.image.registry.name should be ecr
     And response body path $.image.registry.url should be https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2
@@ -64,7 +64,7 @@ Feature: WUD Container API Exposure
     When I GET /api/containers/`containerId`
     Then response code should be 200
     And response body should be valid json
-    And response body path $.watcher should be local
+    And response body path $.controller should be local
     And response body path $.name should be hub_nginx_latest
     And response body path $.image.registry.name should be hub
     And response body path $.image.registry.url should be https://registry-1.docker.io/v2

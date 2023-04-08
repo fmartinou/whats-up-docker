@@ -40,7 +40,7 @@ It's time to [**add some triggers**](configuration/triggers/)!
 ## Going deeper...
 
 ?> Need to fine configure how WUD must watch your containers? \
-Take a look at the [**watcher documentation**](configuration/watchers/)!
+Take a look at the [**controller documentation**](configuration/controllers/)!
   
 ?> Need to integrate other registries (ECR, GCR...)? \
 Take a look at the [**registry documentation**](configuration/registries/).

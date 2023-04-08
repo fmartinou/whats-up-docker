@@ -3,7 +3,7 @@ const { collectDefaultMetrics, register } = require('prom-client');
 const log = require('../log').child({ component: 'prometheus' });
 const container = require('./container');
 const trigger = require('./trigger');
-const watcher = require('./watcher');
+const controller = require('./controller');
 const registry = require('./registry');
 
 /**
@@ -15,7 +15,7 @@ function init() {
     container.init();
     registry.init();
     trigger.init();
-    watcher.init();
+    controller.init();
 }
 
 /**

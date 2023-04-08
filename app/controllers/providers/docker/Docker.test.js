@@ -1,6 +1,6 @@
 const { ValidationError } = require('joi');
 const log = require('../../../log');
-const prometheusWatcher = require('../../../prometheus/watcher');
+const prometheusController = require('../../../prometheus/controller');
 
 jest.mock('../../../event');
 jest.mock('../../../log');
@@ -35,7 +35,7 @@ jest.mock('request-promise-native');
 
 beforeEach(() => {
     jest.resetAllMocks();
-    prometheusWatcher.init();
+    prometheusController.init();
     docker = new Docker();
     docker.name = 'test';
     docker.configuration = configurationValid;
@@ -46,7 +46,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    docker.deregister();
+    docker.unregister();
 });
 
 Docker.__set__('getRegistries', () => ({
@@ -77,9 +77,9 @@ test('validatedConfiguration should failed when configuration is invalid', () =>
     }).toThrowError(ValidationError);
 });
 
-test('initWatcher should create a configured DockerApi instance', () => {
+test('initController should create a configured DockerApi instance', () => {
     docker.configuration = docker.validateConfiguration(configurationValid);
-    docker.initWatcher();
+    docker.initController();
     expect(docker.dockerApi.modem.socketPath).toBe(configurationValid.socket);
 });
 
@@ -155,7 +155,7 @@ test('normalizeContainer should return ecr when applicable', () => {
     expect(Docker.__get__('normalizeContainer')({
         id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
         name: 'homeassistant',
-        watcher: 'local',
+        controller: 'local',
         includeTags: '^\\d+\\.\\d+.\\d+$',
         image: {
             id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
@@ -203,7 +203,7 @@ test('normalizeContainer should return gcr when applicable', () => {
     expect(Docker.__get__('normalizeContainer')({
         id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
         name: 'homeassistant',
-        watcher: 'local',
+        controller: 'local',
         includeTags: '^\\d+\\.\\d+.\\d+$',
         image: {
             id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
@@ -251,7 +251,7 @@ test('normalizeContainer should return acr when applicable', () => {
     expect(Docker.__get__('normalizeContainer')({
         id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
         name: 'homeassistant',
-        watcher: 'local',
+        controller: 'local',
         includeTags: '^\\d+\\.\\d+.\\d+$',
         image: {
             id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
@@ -299,7 +299,7 @@ test('normalizeContainer should return original container when no matching provi
     expect(Docker.__get__('normalizeContainer')({
         id: '31a61a8305ef1fc9a71fa4f20a68d7ec88b28e32303bbc4a5f192e851165b816',
         name: 'homeassistant',
-        watcher: 'local',
+        controller: 'local',
         includeTags: '^\\d+\\.\\d+.\\d+$',
         image: {
             id: 'sha256:d4a6fafb7d4da37495e5c9be3242590be24a87d7edcc4f79761098889c54fca6',
@@ -390,7 +390,7 @@ test('addImageDetailsToContainer should add an image definition to the container
     expect(containerWithImage).toMatchObject({
         id: 'container-123456789',
         name: 'test',
-        watcher: 'test',
+        controller: 'test',
         image: {
             id: 'image-123456789',
             registry: {},

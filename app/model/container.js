@@ -11,7 +11,7 @@ const schema = joi.object({
     displayName: joi.string().default(joi.ref('name')),
     displayIcon: joi.string().default('mdi:docker'),
     status: joi.string().default('unknown'),
-    watcher: joi.string().min(1).required(),
+    controller: joi.string().min(1).required(),
     includeTags: joi.string(),
     excludeTags: joi.string(),
     transformTags: joi.string(),
@@ -299,7 +299,7 @@ function flatten(container) {
  * @returns {string}
  */
 function fullName(container) {
-    return `${container.watcher}_${container.name}`;
+    return `${container.controller}.${container.name}`;
 }
 
 module.exports = {

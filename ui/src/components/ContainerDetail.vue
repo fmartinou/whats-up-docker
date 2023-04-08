@@ -48,10 +48,10 @@
         <v-icon color="secondary">mdi-update</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title>Watcher</v-list-item-title>
+        <v-list-item-title>Controller</v-list-item-title>
         <v-list-item-subtitle>
-          <router-link to="/configuration/watchers">{{
-            container.watcher
+          <router-link to="/configuration/controllers">{{
+            container.controller
           }}</router-link>
         </v-list-item-subtitle>
       </v-list-item-content>

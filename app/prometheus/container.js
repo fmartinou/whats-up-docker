@@ -38,7 +38,7 @@ function init() {
             'display_name',
             'display_icon',
             'status',
-            'watcher',
+            'controller',
             'include_tags',
             'exclude_tags',
             'transform_tags',

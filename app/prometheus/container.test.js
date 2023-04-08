@@ -11,7 +11,7 @@ test('gauge must be populated when containers are in the store', () => {
         {
             id: 'container-123456789',
             name: 'test',
-            watcher: 'test',
+            controller: 'test',
             image: {
                 id: 'image-123456789',
                 registry: {
@@ -54,7 +54,7 @@ test('gauge must be populated when containers are in the store', () => {
         image_tag_value: 'version',
         name: 'test',
         result_tag: 'version',
-        watcher: 'test',
+        controller: 'test',
     }, 1);
 });
 

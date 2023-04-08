@@ -51,13 +51,13 @@ test('publishDiscoveryMessage must publish a discovery message expected by HA', 
 test('addContainerSensor must publish sensor discovery message expected by HA', async () => {
     await hass.addContainerSensor({
         name: 'container-name',
-        watcher: 'watcher-name',
+        controller: 'controller-name',
         displayIcon: 'mdi:docker',
     });
-    expect(mqttClientMock.publish).toHaveBeenCalledWith('homeassistant/update/topic_watcher-name_container-name/config', JSON.stringify({
-        unique_id: 'topic_watcher-name_container-name',
-        object_id: 'topic_watcher-name_container-name',
-        name: 'topic_watcher-name_container-name',
+    expect(mqttClientMock.publish).toHaveBeenCalledWith('homeassistant/update/topic_controller-name_container-name/config', JSON.stringify({
+        unique_id: 'topic_controller-name_container-name',
+        object_id: 'topic_controller-name_container-name',
+        name: 'topic_controller-name_container-name',
         device: {
             identifiers: [
                 'wud',
@@ -69,28 +69,28 @@ test('addContainerSensor must publish sensor discovery message expected by HA', 
         },
         icon: 'mdi:docker',
         entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
-        state_topic: 'topic/watcher-name/container-name',
+        state_topic: 'topic/controller-name/container-name',
         force_update: true,
         value_template: '{{ value_json.image_tag_value }}',
-        latest_version_topic: 'topic/watcher-name/container-name',
+        latest_version_topic: 'topic/controller-name/container-name',
         latest_version_template: '{% if value_json.update_kind_kind == "digest" %}{{ value_json.result_digest[:15] }}{% else %}{{ value_json.result_tag }}{% endif %}',
-        json_attributes_topic: 'topic/watcher-name/container-name',
+        json_attributes_topic: 'topic/controller-name/container-name',
     }), { retain: true });
 });
 
 test('removeContainerSensor must publish sensor discovery message expected by HA', async () => {
     await hass.removeContainerSensor({
         name: 'container-name',
-        watcher: 'watcher-name',
+        controller: 'controller-name',
         displayIcon: 'mdi:docker',
     });
-    expect(mqttClientMock.publish).toHaveBeenCalledWith('homeassistant/update/topic_watcher-name_container-name/config', JSON.stringify({}), { retain: true });
+    expect(mqttClientMock.publish).toHaveBeenCalledWith('homeassistant/update/topic_controller-name_container-name/config', JSON.stringify({}), { retain: true });
 });
 
 test('updateContainerSensors must publish all sensors expected by HA', async () => {
     await hass.updateContainerSensors({
         name: 'container-name',
-        watcher: 'watcher-name',
+        controller: 'controller-name',
         displayIcon: 'mdi:docker',
     });
     expect(mqttClientMock.publish).toHaveBeenCalledTimes(15);
@@ -133,40 +133,40 @@ test('updateContainerSensors must publish all sensors expected by HA', async () 
         payload_off: 'false',
     }), { retain: true });
 
-    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(4, 'homeassistant/sensor/topic_watcher-name_total_count/config', JSON.stringify({
-        unique_id: 'topic_watcher-name_total_count',
-        object_id: 'topic_watcher-name_total_count',
-        name: 'Watcher watcher-name container count',
+    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(4, 'homeassistant/sensor/topic_controller-name_total_count/config', JSON.stringify({
+        unique_id: 'topic_controller-name_total_count',
+        object_id: 'topic_controller-name_total_count',
+        name: 'Controller controller-name container count',
         device: {
             identifiers: ['wud'], manufacturer: 'Fmartinou', model: 'Wud', name: "What's up docker?", sw_version: 'unknown',
         },
         icon: 'mdi:docker',
         entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
-        state_topic: 'topic/watcher-name/total_count',
+        state_topic: 'topic/controller-name/total_count',
     }), { retain: true });
 
-    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(5, 'homeassistant/sensor/topic_watcher-name_update_count/config', JSON.stringify({
-        unique_id: 'topic_watcher-name_update_count',
-        object_id: 'topic_watcher-name_update_count',
-        name: 'Watcher watcher-name container update count',
+    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(5, 'homeassistant/sensor/topic_controller-name_update_count/config', JSON.stringify({
+        unique_id: 'topic_controller-name_update_count',
+        object_id: 'topic_controller-name_update_count',
+        name: 'Controller controller-name container update count',
         device: {
             identifiers: ['wud'], manufacturer: 'Fmartinou', model: 'Wud', name: "What's up docker?", sw_version: 'unknown',
         },
         icon: 'mdi:docker',
         entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
-        state_topic: 'topic/watcher-name/update_count',
+        state_topic: 'topic/controller-name/update_count',
     }), { retain: true });
 
-    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(6, 'homeassistant/binary_sensor/topic_watcher-name_update_status/config', JSON.stringify({
-        unique_id: 'topic_watcher-name_update_status',
-        object_id: 'topic_watcher-name_update_status',
-        name: 'Watcher watcher-name container update status',
+    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(6, 'homeassistant/binary_sensor/topic_controller-name_update_status/config', JSON.stringify({
+        unique_id: 'topic_controller-name_update_status',
+        object_id: 'topic_controller-name_update_status',
+        name: 'Controller controller-name container update status',
         device: {
             identifiers: ['wud'], manufacturer: 'Fmartinou', model: 'Wud', name: "What's up docker?", sw_version: 'unknown',
         },
         icon: 'mdi:docker',
         entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
-        state_topic: 'topic/watcher-name/update_status',
+        state_topic: 'topic/controller-name/update_status',
         payload_on: 'true',
         payload_off: 'false',
     }), { retain: true });
@@ -174,40 +174,40 @@ test('updateContainerSensors must publish all sensors expected by HA', async () 
     expect(mqttClientMock.publish).toHaveBeenNthCalledWith(7, 'topic/total_count', '0', { retain: true });
     expect(mqttClientMock.publish).toHaveBeenNthCalledWith(8, 'topic/update_count', '0', { retain: true });
     expect(mqttClientMock.publish).toHaveBeenNthCalledWith(9, 'topic/update_status', 'false', { retain: true });
-    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(10, 'topic/watcher-name/total_count', '0', { retain: true });
-    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(11, 'topic/watcher-name/update_count', '0', { retain: true });
-    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(12, 'topic/watcher-name/update_status', 'false', { retain: true });
-    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(13, 'homeassistant/sensor/topic_watcher-name_total_count/config', '{}', { retain: true });
-    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(14, 'homeassistant/sensor/topic_watcher-name_update_count/config', '{}', { retain: true });
-    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(15, 'homeassistant/binary_sensor/topic_watcher-name_update_status/config', '{}', { retain: true });
+    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(10, 'topic/controller-name/total_count', '0', { retain: true });
+    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(11, 'topic/controller-name/update_count', '0', { retain: true });
+    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(12, 'topic/controller-name/update_status', 'false', { retain: true });
+    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(13, 'homeassistant/sensor/topic_controller-name_total_count/config', '{}', { retain: true });
+    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(14, 'homeassistant/sensor/topic_controller-name_update_count/config', '{}', { retain: true });
+    expect(mqttClientMock.publish).toHaveBeenNthCalledWith(15, 'homeassistant/binary_sensor/topic_controller-name_update_status/config', '{}', { retain: true });
 });
 
 test('removeContainerSensor must publish all sensor removal messages expected by HA', async () => {
     await hass.removeContainerSensor({
         name: 'container-name',
-        watcher: 'watcher-name',
+        controller: 'controller-name',
         displayIcon: 'mdi:docker',
     });
-    expect(mqttClientMock.publish).toHaveBeenCalledWith('homeassistant/update/topic_watcher-name_container-name/config', JSON.stringify({}), { retain: true });
+    expect(mqttClientMock.publish).toHaveBeenCalledWith('homeassistant/update/topic_controller-name_container-name/config', JSON.stringify({}), { retain: true });
 });
 
-test('updateWatcherSensors must publish all watcher sensor messages expected by HA', async () => {
-    await hass.updateWatcherSensors({
-        watcher: {
-            name: 'watcher-name',
+test('updatecontrollerSensors must publish all controller sensor messages expected by HA', async () => {
+    await hass.updateControllerSensors({
+        controller: {
+            name: 'controller-name',
         },
         isRunning: true,
     });
-    expect(mqttClientMock.publish).toHaveBeenCalledWith('homeassistant/binary_sensor/topic_watcher-name_running/config', JSON.stringify({
-        unique_id: 'topic_watcher-name_running',
-        object_id: 'topic_watcher-name_running',
-        name: 'Watcher watcher-name running status',
+    expect(mqttClientMock.publish).toHaveBeenCalledWith('homeassistant/binary_sensor/topic_controller-name_running/config', JSON.stringify({
+        unique_id: 'topic_controller-name_running',
+        object_id: 'topic_controller-name_running',
+        name: 'Controller controller-name running status',
         device: {
             identifiers: ['wud'], manufacturer: 'Fmartinou', model: 'Wud', name: "What's up docker?", sw_version: 'unknown',
         },
         icon: 'mdi:docker',
         entity_picture: 'https://github.com/fmartinou/whats-up-docker/raw/master/docs/wud_logo.png',
-        state_topic: 'topic/watcher-name/running',
+        state_topic: 'topic/controller-name/running',
         payload_on: 'true',
         payload_off: 'false',
     }), { retain: true });

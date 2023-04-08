@@ -348,11 +348,11 @@ test('renderSimpleBody should replace placeholders when called', async () => {
 
 test('renderSimpleBody should replace placeholders when template is a customized one', async () => {
     // eslint-disable-next-line no-template-curly-in-string
-    trigger.configuration.simplebody = 'Watcher ${watcher} reports container ${name} available update';
+    trigger.configuration.simplebody = 'Controller ${controller} reports container ${name} available update';
     expect(trigger.renderSimpleBody({
         name: 'container-name',
-        watcher: 'DUMMY',
-    })).toEqual('Watcher DUMMY reports container container-name available update');
+        controller: 'DUMMY',
+    })).toEqual('Controller DUMMY reports container container-name available update');
 });
 
 test('renderBatchTitle should replace placeholders when called', async () => {

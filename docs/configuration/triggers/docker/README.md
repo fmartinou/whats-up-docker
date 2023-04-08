@@ -21,7 +21,7 @@ The trigger will:
 
 ?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration).
 
-?> This trigger picks up the Docker configuration from the [configured Docker watchers](configuration/watchers/) so it can handle updates on Local **and** Remote Docker hosts. 
+?> This trigger picks up the Docker configuration from the [configured Docker controllers](configuration/controllers/) so it can handle updates on Local **and** Remote Docker hosts. 
 
 ### Examples
 

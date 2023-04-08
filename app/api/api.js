@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const appRouter = require('./app');
 const containerRouter = require('./container');
-const watcherRouter = require('./watcher');
+const controllerRouter = require('./controller');
 const triggerRouter = require('./trigger');
 const registryRouter = require('./registry');
 const authenticationRouter = require('./authentication');
@@ -39,8 +39,8 @@ function init() {
     // Mount trigger router
     router.use('/triggers', triggerRouter.init());
 
-    // Mount watcher router
-    router.use('/watchers', watcherRouter.init());
+    // Mount controller router
+    router.use('/controllers', controllerRouter.init());
 
     // Mount registry router
     router.use('/registries', registryRouter.init());

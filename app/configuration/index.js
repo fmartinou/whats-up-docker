@@ -57,10 +57,10 @@ function getLogLevel() {
     return wudEnvVars.WUD_LOG_LEVEL || 'info';
 }
 /**
- * Get watcher configuration.
+ * Get controller configuration.
  */
-function getWatcherConfigurations() {
-    return get('wud.watcher', wudEnvVars);
+function getControllerConfigurations() {
+    return get('wud.controller', wudEnvVars);
 }
 
 /**
@@ -126,7 +126,7 @@ module.exports = {
     getVersion,
     getLogLevel,
     getStoreConfiguration,
-    getWatcherConfigurations,
+    getControllerConfigurations,
     getTriggerConfigurations,
     getRegistryConfigurations,
     getAuthenticationConfigurations,

@@ -64,8 +64,8 @@ class Dockercompose extends Trigger {
         const containersFiltered = containers
             // Filter on containers running on local host
             .filter((container) => {
-                const watcher = this.getWatcher(container);
-                if (watcher.dockerApi.modem.socketPath !== '') {
+                const controller = this.getController(container);
+                if (controller.dockerApi.modem.socketPath !== '') {
                     return true;
                 }
                 this.log.warn(`Cannot update container ${container.name} because not running on local host`);

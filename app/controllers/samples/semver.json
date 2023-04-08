@@ -1,7 +1,7 @@
 {
     "id": "container-id",
     "name": "container-name",
-    "watcher": "local",
+    "controller": "local",
     "image": {
         "id": "image-id",
         "name":"organization/image",

@@ -35,7 +35,7 @@ class Component {
      * Deregister the component.
      * @returns {Promise<void>}
      */
-    async deregister() {
+    async unregister() {
         this.log.info('Deregister component');
         await this.deregisterComponent();
         return this;

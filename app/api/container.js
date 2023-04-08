@@ -6,11 +6,11 @@ const registry = require('../registry');
 const router = express.Router();
 
 /**
- * Return registered watchers.
+ * Return registered controllers.
  * @returns {{id: string}[]}
  */
-function getWatchers() {
-    return registry.getState().watcher;
+function getControllers() {
+    return registry.getState().controller;
 }
 
 /**
@@ -71,7 +71,7 @@ function deleteContainer(req, res) {
  */
 async function watchContainers(req, res) {
     try {
-        await Promise.all(Object.values(getWatchers()).map((watcher) => watcher.watch()));
+        await Promise.all(Object.values(getControllers()).map((controller) => controller.watch()));
         getContainers(req, res);
     } catch (e) {
         res.status(500).json({
@@ -91,16 +91,16 @@ async function watchContainer(req, res) {
 
     const container = storeContainer.getContainer(id);
     if (container) {
-        const watcher = getWatchers()[`watcher.docker.${container.watcher}`];
-        if (!watcher) {
+        const controller = getControllers()[`controller.docker.${container.controller}`];
+        if (!controller) {
             res.status(500).json({
-                error: `No provider found for container ${id} and provider ${container.watcher}`,
+                error: `No provider found for container ${id} and provider ${container.controller}`,
             });
         } else {
             try {
                 // Ensure container is still in store
                 // (for cases where it has been removed before running an new watchAll)
-                const containers = await watcher.getContainers();
+                const containers = await controller.getContainers();
                 const containerFound = containers
                     .find((containerInList) => containerInList.id === container.id);
 
@@ -108,7 +108,7 @@ async function watchContainer(req, res) {
                     res.status(404).send();
                 } else {
                     // Run watchContainer from the Provider
-                    const containerReport = await watcher.watchContainer(container);
+                    const containerReport = await controller.watchContainer(container);
                     res.status(200).json(containerReport.container);
                 }
             } catch (e) {

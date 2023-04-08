@@ -1,13 +1,13 @@
 <template>
   <v-container fluid>
-    <v-row v-for="controller in authentications" :key="controller.id">
+    <v-row v-for="controller in controllers" :key="controller.name">
       <v-col :cols="12" class="pt-2 pb-2">
         <configuration-item :item="controller" />
       </v-col>
     </v-row>
-    <v-row v-if="authentications.length === 0">
+    <v-row v-if="controllers.length === 0">
       <v-card-subtitle class="text-h6"
-        >No authentication configured</v-card-subtitle
+        >No controllers configured</v-card-subtitle
       >
     </v-row>
   </v-container>
@@ -15,12 +15,12 @@
 
 <script>
 import ConfigurationItem from "@/components/ConfigurationItem";
-import { getAllAuthentications } from "@/services/authentication";
+import { getAllControllers } from "@/services/controller";
 
 export default {
   data() {
     return {
-      authentications: [],
+      controllers: [],
     };
   },
   components: {
@@ -29,12 +29,12 @@ export default {
 
   async beforeRouteEnter(to, from, next) {
     try {
-      const authentications = await getAllAuthentications();
-      next((vm) => (vm.authentications = authentications));
+      const controllers = await getAllControllers();
+      next((vm) => (vm.controllers = controllers));
     } catch (e) {
       this.$root.$emit(
         "notify",
-        `Error when trying to load the authentications (${e.message})`,
+        `Error when trying to load the controllers (${e.message})`,
         "error"
       );
     }

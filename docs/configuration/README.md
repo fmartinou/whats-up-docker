@@ -14,7 +14,7 @@ Please find below the documentation for each of them:
 
 > [**Triggers**](/configuration/triggers/)
 
-> [**watchers**](/configuration/watchers/)
+> [**controllers**](/configuration/controllers/)
 
 ## Complete example
 

@@ -15,22 +15,22 @@ test('getLogLevel should return debug when overridden', () => {
     expect(configuration.getLogLevel()).toStrictEqual('debug');
 });
 
-test('getWatcherConfiguration should return empty object by default', () => {
-    delete configuration.wudEnvVars.WUD_WATCHER_WATCHER1_X;
-    delete configuration.wudEnvVars.WUD_WATCHER_WATCHER1_Y;
-    delete configuration.wudEnvVars.WUD_WATCHER_WATCHER2_X;
-    delete configuration.wudEnvVars.WUD_WATCHER_WATCHER2_Y;
-    expect(configuration.getWatcherConfigurations()).toStrictEqual({});
+test('getControllerConfiguration should return empty object by default', () => {
+    delete configuration.wudEnvVars.WUD_CONTROLLER_CONTROLLER1_X;
+    delete configuration.wudEnvVars.WUD_CONTROLLER_CONTROLLER1_Y;
+    delete configuration.wudEnvVars.WUD_CONTROLLER_CONTROLLER2_X;
+    delete configuration.wudEnvVars.WUD_CONTROLLER_CONTROLLER2_Y;
+    expect(configuration.getControllerConfigurations()).toStrictEqual({});
 });
 
-test('getWatcherConfiguration should return configured watchers when overridden', () => {
-    configuration.wudEnvVars.WUD_WATCHER_WATCHER1_X = 'x';
-    configuration.wudEnvVars.WUD_WATCHER_WATCHER1_Y = 'y';
-    configuration.wudEnvVars.WUD_WATCHER_WATCHER2_X = 'x';
-    configuration.wudEnvVars.WUD_WATCHER_WATCHER2_Y = 'y';
-    expect(configuration.getWatcherConfigurations()).toStrictEqual({
-        watcher1: { x: 'x', y: 'y' },
-        watcher2: { x: 'x', y: 'y' },
+test('getControllerConfiguration should return configured controllers when overridden', () => {
+    configuration.wudEnvVars.WUD_CONTROLLER_CONTROLLER1_X = 'x';
+    configuration.wudEnvVars.WUD_CONTROLLER_CONTROLLER1_Y = 'y';
+    configuration.wudEnvVars.WUD_CONTROLLER_CONTROLLER2_X = 'x';
+    configuration.wudEnvVars.WUD_CONTROLLER_CONTROLLER2_Y = 'y';
+    expect(configuration.getControllerConfigurations()).toStrictEqual({
+        controller1: { x: 'x', y: 'y' },
+        controller2: { x: 'x', y: 'y' },
     });
 });
 

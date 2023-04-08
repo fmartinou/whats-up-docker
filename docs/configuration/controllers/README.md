@@ -1,29 +1,29 @@
-# Docker Watchers
+# Docker Controller
 ![logo](docker.png)
 
-Watchers are responsible for scanning Docker containers.
+Controllers are responsible for scanning Docker containers.
 
-The ```docker``` watcher lets you configure the Docker hosts you want to watch.
+The ```docker``` controller lets you configure the Docker hosts you want to watch.
 
 ## Variables
 
 | Env var                                                   | Required       | Description                                                     | Supported values                               | Default value when missing                                      |
 | --------------------------------------------------------- |:--------------:| --------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------- | 
-| `WUD_WATCHER_{watcher_name}_SOCKET`                       | :white_circle: | Docker socket to watch                                          | Valid unix socket                              | `/var/run/docker.sock`                                          |
-| `WUD_WATCHER_{watcher_name}_HOST`                         | :white_circle: | Docker hostname or ip of the host to watch                      |                                                |                                                                 |
-| `WUD_WATCHER_{watcher_name}_PORT`                         | :white_circle: | Docker port of the host to watch                                |                                                | `2375`                                                          |
-| `WUD_WATCHER_{watcher_name}_CAFILE`                       | :white_circle: | CA pem file path (only for TLS connection)                      |                                                |                                                                 |
-| `WUD_WATCHER_{watcher_name}_CERTFILE`                     | :white_circle: | Certificate pem file path (only for TLS connection)             |                                                |                                                                 |
-| `WUD_WATCHER_{watcher_name}_KEYFILE`                      | :white_circle: | Key pem file path (only for TLS connection)                     |                                                |                                                                 |
-| `WUD_WATCHER_{watcher_name}_CRON`                         | :white_circle: | Scheduling options                                              | [Valid CRON expression](https://crontab.guru/) | `0 * * * *` (every hour)                                        |
-| `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT`               | :white_circle: | If WUD must monitor all containers by default                   | `true`, `false`                                | `true`                                                          |
-| `WUD_WATCHER_{watcher_name}_WATCHALL`                     | :white_circle: | If WUD must monitor all containers instead of just running ones | `true`, `false`                                | `false`                                                         |
-| `WUD_WATCHER_{watcher_name}_WATCHEVENTS`                  | :white_circle: | If WUD must monitor docker events                               | `true`, `false`                                | `true`                                                          |
-| ~~`WUD_WATCHER_{watcher_name}_WATCHDIGEST`~~ (deprecated) | :white_circle: | If WUD must monitor container digests                           |                                                | `false` for semver image tags, `true` for non semver image tags |
+| `WUD_CONTROLLER_{controller_name}_SOCKET`                       | :white_circle: | Docker socket to watch                                          | Valid unix socket                              | `/var/run/docker.sock`                                          |
+| `WUD_CONTROLLER_{controller_name}_HOST`                         | :white_circle: | Docker hostname or ip of the host to watch                      |                                                |                                                                 |
+| `WUD_CONTROLLER_{controller_name}_PORT`                         | :white_circle: | Docker port of the host to watch                                |                                                | `2375`                                                          |
+| `WUD_CONTROLLER_{controller_name}_CAFILE`                       | :white_circle: | CA pem file path (only for TLS connection)                      |                                                |                                                                 |
+| `WUD_CONTROLLER_{controller_name}_CERTFILE`                     | :white_circle: | Certificate pem file path (only for TLS connection)             |                                                |                                                                 |
+| `WUD_CONTROLLER_{controller_name}_KEYFILE`                      | :white_circle: | Key pem file path (only for TLS connection)                     |                                                |                                                                 |
+| `WUD_CONTROLLER_{controller_name}_CRON`                         | :white_circle: | Scheduling options                                              | [Valid CRON expression](https://crontab.guru/) | `0 * * * *` (every hour)                                        |
+| `WUD_CONTROLLER_{controller_name}_WATCHBYDEFAULT`               | :white_circle: | If WUD must monitor all containers by default                   | `true`, `false`                                | `true`                                                          |
+| `WUD_CONTROLLER_{controller_name}_WATCHALL`                     | :white_circle: | If WUD must monitor all containers instead of just running ones | `true`, `false`                                | `false`                                                         |
+| `WUD_CONTROLLER_{controller_name}_WATCHEVENTS`                  | :white_circle: | If WUD must monitor docker events                               | `true`, `false`                                | `true`                                                          |
+| ~~`WUD_CONTROLLER_{controller_name}_WATCHDIGEST`~~ (deprecated) | :white_circle: | If WUD must monitor container digests                           |                                                | `false` for semver image tags, `true` for non semver image tags |
 
-?> If no watcher is configured, a default one named `local` will be automatically created (reading the Docker socket).
+?> If no controller is configured, a default one named `local` will be automatically created (reading the Docker socket).
 
-?> Multiple watchers can be configured (if you have multiple Docker hosts to watch).  
+?> Multiple controllers can be configured (if you have multiple Docker hosts to watch).  
 You just need to give them different names.
 
 !> Socket configuration and host/port configuration are mutually exclusive.
@@ -39,7 +39,7 @@ You just need to give them different names.
 !> Watching image digests causes an extensive usage of _Docker Registry Pull API_ which is restricted by [**Quotas on the Docker Hub**](https://docs.docker.com/docker-hub/download-rate-limit/). \
 By default, WUD enables it only for **non semver** image tags. \
 You can tune this behavior per container using the `wud.watch.digest` label. \
-If you face [quota related errors](https://docs.docker.com/docker-hub/download-rate-limit/#how-do-i-know-my-pull-requests-are-being-limited), consider slowing down the watcher rate by adjusting the `WUD_WATCHER_{watcher_name}_CRON` variable.
+If you face [quota related errors](https://docs.docker.com/docker-hub/download-rate-limit/#how-do-i-know-my-pull-requests-are-being-limited), consider slowing down the controller rate by adjusting the `WUD_CONTROLLER_{controller_name}_CRON` variable.
 
 ## Variable examples
 
@@ -55,13 +55,13 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-        - WUD_WATCHER_LOCAL_CRON=0 1 * * *
+        - WUD_CONTROLLER_LOCAL_CRON=0 1 * * *
 ```
 
 #### **Docker**
 ```bash
 docker run \
-    -e WUD_WATCHER_LOCAL_CRON="0 1 * * *" \
+    -e WUD_CONTROLLER_LOCAL_CRON="0 1 * * *" \
   ...
   fmartinou/whats-up-docker
 ```
@@ -79,13 +79,13 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-        - WUD_WATCHER_LOCAL_WATCHALL=true
+        - WUD_CONTROLLER_LOCAL_WATCHALL=true
 ```
 
 #### **Docker**
 ```bash
 docker run \
-    -e WUD_WATCHER_LOCAL_WATCHALL="true" \
+    -e WUD_CONTROLLER_LOCAL_WATCHALL="true" \
   ...
   fmartinou/whats-up-docker
 ```
@@ -103,13 +103,13 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-        - WUD_WATCHER_MYREMOTEHOST_HOST=myremotehost 
+        - WUD_CONTROLLER_MYREMOTEHOST_HOST=myremotehost 
 ```
 
 #### **Docker**
 ```bash
 docker run \
-    -e WUD_WATCHER_MYREMOTEHOST_HOST="myremotehost" \
+    -e WUD_CONTROLLER_MYREMOTEHOST_HOST="myremotehost" \
   ...
   fmartinou/whats-up-docker
 ```
@@ -127,11 +127,11 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-        - WUD_WATCHER_MYREMOTEHOST_HOST=myremotehost
-        - WUD_WATCHER_MYREMOTEHOST_PORT=2376
-        - WUD_WATCHER_MYREMOTEHOST_CAFILE=/certs/ca.pem
-        - WUD_WATCHER_MYREMOTEHOST_CERTFILE=/certs/cert.pem
-        - WUD_WATCHER_MYREMOTEHOST_KEYFILE=/certs/key.pem
+        - WUD_CONTROLLER_MYREMOTEHOST_HOST=myremotehost
+        - WUD_CONTROLLER_MYREMOTEHOST_PORT=2376
+        - WUD_CONTROLLER_MYREMOTEHOST_CAFILE=/certs/ca.pem
+        - WUD_CONTROLLER_MYREMOTEHOST_CERTFILE=/certs/cert.pem
+        - WUD_CONTROLLER_MYREMOTEHOST_KEYFILE=/certs/key.pem
     volumes:
         - /my-host/my-certs/ca.pem:/certs/ca.pem:ro
         - /my-host/my-certs/ca.pem:/certs/cert.pem:ro
@@ -141,11 +141,11 @@ services:
 #### **Docker**
 ```bash
 docker run \
-    -e WUD_WATCHER_MYREMOTEHOST_HOST="myremotehost" \
-    -e WUD_WATCHER_MYREMOTEHOST_PORT="2376" \
-    -e WUD_WATCHER_MYREMOTEHOST_CAFILE="/certs/ca.pem" \
-    -e WUD_WATCHER_MYREMOTEHOST_CERTFILE="/certs/cert.pem" \
-    -e WUD_WATCHER_MYREMOTEHOST_KEYFILE="/certs/key.pem" \
+    -e WUD_CONTROLLER_MYREMOTEHOST_HOST="myremotehost" \
+    -e WUD_CONTROLLER_MYREMOTEHOST_PORT="2376" \
+    -e WUD_CONTROLLER_MYREMOTEHOST_CAFILE="/certs/ca.pem" \
+    -e WUD_CONTROLLER_MYREMOTEHOST_CERTFILE="/certs/cert.pem" \
+    -e WUD_CONTROLLER_MYREMOTEHOST_KEYFILE="/certs/key.pem" \
     -v /my-host/my-certs/ca.pem:/certs/ca.pem:ro \
     -v /my-host/my-certs/ca.pem:/certs/cert.pem:ro \
     -v /my-host/my-certs/ca.pem:/certs/key.pem:ro \
@@ -168,17 +168,17 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-        -  WUD_WATCHER_LOCAL_SOCKET=/var/run/docker.sock
-        -  WUD_WATCHER_MYREMOTEHOST1_HOST=myremotehost1
-        -  WUD_WATCHER_MYREMOTEHOST2_HOST=myremotehost2
+        -  WUD_CONTROLLER_LOCAL_SOCKET=/var/run/docker.sock
+        -  WUD_CONTROLLER_MYREMOTEHOST1_HOST=myremotehost1
+        -  WUD_CONTROLLER_MYREMOTEHOST2_HOST=myremotehost2
 ```
 
 #### **Docker**
 ```bash
 docker run \
-    -e  WUD_WATCHER_LOCAL_SOCKET="/var/run/docker.sock" \
-    -e  WUD_WATCHER_MYREMOTEHOST1_HOST="myremotehost1" \
-    -e  WUD_WATCHER_MYREMOTEHOST2_HOST="myremotehost2" \
+    -e  WUD_CONTROLLER_LOCAL_SOCKET="/var/run/docker.sock" \
+    -e  WUD_CONTROLLER_MYREMOTEHOST1_HOST="myremotehost1" \
+    -e  WUD_CONTROLLER_MYREMOTEHOST2_HOST="myremotehost2" \
   ...
   fmartinou/whats-up-docker
 ```
@@ -190,7 +190,7 @@ To fine-tune the behaviour of WUD _per container_, you can add labels on them.
 
 | Label               |    Required    | Description                                        | Supported values                                                                                                                                                            | Default value when missing                                                            |
 |---------------------|:--------------:|----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| `wud.watch`         | :white_circle: | Watch this container                               | Valid Boolean                                                                                                                                                               | `true` when `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` is `true` (`false` otherwise) |
+| `wud.watch`         | :white_circle: | Watch this container                               | Valid Boolean                                                                                                                                                               | `true` when `WUD_CONTROLLER_{controller_name}_WATCHBYDEFAULT` is `true` (`false` otherwise) |
 | `wud.watch.digest`  | :white_circle: | Watch this container digest                        | Valid Boolean                                                                                                                                                               | `false`                                                                               |
 | `wud.tag.include`   | :white_circle: | Regex to include specific tags only                | Valid JavaScript Regex                                                                                                                                                      |                                                                                       |
 | `wud.tag.exclude`   | :white_circle: | Regex to exclude specific tags                     | Valid JavaScript Regex                                                                                                                                                      |                                                                                       |
@@ -213,13 +213,13 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
-      - WUD_WATCHER_LOCAL_WATCHBYDEFAULT=false
+      - WUD_CONTROLLER_LOCAL_WATCHBYDEFAULT=false
 ```
 
 #### **Docker**
 ```bash
 docker run \
-    -e WUD_WATCHER_LOCAL_WATCHBYDEFAULT="false" \
+    -e WUD_CONTROLLER_LOCAL_WATCHBYDEFAULT="false" \
   ...
   fmartinou/whats-up-docker
 ```
@@ -246,7 +246,7 @@ docker run -d --name mariadb --label wud.watch=true mariadb:10.4.5
 <!-- tabs:end -->
 
 ### Exclude specific containers to watch
-Ensure `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` is true (default value).
+Ensure `WUD_CONTROLLER_{controller_name}_WATCHBYDEFAULT` is true (default value).
 
 Then add the `wud.watch=false` label on the containers you want to exclude from being watched.
 <!-- tabs:start -->

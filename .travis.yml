@@ -163,7 +163,7 @@ script:
     --publish 3000:3000
     --volume /var/run/docker.sock:/var/run/docker.sock
     --env WUD_TRIGGER_MOCK_EXAMPLE_MOCK=mock
-    --env WUD_WATCHER_LOCAL_WATCHBYDEFAULT=false
+    --env WUD_CONTROLLER_LOCAL_WATCHBYDEFAULT=false
     --env WUD_REGISTRY_ACR_CLIENTID="$ACR_CLIENT_ID"
     --env WUD_REGISTRY_ACR_CLIENTSECRET="$ACR_CLIENT_SECRET"
     --env WUD_REGISTRY_ECR_ACCESSKEYID="$AWS_ACCESSKEY_ID"

@@ -38,10 +38,12 @@
       </v-col>
       <v-col xs="12" sm="12" md="6" lg="3" xl="3">
         <v-card class="home-card text-center" outlined>
-          <v-icon color="secondary" class="home-icon">{{ watcherIcon }}</v-icon>
+          <v-icon color="secondary" class="home-icon">{{
+            controllerIcon
+          }}</v-icon>
           <br />
-          <v-btn plain x-large to="/configuration/watchers"
-            >{{ watchersCount }} watchers</v-btn
+          <v-btn plain x-large to="/configuration/controllers"
+            >{{ controllersCount }} controllers</v-btn
           >
         </v-card>
       </v-col>
@@ -64,7 +66,7 @@
 import { getContainerIcon, getAllContainers } from "@/services/container";
 import { getRegistryIcon, getAllRegistries } from "@/services/registry";
 import { getTriggerIcon, getAllTriggers } from "@/services/trigger";
-import { getWatcherIcon, getAllWatchers } from "@/services/watcher";
+import { getAllControllers, getControllerIcon } from "@/services/controller";
 
 export default {
   data() {
@@ -72,12 +74,12 @@ export default {
       containersCount: 0,
       containersToUpdateCount: 0,
       triggersCount: 0,
-      watchersCount: 0,
+      controllersCount: 0,
       registriesCount: 0,
       containerIcon: getContainerIcon(),
       registryIcon: getRegistryIcon(),
       triggerIcon: getTriggerIcon(),
-      watcherIcon: getWatcherIcon(),
+      controllerIcon: getControllerIcon(),
     };
   },
 
@@ -93,13 +95,13 @@ export default {
   async beforeRouteEnter(to, from, next) {
     try {
       const containers = await getAllContainers();
-      const watchers = await getAllWatchers();
+      const controllers = await getAllControllers();
       const registries = await getAllRegistries();
       const triggers = await getAllTriggers();
       next((vm) => {
         vm.containersCount = containers.length;
         vm.triggersCount = triggers.length;
-        vm.watchersCount = watchers.length;
+        vm.controllersCount = controllers.length;
         vm.registriesCount = registries.length;
         vm.containersToUpdateCount = containers.filter(
           (container) => container.updateAvailable
