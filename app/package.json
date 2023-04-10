@@ -15,7 +15,7 @@
   "dependencies": {
     "@slack/web-api": "6.8.1",
     "async-mqtt": "2.6.3",
-    "aws-sdk": "2.1342.0",
+    "aws-sdk": "2.1354.0",
     "body-parser": "1.20.2",
     "bunyan": "1.8.15",
     "capitalize": "2.0.4",
