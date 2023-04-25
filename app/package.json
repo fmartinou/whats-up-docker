@@ -52,7 +52,7 @@
     "snake-case": "3.0.4",
     "sort-es": "1.6.7",
     "uuid": "9.0.0",
-    "yaml": "2.2.1"
+    "yaml": "2.2.2"
   },
   "devDependencies": {
     "babel-jest": "29.5.0",
