@@ -1,12 +1,16 @@
 const capitalize = require('capitalize');
 const { getVersion } = require('../../../configuration');
 const {
-    registerContainerAdded,
-    registerContainerUpdated,
-    registerContainerRemoved,
-    registerControllerStart,
-    registerControllerStop,
-} = require('../../../event');
+    register: registerControllerEvent,
+    EVENT_STARTED,
+    EVENT_STOPPED,
+} = require('../../../controllers/event');
+const {
+    register: registerContainerEvent,
+    EVENT_CONTAINER_ADDED,
+    EVENT_CONTAINER_UPDATED,
+    EVENT_CONTAINER_REMOVED,
+} = require('../../../store/event');
 const containerStore = require('../../../store/container');
 const { flatten, fullName } = require('../../../model/container');
 const registry = require('../../../registry');
@@ -123,17 +127,28 @@ class Hass {
         this.log = log;
 
         // Subscribe to container events to sync HA
-        registerContainerAdded((container) => this.addContainerSensors(container));
-        registerContainerUpdated((container) => this.addContainerSensors(container));
-        registerContainerRemoved((container) => this.removeContainerSensor(container));
+        registerContainerEvent({
+            event: EVENT_CONTAINER_ADDED,
+            handler: (container) => this.addContainerSensors(container),
+        });
+        registerContainerEvent({
+            event: EVENT_CONTAINER_UPDATED,
+            handler: (container) => this.addContainerSensors(container),
+        });
+        registerContainerEvent({
+            event: EVENT_CONTAINER_REMOVED,
+            handler: (container) => this.removeContainerSensors(container),
+        });
 
         // Subscribe to controller events to sync HA
-        registerControllerStart(
-            (controller) => this.updateControllerSensors({ controller, isRunning: true }),
-        );
-        registerControllerStop(
-            (controller) => this.updateControllerSensors({ controller, isRunning: false }),
-        );
+        registerControllerEvent({
+            event: EVENT_STARTED,
+            handler: (controller) => this.updateControllerSensors({ controller, isRunning: true }),
+        });
+        registerControllerEvent({
+            event: EVENT_STOPPED,
+            handler: (controller) => this.updateControllerSensors({ controller, isRunning: false }),
+        });
     }
 
     /**
@@ -144,7 +159,7 @@ class Hass {
     async addContainerSensors(container) {
         const containerStateTopic = this.getContainerStateTopic({ container });
         const containerCommandTopic = this.getContainerCommandTopic({ container });
-        this.log.info(`Add hass container update sensor [${containerStateTopic}]`);
+        this.log.info(`Add hass container sensors [${containerStateTopic}]`);
 
         const containerFlatten = flatten(container);
         const containerSensorPromises = Object.keys(containerFlatten)
@@ -198,10 +213,30 @@ class Hass {
      * @param container
      * @returns {Promise<void>}
      */
-    async removeContainerSensor(container) {
+    async removeContainerSensors(container) {
         const containerStateTopic = this.getContainerStateTopic({ container });
-        this.log.info(`Remove hass container update sensor [${containerStateTopic}]`);
-        await this.removeSensor({ discoveryTopic: this.getDiscoveryTopic({ kind: 'update', topic: containerStateTopic }) });
+        this.log.info(`Remove hass container sensors [${containerStateTopic}]`);
+
+        const containerFlatten = flatten(container);
+        const containerSensorPromises = Object.keys(containerFlatten)
+            .filter((property) => Object.keys(CONTAINER_SENSORS_TO_EXPOSE).indexOf(property) !== -1)
+            .filter((property) => containerFlatten[property] !== undefined)
+            .map((key) => {
+                const sensorStateTopic = `${this.configuration.topic}/${container.controller}/${container.name}/${key}`;
+                const sensorConfiguration = CONTAINER_SENSORS_TO_EXPOSE[key];
+                return this.publishDiscoveryMessage({
+                    discoveryTopic: this.getDiscoveryTopic({
+                        kind: sensorConfiguration.kind,
+                        topic: sensorStateTopic,
+                    }),
+                    discoveryMessage: {},
+                });
+            });
+
+        // Delete all container sensors
+        await Promise.all(containerSensorPromises);
+
+        // Update controller & global sensors
         await this.updateContainerSensors(container);
     }
 

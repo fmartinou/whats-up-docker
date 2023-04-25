@@ -5,10 +5,11 @@ const { byString, byValue } = require('sort-es');
 const log = require('../log').child({ component: 'store' });
 const { validate: validateContainer } = require('../model/container');
 const {
-    emitContainerAdded,
-    emitContainerUpdated,
-    emitContainerRemoved,
-} = require('../event');
+    emit,
+    EVENT_CONTAINER_ADDED,
+    EVENT_CONTAINER_UPDATED,
+    EVENT_CONTAINER_REMOVED,
+} = require('./event');
 
 let containers;
 
@@ -22,39 +23,6 @@ function createCollections(db) {
         log.info('Create Collection containers');
         containers = db.addCollection('containers');
     }
-}
-
-/**
- * Insert new Container.
- * @param container
- */
-function insertContainer(container) {
-    const containerToSave = validateContainer(container);
-    containers.insert({
-        data: containerToSave,
-    });
-    emitContainerAdded(containerToSave);
-    return containerToSave;
-}
-
-/**
- * Update existing container.
- * @param container
- */
-function updateContainer(container) {
-    const containerToReturn = validateContainer(container);
-
-    // Remove existing container
-    containers.chain().find({
-        'data.id': container.id,
-    }).remove();
-
-    // Insert new one
-    containers.insert({
-        data: containerToReturn,
-    });
-    emitContainerUpdated(containerToReturn);
-    return containerToReturn;
 }
 
 /**
@@ -93,6 +61,27 @@ function getContainer(id) {
 }
 
 /**
+ * Update existing container.
+ * @param container
+ */
+function updateContainer(container) {
+    const containerToReturn = validateContainer(container);
+    const doesExist = getContainer(container.id) !== undefined;
+    let event = EVENT_CONTAINER_ADDED;
+    if (doesExist) {
+        containers.chain().find({
+            'data.id': container.id,
+        }).remove();
+        event = EVENT_CONTAINER_UPDATED;
+    }
+    containers.insert({
+        data: containerToReturn,
+    });
+    emit({ event, data: containerToReturn });
+    return containerToReturn;
+}
+
+/**
  * Delete container by id.
  * @param id
  */
@@ -102,13 +91,12 @@ function deleteContainer(id) {
         containers.chain().find({
             'data.id': id,
         }).remove();
-        emitContainerRemoved(container);
+        emit({ event: EVENT_CONTAINER_REMOVED, data: container });
     }
 }
 
 module.exports = {
     createCollections,
-    insertContainer,
     updateContainer,
     getContainers,
     getContainer,

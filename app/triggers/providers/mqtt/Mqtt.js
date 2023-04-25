@@ -3,13 +3,12 @@ const mqtt = require('async-mqtt');
 const Trigger = require('../Trigger');
 const Hass = require('./Hass');
 const {
-    registerContainerAdded,
-    registerContainerUpdated,
-    emitUpdateCommand,
-} = require('../../../event');
-const { flatten, fullName} = require('../../../model/container');
+    register: registerContainerEvent,
+    EVENT_CONTAINER_ADDED,
+    EVENT_CONTAINER_UPDATED,
+} = require('../../../store/event');
+const { flatten } = require('../../../model/container');
 const { getContainer } = require('../../../store/container');
-const {getTriggerCounter} = require("../../../prometheus/trigger");
 
 const containerDefaultTopic = 'wud';
 const hassDefaultPrefix = 'homeassistant';
@@ -118,8 +117,15 @@ class Mqtt extends Trigger {
                 log: this.log,
             });
         }
-        registerContainerAdded((container) => this.trigger(container));
-        registerContainerUpdated((container) => this.trigger(container));
+
+        registerContainerEvent({
+            event: EVENT_CONTAINER_ADDED,
+            handler: (container) => this.trigger(container),
+        });
+        registerContainerEvent({
+            event: EVENT_CONTAINER_UPDATED,
+            handler: (container) => this.trigger(container),
+        });
 
         // Consume container update commands (e.g. wud/controller.docker.local/traefik_245/command)
         const containerCommandTopicPattern = `${this.configuration.topic}/+/+/command`;

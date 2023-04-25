@@ -5,7 +5,6 @@ const cron = require('node-cron');
 const parse = require('parse-docker-image-name');
 const debounce = require('just-debounce');
 const { parse: parseSemver, isGreater: isGreaterSemver, transform: transformTag } = require('../../../tag');
-const event = require('../../../event');
 const {
     wudWatch,
     wudTagInclude,
@@ -112,35 +111,6 @@ function getRegistry(registryName) {
     return registryToReturn;
 }
 
-/**
- * Get old containers to prune.
- * @param newContainers
- * @param containersFromTheStore
- * @returns {*[]|*}
- */
-function getOldContainers(newContainers, containersFromTheStore) {
-    if (!containersFromTheStore || !newContainers) {
-        return [];
-    }
-    return containersFromTheStore.filter((containerFromStore) => {
-        const isContainerStillToWatch = newContainers
-            .find((newContainer) => newContainer.id === containerFromStore.id);
-        return isContainerStillToWatch === undefined;
-    });
-}
-
-/**
- * Prune old containers from the store.
- * @param newContainers
- * @param containersFromTheStore
- */
-function pruneOldContainers(newContainers, containersFromTheStore) {
-    const containersToRemove = getOldContainers(newContainers, containersFromTheStore);
-    containersToRemove.forEach((containerToRemove) => {
-        storeContainer.deleteContainer(containerToRemove.id);
-    });
-}
-
 function getContainerName(container) {
     let containerName;
     const names = container.Names;
@@ -218,18 +188,18 @@ class Docker extends Controller {
 
     initController() {
         this.log.info(`Cron scheduled (${this.configuration.cron})`);
-        this.watchCron = cron.schedule(this.configuration.cron, () => this.watchFromCron());
+        this.cron = cron.schedule(this.configuration.cron, () => this.pollFromCron());
 
         // watch at startup (after all components have been registered)
         this.watchCronTimeout = setTimeout(
-            () => this.watchFromCron(),
+            () => this.pollFromCron(),
             START_CONTROLLER_DELAY_MS,
         );
 
         // listen to docker events
         if (this.configuration.watchevents) {
             this.watchCronDebounced = debounce(
-                () => { this.watchFromCron(); },
+                () => { this.pollFromCron(); },
                 DEBOUNCED_CONTROLLER_CRON_MS,
             );
             this.listenDockerEventsTimeout = setTimeout(
@@ -261,9 +231,9 @@ class Docker extends Controller {
      * @returns {Promise<void>}
      */
     async deregisterComponent() {
-        if (this.watchCron) {
-            this.watchCron.stop();
-            delete this.watchCron;
+        if (this.cron) {
+            this.cron.stop();
+            delete this.cron;
         }
         if (this.watchCronTimeout) {
             clearTimeout(this.watchCronTimeout);
@@ -345,25 +315,25 @@ class Docker extends Controller {
      * Watch containers (called by cron scheduled tasks).
      * @returns {Promise<*[]>}
      */
-    async watchFromCron() {
-        this.log.info(`Cron started (${this.configuration.cron})`);
+    async pollFromCron() {
+        this.log.info(`Scheduled from cron (${this.configuration.cron})`);
 
         // Get container reports
-        const containerReports = await this.watch();
+        const containerReports = await this.poll();
 
-        // Count container reports
-        const containerReportsCount = containerReports.length;
-
-        // Count container available updates
-        const containerUpdatesCount = containerReports
-            .filter((containerReport) => containerReport.container.updateAvailable).length;
-
-        // Count container errors
-        const containerErrorsCount = containerReports
-            .filter((containerReport) => containerReport.container.error !== undefined).length;
-
-        const stats = `${containerReportsCount} containers watched, ${containerErrorsCount} errors, ${containerUpdatesCount} available updates`;
-        this.log.info(`Cron finished (${stats})`);
+        // // Count container reports
+        // const containerReportsCount = containerReports.length;
+        //
+        // // Count container available updates
+        // const containerUpdatesCount = containerReports
+        //     .filter((containerReport) => containerReport.container.updateAvailable).length;
+        //
+        // // Count container errors
+        // const containerErrorsCount = containerReports
+        //     .filter((containerReport) => containerReport.container.error !== undefined).length;
+        //
+        // const stats = `${containerReportsCount} containers found, ${containerErrorsCount} errors, ${containerUpdatesCount} available updates`;
+        // this.log.info(`Cron execution finished (${stats})`);
         return containerReports;
     }
 
@@ -371,31 +341,31 @@ class Docker extends Controller {
      * Watch main method.
      * @returns {Promise<*[]>}
      */
-    async watch() {
+    async poll() {
         let containers = [];
 
-        // Dispatch event to notify start watching
-        event.emitControllerStart(this);
+        this.emitStarted();
 
-        // List images to watch
         try {
             containers = await this.getContainers();
         } catch (e) {
-            this.log.warn(`Error when trying to get the list of the containers to watch (${e.message})`);
-        }
-        try {
-            const containerReports = await Promise.all(
-                containers.map((container) => this.watchContainer(container)),
-            );
-            event.emitContainerReports(containerReports);
-            return containerReports;
-        } catch (e) {
-            this.log.warn(`Error when processing some containers (${e.message})`);
-            return [];
+            this.log.warn(`Error when gathering the containers to handle (${e.message})`);
         } finally {
-            // Dispatch event to notify stop watching
-            event.emitControllerStop(this);
+            this.emitStopped({ containers });
         }
+        // try {
+        //     const containerReports = await Promise.all(
+        //         containers.map((container) => this.watchContainer(container)),
+        //     );
+        //     event.emitContainerReports(containerReports);
+        //     return containerReports;
+        // } catch (e) {
+        //     this.log.warn(`Error when processing some containers (${e.message})`);
+        //     return [];
+        // } finally {
+        //     // Dispatch event to notify stop watching
+        //     this.emitStopped();
+        // }
     }
 
     /**
@@ -462,18 +432,11 @@ class Docker extends Controller {
         // Return containers to process
         const containersToReturn = containersWithImage
             .filter((imagePromise) => imagePromise !== undefined);
-
-        // Prune old containers from the store
-        try {
-            const containersFromTheStore = storeContainer.getContainers({ controller: this.name });
-            pruneOldContainers(containersToReturn, containersFromTheStore);
-        } catch (e) {
-            this.log.warn(`Error when trying to prune the old containers (${e.message})`);
-        }
-        getControlledContainerGauge().set({
-            type: this.type,
-            name: this.name,
-        }, containersToReturn.length);
+        //
+        // getControlledContainerGauge().set({
+        //     type: this.type,
+        //     name: this.name,
+        // }, containersToReturn.length);
 
         return containersToReturn;
     }

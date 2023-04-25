@@ -1,1 +1,1 @@
-module.exports = { default: '--publish-quiet' };
+cucu

@@ -22,6 +22,7 @@
     "connect-loki": "1.2.0",
     "cors": "2.8.5",
     "dockerode": "3.3.5",
+    "eventemitter2": "6.4.9",
     "express": "4.18.2",
     "express-healthcheck": "0.1.0",
     "express-session": "1.17.3",
