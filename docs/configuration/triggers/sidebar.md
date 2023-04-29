@@ -18,6 +18,7 @@
         - [Slack](configuration/triggers/slack/)
         - [Smtp](configuration/triggers/smtp/)
         - [Telegram](configuration/triggers/telegram/)
+        - [Discord](configuration/triggers/discord/)
     - [Watchers](configuration/watchers/)
 - [UI](ui/)
 - [Api](api/)
