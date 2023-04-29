@@ -9,6 +9,8 @@ const discord = new Discord();
 const configurationValid = {
     url: 'https://discord.com/api/webhooks/1',
     botusername: 'Bot Name',
+    cardcolor: 65280,
+    cardlabel: 'Container',
     threshold: 'all',
     mode: 'simple',
     once: true,
@@ -44,6 +46,8 @@ test('maskConfiguration should mask sensitive data', () => {
         botusername: 'Bot Name',
         url: 'h********************************1',
         mode: 'simple',
+        cardcolor: 65280,
+        cardlabel: 'Container',
         once: true,
         // eslint-disable-next-line no-template-curly-in-string
         simplebody: 'Container ${name} running with ${kind} ${local} can be updated to ${kind} ${remote}\n${link}',
@@ -79,7 +83,7 @@ test('trigger should send POST http request to webhook endpoint', async () => {
             username: 'Bot Name',
             embeds: [{
                 title: 'New tag found for container container1',
-                color: 65280,
+                color: '65280',
                 fields: [
                     {
                         name: 'Container',
