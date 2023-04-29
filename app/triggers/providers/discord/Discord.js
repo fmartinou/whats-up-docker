@@ -17,7 +17,7 @@ class Discord extends Trigger {
             }).required(),
             botusername: this.joi.string().default("What's up Docker?"),
             cardcolor: this.joi.number().default(65280),
-            cardlabel: this.joi.string().default(""),
+            cardlabel: this.joi.string().default(''),
         });
     }
 
