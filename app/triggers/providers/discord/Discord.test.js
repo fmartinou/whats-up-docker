@@ -83,7 +83,7 @@ test('trigger should send POST http request to webhook endpoint', async () => {
             username: 'Bot Name',
             embeds: [{
                 title: 'New tag found for container container1',
-                color: '65280',
+                color: 65280,
                 fields: [
                     {
                         name: 'Container',

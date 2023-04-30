@@ -44,6 +44,11 @@ class Discord extends Trigger {
         );
     }
 
+    /**
+     * Send an HTTP Request to Discord.
+     * @param containers the list of the containers
+     * @returns {Promise<void>}
+     */
     async triggerBatch(containers) {
         return this.sendMessage(
             this.renderBatchTitle(containers),
@@ -53,19 +58,20 @@ class Discord extends Trigger {
 
     /**
      * Post a message to discord webhook.
-     * @param text the text to post
+     * @param title the message title
+     * @param bodyText the text to post
      * @returns {Promise<>}
      */
     async sendMessage(title, bodyText) {
-        const uri = `${this.configuration.url}`;
+        const uri = this.configuration.url;
         const body = {
-            username: `${this.configuration.botusername}`,
+            username: this.configuration.botusername,
             embeds: [{
                 title,
-                color: `${this.configuration.cardcolor}`,
+                color: this.configuration.cardcolor,
                 fields: [
                     {
-                        name: `${this.configuration.cardlabel}`,
+                        name: this.configuration.cardlabel,
                         value: bodyText,
                     },
                 ],
