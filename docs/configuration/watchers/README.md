@@ -236,7 +236,7 @@ services:
     image: mariadb:10.4.5
     ...
     labels:
-      wud.watch=true
+      - wud.watch=true
 ```
 
 #### **Docker**
@@ -259,7 +259,7 @@ services:
     image: mariadb:10.4.5
     ...
     labels:
-      wud.watch=false
+      - wud.watch=false
 ```
 
 #### **Docker**
