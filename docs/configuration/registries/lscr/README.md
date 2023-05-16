@@ -6,7 +6,8 @@ The `lscr` registry lets you configure [LSCR](https://fleet.linuxserver.io/) int
 ### Variables
 
 | Env var                      |   Required    | Description     | Supported values                         | Default value when missing |
-|------------------------------|:-------------:|-----------------|------------------------------------------|----------------------------| 
+|------------------------------|:-------------:|-----------------|------------------------------------------|----------------------------|
+| `WUD_REGISTRY_LSCR_USERNAME` | :red_circle:  | Github username |                                          |                            |
 | `WUD_REGISTRY_LSCR_TOKEN`    | :red_circle:  | Github token    | Github password or Github Personal Token |                            |
 
 ### Examples
@@ -21,11 +22,13 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
+      - WUD_REGISTRY_LSCR_USERNAME=john@doe
       - WUD_REGISTRY_LSCR_TOKEN=xxxxx 
 ```
 #### **Docker**
 ```bash
 docker run \
+  -e WUD_REGISTRY_LSCR_USERNAME="john@doe" \
   -e WUD_REGISTRY_LSCR_TOKEN="xxxxx" \
   ...
   fmartinou/whats-up-docker

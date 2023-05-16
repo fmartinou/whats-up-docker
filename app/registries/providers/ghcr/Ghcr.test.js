@@ -2,19 +2,23 @@ const Ghcr = require('./Ghcr');
 
 const ghcr = new Ghcr();
 ghcr.configuration = {
+    username: 'user',
     token: 'token',
 };
 
 test('validatedConfiguration should initialize when configuration is valid', () => {
     expect(ghcr.validateConfiguration({
+        username: 'user',
         token: 'token',
     })).toStrictEqual({
+        username: 'user',
         token: 'token',
     });
 });
 
 test('maskConfiguration should mask configuration secrets', () => {
     expect(ghcr.maskConfiguration()).toEqual({
+        username: 'user',
         token: 't***n',
     });
 });

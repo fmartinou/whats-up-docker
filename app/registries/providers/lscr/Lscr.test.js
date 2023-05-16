@@ -6,6 +6,7 @@ jest.mock('request-promise-native', () => jest.fn().mockImplementation(() => ({
 
 const lscr = new Lscr();
 lscr.configuration = {
+    username: 'user',
     token: 'token',
 };
 
@@ -13,8 +14,10 @@ jest.mock('request-promise-native');
 
 test('validatedConfiguration should initialize when configuration is valid', () => {
     expect(lscr.validateConfiguration({
+        username: 'user',
         token: 'token',
     })).toStrictEqual({
+        username: 'user',
         token: 'token',
     });
 });
@@ -22,7 +25,7 @@ test('validatedConfiguration should initialize when configuration is valid', () 
 test('validatedConfiguration should throw error when configuration is missing', () => {
     expect(() => {
         lscr.validateConfiguration({});
-    }).toThrow('"token" is required');
+    }).toThrow('"username" is required');
 });
 
 test('match should return true when registry url is from lscr', () => {

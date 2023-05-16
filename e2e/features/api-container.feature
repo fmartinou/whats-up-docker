@@ -21,10 +21,10 @@ Feature: WUD Container API Exposure
       | 0     | ecr_sub_sub_test         | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/sub/test                        | 1.0.0              | 2.0.0              | true            |
       | 1     | ecr_sub_test             | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test                            | 1.0.0              | 2.0.0              | true            |
       | 2     | ecr_test                 | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test                                | 1.0.0              | 2.0.0              | true            |
-      | 3     | ghcr_radarr              | ghcr     | https://ghcr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   | 4.4.4.7068-ls170   | true            |
+      | 3     | ghcr_radarr              | ghcr     | https://ghcr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   | 4.4.4.7068-ls171   | true            |
       | 4     | gitlab_test              | gitlab   | https://registry.gitlab.com/v2                          | manfred-martin/docker-registry-test | 1.0.0              | 2.0.0              | true            |
       | 5     | hotio_radarr             | hotio    | https://cr.hotio.dev/v2                                 | hotio/radarr                        | release-4.0.4.5922 | release-4.4.4.7068 | true            |
-      | 6     | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | 2021.6.1           | 2023.4.6           | true            |
+      | 6     | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | 2021.6.1           | 2023.5.3           | true            |
       | 7     | hub_homeassistant_latest | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | latest             | latest             | false           |
       | 8     | hub_nginx_120            | hub      | https://registry-1.docker.io/v2                         | library/nginx                       | 1.20-alpine        | 1.24-alpine        | true            |
       | 9     | hub_nginx_latest         | hub      | https://registry-1.docker.io/v2                         | library/nginx                       | latest             | latest             | true            |
@@ -37,8 +37,8 @@ Feature: WUD Container API Exposure
       | 16    | hub_vaultwarden_1222     | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server                  | 1.28.1-alpine      | 1.28.1-alpine      | false           |
       | 17    | hub_vaultwarden_latest   | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server                  | latest             | latest             | false           |
       | 18    | hub_youtubedb_latest     | hub      | https://registry-1.docker.io/v2                         | jeeaaasustest/youtube-dl            | latest             | latest             | false           |
-      | 19    | lscr_radarr              | lscr     | https://lscr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   |4.4.4.7068-ls170    | true            |
-      | 20    | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus               | v2.30.0            |v2.43.0             | true            |
+      | 19    | lscr_radarr              | lscr     | https://lscr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   |4.4.4.7068-ls171    | true            |
+      | 20    | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus               | v2.30.0            |v2.44.0             | true            |
 
   Scenario: WUD must allow to get a container with semver
     Given I GET /api/containers
@@ -76,7 +76,7 @@ Feature: WUD Container API Exposure
     And response body path $.image.tag.semver should be false
     And response body path $.image.digest.value should be sha256:f94d6dd9b5761f33a21bb92848a1f70ea11a1c15f3a142c19a44ea3a4c545a4d
     And response body path $.result.tag should be latest
-    And response body path $.result.digest should be sha256:f2fee5c7194cbbfb9d2711fa5de094c797a42a51aa42b0c8ee8ca31547c872b1
+    And response body path $.result.digest should be sha256:3f01b0094e21f7d55b9eb7179d01c49fdf9c3e1e3419d315b81a9e0bae1b6a90
     And response body path $.updateAvailable should be true
 
   Scenario: WUD must allow to get a container with its link
@@ -86,7 +86,7 @@ Feature: WUD Container API Exposure
     Then response code should be 200
     And response body should be valid json
     And response body path $.link should be https://github.com/home-assistant/core/releases/tag/2021.6.1
-    And response body path $.result.link should be https://github.com/home-assistant/core/releases/tag/2023.4.6
+    And response body path $.result.link should be https://github.com/home-assistant/core/releases/tag/2023.5.3
 
   Scenario: WUD must allow to trigger a watch on a container
     Given I GET /api/containers

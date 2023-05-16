@@ -4,6 +4,7 @@
 - :star: [GCR] - Allow anonymous access (for public images)
 - :star: [UI] - Add dark mode
 - :star: [DISCORD] - Add [Discord trigger](configuration/triggers/discord/)
+- :fire: [GHCR] - Bring back username because needed for image pulling
 
 # 6.2.0
 - :star: [MQTT] - Add home-assistant global sensors (number of containers, number of containers to update...)
