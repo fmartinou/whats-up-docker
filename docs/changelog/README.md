@@ -1,5 +1,8 @@
 # Changelog
 
+# dev
+- :fire: [GHCR] - Bring back username because needed for image pulling
+
 # 6.4.0
 - :star: [HTTP trigger] - Add support for Basic/Bearer authentication
 - :star: [HTTP trigger] - Add support for Http proxy
