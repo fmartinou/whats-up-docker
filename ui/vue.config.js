@@ -1,6 +1,8 @@
 module.exports = {
   transpileDependencies: ["vuetify"],
 
+  publicPath: '', // Allow deploying app at any path (see https://cli.vuejs.org/config/#publicpath)
+
   devServer: {
     proxy: "http://localhost:3000",
   },
