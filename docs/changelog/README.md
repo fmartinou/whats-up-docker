@@ -1,9 +1,12 @@
 # Changelog
 
 # dev
+- :star: [GITEA] - Add support for [Gitea registries](/configuration/registries/gitea/)
+- :star: [FORGEJO] - Add support for [Forgejo registries](/configuration/registries/forgejo/)
 - :star: [GCR] - Allow anonymous access (for public images)
-- :star: [UI] - Add dark mode
 - :star: [DISCORD] - Add [Discord trigger](configuration/triggers/discord/)
+- :star: [UI] - Add dark mode
+- :star: Upgrade all dependencies
 
 # 6.2.0
 - :star: [MQTT] - Add home-assistant global sensors (number of containers, number of containers to update...)

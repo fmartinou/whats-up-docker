@@ -1,7 +1,7 @@
 # CUSTOM (Self-hosted Docker Registry)
 ![logo](custom.png)
 
-The `custom`registry lets you configure a self-hosted [Docker Registry](https://docs.docker.com/registry/) integration.
+The `custom` registry lets you configure a self-hosted [Docker Registry](https://docs.docker.com/registry/) integration.
 
 ### Variables
 
