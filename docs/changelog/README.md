@@ -1,6 +1,6 @@
 # Changelog
 
-# dev
+# 6.3.0
 - :star: [GITEA] - Add support for [Gitea registries](/configuration/registries/gitea/)
 - :star: [FORGEJO] - Add support for [Forgejo registries](/configuration/registries/forgejo/)
 - :star: [GCR] - Allow anonymous access (for public images)
