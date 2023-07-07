@@ -42,6 +42,10 @@ Gets you notified when new versions of your Docker containers are available and 
 
 > [**Docker Hub**](http://hub.docker.com)
 
+> [**Forgejo Container Registry**](https://forgejo.org/)
+
+> [**Gitea Container Registry**](https://gitea.com/)
+
 > [**Github Container Registry**](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry)
 
 > [**Gitlab Container Registry**](https://docs.gitlab.com/ee/user/packages/container_registry/)
