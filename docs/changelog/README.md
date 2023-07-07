@@ -4,7 +4,6 @@
 - :star: [GCR] - Allow anonymous access (for public images)
 - :star: [UI] - Add dark mode
 - :star: [DISCORD] - Add [Discord trigger](configuration/triggers/discord/)
-- :fire: [UI] - Allow app to be deployed at any path
 
 # 6.2.0
 - :star: [MQTT] - Add home-assistant global sensors (number of containers, number of containers to update...)
