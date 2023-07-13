@@ -37,6 +37,7 @@ class Dockercompose extends Trigger {
         return schemaDocker.append({
             file: this.joi.string().required(),
             backup: this.joi.boolean().default(false),
+            composeonly: this.joi.boolean().default(false),
         });
     }
 
@@ -103,7 +104,9 @@ class Dockercompose extends Trigger {
             // Write docker-compose.yml file back
             await this.writeComposeFile(this.configuration.file, composeFileStr);
         }
-
+        if (this.configuration.composeonly) {
+            return;
+        }
         // Update all containers
         // (super.notify will take care of the dry-run mode for each container as well)
         await Promise.all(containersFiltered.map((container) => this.trigger(container)));
