@@ -1,8 +1,7 @@
 const fs = require('fs/promises');
-const yaml = require('yaml');
-const { simpleGit, SimpleGit, SimpleGitOptions } = require('simple-git');
+const { simpleGit } = require('simple-git');
 const Trigger = require('../dockercompose/Dockercompose');
-const { getState } = require('../../../registry');
+const store = require('../../../store');
 
 function generateMessageForContainer(container) {
     return `${container.name}: ${container.image.tag.value} -> ${container.result.tag}`;
@@ -32,12 +31,13 @@ class Git extends Trigger {
         // If it doesnt, creates it
         // If it does, checks it out
         const branch = this.configuration.gitbranch;
-        const branchExists = await this.git.branch();
+        await this.git.fetch(['--all']);
+        const branchExists = await this.git.branch(['--all']);
         if (branchExists.current === branch) {
             this.log.info(`Already in branch ${branch}`);
             return;
         }
-        if (branchExists.all.includes(branch)) {
+        if (branchExists.all.includes(`remotes/origin/${branch}`)) {
             this.log.info(`Branch ${branch} found, checking it out`);
             await this.git.checkout(branch);
         } else {
@@ -55,7 +55,7 @@ class Git extends Trigger {
         // Check git Setup and clone repo
 
         const options = {
-            baseDir: `./.store/gitRepos/${this.name}`,
+            baseDir: `${store.getConfiguration().path}/gitRepos/${this.name}`,
             binary: 'git',
             maxConcurrentProcesses: 6,
             trimmed: false,
@@ -69,9 +69,6 @@ class Git extends Trigger {
         }
 
         this.git = simpleGit(options);
-        // .env('GIT_SSH_COMMAND', 'ssh -i ./store/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no');
-
-        // seti name and email for git
         // check if repo is already cloned
         try {
             const isRepo = await this.git.checkIsRepo('root');
@@ -113,8 +110,6 @@ class Git extends Trigger {
         }
         this.configuration.file = `${options.baseDir}/${this.configuration.file}`;
     }
-
-
 
     /**
      * Update the docker-compose stack.
