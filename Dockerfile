@@ -30,7 +30,7 @@ RUN npm ci --omit=dev --omit=optional --no-audit --no-fund --no-update-notifier
 
 # Release stage
 FROM base as release
-
+ENV GIT_SSH_COMMAND="ssh -i /home/node/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 # Default entrypoint
 COPY Docker.entrypoint.sh /usr/bin/entrypoint.sh
 RUN chmod +x /usr/bin/entrypoint.sh
