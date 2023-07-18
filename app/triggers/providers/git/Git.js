@@ -101,14 +101,29 @@ class Git extends Trigger {
         // when setting all options in a single object
 
         // Check docker-compose file is found
+        let files = this.configuration.file.split(',');
+        files = files.map((file) => `${options.baseDir}/${file.trim()}`);
 
-        try {
-            await fs.access(`${options.baseDir}/${this.configuration.file}`);
-        } catch (e) {
-            this.log.error(`The file ${this.configuration.file} does not exist`);
-            throw e;
+        const allFilesExist = files.all(async (file) => {
+            try {
+                await fs.access(file);
+                return true;
+            } catch (e) {
+                this.log.error(`The file ${file} does not exist`);
+                return false;
+            }
+        });
+        if (!allFilesExist) {
+            throw new Error('One or more files do not exist');
         }
-        this.configuration.file = `${options.baseDir}/${this.configuration.file}`;
+
+        // try {
+        //     await fs.access(`${options.baseDir}/${this.configuration.file}`);
+        // } catch (e) {
+        //     this.log.error(`The file ${this.configuration.file} does not exist`);
+        //     throw e;
+        // }
+        this.configuration.file = files;
     }
 
     /**
@@ -123,8 +138,12 @@ class Git extends Trigger {
             this.log.error(`Error when pulling repo (${e.message})`);
             throw e;
         }
-
-        await super.triggerBatch(containers);
+        const files = this.configuration.file;
+        files.forEach(async (file) => {
+            this.configuration.file = file;
+            await super.triggerBatch(containers);
+        });
+        this.configuration.file = files;
 
         // Build Commit message based on tags
 
