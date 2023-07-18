@@ -117,6 +117,13 @@ class Git extends Trigger {
      * @returns {Promise<void>}
      */
     async triggerBatch(containers) {
+        try {
+            await this.git.pull();
+        } catch (e) {
+            this.log.error(`Error when pulling repo (${e.message})`);
+            throw e;
+        }
+
         await super.triggerBatch(containers);
 
         // Build Commit message based on tags
