@@ -104,7 +104,7 @@ class Git extends Trigger {
         let files = this.configuration.file.split(',');
         files = files.map((file) => `${options.baseDir}/${file.trim()}`);
 
-        const allFilesExist = files.all(async (file) => {
+        const allFilesExist = files.every(async (file) => {
             try {
                 await fs.access(file);
                 return true;
@@ -140,8 +140,7 @@ class Git extends Trigger {
         }
         const files = this.configuration.file;
         files.forEach(async (file) => {
-            this.configuration.file = file;
-            await super.triggerBatch(containers);
+            await super.triggerBatch(containers, file);
         });
         this.configuration.file = files;
 

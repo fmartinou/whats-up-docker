@@ -2,10 +2,9 @@
   "env": {
     "WUD_VERSION": "dev",
     "WUD_STORE_PATH": ".store",
-    "WUD_TRIGGER_GIT_core_FILE": "docker-compose-Core.yml",
+    "WUD_TRIGGER_GIT_core_FILE": "docker-compose-Core.yml, docker-compose-apps-portal.yml",
     "WUD_TRIGGER_GIT_core_GITREPO": "git@gitDep:patmagauran/HomeServerConfigs.git",
     "WUD_TRIGGER_GIT_core_gitbranch": "wud-test",
-    "WUD_TRIGGER_GIT_core_TAGREPLACE": "$TRAEFIKFORWARDARCHTAG:",
     "WUD_SERVER_ENABLED": "false",
     "WUD_LOG_LEVEL": "trace"
 
