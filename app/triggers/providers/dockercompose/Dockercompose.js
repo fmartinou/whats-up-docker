@@ -104,6 +104,7 @@ class Dockercompose extends Trigger {
             // Write docker-compose.yml file back
             await this.writeComposeFile(file, composeFileStr);
         }
+        this.log.info('Done writing compose files');
         if (this.configuration.composeonly) {
             return;
         }

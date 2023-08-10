@@ -139,7 +139,7 @@ class Git extends Trigger {
             throw e;
         }
         const files = this.configuration.file;
-        files.forEach(async (file) => {
+        await files.forEach(async (file) => {
             await super.triggerBatch(containers, file);
         });
         this.configuration.file = files;
@@ -147,6 +147,8 @@ class Git extends Trigger {
         // Build Commit message based on tags
 
         let msg = '';
+        this.log.info('Generating Commit Message');
+
         if (containers.length > 1) {
             msg += 'Batch Update \n';
             containers.forEach((container) => {
@@ -156,11 +158,14 @@ class Git extends Trigger {
         } else {
             msg += generateMessageForContainer(containers[0]);
         }
-
+        this.log.info(`Commiting with message: '${msg}'`);
         // Create commit
         try {
-            await this.git.add('.');
+            this.log.info('Adding files to commit');
+            await this.git.add('./*');
+            this.log.info('Committing');
             await this.git.commit(msg);
+            this.log.info('Pushing');
             await this.git.push();
         } catch (e) {
             this.log.error(`Error when commiting/pushing repo (${e.message})`);
