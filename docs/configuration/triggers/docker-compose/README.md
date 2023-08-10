@@ -1,9 +1,11 @@
 # Docker-Compose
+
 ![logo](docker-compose.png)
 
 The `dockercompose` trigger lets you update docker-compose.yml files & replace existing containers with their updated versions.
 
 The trigger will:
+
 - Update the related docker-compose.yml file
 - Clone the existing container specification
 - Pull the new image
@@ -15,12 +17,13 @@ The trigger will:
 
 ### Variables
 
-| Env var                                           | Required       | Description                                                    | Supported values | Default value when missing |
-| ------------------------------------------------- |:--------------:| -------------------------------------------------------------- | ---------------- | -------------------------- | 
-| `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_FILE`   | :red_circle:   | The docker-compose.yml file location                           |                  |                            |
-| `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_BACKUP` | :white_circle: | Backup the docker-compose.yml file as `.back` before updating? | `true`, `false`  | `false`                    |
-| `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_PRUNE`  | :white_circle: | If the old image must be pruned after upgrade                  | `true`, `false`  | `false`                    |
-| `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_DRYRUN` | :white_circle: | When enabled, only pull the new image ahead of time            | `true`, `false`  | `false`                    |
+| Env var                                                |    Required    | Description                                                                        | Supported values | Default value when missing |
+| ------------------------------------------------------ | :------------: | ---------------------------------------------------------------------------------- | ---------------- | -------------------------- |
+| `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_FILE`        |  :red_circle:  | The docker-compose.yml file location                                               |                  |                            |
+| `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_BACKUP`      | :white_circle: | Backup the docker-compose.yml file as `.back` before updating?                     | `true`, `false`  | `false`                    |
+| `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_PRUNE`       | :white_circle: | If the old image must be pruned after upgrade                                      | `true`, `false`  | `false`                    |
+| `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_DRYRUN`      | :white_circle: | When enabled, only pull the new image ahead of time                                | `true`, `false`  | `false`                    |
+| `WUD_TRIGGER_DOCKERCOMPOSE_{trigger_name}_COMPOSEONLY` | :white_circle: | When enabled, only update the docker compose file without recreating the container | `true`, `false`  | `false`                    |
 
 ?> This trigger also supports the [common configuration variables](configuration/triggers/?id=common-trigger-configuration). but only supports the `batch` mode.
 
@@ -31,7 +34,9 @@ The trigger will:
 ### Examples
 
 <!-- tabs:start -->
+
 #### **Docker Compose**
+
 ```yaml
 version: '3'
 
@@ -44,7 +49,9 @@ services:
     environment:
       - WUD_TRIGGER_DOCKERCOMPOSE_EXAMPLE_FILE=/wud/docker-compose.yml
 ```
+
 #### **Docker**
+
 ```bash
 docker run \
   -v /etc/my-services/docker-compose.yml:/wud/docker-compose.yml
@@ -52,4 +59,5 @@ docker run \
   ...
   fmartinou/whats-up-docker
 ```
+
 <!-- tabs:end -->

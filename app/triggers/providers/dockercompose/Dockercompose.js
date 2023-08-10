@@ -37,6 +37,7 @@ class Dockercompose extends Trigger {
         return schemaDocker.append({
             file: this.joi.string().required(),
             backup: this.joi.boolean().default(false),
+            composeonly: this.joi.boolean().default(false),
         });
     }
 
@@ -58,8 +59,8 @@ class Dockercompose extends Trigger {
      * @param containers the containers
      * @returns {Promise<void>}
      */
-    async triggerBatch(containers) {
-        const compose = await this.getComposeFileAsObject();
+    async triggerBatch(containers, file = this.configuration.file) {
+        const compose = await this.getComposeFileAsObject(file);
 
         const containersFiltered = containers
             // Filter on containers running on local host
@@ -85,12 +86,12 @@ class Dockercompose extends Trigger {
         } else {
             // Backup docker-compose file
             if (this.configuration.backup) {
-                const backupFile = `${this.configuration.file}.back`;
-                await this.backup(this.configuration.file, backupFile);
+                const backupFile = `${file}.back`;
+                await this.backup(file, backupFile);
             }
 
             // Read the compose file as a string
-            let composeFileStr = (await this.getComposeFile()).toString();
+            let composeFileStr = (await this.getComposeFile(file)).toString();
 
             // Replace all versions
             currentVersionToUpdateVersionArray
@@ -101,9 +102,12 @@ class Dockercompose extends Trigger {
                 );
 
             // Write docker-compose.yml file back
-            await this.writeComposeFile(this.configuration.file, composeFileStr);
+            await this.writeComposeFile(file, composeFileStr);
         }
-
+        this.log.info('Done writing compose files');
+        if (this.configuration.composeonly) {
+            return;
+        }
         // Update all containers
         // (super.notify will take care of the dry-run mode for each container as well)
         await Promise.all(containersFiltered.map((container) => this.trigger(container)));
@@ -174,9 +178,9 @@ class Dockercompose extends Trigger {
      * Read docker-compose file as a buffer.
      * @returns {Promise<any>}
      */
-    getComposeFile() {
+    getComposeFile(file) {
         try {
-            return fs.readFile(this.configuration.file);
+            return fs.readFile(file);
         } catch (e) {
             this.log.error(`Error when reading the docker-compose yaml file (${e.message})`);
             throw e;
@@ -187,9 +191,9 @@ class Dockercompose extends Trigger {
      * Read docker-compose file as an object.
      * @returns {Promise<any>}
      */
-    async getComposeFileAsObject() {
+    async getComposeFileAsObject(file) {
         try {
-            return yaml.parse((await this.getComposeFile()).toString());
+            return yaml.parse((await this.getComposeFile(file)).toString());
         } catch (e) {
             this.log.error(`Error when parsing the docker-compose yaml file (${e.message})`);
             throw e;

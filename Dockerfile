@@ -16,7 +16,7 @@ RUN mkdir /store
 
 # Add TZDATA to allow easy local time configuration
 RUN apk update \
-    && apk add --no-cache tzdata openssl \
+    && apk add --no-cache tzdata openssl git gpg less openssh patch \
     && rm -rf /var/cache/apk/*
 
 # Dependencies stage
@@ -30,7 +30,7 @@ RUN npm ci --omit=dev --omit=optional --no-audit --no-fund --no-update-notifier
 
 # Release stage
 FROM base as release
-
+ENV GIT_SSH_COMMAND="ssh -i /home/node/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 # Default entrypoint
 COPY Docker.entrypoint.sh /usr/bin/entrypoint.sh
 RUN chmod +x /usr/bin/entrypoint.sh

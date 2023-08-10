@@ -49,6 +49,7 @@
     "request-promise-native": "1.0.9",
     "semver": "7.3.8",
     "set-value": "4.1.0",
+    "simple-git": "^3.19.1",
     "snake-case": "3.0.4",
     "sort-es": "1.6.12",
     "uuid": "9.0.0",
