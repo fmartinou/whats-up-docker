@@ -13,7 +13,7 @@
   "repository": "fmartinou/whats-up-docker",
   "license": "MIT",
   "dependencies": {
-    "@slack/web-api": "6.8.1",
+    "@slack/web-api": "6.12.0",
     "async-mqtt": "2.6.3",
     "aws-sdk": "2.1412.0",
     "body-parser": "1.20.2",
