@@ -47,7 +47,7 @@
     "pushover-notifications": "1.2.2",
     "request": "2.88.2",
     "request-promise-native": "1.0.9",
-    "semver": "7.3.8",
+    "semver": "7.5.2",
     "set-value": "4.1.0",
     "snake-case": "3.0.4",
     "sort-es": "1.6.12",
