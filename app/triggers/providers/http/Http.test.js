@@ -45,25 +45,6 @@ test('validateConfiguration should throw error when invalid', () => {
     }).toThrowError(ValidationError);
 });
 
-test('trigger should send POST http request when configured like that', async () => {
-    http.configuration = {
-        method: 'POST',
-        url: 'https:///test',
-    };
-    const container = {
-        name: 'container1',
-    };
-    await http.trigger(container);
-    expect(rp).toHaveBeenCalledWith({
-        body: {
-            name: 'container1',
-        },
-        json: true,
-        method: 'POST',
-        uri: 'https:///test',
-    });
-});
-
 test('trigger should send GET http request when configured like that', async () => {
     http.configuration = {
         method: 'GET',
@@ -79,5 +60,89 @@ test('trigger should send GET http request when configured like that', async () 
         },
         method: 'GET',
         uri: 'https:///test',
+        auth: undefined,
+    });
+});
+
+test('trigger should send POST http request when configured like that', async () => {
+    http.configuration = {
+        method: 'POST',
+        url: 'https:///test',
+        auth: undefined,
+    };
+    const container = {
+        name: 'container1',
+    };
+    await http.trigger(container);
+    expect(rp).toHaveBeenCalledWith({
+        body: {
+            name: 'container1',
+        },
+        json: true,
+        method: 'POST',
+        uri: 'https:///test',
+    });
+});
+
+test('trigger should use basic auth when configured like that', async () => {
+    http.configuration = {
+        url: 'https:///test',
+        method: 'POST',
+        auth: { type: 'BASIC', user: 'user', password: 'pass' },
+    };
+    const container = {
+        name: 'container1',
+    };
+    await http.trigger(container);
+    expect(rp).toHaveBeenCalledWith({
+        body: {
+            name: 'container1',
+        },
+        method: 'POST',
+        json: true,
+        uri: 'https:///test',
+        auth: { user: 'user', pass: 'pass' },
+    });
+});
+
+test('trigger should use bearer auth when configured like that', async () => {
+    http.configuration = {
+        url: 'https:///test',
+        method: 'POST',
+        auth: { type: 'BEARER', bearer: 'bearer' },
+    };
+    const container = {
+        name: 'container1',
+    };
+    await http.trigger(container);
+    expect(rp).toHaveBeenCalledWith({
+        body: {
+            name: 'container1',
+        },
+        method: 'POST',
+        json: true,
+        uri: 'https:///test',
+        auth: { bearer: 'bearer' },
+    });
+});
+
+test('trigger should use proxy when configured like that', async () => {
+    http.configuration = {
+        url: 'https:///test',
+        method: 'POST',
+        proxy: 'http://proxy:3128',
+    };
+    const container = {
+        name: 'container1',
+    };
+    await http.trigger(container);
+    expect(rp).toHaveBeenCalledWith({
+        body: {
+            name: 'container1',
+        },
+        method: 'POST',
+        json: true,
+        uri: 'https:///test',
+        proxy: 'http://proxy:3128',
     });
 });

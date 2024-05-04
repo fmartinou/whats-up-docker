@@ -1,5 +1,14 @@
 # Changelog
 
+# 6.4.0
+- :star: [HTTP trigger] - Add support for Basic/Bearer authentication
+- :star: [HTTP trigger] - Add support for Http proxy
+- :star: Upgrade to node.js 18
+- :star: Upgrade all dependencies
+
+!> **Breaking changes!** \
+Hotio.dev registry specific support has been dropped; it's now automatically covered by the GHCR registry.
+
 # 6.3.0
 - :star: [GITEA] - Add support for [Gitea registries](/configuration/registries/gitea/)
 - :star: [FORGEJO] - Add support for [Forgejo registries](/configuration/registries/forgejo/)
@@ -70,7 +79,7 @@ Do not forget to adjust your existing HA configuration accordingly (automations,
 - :star: Add [Gitlab Registry](/configuration/registries/gitlab/) support
 
 # 5.19.0
-- :star: Add [Hotio Registry](/configuration/registries/hotio/) support
+- :star: Add Hotio Registry support
 - :star: Add custom timeout configuration on OIDC authentication providers
 - :fire: Fix missing transform function calls when computing links and semver comparisons
 

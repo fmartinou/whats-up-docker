@@ -102,7 +102,7 @@ export default {
         vm.watchersCount = watchers.length;
         vm.registriesCount = registries.length;
         vm.containersToUpdateCount = containers.filter(
-          (container) => container.updateAvailable
+          (container) => container.updateAvailable,
         ).length;
       });
     } catch (e) {

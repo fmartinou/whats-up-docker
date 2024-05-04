@@ -1,5 +1,5 @@
 const fs = require('fs').promises;
-const mqtt = require('async-mqtt');
+const mqtt = require('mqtt');
 const Trigger = require('../Trigger');
 const Hass = require('./Hass');
 const {

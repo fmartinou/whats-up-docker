@@ -42,7 +42,7 @@ export default {
       this.$root.$emit(
         "notify",
         `Error when trying to load the log configuration (${e.message})`,
-        "error"
+        "error",
       );
     }
     next();

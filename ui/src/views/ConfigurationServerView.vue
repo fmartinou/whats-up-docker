@@ -74,7 +74,7 @@ export default {
       this.$root.$emit(
         "notify",
         `Error when trying to load the state configuration (${e.message})`,
-        "error"
+        "error",
       );
     }
     next();

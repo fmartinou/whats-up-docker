@@ -59,14 +59,14 @@ export default {
         ...new Set(
           this.containers
             .map((container) => container.image.registry.name)
-            .sort()
+            .sort(),
         ),
       ];
     },
     watchers() {
       return [
         ...new Set(
-          this.containers.map((container) => container.watcher).sort()
+          this.containers.map((container) => container.watcher).sort(),
         ),
       ];
     },
@@ -75,15 +75,15 @@ export default {
         .filter((container) =>
           this.registrySelected
             ? this.registrySelected === container.image.registry.name
-            : true
+            : true,
         )
         .filter((container) =>
           this.watcherSelected
             ? this.watcherSelected === container.watcher
-            : true
+            : true,
         )
         .filter((container) =>
-          this.updateAvailableSelected ? container.updateAvailable : true
+          this.updateAvailableSelected ? container.updateAvailable : true,
         );
     },
   },
@@ -112,7 +112,7 @@ export default {
         this.$root.$emit(
           "notify",
           `Error when trying to delete the container (${e.message})`,
-          "error"
+          "error",
         );
       }
     },
@@ -132,7 +132,7 @@ export default {
       this.$root.$emit(
         "notify",
         `Error when trying to get the containerq (${e.message})`,
-        "error"
+        "error",
       );
     }
     next();

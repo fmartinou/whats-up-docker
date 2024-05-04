@@ -52,8 +52,6 @@ Gets you notified when new versions of your Docker containers are available and 
 
 > [**Google Container Registry**](https://cloud.google.com/container-registry)
 
-> [**Hotio**](https://hotio.dev)
-
 > [**LinuxServer Container Registry (lscr.io)**](https://fleet.linuxserver.io/)
 
 > [**Redhat Quay**](https://quay.io/)

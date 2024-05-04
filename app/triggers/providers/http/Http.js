@@ -16,6 +16,16 @@ class Http extends Trigger {
                 scheme: ['http', 'https'],
             }),
             method: this.joi.string().allow('GET').allow('POST').default('POST'),
+            auth: this.joi.object({
+                type: this.joi.string()
+                    .allow('BASIC')
+                    .allow('BEARER')
+                    .default('BASIC'),
+                user: this.joi.string(),
+                password: this.joi.string(),
+                bearer: this.joi.string(),
+            }),
+            proxy: this.joi.string(),
         });
     }
 
@@ -48,6 +58,21 @@ class Http extends Trigger {
             options.json = true;
         } else if (this.configuration.method === 'GET') {
             options.qs = body;
+        }
+        if (this.configuration.auth) {
+            if (this.configuration.auth.type === 'BASIC') {
+                options.auth = {
+                    user: this.configuration.auth.user,
+                    pass: this.configuration.auth.password,
+                };
+            } else if (this.configuration.auth.type === 'BEARER') {
+                options.auth = {
+                    bearer: this.configuration.auth.bearer,
+                };
+            }
+        }
+        if (this.configuration.proxy) {
+            options.proxy = this.configuration.proxy;
         }
         return rp(options);
     }
