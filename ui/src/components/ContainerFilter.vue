@@ -101,7 +101,7 @@ export default {
         this.$root.$emit(
           "notify",
           `Error when trying to refresh all containers (${e.message})`,
-          "error"
+          "error",
         );
       } finally {
         this.isRefreshing = false;

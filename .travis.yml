@@ -1,11 +1,12 @@
+dist: jammy
 language: shell
 os: linux
 
 env:
   global:
-    - NODE_VERSION=16
+    - NODE_VERSION=18
     - CC_TEST_REPORTER_ID=46ef31dae5b656e0f4be410a86bd83bdcf73e7d27ab33a704c197e6fe4bf02a0
-    - DOCKER_CLI_EXPERIMENTAL=enabled
+#    - DOCKER_CLI_EXPERIMENTAL=enabled
 
 before_install:
 
@@ -13,14 +14,17 @@ before_install:
   - export IMAGE_VERSION=${IMAGE_VERSION//\#/\_}
 
   # Install docker with buildx
-  - sudo rm -rf /var/lib/apt/lists/*
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - lsb_release -cs
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
+#  - for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+#  - sudo apt-get update
+#  - sudo apt-get install ca-certificates curl
+  - sudo install -m 0755 -d /etc/apt/keyrings
+  - sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  - sudo chmod a+r /etc/apt/keyrings/docker.asc
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   - sudo apt-get update
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-  - docker run --rm --privileged docker/binfmt:820fdd95a9972a5308930a2bdfb8573dd4447ad3
-  - cat /proc/sys/fs/binfmt_misc/qemu-aarch64
+  - sudo apt-get install -y docker-buildx-plugin
+#  - docker run --rm --privileged docker/binfmt:820fdd95a9972a5308930a2bdfb8573dd4447ad3
+#  - cat /proc/sys/fs/binfmt_misc/qemu-aarch64
 
   # Install Nodejs
   - nvm install $NODE_VERSION
@@ -46,6 +50,7 @@ install:
   - (cd app && npm test)
 
   # Package ui
+  - set -v
   - (cd ui && npm run build)
 
   # Build wud docker image
@@ -95,7 +100,7 @@ script:
 
   # Pull vaultwarden
   - docker pull vaultwarden/server
-  - docker pull vaultwarden/server:1.28.1-alpine
+  - docker pull vaultwarden/server:1.30.5-alpine
 
   # Pull youtubedl
   - docker pull jeeaaasustest/youtube-dl
@@ -123,9 +128,6 @@ script:
   # GITLAB
   - docker run -d --name gitlab_test              --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+\.\d+$'                         registry.gitlab.com/manfred-martin/docker-registry-test:1.0.0
 
-  # HOTIO
-  - docker run -d --name hotio_radarr              --label 'wud.watch=true' --label 'wud.tag.include=^release-\d+\.\d+.\d+.\d+$'               cr.hotio.dev/hotio/radarr:release-4.0.4.5922
-
   # HUB
   - docker run -d --name hub_homeassistant_202161 --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+$' --label 'wud.link.template=https://github.com/home-assistant/core/releases/tag/${major}.${minor}.${patch}' homeassistant/home-assistant:2021.6.1
   - docker run -d --name hub_homeassistant_latest --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' homeassistant/home-assistant
@@ -145,7 +147,7 @@ script:
   - docker run -d --name hub_traefik_245          --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+$'                           traefik:2.4.5
   - docker run -d --name hub_traefik_latest       --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' traefik
 
-  - docker run -d --name hub_vaultwarden_1222     --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+-alpine$'                    -e I_REALLY_WANT_VOLATILE_STORAGE=true vaultwarden/server:1.28.1-alpine
+  - docker run -d --name hub_vaultwarden_1222     --label 'wud.watch=true' --label 'wud.tag.include=^\d+\.\d+.\d+-alpine$'                    -e I_REALLY_WANT_VOLATILE_STORAGE=true vaultwarden/server:1.30.5-alpine
   - docker run -d --name hub_vaultwarden_latest   --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' -e I_REALLY_WANT_VOLATILE_STORAGE=true vaultwarden/server
 
   - docker run -d --name hub_youtubedb_latest     --label 'wud.watch=true' --label 'wud.watch.digest=true' --label 'wud.tag.include=^latest$' jeeaaasustest/youtube-dl

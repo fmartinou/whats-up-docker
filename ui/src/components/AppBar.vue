@@ -67,7 +67,7 @@ export default {
         this.$root.$emit(
           "notify",
           `Error when trying to logout (${e.message})`,
-          "error"
+          "error",
         );
       }
     },

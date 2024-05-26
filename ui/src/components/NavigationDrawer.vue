@@ -155,7 +155,7 @@ export default {
   computed: {
     configurationItemsSorted() {
       return [...this.configurationItems].sort((item1, item2) =>
-        item1.name.localeCompare(item2.name)
+        item1.name.localeCompare(item2.name),
       );
     },
   },

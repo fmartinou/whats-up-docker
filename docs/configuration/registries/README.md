@@ -14,8 +14,6 @@ WUD supports most registries:
 
 ?> [**GITLAB (Gitlab Container Registry)**](configuration/registries/gitlab/)
 
-?> [**HOTIO** (Hotio.dev)](configuration/registries/hotio/)
-
 ?> [**HUB** (Docker Hub)](configuration/registries/hub/)
 
 ?> [**LSCR** (LinuxServer Container Registry)](configuration/registries/lscr/)
@@ -26,6 +24,5 @@ WUD supports most registries:
 ECR (public.ecr.aws) \
 GCR \
 GHCR \
-HOTIO \
 HUB \
 QUAY

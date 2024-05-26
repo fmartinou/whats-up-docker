@@ -111,7 +111,7 @@ const diffTestCases = [{
 }, {
     version1: '1.2.3',
     version2: '1.2.3-alpha1',
-    diff: 'prerelease',
+    diff: 'patch',
 }, {
     version1: '1.2.3',
     version2: 'latest',

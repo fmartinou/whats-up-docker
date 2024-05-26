@@ -24,7 +24,7 @@ export default {
       this.$root.$emit(
         "notify",
         `Error when trying to get app version (${e.message})`,
-        "error"
+        "error",
       );
     }
   },

@@ -44,7 +44,6 @@ function getRegistryProviderIcon(provider) {
     case "quay":
       icon = "si-redhat";
       break;
-
   }
   return icon;
 }

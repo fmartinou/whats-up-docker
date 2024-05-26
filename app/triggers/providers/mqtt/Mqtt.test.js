@@ -1,8 +1,8 @@
 const { ValidationError } = require('joi');
-const asyncMqtt = require('async-mqtt');
+const mqttClient = require('mqtt');
 const log = require('../../../log');
 
-jest.mock('async-mqtt');
+jest.mock('mqtt');
 const Mqtt = require('./Mqtt');
 
 const mqtt = new Mqtt();
@@ -91,7 +91,7 @@ test('initTrigger should init Mqtt client', async () => {
             prefix: 'homeassistant',
         },
     };
-    const spy = jest.spyOn(asyncMqtt, 'connectAsync');
+    const spy = jest.spyOn(mqttClient, 'connectAsync');
     await mqtt.initTrigger();
     expect(spy).toHaveBeenCalledWith('mqtt://host:1883', {
         clientId: 'wud',

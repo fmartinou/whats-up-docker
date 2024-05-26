@@ -12,7 +12,6 @@
         - [GHCR](configuration/registries/ghcr/)
         - [GITEA](configuration/registries/gitea/)
         - [GITLAB](configuration/registries/gitlab/)
-        - [HOTIO](configuration/registries/hotio/)
         - [HUB](configuration/registries/hub/)
         - [LSCR](configuration/registries/lscr/)
         - [QUAY](configuration/registries/quay/)

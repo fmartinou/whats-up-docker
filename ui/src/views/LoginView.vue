@@ -112,7 +112,7 @@ export default {
 
       // If oidc strategy supporting redirect
       const oidcWithRedirect = strategies.find(
-        (strategy) => strategy.type === "oidc" && strategy.redirect
+        (strategy) => strategy.type === "oidc" && strategy.redirect,
       );
       if (oidcWithRedirect) {
         const redirection = await getOidcRedirection(oidcWithRedirect.name);
@@ -127,7 +127,7 @@ export default {
       this.$root.$emit(
         "notify",
         `Error when trying to get the authentication strategies (${e.message})`,
-        "error"
+        "error",
       );
     }
   },
