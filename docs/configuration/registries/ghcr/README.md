@@ -7,6 +7,7 @@ The `ghcr` registry lets you configure [GHCR](https://docs.github.com/en/package
 
 | Env var                      | Required       | Description     | Supported values                         | Default value when missing |
 | ---------------------------- |:--------------:| --------------- | ---------------------------------------- | -------------------------- | 
+| `WUD_REGISTRY_GHCR_USERNAME` | :white_circle: | Github username |                                          |                            |
 | `WUD_REGISTRY_GHCR_TOKEN`    | :white_circle: | Github token    | Github password or Github Personal Token |                            |
 
 ### Examples
@@ -46,11 +47,13 @@ services:
     image: fmartinou/whats-up-docker
     ...
     environment:
+      - WUD_REGISTRY_GHCR_USERNAME=john@doe
       - WUD_REGISTRY_GHCR_TOKEN=xxxxx 
 ```
 #### **Docker**
 ```bash
 docker run \
+  -e WUD_REGISTRY_GHCR_USERNAME="john@doe" \
   -e WUD_REGISTRY_GHCR_TOKEN="xxxxx" \
   ...
   fmartinou/whats-up-docker

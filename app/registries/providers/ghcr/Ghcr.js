@@ -8,7 +8,8 @@ class Ghcr extends Registry {
         return this.joi.alternatives([
             this.joi.string().allow(''),
             this.joi.object().keys({
-                token: this.joi.string().allow('').required(),
+                username: this.joi.string().required(),
+                token: this.joi.string().required(),
             }),
         ]);
     }

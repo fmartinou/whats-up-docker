@@ -6,7 +6,8 @@ const Ghcr = require('../ghcr/Ghcr');
 class Lscr extends Ghcr {
     getConfigurationSchema() {
         return this.joi.object().keys({
-            token: this.joi.string().allow('').required(),
+            username: this.joi.string().required(),
+            token: this.joi.string().required(),
         });
     }
 
