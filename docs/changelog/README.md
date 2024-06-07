@@ -1,6 +1,6 @@
 # Changelog
 
-# dev
+# 6.4.1
 - :fire: [GHCR] - Bring back username because needed for image pulling
 
 # 6.4.0
