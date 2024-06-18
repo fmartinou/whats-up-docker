@@ -91,6 +91,7 @@ test('initTrigger should init Mqtt client', async () => {
         clientid: 'wud',
         hass: {
             enabled: true,
+            discovery: true,
             prefix: 'homeassistant',
         },
     };
