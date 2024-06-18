@@ -13,6 +13,7 @@ const configurationValid = {
     topic: 'wud/container',
     clientid: 'wud',
     hass: {
+        discovery: false,
         enabled: false,
         prefix: 'homeassistant',
     },
@@ -65,12 +66,14 @@ test('maskConfiguration should mask sensitive data', () => {
         url: 'mqtt://host:1883',
         topic: 'wud/container',
         hass: {
+            discovery: false,
             enabled: false,
             prefix: 'homeassistant',
         },
     };
     expect(mqtt.maskConfiguration()).toEqual({
         hass: {
+            discovery: false,
             enabled: false,
             prefix: 'homeassistant',
         },
@@ -88,6 +91,7 @@ test('initTrigger should init Mqtt client', async () => {
         clientid: 'wud',
         hass: {
             enabled: true,
+            discovery: true,
             prefix: 'homeassistant',
         },
     };

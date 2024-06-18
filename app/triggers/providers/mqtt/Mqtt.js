@@ -41,9 +41,11 @@ class Mqtt extends Trigger {
             hass: this.joi.object({
                 enabled: this.joi.boolean().default(false),
                 prefix: this.joi.string().default(hassDefaultPrefix),
+                discovery: this.joi.boolean().default(false),
             }).default({
                 enabled: false,
                 prefix: hassDefaultPrefix,
+                discovery: false,
             }),
             tls: this.joi.object({
                 clientkey: this.joi.string(),
