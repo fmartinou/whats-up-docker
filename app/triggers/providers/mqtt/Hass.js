@@ -77,7 +77,8 @@ class Hass {
     async addContainerSensor(container) {
         const containerStateTopic = this.getContainerStateTopic({ container });
         this.log.info(`Add hass container update sensor [${containerStateTopic}]`);
-        if (this.configuration.hass.discovery) { await this.publishDiscoveryMessage({
+        if (this.configuration.hass.discovery) { 
+            await this.publishDiscoveryMessage({
             discoveryTopic: this.getDiscoveryTopic({ kind: 'update', topic: containerStateTopic }),
             stateTopic: containerStateTopic,
             name: container.displayName,
@@ -90,7 +91,8 @@ class Hass {
                 release_url: container.result ? container.result.link : undefined,
                 json_attributes_topic: containerStateTopic,
             },
-        })};
+        }); 
+        }
         await this.updateContainerSensors(container);
     }
 
@@ -102,7 +104,9 @@ class Hass {
     async removeContainerSensor(container) {
         const containerStateTopic = this.getContainerStateTopic({ container });
         this.log.info(`Remove hass container update sensor [${containerStateTopic}]`);
-        if (this.configuration.hass.discovery) { await this.removeSensor({ discoveryTopic: this.getDiscoveryTopic({ kind: 'update', topic: containerStateTopic }) })};
+        if (this.configuration.hass.discovery) { 
+            await this.removeSensor({ discoveryTopic: this.getDiscoveryTopic({ kind: 'update', topic: containerStateTopic }) });
+        }
         await this.updateContainerSensors(container);
     }
 
@@ -124,17 +128,22 @@ class Hass {
         const watcherUpdateStatusDiscoveryTopic = this.getDiscoveryTopic({ kind: 'binary_sensor', topic: watcherUpdateStatusTopic });
 
         // Publish discovery messages
-        if (this.configuration.hass.discovery) { await this.publishDiscoveryMessage({
+        if (this.configuration.hass.discovery) { 
+            await this.publishDiscoveryMessage({
             discoveryTopic: totalCountDiscoveryTopic,
             stateTopic: totalCountTopic,
             name: 'Total container count',
-        })};
-        if (this.configuration.hass.discovery) { await this.publishDiscoveryMessage({
+        });
+        }
+        if (this.configuration.hass.discovery) { 
+            await this.publishDiscoveryMessage({
             discoveryTopic: totalUpdateCountDiscoveryTopic,
             stateTopic: totalUpdateCountTopic,
             name: 'Total container update count',
-        })};
-        if (this.configuration.hass.discovery) { await this.publishDiscoveryMessage({
+        });
+        }
+        if (this.configuration.hass.discovery) { 
+            await this.publishDiscoveryMessage({
             discoveryTopic: totalUpdateStatusDiscoveryTopic,
             stateTopic: totalUpdateStatusTopic,
             name: 'Total container update status',
@@ -142,18 +151,24 @@ class Hass {
                 payload_on: true.toString(),
                 payload_off: false.toString(),
             },
-        })};
-        if (this.configuration.hass.discovery) { await this.publishDiscoveryMessage({
+        });
+        }
+        if (this.configuration.hass.discovery) { 
+            await this.publishDiscoveryMessage({
             discoveryTopic: watcherTotalCountDiscoveryTopic,
             stateTopic: watcherTotalCountTopic,
             name: `Watcher ${container.watcher} container count`,
-        })};
-        if (this.configuration.hass.discovery) { await this.publishDiscoveryMessage({
+        });
+        }
+        if (this.configuration.hass.discovery) { 
+            await this.publishDiscoveryMessage({
             discoveryTopic: watcherUpdateCountDiscoveryTopic,
             stateTopic: watcherUpdateCountTopic,
             name: `Watcher ${container.watcher} container update count`,
-        })};
-        if (this.configuration.hass.discovery) { await this.publishDiscoveryMessage({
+        });
+        }
+        if (this.configuration.hass.discovery) { 
+            await this.publishDiscoveryMessage({
             discoveryTopic: watcherUpdateStatusDiscoveryTopic,
             stateTopic: watcherUpdateStatusTopic,
             name: `Watcher ${container.watcher} container update status`,
@@ -161,7 +176,8 @@ class Hass {
                 payload_on: true.toString(),
                 payload_off: false.toString(),
             },
-        })};
+        });
+        }
 
         // Count all containers
         const totalCount = containerStore.getContainers().length;
@@ -208,7 +224,8 @@ class Hass {
         const watcherStatusDiscoveryTopic = this.getDiscoveryTopic({ kind: 'binary_sensor', topic: watcherStatusTopic });
 
         // Publish discovery messages
-        if (this.configuration.hass.discovery) { await this.publishDiscoveryMessage({
+        if (this.configuration.hass.discovery) { 
+            await this.publishDiscoveryMessage({
             discoveryTopic: watcherStatusDiscoveryTopic,
             stateTopic: watcherStatusTopic,
             options: {
@@ -216,7 +233,8 @@ class Hass {
                 payload_off: false.toString(),
             },
             name: `Watcher ${watcher.name} running status`,
-        })};
+        });
+        }
 
         // Publish sensors
         await this.updateSensor({
