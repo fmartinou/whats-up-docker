@@ -97,6 +97,15 @@ export default {
     },
     onUpdateAvailableChanged() {
       this.updateAvailableSelected = !this.updateAvailableSelected;
+      this.$router.push(
+        this.updateAvailableSelected
+          ? {
+              query: {
+                "update-available": this.updateAvailableSelected,
+              },
+            }
+          : { query: {} },
+      );
     },
     onRefreshAllContainers(containersRefreshed) {
       this.containers = containersRefreshed;
