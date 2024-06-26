@@ -14,6 +14,7 @@ beforeEach(() => {
         configuration: {
             topic: 'topic',
             hass: {
+                discovery: true,
                 prefix: 'homeassistant',
             },
         },
