@@ -38,7 +38,7 @@ services:
 ## Prometheus metrics
 ![logo](prometheus.png)
 
-WUD exposes various metrics that [Prometheus](https://prometheus.io/) can scrap.
+WUD exposes various metrics that [Prometheus](https://prometheus.io/) can scrape.
 
 ### Endpoint
 The metrics are exposed at [/metrics](http://localhost:3000/metrics).
@@ -274,5 +274,5 @@ You can also display WUD watched images on Grafana.
 sum by(image_registry_url, image_name, image_os, image_architecture, image_tag_value, result_tag) (wud_containers)
 
 # or if you want to display images to be updated only 
-sum by(image_registry_url, image_name, image_os, image_architecture, image_tag_value, result_tag) (wud_containers{updateAvailable="true"})
+sum by(image_registry_url, image_name, image_os, image_architecture, image_tag_value, result_tag) (wud_containers{update_available="true"})
 ```
