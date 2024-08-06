@@ -134,15 +134,11 @@ class Hass {
                 stateTopic: totalCountTopic,
                 name: 'Total container count',
             });
-        }
-        if (this.configuration.hass.discovery) {
             await this.publishDiscoveryMessage({
                 discoveryTopic: totalUpdateCountDiscoveryTopic,
                 stateTopic: totalUpdateCountTopic,
                 name: 'Total container update count',
             });
-        }
-        if (this.configuration.hass.discovery) {
             await this.publishDiscoveryMessage({
                 discoveryTopic: totalUpdateStatusDiscoveryTopic,
                 stateTopic: totalUpdateStatusTopic,
@@ -152,22 +148,16 @@ class Hass {
                     payload_off: false.toString(),
                 },
             });
-        }
-        if (this.configuration.hass.discovery) {
             await this.publishDiscoveryMessage({
                 discoveryTopic: watcherTotalCountDiscoveryTopic,
                 stateTopic: watcherTotalCountTopic,
                 name: `Watcher ${container.watcher} container count`,
             });
-        }
-        if (this.configuration.hass.discovery) {
             await this.publishDiscoveryMessage({
                 discoveryTopic: watcherUpdateCountDiscoveryTopic,
                 stateTopic: watcherUpdateCountTopic,
                 name: `Watcher ${container.watcher} container update count`,
             });
-        }
-        if (this.configuration.hass.discovery) {
             await this.publishDiscoveryMessage({
                 discoveryTopic: watcherUpdateStatusDiscoveryTopic,
                 stateTopic: watcherUpdateStatusTopic,
