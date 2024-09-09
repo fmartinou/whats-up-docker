@@ -1,5 +1,8 @@
 # Changelog
 
+# 6.4.2 (wip)
+- :fire: [SMTP] - Make user / password optional (e.g. for posfix usage)
+
 # 6.4.1
 - :fire: [GHCR] - Bring back username because needed for image pulling
 

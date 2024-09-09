@@ -8,10 +8,10 @@ The `smtp` trigger lets you send emails with smtp.
 | --------------------------------------------- |:--------------:|:----------------------------- | ----------------------------- | -------------------------- | 
 | `WUD_TRIGGER_SMTP_{trigger_name}_HOST`        | :red_circle:   | Smtp server host              | Valid hostname or IP address  |                            |
 | `WUD_TRIGGER_SMTP_{trigger_name}_PORT`        | :red_circle:   | Smtp server port              | Valid smtp port               |                            |
-| `WUD_TRIGGER_SMTP_{trigger_name}_USER`        | :red_circle:   | Smtp user                     |                               |                            |
-| `WUD_TRIGGER_SMTP_{trigger_name}_PASS`        | :red_circle:   | Smtp password                 |                               |                            |
 | `WUD_TRIGGER_SMTP_{trigger_name}_FROM`        | :red_circle:   | Email from address            | Valid email address           |                            |
 | `WUD_TRIGGER_SMTP_{trigger_name}_TO`          | :red_circle:   | Email to address              | Valid email address           |                            |
+| `WUD_TRIGGER_SMTP_{trigger_name}_USER`        | :white_circle: | Smtp user                     |                               |                            |
+| `WUD_TRIGGER_SMTP_{trigger_name}_PASS`        | :white_circle: | Smtp password                 |                               |                            |
 | `WUD_TRIGGER_SMTP_{trigger_name}_TLS_ENABLED` | :white_circle: | Use TLS                       | `true`, `false`               | `false`                    |
 | `WUD_TRIGGER_SMTP_{trigger_name}_TLS_VERIFY`  | :white_circle: | Verify server TLS certificate | `true`, `false`               | `true`                     |
 
