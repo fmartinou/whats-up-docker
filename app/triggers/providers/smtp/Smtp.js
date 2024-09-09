@@ -13,8 +13,8 @@ class Smtp extends Trigger {
         return this.joi.object().keys({
             host: [this.joi.string().hostname().required(), this.joi.string().ip().required()],
             port: this.joi.number().port().required(),
-            user: this.joi.string().required(),
-            pass: this.joi.string().required(),
+            user: this.joi.string(),
+            pass: this.joi.string(),
             from: this.joi.string().email().required(),
             to: this.joi.string().email().required(),
             tls: this.joi.object({
@@ -48,13 +48,17 @@ class Smtp extends Trigger {
      * Init trigger.
      */
     initTrigger() {
+        let auth;
+        if (this.configuration.user || this.configuration.pass) {
+            auth = {
+                user: this.configuration.user,
+                pass: this.configuration.pass,
+            };
+        }
         this.transporter = nodemailer.createTransport({
             host: this.configuration.host,
             port: this.configuration.port,
-            auth: {
-                user: this.configuration.user,
-                pass: this.configuration.pass,
-            },
+            auth,
             secure: this.configuration.tls && this.configuration.tls.enabled,
             tls: {
                 rejectUnauthorized: !this.configuration.tls
