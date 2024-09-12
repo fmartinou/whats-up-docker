@@ -12,7 +12,8 @@ The `mqtt` trigger lets you send container update notifications to an MQTT broke
 | `WUD_TRIGGER_MQTT_{trigger_name}_PASSWORD`               | :white_circle: | The password if broker authentication is enabled                                                    |                                     |                            |
 | `WUD_TRIGGER_MQTT_{trigger_name}_CLIENTID`               | :white_circle: | The Mqtt client Id to use                                                                           |                                     | `wud_$random`              |
 | `WUD_TRIGGER_MQTT_{trigger_name}_TOPIC`                  | :white_circle: | The base topic where the updates are published to                                                   |                                     | `wud/container`            |
-| `WUD_TRIGGER_MQTT_{trigger_name}_HASS_ENABLED`           | :white_circle: | Enable [Home-assistant](https://www.home-assistant.io/) integration                                 | `true`, `false`                     | `false`                    |
+| `WUD_TRIGGER_MQTT_{trigger_name}_HASS_ENABLED`           | :white_circle: | Enable [Home-assistant](https://www.home-assistant.io/) integration and deliver additional topics   | `true`, `false`                     | `false`                    |
+| `WUD_TRIGGER_MQTT_{trigger_name}_HASS_DISCOVERY`         | :white_circle: | Enable [Home-assistant](https://www.home-assistant.io/) integration including discovery             | `true`, `false`                     | `false`                    |
 | `WUD_TRIGGER_MQTT_{trigger_name}_HASS_PREFIX`            | :white_circle: | Base topic for hass entity discovery                                                                |                                     | `homeassistant`            |
 | `WUD_TRIGGER_MQTT_{trigger_name}_TLS_CACHAIN`            | :white_circle: | The path to the file containing the server CA chain (when TLS with a private Certificate Authority) | Any valid file path                 |                            |
 | `WUD_TRIGGER_MQTT_{trigger_name}_TLS_CLIENTCERT`         | :white_circle: | The path to the file containing the client public certificate (when TLS mutual authzentication)     | Any valid file path                 |                            |
@@ -153,6 +154,7 @@ services:
     environment:
       - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtt://localhost:1883
       - WUD_TRIGGER_MQTT_MOSQUITTO_HASS_ENABLED=true
+      - WUD_TRIGGER_MQTT_MOSQUITTO_HASS_DISCOVERY=true
 ```
 
 #### **Docker**
@@ -160,6 +162,7 @@ services:
 docker run \
     -e WUD_TRIGGER_MQTT_MOSQUITTO_URL="mqtt://localhost:1883" \
     -e WUD_TRIGGER_MQTT_MOSQUITTO_HASS_ENABLED="true" \
+    -e WUD_TRIGGER_MQTT_MOSQUITTO_HASS_DISCOVERY="true" \
   ...
   fmartinou/whats-up-docker
 ```
