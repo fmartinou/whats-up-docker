@@ -119,14 +119,19 @@ class Quay extends Registry {
     getTagsPage(image, lastItem, link) {
         // Default items per page (not honoured by all registries)
         const itemsPerPage = 1000;
-        let nextPage = '';
+        let nextOrLast = '';
         if (link) {
             const nextPageRegex = link.match(/^.*next_page=(.*)$/);
-            nextPage = `&next_page=${nextPageRegex[1]}`;
+            const lastRegex = link.match(/^.*last=(.*)>;.*$/);
+            if (nextPageRegex) {
+                nextOrLast = `&next_page=${nextPageRegex[1]}`;
+            } else if (lastRegex) {
+                nextOrLast = `&last=${lastRegex[1]}`;
+            }
         }
         return this.callRegistry({
             image,
-            url: `${image.registry.url}/${image.name}/tags/list?n=${itemsPerPage}${nextPage}`,
+            url: `${image.registry.url}/${image.name}/tags/list?n=${itemsPerPage}${nextOrLast}`,
             resolveWithFullResponse: true,
         });
     }
