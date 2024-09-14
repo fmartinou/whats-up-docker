@@ -4,11 +4,16 @@
       <v-col>
         <container-filter
           :registries="registries"
+          :registry-selected-init="registrySelected"
           :watchers="watchers"
+          :watcher-selected-init="watcherSelected"
+          :update-kinds="updateKinds"
+          :update-kind-selected-init="updateKindSelected"
           :updateAvailable="updateAvailableSelected"
           @registry-changed="onRegistryChanged"
           @watcher-changed="onWatcherChanged"
           @update-available-changed="onUpdateAvailableChanged"
+          @update-kind-changed="onUpdateKindChanged"
           @refresh-all-containers="onRefreshAllContainers"
         />
       </v-col>
@@ -47,8 +52,9 @@ export default {
   data() {
     return {
       containers: [],
-      registrySelected: undefined,
-      watcherSelected: undefined,
+      registrySelected: "",
+      watcherSelected: "",
+      updateKindSelected: "",
       updateAvailableSelected: false,
     };
   },
@@ -70,6 +76,18 @@ export default {
         ),
       ];
     },
+    updateKinds() {
+      return [
+        ...new Set(
+          this.containers
+            .filter((container) => container.updateAvailable)
+            .filter((container) => container.updateKind.kind === "tag")
+            .filter((container) => container.updateKind.semverDiff)
+            .map((container) => container.updateKind.semverDiff)
+            .sort(),
+        ),
+      ];
+    },
     containersFiltered() {
       return this.containers
         .filter((container) =>
@@ -83,6 +101,12 @@ export default {
             : true,
         )
         .filter((container) =>
+          this.updateKindSelected
+            ? this.updateKindSelected ===
+              (container.updateKind && container.updateKind.semverDiff)
+            : true,
+        )
+        .filter((container) =>
           this.updateAvailableSelected ? container.updateAvailable : true,
         );
     },
@@ -91,21 +115,35 @@ export default {
   methods: {
     onRegistryChanged(registrySelected) {
       this.registrySelected = registrySelected;
+      this.updateQueryParams();
     },
     onWatcherChanged(watcherSelected) {
       this.watcherSelected = watcherSelected;
+      this.updateQueryParams();
     },
     onUpdateAvailableChanged() {
       this.updateAvailableSelected = !this.updateAvailableSelected;
-      this.$router.push(
-        this.updateAvailableSelected
-          ? {
-              query: {
-                "update-available": this.updateAvailableSelected,
-              },
-            }
-          : { query: {} },
-      );
+      this.updateQueryParams();
+    },
+    onUpdateKindChanged(updateKindSelected) {
+      this.updateKindSelected = updateKindSelected;
+      this.updateQueryParams();
+    },
+    updateQueryParams() {
+      const query = {};
+      if (this.registrySelected) {
+        query["registry"] = this.registrySelected;
+      }
+      if (this.watcherSelected) {
+        query["watcher"] = this.watcherSelected;
+      }
+      if (this.updateKindSelected) {
+        query["update-kind"] = this.updateKindSelected;
+      }
+      if (this.updateAvailableSelected) {
+        query["update-available"] = this.updateAvailableSelected;
+      }
+      this.$router.push({ query });
     },
     onRefreshAllContainers(containersRefreshed) {
       this.containers = containersRefreshed;
@@ -128,19 +166,31 @@ export default {
   },
 
   async beforeRouteEnter(to, from, next) {
+    const registrySelected = to.query["registry"];
+    const watcherSelected = to.query["watcher"];
+    const updateKindSelected = to.query["update-kind"];
     const updateAvailable = to.query["update-available"];
     try {
       const containers = await getAllContainers();
       next((vm) => {
+        if (registrySelected) {
+          vm.registrySelected = registrySelected;
+        }
+        if (watcherSelected) {
+          vm.watcherSelected = watcherSelected;
+        }
+        if (updateKindSelected) {
+          vm.updateKindSelected = updateKindSelected;
+        }
         if (updateAvailable) {
-          vm.updateAvailableSelected = true;
+          vm.updateAvailableSelected = updateAvailable.toLowerCase() === "true";
         }
         vm.containers = containers;
       });
     } catch (e) {
       this.$root.$emit(
         "notify",
-        `Error when trying to get the containerq (${e.message})`,
+        `Error when trying to get the containers (${e.message})`,
         "error",
       );
     }

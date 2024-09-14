@@ -1,7 +1,11 @@
 # Changelog
 
 # 6.4.2 (wip)
+- :star: [UI] - Add filter dropdown for update kinds (major, minor...)
+- :star: [UI] - Make filter values bookmarkable (url query params)
+- :star: Upgrade all dependencies
 - :fire: [SMTP] - Make user / password optional (e.g. for posfix usage)
+- :fire: [QUAY] - Fix quay.io paging API
 
 # 6.4.1
 - :fire: [GHCR] - Bring back username because needed for image pulling

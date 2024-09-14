@@ -2,6 +2,6 @@
   "env": {
     "WUD_VERSION": "dev",
     "WUD_STORE_PATH": ".store",
-    "WUD_WATCHER_LOCAL_WATCHBYDEFAULT": "false"
+    "WUD_WATCHER_LOCAL_WATCHBYDEFAULT": "true"
   }
 }
