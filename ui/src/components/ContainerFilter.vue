@@ -30,6 +30,18 @@
         ></v-select>
       </v-col>
       <v-col>
+        <v-select
+          :hide-details="true"
+          v-model="updateKindSelected"
+          :items="updateKinds"
+          @change="emitUpdateKindChanged"
+          :clearable="true"
+          label="Update kind"
+          outlined
+          dense
+        ></v-select>
+      </v-col>
+      <v-col>
         <v-switch
           class="switch-top"
           label="Update available"
@@ -63,8 +75,24 @@ export default {
       type: Array,
       required: true,
     },
+    registrySelectedInit: {
+      type: String,
+      required: true,
+    },
     watchers: {
       type: Array,
+      required: true,
+    },
+    watcherSelectedInit: {
+      type: String,
+      required: true,
+    },
+    updateKinds: {
+      type: Array,
+      required: true,
+    },
+    updateKindSelectedInit: {
+      type: String,
       required: true,
     },
     updateAvailable: {
@@ -76,8 +104,9 @@ export default {
   data() {
     return {
       isRefreshing: false,
-      registrySelected: undefined,
-      watcherSelected: undefined,
+      registrySelected: "",
+      watcherSelected: "",
+      updateKindSelected: "",
     };
   },
 
@@ -87,6 +116,9 @@ export default {
     },
     emitWatcherChanged() {
       this.$emit("watcher-changed", this.watcherSelected);
+    },
+    emitUpdateKindChanged() {
+      this.$emit("update-kind-changed", this.updateKindSelected);
     },
     emitUpdateAvailableChanged() {
       this.$emit("update-available-changed");
@@ -107,6 +139,12 @@ export default {
         this.isRefreshing = false;
       }
     },
+  },
+
+  async beforeUpdate() {
+    this.registrySelected = this.registrySelectedInit;
+    this.watcherSelected = this.watcherSelectedInit;
+    this.updateKindSelected = this.updateKindSelectedInit;
   },
 };
 </script>

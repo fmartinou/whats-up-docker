@@ -24,10 +24,12 @@
 </template>
 
 <script>
+import Vue from "vue";
 import NavigationDrawer from "@/components/NavigationDrawer";
 import AppBar from "@/components/AppBar";
 import SnackBar from "@/components/SnackBar";
 import AppFooter from "@/components/AppFooter";
+import { getServer } from "@/services/server";
 
 export default {
   components: {
@@ -101,6 +103,13 @@ export default {
     this.$root.$on("authenticated", this.onAuthenticated);
     this.$root.$on("notify", this.notify);
     this.$root.$on("notify:close", this.notifyClose);
+  },
+
+  async beforeUpdate() {
+    if (this.authenticated && !this.$serverConfig) {
+      const server = await getServer();
+      Vue.prototype.$serverConfig = server.configuration;
+    }
   },
 };
 </script>

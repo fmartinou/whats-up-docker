@@ -1,4 +1,5 @@
 const fs = require('fs');
+const joi = require('joi');
 const setValue = require('set-value');
 
 const VAR_FILE_SUFFIX = '__FILE';
@@ -97,17 +98,34 @@ function getStoreConfiguration() {
  * Get Server configurations.
  */
 function getServerConfiguration() {
-    // Deprecated env var namespace; to be removed on next major version
-    const apiConfiguration = get('wud.api', wudEnvVars);
+    const configurationFromEnv = get('wud.server', wudEnvVars);
+    const configurationSchema = joi.object().keys({
+        enabled: joi.boolean().default(true),
+        port: joi.number().default(3000).integer().min(0)
+            .max(65535),
+        tls: joi.object({
+            enabled: joi.boolean().default(false),
+            key: joi.string().when('enabled', { is: true, then: joi.required(), otherwise: joi.optional() }),
+            cert: joi.string().when('enabled', { is: true, then: joi.required(), otherwise: joi.optional() }),
+        }).default({}),
+        cors: joi.object({
+            enabled: joi.boolean().default(false),
+            origin: joi.string().default('*'),
+            methods: joi.string().default('GET,HEAD,PUT,PATCH,POST,DELETE'),
+        }).default({}),
+        feature: joi.object({
+            delete: joi.boolean().default(true),
+        }).default({
+            delete: true,
+        }),
+    });
 
-    // New en var namespace
-    const serverConfiguration = get('wud.server', wudEnvVars);
-
-    // Merge deprecated & new env vars
-    return {
-        ...apiConfiguration,
-        ...serverConfiguration,
-    };
+    // Validate Configuration
+    const configurationToValidate = configurationSchema.validate(configurationFromEnv || {});
+    if (configurationToValidate.error) {
+        throw configurationToValidate.error;
+    }
+    return configurationToValidate.value;
 }
 
 function getPublicUrl(req) {

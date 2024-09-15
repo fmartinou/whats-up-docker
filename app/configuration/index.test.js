@@ -78,27 +78,25 @@ test('getStoreConfiguration should return configured store', () => {
     expect(configuration.getStoreConfiguration()).toStrictEqual({ x: 'x', y: 'y' });
 });
 
-test('getServerConfiguration should return configured api (deprecated vars)', () => {
-    configuration.wudEnvVars.WUD_API_X = 'x';
-    configuration.wudEnvVars.WUD_API_Y = 'y';
-    expect(configuration.getServerConfiguration()).toStrictEqual({ x: 'x', y: 'y' });
-});
-
 test('getServerConfiguration should return configured api (new vars)', () => {
-    configuration.wudEnvVars.WUD_API_W = 'w';
-    configuration.wudEnvVars.WUD_API_X = 'x';
-    configuration.wudEnvVars.WUD_API_Y = 'y';
-    configuration.wudEnvVars.WUD_SERVER_X = 'x2';
-    configuration.wudEnvVars.WUD_SERVER_Y = 'y2';
-    expect(configuration.getServerConfiguration()).toStrictEqual({ w: 'w', x: 'x2', y: 'y2' });
+    configuration.wudEnvVars.WUD_SERVER_PORT = '4000';
+    expect(configuration.getServerConfiguration()).toStrictEqual({
+        cors: {},
+        enabled: true,
+        feature: {
+            delete: true,
+        },
+        port: 4000,
+        tls: {},
+    });
 });
 
 test('replaceSecrets must read secret in file', () => {
     const vars = {
-        WUD_API_X__FILE: `${__dirname}/secret.txt`,
+        WUD_SERVER_X__FILE: `${__dirname}/secret.txt`,
     };
     configuration.replaceSecrets(vars);
     expect(vars).toStrictEqual({
-        WUD_API_X: 'super_secret',
+        WUD_SERVER_X: 'super_secret',
     });
 });

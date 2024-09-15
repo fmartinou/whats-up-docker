@@ -91,7 +91,7 @@
         <v-card-actions>
           <v-row>
             <v-col class="text-center">
-              <v-dialog v-model="dialogDelete" width="500">
+              <v-dialog v-model="dialogDelete" width="500" v-if="deleteEnabled">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn small color="error" outlined v-bind="attrs" v-on="on">
                     Delete
@@ -174,6 +174,7 @@ export default {
       showDetail: false,
       dialogDelete: false,
       tab: 0,
+      deleteEnabled: false,
     };
   },
   computed: {
@@ -277,6 +278,10 @@ export default {
     normalizeFontawesome(iconString, prefix) {
       return `${prefix} fa-${iconString.replace(`${prefix}:`, "")}`;
     },
+  },
+
+  mounted() {
+    this.deleteEnabled = this.$serverConfig.feature.delete;
   },
 };
 </script>
