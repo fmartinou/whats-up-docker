@@ -1,6 +1,5 @@
 const fs = require('fs');
 const https = require('https');
-const joi = require('joi');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -10,32 +9,9 @@ const apiRouter = require('./api');
 const uiRouter = require('./ui');
 const prometheusRouter = require('./prometheus');
 const healthRouter = require('./health');
-
 const { getServerConfiguration } = require('../configuration');
 
-// Configuration Schema
-const configurationSchema = joi.object().keys({
-    enabled: joi.boolean().default(true),
-    port: joi.number().default(3000).integer().min(0)
-        .max(65535),
-    tls: joi.object({
-        enabled: joi.boolean().default(false),
-        key: joi.string().when('enabled', { is: true, then: joi.required(), otherwise: joi.optional() }),
-        cert: joi.string().when('enabled', { is: true, then: joi.required(), otherwise: joi.optional() }),
-    }).default({}),
-    cors: joi.object({
-        enabled: joi.boolean().default(false),
-        origin: joi.string().default('*'),
-        methods: joi.string().default('GET,HEAD,PUT,PATCH,POST,DELETE'),
-    }).default({}),
-});
-
-// Validate Configuration
-const configurationToValidate = configurationSchema.validate(getServerConfiguration() || {});
-if (configurationToValidate.error) {
-    throw configurationToValidate.error;
-}
-const configuration = configurationToValidate.value;
+const configuration = getServerConfiguration();
 
 /**
  * Init Http API.

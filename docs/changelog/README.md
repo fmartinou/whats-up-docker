@@ -1,6 +1,7 @@
 # Changelog
 
 # 6.4.2 (wip)
+- :star: [API/UI] - Add a feature to allow/disallow delete operations (`WUD_SERVER_FEATURE_DELETE`)
 - :star: [UI] - Add filter dropdown for update kinds (major, minor...)
 - :star: [UI] - Make filter values bookmarkable (url query params)
 - :star: Upgrade all dependencies

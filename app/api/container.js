@@ -2,8 +2,11 @@ const express = require('express');
 const nocache = require('nocache');
 const storeContainer = require('../store/container');
 const registry = require('../registry');
+const { getServerConfiguration } = require('../configuration');
 
 const router = express.Router();
+
+const serverConfiguration = getServerConfiguration();
 
 /**
  * Return registered watchers.
@@ -53,13 +56,17 @@ function getContainer(req, res) {
  * @param res
  */
 function deleteContainer(req, res) {
-    const { id } = req.params;
-    const container = storeContainer.getContainer(id);
-    if (container) {
-        storeContainer.deleteContainer(id);
-        res.sendStatus(204);
+    if (!serverConfiguration.feature.delete) {
+        res.sendStatus(403);
     } else {
-        res.sendStatus(404);
+        const { id } = req.params;
+        const container = storeContainer.getContainer(id);
+        if (container) {
+            storeContainer.deleteContainer(id);
+            res.sendStatus(204);
+        } else {
+            res.sendStatus(404);
+        }
     }
 }
 
