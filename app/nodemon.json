@@ -2,6 +2,8 @@
   "env": {
     "WUD_VERSION": "dev",
     "WUD_STORE_PATH": ".store",
-    "WUD_WATCHER_LOCAL_WATCHBYDEFAULT": "true"
+    "WUD_WATCHER_LOCAL_WATCHBYDEFAULT": "true",
+    "WUD_AUTH_BASIC_JOHN_USER": "john",
+    "WUD_AUTH_BASIC_JOHN_HASH": "$apr1$aefKbZEa$ZSA5Y3zv9vDQOxr283NGx/"
   }
 }
