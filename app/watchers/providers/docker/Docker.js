@@ -499,9 +499,27 @@ class Docker extends Component {
         if (!registryProvider) {
             logContainer.error(`Unsupported registry (${container.image.registry.name})`);
         } else {
+            // Get all available tags
+            const tags = await registryProvider.getTags(container.image);
+
+            // Get candidate tags (based on tag name)
+            const tagsCandidates = getTagCandidates(container, tags);
+
             // Must watch digest? => Find local/remote digests on registry
             if (container.image.digest.watch && container.image.digest.repo) {
-                const remoteDigest = await registryProvider.getImageManifestDigest(container.image);
+                // If we have a tag candidate BUT we also watch digest
+                // (case where local=`mongo:8` and remote=`mongo:8.0.0`),
+                // Then get the digest of the tag candidate
+                // Else get the digest of the same tag as the local one
+                const imageToGetDigestFrom = JSON.parse(JSON.stringify(container.image));
+                if (tagsCandidates.length > 0) {
+                    [imageToGetDigestFrom.tag.value] = tagsCandidates;
+                }
+
+                const remoteDigest = await registryProvider.getImageManifestDigest(
+                    imageToGetDigestFrom,
+                );
+
                 result.digest = remoteDigest.digest;
                 result.created = remoteDigest.created;
 
@@ -509,7 +527,7 @@ class Docker extends Component {
                     // Regular v2 manifest => Get manifest digest
                     /*  eslint-disable no-param-reassign */
                     const digestV2 = await registryProvider.getImageManifestDigest(
-                        container.image,
+                        imageToGetDigestFrom,
                         container.image.digest.repo,
                     );
                     container.image.digest.value = digestV2.digest;
@@ -520,15 +538,11 @@ class Docker extends Component {
                 }
             }
 
-            const tags = await registryProvider.getTags(container.image);
-
-            // Get candidates (based on tag name)
-            const tagsCandidates = getTagCandidates(container, tags);
-
             // The first one in the array is the highest
             if (tagsCandidates && tagsCandidates.length > 0) {
                 [result.tag] = tagsCandidates;
             }
+
             return result;
         }
     }
