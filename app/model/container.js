@@ -99,19 +99,21 @@ function addUpdateAvailableProperty(container) {
                 if (this.image === undefined || this.result === undefined) {
                     return false;
                 }
-                // Different tags?
+
+                // Compare digests if we have them
+                if (this.image.digest.watch
+                    && this.image.digest.value !== undefined
+                    && this.result.digest !== undefined
+                ) {
+                    return this.image.digest.value !== this.result.digest;
+                }
+
+                // Compare tags otherwise
+                let updateAvailable = false;
                 const localTag = transformTag(container.transformTags, this.image.tag.value);
                 const remoteTag = transformTag(container.transformTags, this.result.tag);
-                let updateAvailable = localTag !== remoteTag;
+                updateAvailable = localTag !== remoteTag;
 
-                // Compare digests?
-                if (this.image.digest.watch) {
-                    // Digests can be compared
-                    if (this.image.digest.value !== undefined && this.result.digest !== undefined) {
-                        updateAvailable = updateAvailable
-                            || this.image.digest.value !== this.result.digest;
-                    }
-                }
                 // Fallback to image created date (especially for legacy v1 manifests)
                 if (this.image.created !== undefined && this.result.created !== undefined) {
                     const createdDate = new Date(this.image.created).getTime();
