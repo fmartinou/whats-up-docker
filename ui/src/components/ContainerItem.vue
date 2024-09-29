@@ -7,18 +7,31 @@
       @click="collapseDetail()"
       style="cursor: pointer"
     >
-      <v-toolbar-title class="text-body-2">
-        {{ container.displayName }}</v-toolbar-title
-      >
-      <v-chip
-        v-if="$vuetify.breakpoint.mdAndUp"
-        class="ma-4"
-        label
-        outlined
-        disabled
-      >
-        {{ container.image.tag.value }}
-      </v-chip>
+      <v-toolbar-title class="text-body-3">
+        <v-chip label color="info" outlined disabled
+          ><v-icon left small>mdi-update</v-icon>{{ container.watcher }}
+        </v-chip>
+        /
+        <v-chip label color="info" outlined disabled
+          ><v-icon left small>{{ registryIcon }}</v-icon
+          >{{ container.image.registry.name }}
+        </v-chip>
+        /
+        <v-chip label color="info" outlined disabled
+          ><v-icon left small>{{ containerIcon }}</v-icon
+          >{{ container.displayName }}
+        </v-chip>
+        :
+        <v-chip
+          v-if="$vuetify.breakpoint.mdAndUp"
+          label
+          outlined
+          color="info"
+          disabled
+        >
+          {{ container.image.tag.value }}
+        </v-chip>
+      </v-toolbar-title>
       <v-spacer />
       <v-tooltip bottom v-if="$vuetify.breakpoint.mdAndUp">
         <template v-slot:activator="{ on, attrs }">

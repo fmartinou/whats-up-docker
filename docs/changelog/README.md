@@ -1,5 +1,8 @@
 # Changelog
 
+# dev (wip)
+- :star: [UI] - Make watcher and registry names visible when container box is collapsed
+
 # 6.5.0
 - :star: [API/UI] - Add a feature to allow/disallow delete operations (`WUD_SERVER_FEATURE_DELETE`)
 - :star: [UI] - Add filter dropdown for update kinds (major, minor...)

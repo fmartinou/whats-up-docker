@@ -8,11 +8,11 @@
       <v-col>
         <v-select
           :hide-details="true"
-          v-model="registrySelected"
-          :items="registries"
-          @change="emitRegistryChanged"
+          v-model="watcherSelected"
+          :items="watchers"
+          @change="emitWatcherChanged"
           :clearable="true"
-          label="Registry"
+          label="Watcher"
           outlined
           dense
         ></v-select>
@@ -20,11 +20,11 @@
       <v-col>
         <v-select
           :hide-details="true"
-          v-model="watcherSelected"
-          :items="watchers"
-          @change="emitWatcherChanged"
+          v-model="registrySelected"
+          :items="registries"
+          @change="emitRegistryChanged"
           :clearable="true"
-          label="Watcher"
+          label="Registry"
           outlined
           dense
         ></v-select>
