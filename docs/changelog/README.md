@@ -3,6 +3,7 @@
 # dev (wip)
 - :star: [UI] - Make watcher and registry names visible when container box is collapsed
 - :fire: Fix edge case where comparing different tags with identical digests (e.g. `mongo:8` = `mongo:8.0.0`)
+- :fire: [UI] - Fix sporadic 401 error when loading backend info from the UI
 
 # 6.5.0
 - :star: [API/UI] - Add a feature to allow/disallow delete operations (`WUD_SERVER_FEATURE_DELETE`)
