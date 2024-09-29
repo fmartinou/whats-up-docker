@@ -21,7 +21,7 @@ Feature: WUD Container API Exposure
       | 0     | ecr_sub_sub_test         | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/sub/test                        | 1.0.0              | 2.0.0              | true            |
       | 1     | ecr_sub_test             | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test                            | 1.0.0              | 2.0.0              | true            |
       | 2     | ecr_test                 | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test                                | 1.0.0              | 2.0.0              | true            |
-      | 3     | ghcr_radarr              | ghcr     | https://ghcr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   | 5.11.0.9244-ls240   | true            |
+      | 3     | ghcr_radarr              | ghcr     | https://ghcr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   | 5.11.0.9244-ls240  | true            |
       | 4     | gitlab_test              | gitlab   | https://registry.gitlab.com/v2                          | manfred-martin/docker-registry-test | 1.0.0              | 2.0.0              | true            |
       | 5     | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | 2021.6.1           | 2024.9.3           | true            |
       | 6     | hub_homeassistant_latest | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | latest             | latest             | false           |
@@ -36,8 +36,8 @@ Feature: WUD Container API Exposure
       | 15    | hub_vaultwarden_1222     | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server                  | 1.32.0-alpine      | 1.32.0-alpine      | false           |
       | 16    | hub_vaultwarden_latest   | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server                  | latest             | latest             | false           |
       | 17    | hub_youtubedb_latest     | hub      | https://registry-1.docker.io/v2                         | jeeaaasustest/youtube-dl            | latest             | latest             | false           |
-      | 18    | lscr_radarr              | lscr     | https://lscr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   |5.11.0.9244-ls240    | true            |
-      | 19    | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus               | v2.52.0            |v2.54.1             | true            |
+      | 18    | lscr_radarr              | lscr     | https://lscr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   | 5.11.0.9244-ls240  | true            |
+      | 19    | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus               | v2.52.0            | v2.54.1            | true            |
 
   Scenario: WUD must allow to get a container with semver
     Given I GET /api/containers

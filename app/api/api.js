@@ -18,11 +18,11 @@ const auth = require('./auth');
 function init() {
     const router = express.Router();
 
-    // Routes to protect after this line
-    router.use(passport.authenticate(auth.getAllIds()));
-
     // Mount app router
     router.use('/app', appRouter.init());
+
+    // Routes to protect after this line
+    router.use(passport.authenticate(auth.getAllIds()));
 
     // Mount log router
     router.use('/log', logRouter.init());
