@@ -1,6 +1,6 @@
 # Changelog
 
-# dev (wip)
+# 6.6.0
 - :star: [UI] - Make watcher and registry names visible when container box is collapsed
 - :fire: Fix edge case where comparing different tags with identical digests (e.g. `mongo:8` = `mongo:8.0.0`)
 - :fire: [UI] - Fix sporadic 401 error when loading backend info from the UI
