@@ -48,9 +48,9 @@ function getSessionSecretKey() {
  * @param authentication
  * @param app
  */
-function useStrategy(authentication, app) {
+async function useStrategy(authentication, app) {
     try {
-        const strategy = authentication.getStrategy(app);
+        const strategy = await authentication.getStrategy(app);
         passport.use(authentication.getId(), strategy);
         STRATEGY_IDS.push(authentication.getId());
     } catch (e) {
@@ -148,7 +148,7 @@ function init(app) {
 
     // Register all authentications
     Object.values(registry.getState().authentication)
-        .forEach((authentication) => useStrategy(authentication, app));
+        .forEach(async (authentication) => useStrategy(authentication, app));
 
     passport.serializeUser((user, done) => {
         done(null, JSON.stringify(user));

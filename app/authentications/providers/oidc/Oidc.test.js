@@ -37,8 +37,8 @@ test('validateConfiguration should throw error when invalid', () => {
     }).toThrowError(ValidationError);
 });
 
-test('getStrategy should return an Authentication strategy', () => {
-    const strategy = oidc.getStrategy(app);
+test('getStrategy should return an Authentication strategy', async () => {
+    const strategy = await oidc.getStrategy(app);
     expect(strategy.name).toEqual('oidc');
 });
 
