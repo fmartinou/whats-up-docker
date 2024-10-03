@@ -43,7 +43,7 @@ function getRegistries() {
  * @param tags
  * @returns {*}
  */
-function getTagCandidates(container, tags) {
+function getTagCandidates(container, tags, logContainer) {
     let filteredTags = tags;
 
     // Match include tag regex
@@ -56,6 +56,10 @@ function getTagCandidates(container, tags) {
     if (container.excludeTags) {
         const excludeTagsRegex = new RegExp(container.excludeTags);
         filteredTags = filteredTags.filter((tag) => !excludeTagsRegex.test(tag));
+    }
+
+    if (filteredTags.length === 0) {
+        logContainer.warn('No tags found after filtering check you regex filters');
     }
 
     // Semver image -> find higher semver tag
@@ -503,7 +507,7 @@ class Docker extends Component {
             const tags = await registryProvider.getTags(container.image);
 
             // Get candidate tags (based on tag name)
-            const tagsCandidates = getTagCandidates(container, tags);
+            const tagsCandidates = getTagCandidates(container, tags, logContainer);
 
             // Must watch digest? => Find local/remote digests on registry
             if (container.image.digest.watch && container.image.digest.repo) {
@@ -667,7 +671,7 @@ class Docker extends Component {
             containerReport.container = storeContainer.insertContainer(containerWithResult);
             containerReport.changed = true;
 
-        // Found in DB? => update it
+            // Found in DB? => update it
         } else {
             containerReport.container = storeContainer.updateContainer(containerWithResult);
             containerReport.changed = containerInDb.resultChanged(containerReport.container)
