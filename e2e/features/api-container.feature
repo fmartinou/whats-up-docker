@@ -17,27 +17,27 @@ Feature: WUD Container API Exposure
     And response body path $[<index>].result.tag should be <resultTag>
     And response body path $[<index>].updateAvailable should be <updateAvailable>
     Examples:
-      | index | containerName            | registry | registryUrl                                             | imageName                           | tag                | resultTag          | updateAvailable |
-      | 0     | ecr_sub_sub_test         | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/sub/test                        | 1.0.0              | 2.0.0              | true            |
-      | 1     | ecr_sub_test             | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test                            | 1.0.0              | 2.0.0              | true            |
-      | 2     | ecr_test                 | ecr      | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test                                | 1.0.0              | 2.0.0              | true            |
-      | 3     | ghcr_radarr              | ghcr     | https://ghcr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   | 5.11.0.9244-ls241  | true            |
-      | 4     | gitlab_test              | gitlab   | https://registry.gitlab.com/v2                          | manfred-martin/docker-registry-test | 1.0.0              | 2.0.0              | true            |
-      | 5     | hub_homeassistant_202161 | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | 2021.6.1           | 2024.9.3           | true            |
-      | 6     | hub_homeassistant_latest | hub      | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | latest             | latest             | false           |
-      | 7     | hub_nginx_120            | hub      | https://registry-1.docker.io/v2                         | library/nginx                       | 1.20-alpine        | 1.27-alpine        | true            |
-      | 8     | hub_nginx_latest         | hub      | https://registry-1.docker.io/v2                         | library/nginx                       | latest             | latest             | true            |
-      | 9     | hub_omnidb_latest        | hub      | https://registry-1.docker.io/v2                         | omnidbteam/omnidb                   | latest             | latest             | false           |
-      | 10    | hub_pihole_57            | hub      | https://registry-1.docker.io/v2                         | pihole/pihole                       | v5.7               | v5.8.1             | true            |
-      | 11    | hub_pihole_latest        | hub      | https://registry-1.docker.io/v2                         | pihole/pihole                       | latest             | latest             | false           |
-      | 12    | hub_pyload_latest        | hub      | https://registry-1.docker.io/v2                         | writl/pyload                        | latest             | latest             | false           |
-      | 13    | hub_traefik_245          | hub      | https://registry-1.docker.io/v2                         | library/traefik                     | 2.4.5              | 3.1.4              | true            |
-      | 14    | hub_traefik_latest       | hub      | https://registry-1.docker.io/v2                         | library/traefik                     | latest             | latest             | false           |
-      | 15    | hub_vaultwarden_1222     | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server                  | 1.32.0-alpine      | 1.32.0-alpine      | false           |
-      | 16    | hub_vaultwarden_latest   | hub      | https://registry-1.docker.io/v2                         | vaultwarden/server                  | latest             | latest             | false           |
-      | 17    | hub_youtubedb_latest     | hub      | https://registry-1.docker.io/v2                         | jeeaaasustest/youtube-dl            | latest             | latest             | false           |
-      | 18    | lscr_radarr              | lscr     | https://lscr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   | 5.11.0.9244-ls241  | true            |
-      | 19    | quay_prometheus          | quay     | https://quay.io/v2                                      | prometheus/prometheus               | v2.52.0            | v2.54.1            | true            |
+      | index | registry | containerName            | registryUrl                                             | imageName                           | tag                | resultTag          | updateAvailable |
+      | 0     | ecr      | ecr_sub_sub_test         | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/sub/test                        | 1.0.0              | 2.0.0              | true            |
+      | 1     | ecr      | ecr_sub_test             | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | sub/test                            | 1.0.0              | 2.0.0              | true            |
+      | 2     | ecr      | ecr_test                 | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test                                | 1.0.0              | 2.0.0              | true            |
+      | 3     | ghcr     | ghcr_radarr              | https://ghcr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   | 5.11.0.9244-ls241  | true            |
+      | 4     | gitlab   | gitlab_test              | https://registry.gitlab.com/v2                          | manfred-martin/docker-registry-test | 1.0.0              | 2.0.0              | true            |
+      | 5     | hub      | hub_homeassistant_202161 | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | 2021.6.1           | 2024.10.1           | true            |
+      | 6     | hub      | hub_homeassistant_latest | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | latest             | latest             | false           |
+      | 7     | hub      | hub_nginx_120            | https://registry-1.docker.io/v2                         | library/nginx                       | 1.20-alpine        | 1.27-alpine        | true            |
+      | 8     | hub      | hub_nginx_latest         | https://registry-1.docker.io/v2                         | library/nginx                       | latest             | latest             | true            |
+      | 9     | hub      | hub_omnidb_latest        | https://registry-1.docker.io/v2                         | omnidbteam/omnidb                   | latest             | latest             | false           |
+      | 10    | hub      | hub_pihole_57            | https://registry-1.docker.io/v2                         | pihole/pihole                       | v5.7               | v5.8.1             | true            |
+      | 11    | hub      | hub_pihole_latest        | https://registry-1.docker.io/v2                         | pihole/pihole                       | latest             | latest             | false           |
+      | 12    | hub      | hub_pyload_latest        | https://registry-1.docker.io/v2                         | writl/pyload                        | latest             | latest             | false           |
+      | 13    | hub      | hub_traefik_245          | https://registry-1.docker.io/v2                         | library/traefik                     | 2.4.5              | 3.1.5              | true            |
+      | 14    | hub      | hub_traefik_latest       | https://registry-1.docker.io/v2                         | library/traefik                     | latest             | latest             | false           |
+      | 15    | hub      | hub_vaultwarden_1222     | https://registry-1.docker.io/v2                         | vaultwarden/server                  | 1.32.1-alpine      | 1.32.1-alpine      | false           |
+      | 16    | hub      | hub_vaultwarden_latest   | https://registry-1.docker.io/v2                         | vaultwarden/server                  | latest             | latest             | false           |
+      | 17    | hub      | hub_youtubedb_latest     | https://registry-1.docker.io/v2                         | jeeaaasustest/youtube-dl            | latest             | latest             | false           |
+      | 18    | lscr     | lscr_radarr              | https://lscr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   | 5.11.0.9244-ls241  | true            |
+      | 19    | quay     | quay_prometheus          | https://quay.io/v2                                      | prometheus/prometheus               | v2.52.0            | v2.54.1            | true            |
 
   Scenario: WUD must allow to get a container with semver
     Given I GET /api/containers
@@ -75,7 +75,7 @@ Feature: WUD Container API Exposure
     And response body path $.image.tag.semver should be false
     And response body path $.image.digest.value should be sha256:f94d6dd9b5761f33a21bb92848a1f70ea11a1c15f3a142c19a44ea3a4c545a4d
     And response body path $.result.tag should be latest
-    And response body path $.result.digest should be sha256:10b61fc3d8262c8bf44c89aef3d81202ce12b8cba12fff2e32ca5978a2d88c2b
+    And response body path $.result.digest should be sha256:396c6e925f28fbbed95a475d27c18886289c2bbc53231534dc86c163558b5e4b
     And response body path $.updateAvailable should be true
 
   Scenario: WUD must allow to get a container with its link
@@ -85,7 +85,7 @@ Feature: WUD Container API Exposure
     Then response code should be 200
     And response body should be valid json
     And response body path $.link should be https://github.com/home-assistant/core/releases/tag/2021.6.1
-    And response body path $.result.link should be https://github.com/home-assistant/core/releases/tag/2024.9.3
+    And response body path $.result.link should be https://github.com/home-assistant/core/releases/tag/2024.10.1
 
   Scenario: WUD must allow to trigger a watch on a container
     Given I GET /api/containers

@@ -9,28 +9,32 @@
     >
       <v-toolbar-title class="text-body-3">
         <v-chip label color="info" outlined disabled
-          ><v-icon left small>mdi-update</v-icon>{{ container.watcher }}
+          ><v-icon left small v-if="$vuetify.breakpoint.mdAndUp"
+            >mdi-update</v-icon
+          >{{ container.watcher }}
         </v-chip>
         /
+        <span v-if="$vuetify.breakpoint.mdAndUp">
+          <v-chip label color="info" outlined disabled
+            ><v-icon left small v-if="$vuetify.breakpoint.mdAndUp">{{
+              registryIcon
+            }}</v-icon
+            >{{ container.image.registry.name }}
+          </v-chip>
+          /
+        </span>
         <v-chip label color="info" outlined disabled
-          ><v-icon left small>{{ registryIcon }}</v-icon
-          >{{ container.image.registry.name }}
-        </v-chip>
-        /
-        <v-chip label color="info" outlined disabled
-          ><v-icon left small>{{ containerIcon }}</v-icon
+          ><v-icon left small v-if="$vuetify.breakpoint.mdAndUp">{{
+            containerIcon
+          }}</v-icon
           >{{ container.displayName }}
         </v-chip>
-        :
-        <v-chip
-          v-if="$vuetify.breakpoint.mdAndUp"
-          label
-          outlined
-          color="info"
-          disabled
-        >
-          {{ container.image.tag.value }}
-        </v-chip>
+        <span v-if="$vuetify.breakpoint.mdAndUp">
+          :
+          <v-chip label outlined color="info" disabled>
+            {{ container.image.tag.value }}
+          </v-chip>
+        </span>
       </v-toolbar-title>
       <v-spacer />
       <v-tooltip bottom v-if="$vuetify.breakpoint.mdAndUp">

@@ -58,12 +58,12 @@ function getTagCandidates(container, tags, logContainer) {
         filteredTags = filteredTags.filter((tag) => !excludeTagsRegex.test(tag));
     }
 
-    if (filteredTags.length === 0) {
-        logContainer.warn('No tags found after filtering check you regex filters');
-    }
-
     // Semver image -> find higher semver tag
     if (container.image.tag.semver) {
+        if (filteredTags.length === 0) {
+            logContainer.warn('No tags found after filtering; check you regex filters');
+        }
+
         // Keep semver only
         filteredTags = filteredTags
             .filter((tag) => parseSemver(transformTag(container.transformTags, tag)) !== null);
