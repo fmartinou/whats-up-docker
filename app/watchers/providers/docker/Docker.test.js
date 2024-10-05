@@ -147,7 +147,7 @@ const getTagCandidatesTestCases = [{
 test.each(getTagCandidatesTestCases)(
     'getTagCandidates should behave as expected',
     (item) => {
-        expect(Docker.__get__('getTagCandidates')(item.source, item.items)).toEqual(item.candidates);
+        expect(Docker.__get__('getTagCandidates')(item.source, item.items, docker.log)).toEqual(item.candidates);
     },
 );
 
@@ -346,7 +346,7 @@ test('normalizeContainer should return original container when no matching provi
 test('findNewVersion should return new image version when found', async () => {
     hub.getTags = () => (['7.8.9']);
     hub.getImageManifestDigest = () => ({ digest: 'sha256:abcdef', version: 2 });
-    await expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
+    await expect(docker.findNewVersion(sampleSemver, docker.log)).resolves.toMatchObject({
         tag: '7.8.9',
         digest: 'sha256:abcdef',
     });
@@ -355,7 +355,7 @@ test('findNewVersion should return new image version when found', async () => {
 test('findNewVersion should return same result as current when no image version found', async () => {
     hub.getTags = () => ([]);
     hub.getImageManifestDigest = () => ({ digest: 'sha256:abcdef', version: 2 });
-    await expect(docker.findNewVersion(sampleSemver)).resolves.toMatchObject({
+    await expect(docker.findNewVersion(sampleSemver, docker.log)).resolves.toMatchObject({
         tag: '4.5.6',
         digest: 'sha256:abcdef',
     });

@@ -1,5 +1,9 @@
 # Changelog
 
+# 6.6.1
+- :fire: [UI] - Fix container view (mobile layout)
+- :fire: [API/UI] - Sort by default containers by watcher, registry, name and version
+
 # 6.6.0
 - :star: [UI] - Make watcher and registry names visible when container box is collapsed
 - :fire: Fix edge case where comparing different tags with identical digests (e.g. `mongo:8` = `mongo:8.0.0`)

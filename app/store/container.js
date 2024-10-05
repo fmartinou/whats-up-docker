@@ -1,7 +1,7 @@
 /**
  * Container store.
  */
-const { byString, byValue } = require('sort-es');
+const { byString, byValues } = require('sort-es');
 const log = require('../log').child({ component: 'store' });
 const { validate: validateContainer } = require('../model/container');
 const {
@@ -72,7 +72,12 @@ function getContainers(query = {}) {
     }
     const containerList = containers.find(filter).map((item) => validateContainer(item.data));
     return containerList.sort(
-        byValue((container) => container.name, byString()),
+        byValues([
+            [(container) => container.watcher, byString()],
+            [(container) => container.image.registry.name, byString()],
+            [(container) => container.name, byString()],
+            [(container) => container.image.tag.value, byString()],
+        ]),
     );
 }
 
