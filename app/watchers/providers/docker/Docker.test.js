@@ -29,6 +29,7 @@ const configurationValid = {
     watchall: false,
     watchevents: true,
     cron: '0 * * * *',
+    watchatstart: true,
 };
 
 jest.mock('request-promise-native');
