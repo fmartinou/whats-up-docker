@@ -217,6 +217,7 @@ class Docker extends Component {
             watchall: this.joi.boolean().default(false),
             watchdigest: this.joi.any(),
             watchevents: this.joi.boolean().default(true),
+            watchatstart: this.joi.boolean().default(true),
         });
     }
 
@@ -231,11 +232,13 @@ class Docker extends Component {
         this.log.info(`Cron scheduled (${this.configuration.cron})`);
         this.watchCron = cron.schedule(this.configuration.cron, () => this.watchFromCron());
 
-        // watch at startup (after all components have been registered)
-        this.watchCronTimeout = setTimeout(
-            () => this.watchFromCron(),
-            START_WATCHER_DELAY_MS,
-        );
+        // watch at startup if enabled (after all components have been registered)
+        if (this.configuration.watchatstart) {
+            this.watchCronTimeout = setTimeout(
+                () => this.watchFromCron(),
+                START_WATCHER_DELAY_MS,
+            );
+        }
 
         // listen to docker events
         if (this.configuration.watchevents) {
