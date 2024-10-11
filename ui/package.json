@@ -10,10 +10,13 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "6.6.0",
     "core-js": "3.38.1",
+    "install": "0.13.0",
+    "npm": "10.9.0",
     "register-service-worker": "1.7.2",
     "simple-icons-font": "13.9.0",
     "v-clipboard": "2.2.3",
     "vue": "2.7.16",
+    "vue-inline-svg": "2.1.4",
     "vue-router": "3.6.5",
     "vuetify": "2.7.2"
   },

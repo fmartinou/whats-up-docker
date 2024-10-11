@@ -9,25 +9,32 @@
     >
       <v-toolbar-title class="text-body-3">
         <v-chip label color="info" outlined disabled
-          ><v-icon left small v-if="$vuetify.breakpoint.mdAndUp"
-            >mdi-update</v-icon
+          ><v-icon left v-if="$vuetify.breakpoint.mdAndUp">mdi-update</v-icon
           >{{ container.watcher }}
         </v-chip>
         /
-        <span v-if="$vuetify.breakpoint.mdAndUp">
+        <span v-if="$vuetify.breakpoint.mdAndUp && !selfhstContainerIconUrl">
           <v-chip label color="info" outlined disabled
-            ><v-icon left small v-if="$vuetify.breakpoint.mdAndUp">{{
+            ><v-icon left v-if="$vuetify.breakpoint.mdAndUp">{{
               registryIcon
             }}</v-icon
             >{{ container.image.registry.name }}
           </v-chip>
           /
         </span>
-        <v-chip label color="info" outlined disabled
-          ><v-icon left small v-if="$vuetify.breakpoint.mdAndUp">{{
-            containerIcon
-          }}</v-icon
-          >{{ container.displayName }}
+        <v-chip label color="info" outlined disabled>
+          <span v-if="$vuetify.breakpoint.mdAndUp">
+            <img
+              :src="selfhstContainerIconUrl"
+              style="width: 24px; height: 24px"
+              class="v-icon v-icon--left"
+              v-if="isSelfhstContainerIcon"
+            />
+            <v-icon left v-else>
+              {{ containerIcon }}
+            </v-icon>
+          </span>
+          {{ container.displayName }}
         </v-chip>
         <span v-if="$vuetify.breakpoint.mdAndUp">
           :
@@ -69,7 +76,15 @@
         >
           <v-tab>
             <span v-if="$vuetify.breakpoint.mdAndUp">Container</span>
-            <v-icon>{{ containerIcon }}</v-icon>
+            <img
+              :src="selfhstContainerIconUrl"
+              style="width: 24px; height: 24px"
+              class="v-icon v-icon--left"
+              v-if="isSelfhstContainerIcon"
+            />
+            <v-icon left v-else>
+              {{ containerIcon }}
+            </v-icon>
           </v-tab>
           <v-tab>
             <span v-if="$vuetify.breakpoint.mdAndUp">Image</span>
@@ -214,6 +229,21 @@ export default {
         icon = this.normalizeFontawesome(icon, "fas");
       }
       return icon;
+    },
+
+    isSelfhstContainerIcon() {
+      console.log(this.container.displayIcon);
+      return (
+        this.container.displayIcon.startsWith("sh-") ||
+        this.container.displayIcon.startsWith("sh:")
+      );
+    },
+
+    selfhstContainerIconUrl() {
+      const iconName = this.container.displayIcon
+        .replace("sh-", "")
+        .replace("sh:", "");
+      return `https://cdn.jsdelivr.net/gh/selfhst/icons/png/${iconName}.png`;
     },
 
     registryIcon() {

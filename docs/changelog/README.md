@@ -1,5 +1,8 @@
 # Changelog
 
+# 6.6.2 (wip)
+- :star: [UI] - Add support for [Selfh.st](https://selfh.st/icons/) icons
+
 # 6.6.1
 - :fire: [UI] - Fix container view (mobile layout)
 - :fire: [API/UI] - Sort by default containers by watcher, registry, name and version
