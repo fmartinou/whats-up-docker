@@ -49,8 +49,8 @@ class Hub extends Custom {
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
-    match(image) {
-        return !image.registry.url || /^.*\.?docker.io$/.test(image.registry.url);
+    match(imageRegistryUrl) {
+        return !imageRegistryUrl || /^.*\.?docker.io$/.test(imageRegistryUrl);
     }
 
     /**

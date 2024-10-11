@@ -36,8 +36,8 @@ class Gitlab extends Registry {
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
-    match(image) {
-        return this.configuration.url.indexOf(image.registry.url) !== -1;
+    match(imageRegistryUrl) {
+        return this.configuration.url.indexOf(imageRegistryUrl) !== -1;
     }
 
     /**

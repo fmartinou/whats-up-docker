@@ -36,34 +36,14 @@ test('maskConfiguration should mask configuration secrets', () => {
 });
 
 test('match should return true when registry url is from gcr', () => {
-    expect(gcr.match({
-        registry: {
-            url: 'gcr.io',
-        },
-    })).toBeTruthy();
-    expect(gcr.match({
-        registry: {
-            url: 'us.gcr.io',
-        },
-    })).toBeTruthy();
-    expect(gcr.match({
-        registry: {
-            url: 'eu.gcr.io',
-        },
-    })).toBeTruthy();
-    expect(gcr.match({
-        registry: {
-            url: 'asia.gcr.io',
-        },
-    })).toBeTruthy();
+    expect(gcr.match('gcr.io')).toBeTruthy();
+    expect(gcr.match('us.gcr.io')).toBeTruthy();
+    expect(gcr.match('eu.gcr.io')).toBeTruthy();
+    expect(gcr.match('asia.gcr.io')).toBeTruthy();
 });
 
 test('match should return false when registry url is not from gcr', () => {
-    expect(gcr.match({
-        registry: {
-            url: 'grr.io',
-        },
-    })).toBeFalsy();
+    expect(gcr.match('grr.io')).toBeFalsy();
 });
 
 test('normalizeImage should return the proper registry v2 endpoint', () => {

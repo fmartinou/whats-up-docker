@@ -33,8 +33,8 @@ class Gcr extends Registry {
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
-    match(image) {
-        return /^.*\.?gcr.io$/.test(image.registry.url);
+    match(imageRegistryUrl) {
+        return /^.*\.?gcr.io$/.test(imageRegistryUrl);
     }
 
     /**

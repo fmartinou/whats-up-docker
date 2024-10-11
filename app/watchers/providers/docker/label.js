@@ -43,4 +43,9 @@ module.exports = {
      */
     wudDisplayIcon: 'wud.display.icon',
 
+    /**
+     * Optional Lookup registry url (can be useful when pulling containers from a registry cache)
+     */
+    wudRegistryLookupUrl: 'wud.registry.lookup.url',
+
 };

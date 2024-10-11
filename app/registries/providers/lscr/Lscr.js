@@ -17,8 +17,8 @@ class Lscr extends Ghcr {
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
-    match(image) {
-        return /^.*\.?lscr.io$/.test(image.registry.url);
+    match(imageRegistryUrl) {
+        return /^.*\.?lscr.io$/.test(imageRegistryUrl);
     }
 
     /**

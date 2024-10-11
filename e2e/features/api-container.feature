@@ -23,7 +23,7 @@ Feature: WUD Container API Exposure
       | 2     | ecr      | ecr_test                 | https://229211676173.dkr.ecr.eu-west-1.amazonaws.com/v2 | test                                | 1.0.0              | 2.0.0              | true            |
       | 3     | ghcr     | ghcr_radarr              | https://ghcr.io/v2                                      | linuxserver/radarr                  | 3.2.1.5070-ls105   | 5.11.0.9244-ls241  | true            |
       | 4     | gitlab   | gitlab_test              | https://registry.gitlab.com/v2                          | manfred-martin/docker-registry-test | 1.0.0              | 2.0.0              | true            |
-      | 5     | hub      | hub_homeassistant_202161 | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | 2021.6.1           | 2024.10.1           | true            |
+      | 5     | hub      | hub_homeassistant_202161 | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | 2021.6.1           | 2024.10.2           | true            |
       | 6     | hub      | hub_homeassistant_latest | https://registry-1.docker.io/v2                         | homeassistant/home-assistant        | latest             | latest             | false           |
       | 7     | hub      | hub_nginx_120            | https://registry-1.docker.io/v2                         | library/nginx                       | 1.20-alpine        | 1.27-alpine        | true            |
       | 8     | hub      | hub_nginx_latest         | https://registry-1.docker.io/v2                         | library/nginx                       | latest             | latest             | true            |
@@ -85,7 +85,7 @@ Feature: WUD Container API Exposure
     Then response code should be 200
     And response body should be valid json
     And response body path $.link should be https://github.com/home-assistant/core/releases/tag/2021.6.1
-    And response body path $.result.link should be https://github.com/home-assistant/core/releases/tag/2024.10.1
+    And response body path $.result.link should be https://github.com/home-assistant/core/releases/tag/2024.10.2
 
   Scenario: WUD must allow to trigger a watch on a container
     Given I GET /api/containers

@@ -38,11 +38,7 @@ test('maskConfiguration should mask configuration secrets', () => {
 });
 
 test('match should return true when registry url is from custom', () => {
-    expect(custom.match({
-        registry: {
-            url: 'localhost:5000',
-        },
-    })).toBeTruthy();
+    expect(custom.match('localhost:5000')).toBeTruthy();
 });
 
 test('match should return false when registry url is not from custom', () => {

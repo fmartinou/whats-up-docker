@@ -39,9 +39,9 @@ class Ecr extends Registry {
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
-    match(image) {
-        return /^.*\.dkr\.ecr\..*\.amazonaws\.com$/.test(image.registry.url)
-            || image.registry.url === ECR_PUBLIC_GALLERY_HOSTNAME;
+    match(imageRegistryUrl) {
+        return /^.*\.dkr\.ecr\..*\.amazonaws\.com$/.test(imageRegistryUrl)
+            || imageRegistryUrl === ECR_PUBLIC_GALLERY_HOSTNAME;
     }
 
     /**

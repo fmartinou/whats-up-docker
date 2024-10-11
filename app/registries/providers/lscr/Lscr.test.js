@@ -29,19 +29,11 @@ test('validatedConfiguration should throw error when configuration is missing', 
 });
 
 test('match should return true when registry url is from lscr', () => {
-    expect(lscr.match({
-        registry: {
-            url: 'lscr.io',
-        },
-    })).toBeTruthy();
+    expect(lscr.match('lscr.io')).toBeTruthy();
 });
 
 test('match should return false when registry url is not from lscr', () => {
-    expect(lscr.match({
-        registry: {
-            url: 'wrong.io',
-        },
-    })).toBeFalsy();
+    expect(lscr.match('wrong.io')).toBeFalsy();
 });
 
 test('normalizeImage should return the proper registry v2 endpoint', () => {
