@@ -38,8 +38,8 @@ class Quay extends Registry {
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
-    match(image) {
-        return /^.*\.?quay.io$/.test(image.registry.url);
+    match(imageRegistryUrl) {
+        return /^.*\.?quay.io$/.test(imageRegistryUrl);
     }
 
     /**

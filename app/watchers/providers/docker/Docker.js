@@ -7,14 +7,15 @@ const debounce = require('just-debounce');
 const { parse: parseSemver, isGreater: isGreaterSemver, transform: transformTag } = require('../../../tag');
 const event = require('../../../event');
 const {
-    wudWatch,
-    wudTagInclude,
-    wudTagExclude,
-    wudTagTransform,
-    wudWatchDigest,
-    wudLinkTemplate,
-    wudDisplayName,
     wudDisplayIcon,
+    wudDisplayName,
+    wudLinkTemplate,
+    wudRegistryLookupUrl,
+    wudTagExclude,
+    wudTagInclude,
+    wudTagTransform,
+    wudWatch,
+    wudWatchDigest,
 } = require('./label');
 const storeContainer = require('../../../store/container');
 const log = require('../../../log');
@@ -93,7 +94,9 @@ function getTagCandidates(container, tags, logContainer) {
 function normalizeContainer(container) {
     const containerWithNormalizedImage = container;
     const registryProvider = Object.values(getRegistries())
-        .find((provider) => provider.match(container.image));
+        .find((provider) => provider.match(
+            container.image.registry.lookupUrl || container.image.registry.url,
+        ));
     if (!registryProvider) {
         log.warn(`${fullName(container)} - No Registry Provider found`);
         containerWithNormalizedImage.image.registry.name = 'unknown';
@@ -473,6 +476,7 @@ class Docker extends Component {
                 container.Labels[wudLinkTemplate],
                 container.Labels[wudDisplayName],
                 container.Labels[wudDisplayIcon],
+                container.Labels[wudRegistryLookupUrl],
             ));
         const containersWithImage = await Promise.all(containerPromises);
 
@@ -573,6 +577,7 @@ class Docker extends Component {
         linkTemplate,
         displayName,
         displayIcon,
+        wudRegistryLookupUrlValue,
     ) {
         const containerId = container.Id;
 
@@ -632,6 +637,7 @@ class Docker extends Component {
                 id: imageId,
                 registry: {
                     url: parsedImage.domain,
+                    lookupUrl: wudRegistryLookupUrlValue,
                 },
                 name: parsedImage.path,
                 tag: {

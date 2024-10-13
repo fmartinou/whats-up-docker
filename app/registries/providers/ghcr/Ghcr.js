@@ -32,8 +32,8 @@ class Ghcr extends Registry {
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
-    match(image) {
-        return /^.*\.?ghcr.io$/.test(image.registry.url);
+    match(imageRegistryUrl) {
+        return /^.*\.?ghcr.io$/.test(imageRegistryUrl);
     }
 
     /**

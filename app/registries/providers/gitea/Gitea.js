@@ -29,9 +29,9 @@ class Gitea extends Custom {
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
-    match(image) {
+    match(imageRegistryUrl) {
         const fqdnConfigured = /(?:https?:\/\/)?(.*)/.exec(this.configuration.url)[1].toLowerCase();
-        const imageRegistryFqdn = /(?:https?:\/\/)?(.*)/.exec(image.registry.url)[1].toLowerCase();
+        const imageRegistryFqdn = /(?:https?:\/\/)?(.*)/.exec(imageRegistryUrl)[1].toLowerCase();
         return fqdnConfigured === imageRegistryFqdn;
     }
 

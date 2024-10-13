@@ -46,7 +46,7 @@ class Registry extends Component {
      * @returns {boolean}
      */
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
-    match(image) {
+    match(imageRegistryUrl) {
         return false;
     }
 

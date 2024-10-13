@@ -45,11 +45,7 @@ test('maskConfiguration should mask configuration secrets', () => {
 });
 
 test('match should return true when registry url is from gitlab.com', () => {
-    expect(gitlab.match({
-        registry: {
-            url: 'registry.gitlab.com',
-        },
-    })).toBeTruthy();
+    expect(gitlab.match('registry.gitlab.com')).toBeTruthy();
 });
 
 test('match should return true when registry url is from custom gitlab', () => {
@@ -59,11 +55,7 @@ test('match should return true when registry url is from custom gitlab', () => {
         authurl: 'https://custom.com',
         token: 'abcdef',
     };
-    expect(gitlabCustom.match({
-        registry: {
-            url: 'custom.com',
-        },
-    })).toBeTruthy();
+    expect(gitlabCustom.match('custom.com')).toBeTruthy();
 });
 
 test('authenticate should perform authenticate request', () => {

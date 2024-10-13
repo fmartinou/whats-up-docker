@@ -30,11 +30,7 @@ test('maskConfiguration should mask configuration secrets', () => {
 });
 
 test('match should return true when registry url is from acr', () => {
-    expect(acr.match({
-        registry: {
-            url: 'test.azurecr.io',
-        },
-    })).toBeTruthy();
+    expect(acr.match('test.azurecr.io')).toBeTruthy();
 });
 
 test('match should return false when registry url is not from acr', () => {

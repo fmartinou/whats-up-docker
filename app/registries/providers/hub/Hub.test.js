@@ -41,25 +41,15 @@ test('maskConfiguration should mask configuration secrets', () => {
 });
 
 test('match should return true when no registry on the image', () => {
-    expect(hub.match({
-        registry: {},
-    })).toBeTruthy();
+    expect(hub.match('')).toBeTruthy();
 });
 
 test('match should return true when registry id docker.io on the image', () => {
-    expect(hub.match({
-        registry: {
-            url: 'docker.io',
-        },
-    })).toBeTruthy();
+    expect(hub.match('docker.io')).toBeTruthy();
 });
 
 test('match should return false when registry on the image', () => {
-    expect(hub.match({
-        registry: {
-            url: 'registry',
-        },
-    })).toBeFalsy();
+    expect(hub.match('registry')).toBeFalsy();
 });
 
 test('normalizeImage should prefix with library when no organization', () => {

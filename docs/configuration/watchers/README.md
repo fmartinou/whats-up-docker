@@ -189,16 +189,17 @@ docker run \
 
 To fine-tune the behaviour of WUD _per container_, you can add labels on them.
 
-| Label               |    Required    | Description                                        | Supported values                                                                                                                                                            | Default value when missing                                                            |
-|---------------------|:--------------:|----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| `wud.watch`         | :white_circle: | Watch this container                               | Valid Boolean                                                                                                                                                               | `true` when `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` is `true` (`false` otherwise) |
-| `wud.watch.digest`  | :white_circle: | Watch this container digest                        | Valid Boolean                                                                                                                                                               | `false`                                                                               |
-| `wud.tag.include`   | :white_circle: | Regex to include specific tags only                | Valid JavaScript Regex                                                                                                                                                      |                                                                                       |
-| `wud.tag.exclude`   | :white_circle: | Regex to exclude specific tags                     | Valid JavaScript Regex                                                                                                                                                      |                                                                                       |
-| `wud.tag.transform` | :white_circle: | Transform function to apply to the tag             | `$valid_regex => $valid_string_with_placeholders` (see below)                                                                                                               |                                                                                       |
-| `wud.link.template` | :white_circle: | Browsable link associated to the container version | String template with placeholders `${raw}` `${major}` `${minor}` `${patch}` `${prerelease}`                                                                                 |                                                                                       |
-| `wud.display.name`  | :white_circle: | Custom display name for the container              | Valid String                                                                                                                                                                | Container name                                                                        |
-| `wud.display.icon`  | :white_circle: | Custom display icon for the container              | Valid [Material Design Icon](https://materialdesignicons.com/), [Fontawesome Icon](https://fontawesome.com/) or [Simple icon](https://simpleicons.org/) (see details below) | `mdi:docker`                                                                          |
+| Label                     |    Required    | Description                                        | Supported values                                                                                                                                                            | Default value when missing                                                            |
+|---------------------------|:--------------:|----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| `wud.display.icon`        | :white_circle: | Custom display icon for the container              | Valid [Material Design Icon](https://materialdesignicons.com/), [Fontawesome Icon](https://fontawesome.com/) or [Simple icon](https://simpleicons.org/) (see details below) | `mdi:docker`                                                                          |
+| `wud.display.name`        | :white_circle: | Custom display name for the container              | Valid String                                                                                                                                                                | Container name                                                                        |
+| `wud.link.template`       | :white_circle: | Browsable link associated to the container version | String template with placeholders `${raw}` `${major}` `${minor}` `${patch}` `${prerelease}`                                                                                 |                                                                                       |
+| `wud.registry.lookup.url` | :white_circle: | Custom registy url to use for update lookups       | Any valid Docker registry url                                                                                                                                               |                                                                                       |
+| `wud.tag.exclude`         | :white_circle: | Regex to exclude specific tags                     | Valid JavaScript Regex                                                                                                                                                      |                                                                                       |
+| `wud.tag.include`         | :white_circle: | Regex to include specific tags only                | Valid JavaScript Regex                                                                                                                                                      |                                                                                       |
+| `wud.tag.transform`       | :white_circle: | Transform function to apply to the tag             | `$valid_regex => $valid_string_with_placeholders` (see below)                                                                                                               |                                                                                       |
+| `wud.watch.digest`        | :white_circle: | Watch this container digest                        | Valid Boolean                                                                                                                                                               | `false`                                                                               |
+| `wud.watch`               | :white_circle: | Watch this container                               | Valid Boolean                                                                                                                                                               | `true` when `WUD_WATCHER_{watcher_name}_WATCHBYDEFAULT` is `true` (`false` otherwise) |
 
 ## Label examples
 
@@ -425,5 +426,27 @@ services:
 #### **Docker**
 ```bash
 docker run -d --name mariadb --label 'wud.display.name=Maria DB' --label 'wud.display.icon=mdi-database' mariadb:10
+```
+<!-- tabs:end -->
+
+### Use an alternative Registry url for update lookups
+In some situations (e.g. when using a Docker Registry cache), it can be needed to give the url of the upstream registry (e.g. the Docker hub registry url)
+
+<!-- tabs:start -->
+#### **Docker Compose**
+```yaml
+version: '3'
+
+services:
+
+  mariadb:
+    image: localhost:5000/mariadb:10.6.4
+    labels:
+      - wud.registry.lookup.url=https://registry-1.docker.io
+```
+
+#### **Docker**
+```bash
+docker run -d --name mariadb --label 'wud.registry.lookup.url=https://registry-1.docker.io' localhost:5000/mariadb:10.6.4
 ```
 <!-- tabs:end -->

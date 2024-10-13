@@ -22,6 +22,7 @@ const schema = joi.object({
         registry: joi.object({
             name: joi.string().min(1).required(),
             url: joi.string().min(1).required(),
+            lookupUrl: joi.string(),
         }).required(),
         name: joi.string().min(1).required(),
         tag: joi.object({

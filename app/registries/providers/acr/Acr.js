@@ -29,8 +29,8 @@ class Acr extends Registry {
      * @returns {boolean}
      */
     // eslint-disable-next-line class-methods-use-this
-    match(image) {
-        return /^.*\.?azurecr.io$/.test(image.registry.url);
+    match(imageRegistryUrl) {
+        return /^.*\.?azurecr.io$/.test(imageRegistryUrl);
     }
 
     /**
