@@ -2,6 +2,7 @@
 
 # 6.6.2 (wip)
 - :star: [UI] - Add support for [Selfh.st](https://selfh.st/icons/) icons
+- :star: [Docker watcher] - Add new `watchatstart` option to disable automatic watch during startup
 
 # 6.6.1
 - :fire: [UI] - Fix container view (mobile layout)
